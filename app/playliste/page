@@ -1,0 +1,8 @@
+export default function PlejlistePage() {
+  return (
+    <div>
+      <h1>Plejliste</h1>
+      <p>Akustične, početničke, rock balade…</p>
+    </div>
+  );
+}
