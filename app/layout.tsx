@@ -1,39 +1,38 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import Menu from "./Menu";
+import "./globals.css"
+import Menu from "@/app/components/Menu"
+import { Poppins } from "next/font/google"
+import type { Metadata } from "next"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poppins = Poppins({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  weight: ["400", "500", "700", "800"],
+})
 
 export const metadata: Metadata = {
-  title: "Moj Muzički Sajt",
-  description: "Tekstovi pesama, akordi i plejliste",
-};
+  title: "Moj Sajt",
+  description: "Akordi i tekstovi",
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="sr">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Menu />
-        <main className="p-6">
+    <html lang="en">
+      <body className={`${poppins.className} m-0 p-0`}>
+        
+        {/* HEADER */}
+        <header className="w-full">
+          <Menu />
+        </header>
+
+        {/* CONTENT */}
+        <main className="w-full">
           {children}
         </main>
+
       </body>
     </html>
-  );
+  )
 }
-
-
-

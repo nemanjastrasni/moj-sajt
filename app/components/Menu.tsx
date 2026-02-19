@@ -6,7 +6,8 @@ export default function Menu() {
   const [openPesme, setOpenPesme] = useState(false);
 
   return (
-    <nav className="p-10 space-y-8 select-none">
+    <nav className="pt-1 pb-10 px-10 space-y-8 select-none">
+
 
       <a href="/" className="string w-64">
         <span>Home</span>
