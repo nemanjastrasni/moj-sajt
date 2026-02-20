@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { songs, Song } from "../../lib/data/songs"
+import { getAllSongs } from "@/lib/data/registry"
+import type { SongWithMeta } from "@/lib/data/registry"
 
 export default function CategoryPage({
   params,
@@ -12,8 +13,9 @@ export default function CategoryPage({
     "S","Š","T","U","V","Z","Ž"
   ]
 
-  // uzimamo samo pesme iz kategorije
-  const categorySongs: Song[] = songs.filter(
+  const songs: SongWithMeta[] = getAllSongs()
+
+  const categorySongs = songs.filter(
     (song) => song.category === params.category
   )
 
