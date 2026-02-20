@@ -2,22 +2,58 @@ export async function searchYouTubeTrack(
   artist: string,
   title: string
 ) {
+  const apiKey = process.env.YOUTUBE_API_KEY
+
+  if (!apiKey) {
+    console.error("❌ Missing YOUTUBE_API_KEY")
+    return null
+  }
+
   const query = `${artist} ${title} official audio`
 
-  const res = await fetch(
-    `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=3&q=${encodeURIComponent(
-      query
-    )}&key=${process.env.YOUTUBE_API_KEY}`
-  )
+  try {
+    const url =
+      `https://www.googleapis.com/youtube/v3/search` +
+      `?part=snippet` +
+      `&type=video` +
+      `&maxResults=5` +
+      `&videoEmbeddable=true` +
+      `&q=${encodeURIComponent(query)}` +
+      `&key=${apiKey}`
 
-  const data = await res.json()
+    const res = await fetch(url, {
+      cache: "no-store",
+    })
 
-  if (!data.items?.length) return null
+    if (!res.ok) {
+      console.error("❌ YouTube API error:", res.status)
+      return null
+    }
 
-  const video = data.items[0]
+    const data = await res.json()
 
-  return {
-    platform: "youtube",
-    embedUrl: `https://www.youtube.com/embed/${video.id.videoId}`,
+    if (!data?.items?.length) {
+      console.log("⚠️ No YouTube results")
+      return null
+    }
+
+    const video = data.items.find(
+      (item: any) => item?.id?.videoId
+    )
+
+    if (!video?.id?.videoId) {
+      console.log("⚠️ No valid videoId found")
+      return null
+    }
+
+    const videoId = video.id.videoId
+
+    return {
+      platform: "youtube",
+      embedUrl: `https://www.youtube.com/embed/${videoId}`,
+    }
+  } catch (err) {
+    console.error("❌ YouTube search error:", err)
+    return null
   }
 }

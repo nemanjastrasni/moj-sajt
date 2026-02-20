@@ -143,7 +143,7 @@ F:  1 3 3 2 1 1
       title: "Anestezija",
       content: `
 
-Uvod: Am, Em
+Uvod: Am  Em
 
 Strofa:
 Am

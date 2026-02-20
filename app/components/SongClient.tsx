@@ -9,9 +9,13 @@ type Props = {
     artist: string
     content: string
   }
+  media?: {
+    platform: string
+    embedUrl: string
+  } | null
 }
 
-export default function SongClient({ song }: Props) {
+export default function SongClient({ song, media }: Props) {
   const [transpose, setTranspose] = useState(0)
 
   const { title, artist, content } = song
@@ -47,58 +51,81 @@ export default function SongClient({ song }: Props) {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-8">
 
-     {/* TONALITET */}
-<div className="mb-8 text-center">
-  <div className="inline-flex items-center gap-5 px-5 py-3 border border-gray-700 rounded-xl">
+      <div className="grid lg:grid-cols-[1fr_420px] gap-12">
 
-    <button
-      onClick={() => setTranspose(t => t - 1)}
-      className="px-3 py-1 border border-gray-600 rounded-lg hover:bg-gray-800 transition"
-    >
-      −
-    </button>
+        {/* LEVA STRANA - PESMA */}
+        <div>
 
-    <div className="flex flex-col items-center min-w-[70px]">
-      <span className="text-sm text-gray-400">
-        Tonalitet
-      </span>
+          {/* TONALITET */}
+          <div className="mb-8 text-center">
+            <div className="inline-flex items-center gap-5 px-5 py-3 border border-gray-700 rounded-xl">
 
-      <span className="text-xl font-semibold">
-        {transpose > 0 ? `+${transpose}` : transpose}
-      </span>
+              <button
+                onClick={() => setTranspose(t => t - 1)}
+                className="px-3 py-1 border border-gray-600 rounded-lg hover:bg-gray-800 transition"
+              >
+                −
+              </button>
 
-      <button
-  onClick={() => setTranspose(0)}
-  className="mt-1 px-2 py-0.5 text-xs border border-red-500 text-red-400 rounded-md hover:bg-red-500/10 transition"
->
-  Reset
-</button>
-    </div>
+              <div className="flex flex-col items-center min-w-[70px]">
+                <span className="text-sm text-gray-400">
+                  Tonalitet
+                </span>
 
-    <button
-      onClick={() => setTranspose(t => t + 1)}
-      className="px-3 py-1 border border-gray-600 rounded-lg hover:bg-gray-800 transition"
-    >
-      +
-    </button>
+                <span className="text-xl font-semibold">
+                  {transpose > 0 ? `+${transpose}` : transpose}
+                </span>
 
-  </div>
-</div>
+                <button
+                  onClick={() => setTranspose(0)}
+                  className="mt-1 px-2 py-0.5 text-xs border border-red-500 text-red-400 rounded-md hover:bg-red-500/10 transition"
+                >
+                  Reset
+                </button>
+              </div>
 
-      {/* TITLE */}
-      <h1 className="text-3xl font-bold mb-2">
-        {title}
-      </h1>
+              <button
+                onClick={() => setTranspose(t => t + 1)}
+                className="px-3 py-1 border border-gray-600 rounded-lg hover:bg-gray-800 transition"
+              >
+                +
+              </button>
 
-      <h2 className="text-lg text-gray-500 mb-6">
-        {artist}
-      </h2>
+            </div>
+          </div>
 
-      {/* CONTENT */}
-      <div className="font-mono text-lg leading-relaxed whitespace-pre-wrap">
-        {renderContent(content.trim())}
+          {/* TITLE */}
+          <h1 className="text-3xl font-bold mb-2">
+            {title}
+          </h1>
+
+          <h2 className="text-lg text-gray-500 mb-6">
+            {artist}
+          </h2>
+
+          {/* CONTENT */}
+          <div className="font-mono text-lg leading-relaxed whitespace-pre-wrap">
+            {renderContent(content.trim())}
+          </div>
+
+        </div>
+
+        {/* DESNA STRANA - VIDEO */}
+        {media?.platform === "youtube" && (
+          <div className="lg:sticky lg:top-24 h-fit">
+            <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+              <iframe
+                src={media.embedUrl}
+                title="YouTube player"
+                className="w-full aspect-video"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   )

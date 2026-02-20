@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { getAllSongs } from "@/lib/data/registry"
 import SongClient from "../../../../components/SongClient"
+import { resolveMusic } from "@/lib/music/resolver"
 
 type Props = {
   params: Promise<{
@@ -12,7 +13,6 @@ type Props = {
 
 export default async function SongPage({ params }: Props) {
   const { category, artist, slug } = await params
-
   const songs = getAllSongs()
 
   const song = songs.find(
@@ -26,5 +26,9 @@ export default async function SongPage({ params }: Props) {
     notFound()
   }
 
-  return <SongClient song={song} />
+  const media = await resolveMusic(song.artistFull, song.title)
+
+  console.log("RESOLVED MEDIA:", media)
+
+  return <SongClient song={song} media={media} />
 }
