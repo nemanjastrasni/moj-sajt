@@ -49,8 +49,8 @@ export default function Menu() {
         <span>Akordi</span>
       </a>
 
-      <a href="/about" className="string w-96 ml-28">
-        <span>O sajtu</span>
+      <a href="/biografija" className="string w-96 ml-28">
+        <span>Biografija</span>
       </a>
 
       <a href="/kontakt" className="string w-[28rem] ml-36">
