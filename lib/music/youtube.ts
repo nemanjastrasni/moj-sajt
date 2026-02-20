@@ -5,55 +5,91 @@ export async function searchYouTubeTrack(
   const apiKey = process.env.YOUTUBE_API_KEY
 
   if (!apiKey) {
-    console.error("❌ Missing YOUTUBE_API_KEY")
+    console.error("Missing YOUTUBE_API_KEY")
     return null
   }
 
-  const query = `${artist} ${title} official audio`
+  const query = `${artist} ${title}`
 
   try {
     const url =
       `https://www.googleapis.com/youtube/v3/search` +
       `?part=snippet` +
       `&type=video` +
-      `&maxResults=5` +
+      `&maxResults=8` +
       `&videoEmbeddable=true` +
       `&q=${encodeURIComponent(query)}` +
       `&key=${apiKey}`
 
-    const res = await fetch(url, {
-      cache: "no-store",
-    })
+    const res = await fetch(url, { cache: "no-store" })
 
     if (!res.ok) {
-      console.error("❌ YouTube API error:", res.status)
+      console.error("YouTube API error:", res.status)
       return null
     }
 
     const data = await res.json()
+    if (!data?.items?.length) return null
 
-    if (!data?.items?.length) {
-      console.log("⚠️ No YouTube results")
-      return null
-    }
+    const videos = data.items.filter((item: any) => item?.id?.videoId)
 
-    const video = data.items.find(
-      (item: any) => item?.id?.videoId
-    )
+    const blacklist = [
+      "live",
+      "cover",
+      "remix",
+      "karaoke",
+      "instrumental",
+      "reaction",
+      "acoustic",
+      "concert"
+    ]
 
-    if (!video?.id?.videoId) {
-      console.log("⚠️ No valid videoId found")
-      return null
-    }
+    const priorityWords = [
+      "official video",
+      "official audio",
+      "official",
+      "lyrics"
+    ]
 
-    const videoId = video.id.videoId
+    const scored = videos
+      .map((video: any) => {
+        const t = video.snippet.title.toLowerCase()
+
+        let score = 0
+
+        // ❌ Kazna za blacklist (ali ne izbacujemo odmah — samo penal)
+        blacklist.forEach(word => {
+          if (t.includes(word)) score -= 10
+        })
+
+        // ✅ Prioritetne reči
+        priorityWords.forEach(word => {
+          if (t.includes(word)) score += 5
+        })
+
+        // ✅ Ako sadrži ime izvođača
+        if (t.includes(artist.toLowerCase())) score += 3
+
+        // ✅ Ako sadrži naziv pesme
+        if (t.includes(title.toLowerCase())) score += 3
+
+        // Mala kazna ako je predugačak naslov (često clickbait)
+        if (t.length > 80) score -= 1
+
+        return { video, score }
+      })
+      .sort((a: any, b: any) => b.score - a.score)
+
+    const best = scored[0]?.video
+    if (!best?.id?.videoId) return null
 
     return {
       platform: "youtube",
-      embedUrl: `https://www.youtube.com/embed/${videoId}`,
+      embedUrl: `https://www.youtube.com/embed/${best.id.videoId}`,
     }
+
   } catch (err) {
-    console.error("❌ YouTube search error:", err)
+    console.error("YouTube search error:", err)
     return null
   }
 }

@@ -8,7 +8,12 @@ function normalizeChord(chord: string) {
   return chord.replace(/^H/, "B")
 }
 
-export default function Chord({ chord }: { chord: string }) {
+type Props = {
+  chord: string
+  size: number
+}
+
+export default function Chord({ chord, size }: Props) {
   const [show, setShow] = useState(false)
   const spanRef = useRef<HTMLSpanElement>(null)
 
@@ -17,7 +22,7 @@ export default function Chord({ chord }: { chord: string }) {
   const root = rootMatch ? rootMatch[0] : null
 
   if (!root) {
-    return <span>{chord}</span>
+    return <span style={{ fontSize: `${size}px` }}>{chord}</span>
   }
 
   const encodedRoot = encodeURIComponent(root)
@@ -34,18 +39,19 @@ export default function Chord({ chord }: { chord: string }) {
         position: "relative",
         display: "inline-block",
         zIndex: 10,
+        fontSize: `${size}px`,   // ✅ OVDE JE BITNO
       }}
-       onMouseEnter={() => {
+      onMouseEnter={() => {
         if (window.innerWidth > 768) setShow(true)
-}}
-       onMouseLeave={() => {
+      }}
+      onMouseLeave={() => {
         if (window.innerWidth > 768) setShow(false)
-}}
+      }}
       onClick={() => {
         if (window.innerWidth <= 768) {
-    setShow(prev => !prev)
-  }
-}}
+          setShow(prev => !prev)
+        }
+      }}
     >
       {chord}
 
@@ -56,8 +62,8 @@ export default function Chord({ chord }: { chord: string }) {
           <div
             style={{
               position: "fixed",
-              top: rect.top - 150,     // koliko ide gore (povećaj ako treba)
-              left: rect.left + 30,   // koliko ide ulevo (povećaj ako treba)
+              top: rect.top - 150,
+              left: rect.left + 30,
               background: "#111",
               padding: "8px",
               borderRadius: "8px",

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import Chord from "./Chord"
 
 type Props = {
@@ -17,6 +17,15 @@ type Props = {
 
 export default function SongClient({ song, media }: Props) {
   const [transpose, setTranspose] = useState(0)
+
+  // AUTO SCROLL
+  const [isAutoScrolling, setIsAutoScrolling] = useState(false)
+  const [scrollSpeed, setScrollSpeed] = useState(1)
+  const scrollRef = useRef<NodeJS.Timeout | null>(null)
+
+  // FONT SIZE
+  const [textSize, setTextSize] = useState(18)
+  const [chordSize, setChordSize] = useState(18)
 
   const { title, artist, content } = song
 
@@ -38,64 +47,139 @@ export default function SongClient({ song, media }: Props) {
 
   const chordRegex = /^[A-GH](#|b)?(m|maj7|7|sus4|dim|aug)?$/
 
-  function renderContent(text: string) {
+  function renderContent(text: string, chordSize: number) {
     return text.split("\n").map((line, i) => (
       <div key={i}>
         {line.split(" ").map((word, j) =>
           chordRegex.test(word)
-            ? <Chord key={j} chord={transposeChord(word)} />
+            ? (
+              <Chord
+                key={j}
+                chord={transposeChord(word)}
+                size={chordSize}
+              />
+            )
             : word + " "
         )}
       </div>
     ))
   }
 
+  function startAutoScroll() {
+    if (scrollRef.current) return
+
+    setIsAutoScrolling(true)
+
+    scrollRef.current = setInterval(() => {
+      window.scrollBy(0, scrollSpeed * 0.3)
+    }, 60)
+  }
+
+  function stopAutoScroll() {
+    if (scrollRef.current) {
+      clearInterval(scrollRef.current)
+      scrollRef.current = null
+    }
+    setIsAutoScrolling(false)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (scrollRef.current) clearInterval(scrollRef.current)
+    }
+  }, [])
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
 
       <div className="grid lg:grid-cols-[1fr_420px] gap-12">
 
-        {/* LEVA STRANA - PESMA */}
+        {/* LEVA STRANA */}
         <div>
 
-          {/* TONALITET */}
-          <div className="mb-8 text-center">
-            <div className="inline-flex items-center gap-5 px-5 py-3 border border-gray-700 rounded-xl">
+          {/* MINI TOOLBAR */}
+<div className="mb-6 flex items-center gap-6 text-sm text-gray-400 border-b border-gray-800 pb-3">
 
-              <button
-                onClick={() => setTranspose(t => t - 1)}
-                className="px-3 py-1 border border-gray-600 rounded-lg hover:bg-gray-800 transition"
-              >
-                −
-              </button>
+  {/* TONALITET */}
+  <div className="flex items-center gap-2">
+    <span className="uppercase tracking-wide text-xs">Ton</span>
 
-              <div className="flex flex-col items-center min-w-[70px]">
-                <span className="text-sm text-gray-400">
-                  Tonalitet
-                </span>
+    <button
+      onClick={() => setTranspose(t => t - 1)}
+      className="px-2 hover:text-white"
+    >
+      −
+    </button>
 
-                <span className="text-xl font-semibold">
-                  {transpose > 0 ? `+${transpose}` : transpose}
-                </span>
+    <span className="text-white font-medium w-6 text-center">
+      {transpose > 0 ? `+${transpose}` : transpose}
+    </span>
 
-                <button
-                  onClick={() => setTranspose(0)}
-                  className="mt-1 px-2 py-0.5 text-xs border border-red-500 text-red-400 rounded-md hover:bg-red-500/10 transition"
-                >
-                  Reset
-                </button>
-              </div>
+    <button
+      onClick={() => setTranspose(t => t + 1)}
+      className="px-2 hover:text-white"
+    >
+      +
+    </button>
 
-              <button
-                onClick={() => setTranspose(t => t + 1)}
-                className="px-3 py-1 border border-gray-600 rounded-lg hover:bg-gray-800 transition"
-              >
-                +
-              </button>
+    <button
+      onClick={() => setTranspose(0)}
+      className="ml-1 text-xs text-red-400 hover:text-red-300"
+    >
+      reset
+    </button>
+  </div>
 
-            </div>
-          </div>
+  {/* SCROLL */}
+  <div className="flex items-center gap-2">
+    <span className="uppercase tracking-wide text-xs">Scroll</span>
 
+    <button
+      onClick={isAutoScrolling ? stopAutoScroll : startAutoScroll}
+      className="px-2 hover:text-white"
+    >
+      {isAutoScrolling ? "⏸" : "▶"}
+    </button>
+
+    <input
+      type="range"
+      min="1"
+      max="6"
+      value={scrollSpeed}
+      onChange={(e) => setScrollSpeed(Number(e.target.value))}
+      className="w-20"
+    />
+  </div>
+
+  {/* TEKST */}
+  <div className="flex items-center gap-2">
+    <span className="uppercase tracking-wide text-xs">Tekst</span>
+
+    <input
+      type="range"
+      min="14"
+      max="32"
+      value={textSize}
+      onChange={(e) => setTextSize(Number(e.target.value))}
+      className="w-20"
+    />
+  </div>
+
+  {/* AKORDI */}
+  <div className="flex items-center gap-2">
+    <span className="uppercase tracking-wide text-xs">Akordi</span>
+
+    <input
+      type="range"
+      min="14"
+      max="32"
+      value={chordSize}
+      onChange={(e) => setChordSize(Number(e.target.value))}
+      className="w-20"
+    />
+  </div>
+
+</div>
           {/* TITLE */}
           <h1 className="text-3xl font-bold mb-2">
             {title}
@@ -106,8 +190,11 @@ export default function SongClient({ song, media }: Props) {
           </h2>
 
           {/* CONTENT */}
-          <div className="font-mono text-lg leading-relaxed whitespace-pre-wrap">
-            {renderContent(content.trim())}
+          <div
+            className="font-mono leading-relaxed whitespace-pre-wrap"
+            style={{ fontSize: `${textSize}px` }}
+          >
+            {renderContent(content.trim(), chordSize)}
           </div>
 
         </div>
