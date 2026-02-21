@@ -1,12 +1,12 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useState } from "react"
+import Link from "next/link"
+import { signIn, signOut, useSession } from "next-auth/react"
 
 export default function Menu() {
-  const [openPesme, setOpenPesme] = useState(false);
-  const { data: session } = useSession();
+  const [openPesme, setOpenPesme] = useState(false)
+  const { data: session } = useSession()
 
   return (
     <nav className="relative flex justify-between items-start pt-6 pb-6 px-10 bg-red-700 text-black shadow-md overflow-hidden">
@@ -18,9 +18,11 @@ export default function Menu() {
           <span>Home</span>
         </Link>
 
+        {/* PESME DROPDOWN */}
         <div>
           <button
-            onClick={() => setOpenPesme(!openPesme)}
+            type="button"
+            onClick={() => setOpenPesme((v) => !v)}
             className="string w-72 ml-6 text-left"
           >
             <span>Pesme</span>
@@ -61,11 +63,19 @@ export default function Menu() {
           <span>Kontakt</span>
         </Link>
 
+        {/* ✅ ADMIN LINK – samo admin */}
+        {session?.user?.role === "admin" && (
+          <Link
+            href="/admin"
+            className="string w-[30rem] ml-44 block font-semibold"
+          >
+            <span>Admin</span>
+          </Link>
+        )}
       </div>
 
       {/* DESNA STRANA – LOGIN */}
       <div className="relative z-10 flex items-center gap-4">
-
         {!session ? (
           <button
             onClick={() => signIn("github")}
@@ -82,9 +92,24 @@ export default function Menu() {
                 className="w-10 h-10 rounded-full border"
               />
             )}
-            <span className="text-sm font-medium text-red-700">
-              {session.user?.name}
-            </span>
+
+            {/* IME + ROLE */}
+            <div className="flex flex-col leading-tight">
+              <span className="text-sm font-medium text-red-700">
+                {session.user?.name}
+              </span>
+
+              <span
+                className={`text-[10px] uppercase tracking-wide font-semibold ${
+                  session.user?.role === "admin"
+                    ? "text-blue-400"
+                    : "text-gray-600"
+                }`}
+              >
+                {session.user?.role}
+              </span>
+            </div>
+
             <button
               onClick={() => signOut()}
               className="px-3 py-1 bg-gray-200 rounded-md text-sm hover:bg-gray-300 transition"
@@ -93,8 +118,7 @@ export default function Menu() {
             </button>
           </div>
         )}
-
       </div>
     </nav>
-  );
+  )
 }
