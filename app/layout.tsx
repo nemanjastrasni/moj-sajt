@@ -2,6 +2,7 @@ import "./globals.css"
 import Menu from "@/app/components/Menu"
 import { Poppins } from "next/font/google"
 import type { Metadata } from "next"
+import Providers from "./providers"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -22,15 +23,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.className} m-0 p-0`}>
         
-        {/* HEADER */}
-        <header className="w-full">
-          <Menu />
-        </header>
+        <Providers>
+          {/* HEADER */}
+          <header className="w-full">
+            <Menu />
+          </header>
 
-        {/* CONTENT */}
-        <main className="w-full">
-          {children}
-        </main>
+          {/* CONTENT */}
+          <main className="w-full">
+            {children}
+          </main>
+        </Providers>
 
       </body>
     </html>
