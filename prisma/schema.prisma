@@ -24,19 +24,41 @@ model User {
   playlists Playlist[]
 }
 
+/* ================= ARTIST ================= */
+
+model Artist {
+  id           String   @id @default(cuid())
+  slug         String   @unique        // galija, ekv...
+  name         String                  // Galija
+  image        String?
+  bio          String?
+  discography  Json?                   // niz albuma (stringovi)
+  category    String?
+  songs        Song[]
+
+  createdAt    DateTime @default(now())
+}
+
 /* ================= SONG ================= */
 
 model Song {
   id        String   @id @default(cuid())
+  slug      String               // decimen
   title     String
-  artist    String
-  category  String       // narodne | domace | strane
+  category  String               // narodne | domace | strane
+
   lyrics    String
   chords    String?
+
+  artistId  String
+  artist    Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
 
   favorites Favorite[]
   playlists PlaylistSong[]
+
+  @@unique([artistId, slug])
 }
 
 /* ================= NEXTAUTH ================= */
@@ -98,6 +120,7 @@ model Playlist {
   id        String         @id @default(cuid())
   name      String
   userId    String
+
   user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   songs     PlaylistSong[]
   createdAt DateTime       @default(now())

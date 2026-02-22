@@ -15,13 +15,17 @@ const PAGE_SIZE = 10
 export default async function AdminSongsPage({ searchParams }: Props) {
   const q = searchParams?.q ?? ""
   const sort = searchParams?.sort ?? "createdAt"
-  const page = Number(searchParams?.page ?? 1)
+  const page = Number(searchParams?.page || 1)
 
   const where = q
     ? {
         OR: [
           { title: { contains: q, mode: "insensitive" } },
-          { artist: { contains: q, mode: "insensitive" } },
+          {
+            artist: {
+              name: { contains: q, mode: "insensitive" },
+            },
+          },
         ],
       }
     : {}
@@ -31,6 +35,7 @@ export default async function AdminSongsPage({ searchParams }: Props) {
 
   const songs = await prisma.song.findMany({
     where,
+    include: { artist: true },
     orderBy:
       sort === "title"
         ? { title: "asc" }
@@ -43,11 +48,11 @@ export default async function AdminSongsPage({ searchParams }: Props) {
     <div>
       {/* HEADER */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Pesme</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Pesme</h1>
 
         <Link
           href="/admin/songs/new"
-          className="bg-black text-white px-4 py-2 text-sm"
+          className="bg-black text-white px-4 py-2 text-sm rounded"
         >
           + Nova pesma
         </Link>
@@ -59,19 +64,19 @@ export default async function AdminSongsPage({ searchParams }: Props) {
           name="q"
           defaultValue={q}
           placeholder="Pretraga (naslov / izvođač)"
-          className="border p-2 w-64"
+          className="border p-2 w-64 rounded"
         />
 
         <select
           name="sort"
           defaultValue={sort}
-          className="border p-2"
+          className="border p-2 rounded"
         >
           <option value="createdAt">Najnovije</option>
           <option value="title">Naslov A–Z</option>
         </select>
 
-        <button className="bg-gray-800 text-white px-4">
+        <button className="bg-gray-800 text-white px-4 rounded">
           Primeni
         </button>
       </form>
@@ -80,25 +85,28 @@ export default async function AdminSongsPage({ searchParams }: Props) {
       {songs.length === 0 ? (
         <p className="text-gray-500">Nema rezultata.</p>
       ) : (
-        <table className="w-full border text-sm">
-          <thead className="bg-gray-100">
+        <table className="w-full text-sm border border-gray-200 rounded overflow-hidden">
+          <thead className="bg-gray-100 text-gray-900">
             <tr>
-              <th className="border p-2 text-left">Naslov</th>
-              <th className="border p-2 text-left">Izvođač</th>
-              <th className="border p-2">Kategorija</th>
-              <th className="border p-2">Akcije</th>
+              <th className="p-3 text-left">Naslov</th>
+              <th className="p-3 text-left">Izvođač</th>
+              <th className="p-3 text-center">Kategorija</th>
+              <th className="p-3 text-center">Akcije</th>
             </tr>
           </thead>
 
           <tbody>
-            {songs.map((song) => (
-              <tr key={song.id}>
-                <td className="border p-2">{song.title}</td>
-                <td className="border p-2">{song.artist}</td>
-                <td className="border p-2 text-center">
-                  {song.category}
+            {songs.map((song, i) => (
+              <tr
+                key={song.id}
+                className={`${i % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-200 transition text-gray-900`}
+               >
+                <td className="p-3">{song.title}</td>
+                <td className="p-3">{song.artist.name}</td>
+                <td className="p-3 text-center">
+                  {song.category || "-"}
                 </td>
-                <td className="border p-2 text-center space-x-3">
+                <td className="p-3 text-center space-x-3">
                   <Link
                     href={`/admin/songs/${song.id}/edit`}
                     className="text-blue-600 hover:underline"
@@ -119,7 +127,6 @@ export default async function AdminSongsPage({ searchParams }: Props) {
                     >
                       Delete
                     </button>
-                    
                   </form>
                 </td>
               </tr>
@@ -137,10 +144,10 @@ export default async function AdminSongsPage({ searchParams }: Props) {
               <Link
                 key={p}
                 href={`?q=${q}&sort=${sort}&page=${p}`}
-                className={`px-3 py-1 border ${
+                className={`px-3 py-1 border rounded ${
                   p === page
                     ? "bg-black text-white"
-                    : "bg-white"
+                    : "bg-white hover:bg-gray-100"
                 }`}
               >
                 {p}
