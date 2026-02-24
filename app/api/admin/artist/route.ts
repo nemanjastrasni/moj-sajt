@@ -16,25 +16,18 @@ export async function GET(req: Request) {
     return NextResponse.json([], { status: 200 })
   }
 
-  // Pronađi izvođače koji sadrže search string
   const artists = await prisma.artist.findMany({
-    where: {
-      name: {
-        contains: search,
-       
-      },
-    },
     orderBy: { name: "asc" },
   })
 
-  // Vrati samo polja koja su nam potrebna
-  const result = artists.map((a) => ({
-    id: a.id,
-    name: a.name,
-    bio: a.bio ?? "",
-    discography: a.discography ?? "",
-    slug: a.slug,
-  }))
-
-  return NextResponse.json(result)
+  return NextResponse.json(
+    artists.map((a) => ({
+      id: a.id,
+      name: a.name,
+      slug: a.slug,
+      bio: a.bio,
+      discography: a.discography,
+      image: a.image,
+    }))
+  )
 }

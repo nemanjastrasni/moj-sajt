@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { getArtists } from "@/lib/data/registry"
+import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 
 type Props = {
@@ -12,81 +12,54 @@ type Props = {
 export default async function ArtistInfoPage({ params }: Props) {
   const { category, artist } = await params
 
-  const artists = getArtists()
+  const artistData = await prisma.artist.findFirst({
+    where: {
+      slug: artist,
+      category: category,
+    },
+  })
 
- const artistData = artists.find(
-  (a) => a.slug.toLowerCase() === artist.toLowerCase()
-)
-
-if (!artistData) {
-  notFound()
-}
+  if (!artistData) {
+    notFound()
+  }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10">
+    <div className="max-w-4xl mx-auto px-6 py-10 text-white">
 
-      {/* NAZIV */}
-      <h1 className="text-3xl font-bold mb-4">
-        {artistData.artistFull}
+      <h1 className="text-3xl font-bold mb-6">
+        {artistData.name}
       </h1>
 
-      {/* SLIKA */}
       {artistData.image && (
         <div className="mb-6">
           <img
             src={artistData.image}
-            alt={artistData.artistFull}
+            alt={artistData.name}
             className="w-full max-w-md rounded-lg"
           />
         </div>
       )}
 
-      {/* BIO */}
       {artistData.bio && (
-        <div className="mb-8 whitespace-pre-line text-lg leading-relaxed">
+        <div className="mb-10 whitespace-pre-line text-lg leading-relaxed text-gray-300">
           {artistData.bio}
         </div>
       )}
 
-      {/* DISKOGRAFIJA */}
-      {artistData.discography && (
-        <div className="mb-8">
+      {Array.isArray(artistData.discography) && (
+        <div className="mb-10">
           <h2 className="text-2xl font-semibold mb-4">
             Diskografija
           </h2>
 
-          {Array.isArray(artistData.discography) ? (
-            <ul className="space-y-2">
-              {artistData.discography.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          ) : (
-            <div className="space-y-4">
-              {Object.entries(artistData.discography).map(
-                ([section, albums]) =>
-                  albums && albums.length > 0 && (
-                    <div key={section}>
-                      <h3 className="font-semibold capitalize mb-2">
-                        {section}
-                      </h3>
-                      <ul className="space-y-1">
-                        {albums.map((album, i) => (
-                          <li key={i}>
-                            {album.title}
-                            {album.year && ` (${album.year})`}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )
-              )}
-            </div>
-          )}
+          <ul className="space-y-2 text-gray-300">
+            {artistData.discography.map((album, i) => (
+              <li key={i}>{String(album)}</li>
+            ))}
+          </ul>
         </div>
       )}
 
-      {/* NAZAD NA PESME */}
       <Link
         href={`/pesme/${category}/${artist}`}
         className="text-blue-400 hover:underline"

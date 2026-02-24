@@ -10,9 +10,7 @@ export default async function EditArtistPage({ params }: Props) {
     where: { id: params.id },
   })
 
-  if (!artist) {
-    notFound()
-  }
+  if (!artist) notFound()
 
   const artistId = artist.id
 
@@ -22,7 +20,17 @@ export default async function EditArtistPage({ params }: Props) {
     const name = formData.get("name") as string
     const bio = formData.get("bio") as string
     const image = formData.get("image") as string
-    const discography = formData.get("discography") as string
+    const discographyRaw = formData.get("discography") as string
+
+    let parsedDiscography = null
+
+    if (discographyRaw?.trim()) {
+      try {
+        parsedDiscography = JSON.parse(discographyRaw)
+      } catch {
+        parsedDiscography = discographyRaw.split("\n").filter(Boolean)
+      }
+    }
 
     await prisma.artist.update({
       where: { id: artistId },
@@ -30,7 +38,7 @@ export default async function EditArtistPage({ params }: Props) {
         name,
         bio,
         image,
-        discography,
+        discography: parsedDiscography,
       },
     })
 
@@ -72,18 +80,33 @@ export default async function EditArtistPage({ params }: Props) {
         </div>
 
         <div>
-  <label className="block text-sm mb-1">Diskografija</label>
-  <textarea
-    name="discography"
-    defaultValue={String(artist.discography ?? "")}
-    rows={4}
+  <label className="block text-sm mb-1">Kategorija</label>
+  <input
+    name="category"
+    defaultValue={artist.category ?? ""}
     className="border p-2 w-full rounded"
   />
 </div>
 
-<button className="bg-black text-white px-4 py-2 rounded">
-  Sačuvaj izmene
-</button>
+        <div>
+          <label className="block text-sm mb-1">
+            Diskografija (jedan album po redu ili JSON niz)
+          </label>
+          <textarea
+            name="discography"
+            defaultValue={
+              Array.isArray(artist.discography)
+                ? artist.discography.join("\n")
+                : ""
+            }
+            rows={6}
+            className="border p-2 w-full rounded"
+          />
+        </div>
+
+        <button className="bg-black text-white px-4 py-2 rounded">
+          Sačuvaj izmene
+        </button>
 
       </form>
     </div>

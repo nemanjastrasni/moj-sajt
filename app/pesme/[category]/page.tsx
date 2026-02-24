@@ -1,60 +1,48 @@
 import Link from "next/link"
-import { getAllSongs } from "@/lib/data/registry"
-import type { SongWithMeta } from "@/lib/data/registry"
+import { prisma } from "@/lib/prisma"
 
-export default function CategoryPage({
-  params,
-}: {
-  params: { category: string }
-}) {
+type Props = {
+  params: Promise<{ category: string }>
+}
+
+export default async function CategoryPage({ params }: Props) {
+  const { category } = await params
+
   const SR_LATIN = [
     "A","B","C","Č","Ć","D","DŽ","Đ","E","F","G","H",
     "I","J","K","L","LJ","M","N","NJ","O","P","R",
     "S","Š","T","U","V","Z","Ž"
   ]
 
-  const songs: SongWithMeta[] = getAllSongs()
+  const artists = await prisma.artist.findMany({
+    where: { category: category },
+    orderBy: { name: "asc" },
+  })
 
-  const categorySongs = songs.filter(
-    (song) => song.category === params.category
-  )
+  if (!artists.length) {
+    return <div style={{ padding: 40 }}>Nema izvođača.</div>
+  }
 
-  // izvlačimo jedinstvene izvođače
-  const artists = Array.from(
-    new Map(
-      categorySongs.map((s) => [
-        s.artist,
-        { slug: s.artist, fullName: s.artistFull }
-      ])
-    ).values()
-  )
-
-  // funkcija za LJ, NJ, DŽ
   function getFirstLetter(name: string) {
     const upper = name.toUpperCase()
-
     if (upper.startsWith("DŽ")) return "DŽ"
     if (upper.startsWith("LJ")) return "LJ"
     if (upper.startsWith("NJ")) return "NJ"
-
     return upper.charAt(0)
   }
 
-  // grupisanje po slovima
   const grouped: Record<string, typeof artists> = {}
 
   artists.forEach((artist) => {
-    const letter = getFirstLetter(artist.fullName)
-
+    const letter = getFirstLetter(artist.name)
     if (!grouped[letter]) grouped[letter] = []
     grouped[letter].push(artist)
   })
 
-  // sortiranje po srpskom alfabetu
   SR_LATIN.forEach((letter) => {
     if (grouped[letter]) {
       grouped[letter].sort((a, b) =>
-        a.fullName.localeCompare(b.fullName, "sr-Latn", {
+        a.name.localeCompare(b.name, "sr-Latn", {
           sensitivity: "base"
         })
       )
@@ -63,29 +51,23 @@ export default function CategoryPage({
 
   return (
     <div style={container}>
-      <h1 style={title}>Kategorija: {params.category}</h1>
+      <h1 style={title}>Kategorija: {category}</h1>
 
-      {/* A-Z NAV */}
       <div style={stickyNav}>
         {SR_LATIN.map((letter) => {
           const exists = grouped[letter]?.length > 0
-
           return exists ? (
             <a key={letter} href={`#${letter}`} style={navLetter}>
               {letter}
             </a>
           ) : (
-            <span
-              key={letter}
-              style={{ ...navLetter, opacity: 0.3 }}
-            >
+            <span key={letter} style={{ ...navLetter, opacity: 0.3 }}>
               {letter}
             </span>
           )
         })}
       </div>
 
-      {/* LISTA IZVOĐAČA */}
       {SR_LATIN.map((letter) => {
         if (!grouped[letter]) return null
 
@@ -96,11 +78,11 @@ export default function CategoryPage({
             <div style={grid}>
               {grouped[letter].map((artist) => (
                 <Link
-                  key={artist.slug}
-                  href={`/pesme/${params.category}/${artist.slug}`}
+                  key={artist.id}
+                  href={`/pesme/${category}/${artist.slug}`}
                   style={card}
                 >
-                  {artist.fullName}
+                  {artist.name}
                 </Link>
               ))}
             </div>
@@ -110,8 +92,6 @@ export default function CategoryPage({
     </div>
   )
 }
-
-/* ---------- STYLES ---------- */
 
 const container: React.CSSProperties = {
   padding: "40px",
