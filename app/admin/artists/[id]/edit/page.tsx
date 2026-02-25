@@ -23,7 +23,14 @@ export default async function EditArtistPage({ params }: Props) {
     const category = (formData.get("category") as string)?.toLowerCase().trim()  // ✅ DODATO
     const discographyRaw = formData.get("discography") as string
 
-    let parsedDiscography = null
+    let parsedDiscography: string[] = []
+
+if (discographyRaw?.trim()) {
+  parsedDiscography = discographyRaw
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+}
 
     if (discographyRaw?.trim()) {
       try {

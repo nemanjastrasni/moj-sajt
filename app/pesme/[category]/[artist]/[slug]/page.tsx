@@ -30,7 +30,13 @@ export default async function SongPage({ params }: Props) {
     notFound()
   }
 
-  const media = await resolveMusic(song.artist.name, song.title)
+  let media = null
+
+try {
+  media = await resolveMusic(song.artist.name, song.title)
+} catch (e) {
+  console.error("Music resolver failed:", e)
+}
 
   return (
     <SongClient

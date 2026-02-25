@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { getArtists } from "@/lib/data/registry"
+import { prisma } from "@/lib/prisma"
 
 const letters = [
   "A","B","C","Č","Ć","D","Đ","E","F","G",
@@ -7,12 +7,14 @@ const letters = [
   "S","Š","T","U","V","Z","Ž"
 ]
 
-export default function BiografijePage() {
-  const artists = getArtists()
+export default async function BiografijePage() {
+  const artists = await prisma.artist.findMany({
+    orderBy: { name: "asc" },
+  })
 
   const grouped = letters.reduce((acc, letter) => {
     acc[letter] = artists.filter((artist) =>
-      artist.artistFull
+      artist.name
         .toUpperCase()
         .startsWith(letter)
     )
@@ -25,7 +27,6 @@ export default function BiografijePage() {
         Biografije izvođača
       </h1>
 
-      {/* Slova */}
       <div className="flex flex-wrap gap-3 mb-10">
         {letters.map((letter) => (
           <a
@@ -38,10 +39,9 @@ export default function BiografijePage() {
         ))}
       </div>
 
-      {/* Lista po slovima */}
       <div className="space-y-10">
         {letters.map((letter) =>
-          grouped[letter].length > 0 ? (
+          grouped[letter]?.length > 0 ? (
             <div key={letter} id={letter}>
               <h2 className="text-2xl font-semibold mb-4">
                 {letter}
@@ -54,7 +54,7 @@ export default function BiografijePage() {
                       href={`/pesme/${artist.category}/${artist.slug}/info`}
                       className="text-blue-400 hover:text-blue-300 hover:underline transition"
                     >
-                      {artist.artistFull}
+                      {artist.name}
                     </Link>
                   </li>
                 ))}
