@@ -2,11 +2,11 @@ import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 
 type Props = {
-  params: Promise<{ category: string }>
+  params: { category: string }
 }
 
 export default async function CategoryPage({ params }: Props) {
-  const { category } = await params
+  const category = params.category
 
   const SR_LATIN = [
     "A","B","C","Č","Ć","D","DŽ","Đ","E","F","G","H",
@@ -14,11 +14,13 @@ export default async function CategoryPage({ params }: Props) {
     "S","Š","T","U","V","Z","Ž"
   ]
 
-  const artists = await prisma.artist.findMany({
-    where: { category: category },
-    orderBy: { name: "asc" },
-  })
+ const artists = await prisma.artist.findMany({
+  orderBy: { name: "asc" },
+})
 
+   console.log(artists)
+
+   
   if (!artists.length) {
     return <div style={{ padding: 40 }}>Nema izvođača.</div>
   }

@@ -20,6 +20,7 @@ export default async function EditArtistPage({ params }: Props) {
     const name = formData.get("name") as string
     const bio = formData.get("bio") as string
     const image = formData.get("image") as string
+    const category = (formData.get("category") as string)?.toLowerCase().trim()  // ✅ DODATO
     const discographyRaw = formData.get("discography") as string
 
     let parsedDiscography = null
@@ -38,6 +39,7 @@ export default async function EditArtistPage({ params }: Props) {
         name,
         bio,
         image,
+        category,          // ✅ DODATO
         discography: parsedDiscography,
       },
     })
@@ -61,6 +63,15 @@ export default async function EditArtistPage({ params }: Props) {
         </div>
 
         <div>
+          <label className="block text-sm mb-1">Kategorija</label>
+          <input
+            name="category"
+            defaultValue={artist.category ?? ""}
+            className="border p-2 w-full rounded"
+          />
+        </div>
+
+        <div>
           <label className="block text-sm mb-1">Slika (URL)</label>
           <input
             name="image"
@@ -78,15 +89,6 @@ export default async function EditArtistPage({ params }: Props) {
             className="border p-2 w-full rounded"
           />
         </div>
-
-        <div>
-  <label className="block text-sm mb-1">Kategorija</label>
-  <input
-    name="category"
-    defaultValue={artist.category ?? ""}
-    className="border p-2 w-full rounded"
-  />
-</div>
 
         <div>
           <label className="block text-sm mb-1">
