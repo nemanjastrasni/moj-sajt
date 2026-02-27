@@ -1,8 +1,27 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
+import type { Metadata } from "next"
 
 type Props = {
   params: { category: string }
+}
+
+function formatCategory(category: string) {
+  if (category === "domace") return "Domaće"
+  if (category === "strane") return "Strane"
+  if (category === "narodne") return "Narodne"
+  return category.charAt(0).toUpperCase() + category.slice(1)
+}
+
+export async function generateMetadata(
+  { params }: Props
+): Promise<Metadata> {
+  const pretty = formatCategory(params.category)
+
+  return {
+    title: `${pretty} pesme – Akordi i tekstovi`,
+    description: `Lista izvođača i pesama u kategoriji ${pretty}. Akordi i tekstovi na GitaraAkordi.`,
+  }
 }
 
 export default async function CategoryPage({ params }: Props) {
@@ -14,13 +33,11 @@ export default async function CategoryPage({ params }: Props) {
     "S","Š","T","U","V","Z","Ž"
   ]
 
- const artists = await prisma.artist.findMany({
-  orderBy: { name: "asc" },
-})
+  const artists = await prisma.artist.findMany({
+    where: { category },
+    orderBy: { name: "asc" },
+  })
 
-   console.log(artists)
-
-   
   if (!artists.length) {
     return <div style={{ padding: 40 }}>Nema izvođača.</div>
   }
@@ -53,7 +70,7 @@ export default async function CategoryPage({ params }: Props) {
 
   return (
     <div style={container}>
-      <h1 style={title}>Kategorija: {category}</h1>
+      <h1 style={title}>Kategorija: {formatCategory(category)}</h1>
 
       <div style={stickyNav}>
         {SR_LATIN.map((letter) => {

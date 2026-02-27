@@ -1,34 +1,38 @@
-"use client"
-
+import { prisma } from "@/lib/prisma"
 import Link from "next/link"
-import { songs } from "@/app/lib/data/songs"
-import { useParams, notFound } from "next/navigation"
+import { notFound } from "next/navigation"
 
-export default function CategoryPage() {
-  const { category } = useParams() as { category: string }
+export default async function CategoryPage({
+  params,
+}: {
+  params: { category: string }
+}) {
+  const { category } = params
 
-  const filteredSongs = songs.filter(
-    (song) => song.category === category
-  )
+  const artists = await prisma.artist.findMany({
+    where: { category },
+    include: { songs: true },
+  })
 
-  if (filteredSongs.length === 0) {
-    return notFound()
-  }
+  if (!artists.length) return notFound()
 
   return (
     <div style={{ padding: "40px" }}>
       <h1>{category.toUpperCase()}</h1>
 
       <ul>
-        {filteredSongs.map((song) => (
-          <li key={song.id}>
-            <Link href={`/pesme/${song.category}/${song.artist}/${song.id}`}>
-              {song.artistFull} - {song.title}
-            </Link>
-          </li>
-        ))}
+        {artists.flatMap((artist) =>
+          artist.songs.map((song) => (
+            <li key={song.id}>
+              <Link
+                href={`/pesme/${category}/${artist.slug}/${song.slug}`}
+              >
+                {artist.name} - {song.title}
+              </Link>
+            </li>
+          ))
+        )}
       </ul>
     </div>
   )
 }
-

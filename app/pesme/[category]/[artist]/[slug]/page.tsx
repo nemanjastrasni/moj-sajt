@@ -2,24 +2,53 @@ import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import SongClient from "../../../../components/SongClient"
 import { resolveMusic } from "@/lib/music/resolver"
+import type { Metadata } from "next"
 
 type Props = {
-  params: Promise<{
+  params: {
     category: string
     artist: string
     slug: string
-  }>
+  }
 }
 
-export default async function SongPage({ params }: Props) {
-  const { artist, slug } = await params
+export async function generateMetadata(
+  { params }: Props
+): Promise<Metadata> {
+  const { artist, slug } = params
 
   const song = await prisma.song.findFirst({
     where: {
       slug,
-      artist: {
-        slug: artist,
-      },
+      artist: { slug: artist },
+    },
+    include: { artist: true },
+  })
+
+  if (!song) {
+    return {
+      title: "Pesma nije pronađena",
+    }
+  }
+
+  return {
+    title: `${song.title} – ${song.artist.name}`,
+    description: `Akordi i tekst pesme ${song.title} od izvođača ${song.artist.name}.`,
+    openGraph: {
+      title: `${song.title} – ${song.artist.name}`,
+      description: `Akordi i tekst pesme ${song.title}.`,
+      type: "article",
+    },
+  }
+}
+
+export default async function SongPage({ params }: Props) {
+  const { artist, slug } = params
+
+  const song = await prisma.song.findFirst({
+    where: {
+      slug,
+      artist: { slug: artist },
     },
     include: {
       artist: true,
@@ -32,11 +61,11 @@ export default async function SongPage({ params }: Props) {
 
   let media = null
 
-try {
-  media = await resolveMusic(song.artist.name, song.title)
-} catch (e) {
-  console.error("Music resolver failed:", e)
-}
+  try {
+    media = await resolveMusic(song.artist.name, song.title)
+  } catch (e) {
+    console.error("Music resolver failed:", e)
+  }
 
   return (
     <SongClient
@@ -45,7 +74,7 @@ try {
         artist: song.artist.name,
         lyrics: song.lyrics ?? undefined,
         chords: song.chords ?? undefined,
-        category: song.artist.category ?? undefined, // uzimamo iz artist-a
+        category: song.artist.category ?? undefined,
         artistSlug: song.artist.slug,
         artistName: song.artist.name,
       }}

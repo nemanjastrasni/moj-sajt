@@ -1,9 +1,31 @@
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import type { Metadata } from "next"
 
 type Props = {
   params: Promise<{ category: string; artist: string }>
+}
+
+export async function generateMetadata(
+  { params }: Props
+): Promise<Metadata> {
+  const { artist } = await params
+
+  const artistData = await prisma.artist.findUnique({
+    where: { slug: artist },
+  })
+
+  if (!artistData) {
+    return {
+      title: "Izvođač nije pronađen",
+    }
+  }
+
+  return {
+    title: `${artistData.name} – Biografija, Diskografija i Pesme`,
+    description: `Biografija, diskografija i pesme izvođača ${artistData.name}. Akordi i tekstovi na GitaraAkordi.`,
+  }
 }
 
 export default async function ArtistPage({ params }: Props) {
@@ -13,7 +35,7 @@ export default async function ArtistPage({ params }: Props) {
 
   const artistData = await prisma.artist.findFirst({
     where: {
-      slug: artist, // filtriramo samo po slug-u
+      slug: artist,
     },
     include: {
       songs: {

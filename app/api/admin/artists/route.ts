@@ -10,31 +10,52 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const { search } = Object.fromEntries(new URL(req.url).searchParams)
+  const { searchParams } = new URL(req.url)
+  const search = searchParams.get("search")
+  const name = searchParams.get("name")
 
-  if (!search || typeof search !== "string") {
-    return NextResponse.json([], { status: 200 })
+  // ✅ Tačno ime (za automatsku kategoriju)
+  if (name) {
+    const artist = await prisma.artist.findFirst({
+      where: { name },
+    })
+
+    if (!artist) return NextResponse.json(null)
+
+    return NextResponse.json({
+      id: artist.id,
+      name: artist.name,
+      slug: artist.slug,
+      bio: artist.bio ?? "",
+      discography: artist.discography ?? "",
+      image: artist.image,
+      category: artist.category,
+    })
   }
 
-  // Pronađi izvođače koji sadrže search string
-  const artists = await prisma.artist.findMany({
-    where: {
-      name: {
-        contains: search,
-       
+  // ✅ Autocomplete
+  if (search) {
+    const artists = await prisma.artist.findMany({
+      where: {
+        name: {
+          contains: search,
+        },
       },
-    },
-    orderBy: { name: "asc" },
-  })
+      orderBy: { name: "asc" },
+    })
 
-  // Vrati samo polja koja su nam potrebna
-  const result = artists.map((a) => ({
-    id: a.id,
-    name: a.name,
-    bio: a.bio ?? "",
-    discography: a.discography ?? "",
-    slug: a.slug,
-  }))
+    return NextResponse.json(
+      artists.map((a) => ({
+        id: a.id,
+        name: a.name,
+        bio: a.bio ?? "",
+        discography: a.discography ?? "",
+        slug: a.slug,
+        image: a.image,
+        category: a.category,
+      }))
+    )
+  }
 
-  return NextResponse.json(result)
+  return NextResponse.json([])
 }

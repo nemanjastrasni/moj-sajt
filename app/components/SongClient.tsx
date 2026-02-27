@@ -53,25 +53,38 @@ export default function SongClient({ song, media }: Props) {
     return NOTES[newIndex] + rest
   }
 
-  const chordRegex = /^[A-GH](#|b)?(m|maj7|7|sus4|dim|aug)?$/
 
   function renderContent(text: string, chordSize: number) {
-    return text.split("\n").map((line, i) => (
-      <div key={i}>
-        {line.split(" ").map((word, j) =>
-          chordRegex.test(word)
-            ? (
-              <Chord
-                key={j}
-                chord={transposeChord(word)}
-                size={chordSize}
-              />
-            )
-            : word + " "
-        )}
-      </div>
-    ))
-  }
+  const chordRegex = /(?<!\S)[A-GH](#|b)?(m|maj|min|maj7|7|sus|sus4|dim|aug|add\d*)?(\d*)?(\/[A-GH](#|b)?)?(?!\S)/g
+
+  return text.split("\n").map((line, i) => {
+    const parts = []
+    let lastIndex = 0
+    let match
+
+    while ((match = chordRegex.exec(line)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(line.slice(lastIndex, match.index))
+      }
+
+      parts.push(
+        <Chord
+          key={match.index}
+          chord={transposeChord(match[0])}
+          size={chordSize}
+        />
+      )
+
+      lastIndex = chordRegex.lastIndex
+    }
+
+    if (lastIndex < line.length) {
+      parts.push(line.slice(lastIndex))
+    }
+
+    return <div key={i}>{parts}</div>
+  })
+}
 
   function startAutoScroll() {
     if (scrollRef.current) return
@@ -107,6 +120,7 @@ export default function SongClient({ song, media }: Props) {
 
           {/* MINI TOOLBAR */}
           <div className="mb-6 flex items-center gap-6 text-sm text-gray-400 border-b border-gray-800 pb-3">
+            
             {/* TONALITET */}
             <div className="flex items-center gap-2">
               <span className="uppercase tracking-wide text-xs">Ton</span>
@@ -121,6 +135,13 @@ export default function SongClient({ song, media }: Props) {
               <span className="text-white font-medium w-6 text-center">
                 {transpose > 0 ? `+${transpose}` : transpose}
               </span>
+
+              <button
+                onClick={() => setTranspose(t => t + 1)}
+                className="px-2 hover:text-white"
+               >
+                    +
+                </button>
 
               <button
                 onClick={() => setTranspose(0)}

@@ -12,10 +12,16 @@ type Props = {
 
 const PAGE_SIZE = 10
 
-export default async function AdminSongsPage({ searchParams }: Props) {
-  const q = searchParams?.q ?? ""
-  const sort = searchParams?.sort ?? "createdAt"
-  const page = Number(searchParams?.page || 1)
+export default async function AdminSongsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; sort?: string; page?: string }>
+}) {
+  const params = await searchParams
+
+  const q = params?.q ?? ""
+  const sort = params?.sort ?? "createdAt"
+  const page = Number(params?.page || 1)
 
   const where = q
     ? {

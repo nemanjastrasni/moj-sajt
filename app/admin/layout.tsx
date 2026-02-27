@@ -2,7 +2,12 @@
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
+import BackButton from "@/app/components/BackButton"
 
+<header className="flex justify-between items-center mb-6">
+  <h1 className="text-2xl font-bold">Tvoj Header</h1>
+  <BackButton />
+</header>
 export default async function AdminLayout({
   children,
 }: {

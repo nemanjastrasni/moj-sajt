@@ -8,7 +8,7 @@ export default function NewSongPage() {
 
   const [artist, setArtist] = useState("")
   const [title, setTitle] = useState("")
-  const [category, setCategory] = useState("ostalo")
+  const [category, setCategory] = useState("narodne")
   const [lyrics, setLyrics] = useState("")
   const [bio, setBio] = useState("")
   const [discography, setDiscography] = useState("")
@@ -18,9 +18,6 @@ export default function NewSongPage() {
   const [error, setError] = useState("")
   const [suggestions, setSuggestions] = useState<any[]>([])
 
-  // =========================
-  // Autocomplete funkcija
-  // =========================
   async function handleArtistChange(value: string) {
     setArtist(value)
 
@@ -29,23 +26,16 @@ export default function NewSongPage() {
       return
     }
 
-    try {
-      const res = await fetch(`/api/admin/artists?search=${value}`)
-      if (!res.ok) {
-        setSuggestions([])
-        return
-      }
-
-      const data = await res.json()
-      setSuggestions(data)
-    } catch {
+    const res = await fetch(`/api/admin/artists?search=${value}`)
+    if (!res.ok) {
       setSuggestions([])
+      return
     }
+
+    const data = await res.json()
+    setSuggestions(data)
   }
 
-  // =========================
-  // Submit pesme
-  // =========================
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
@@ -71,13 +61,14 @@ export default function NewSongPage() {
       return
     }
 
-    setLoading(false)
     router.push("/admin/songs")
   }
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">Nova pesma</h1>
+      <h1 className="text-3xl font-bold text-blue-600 mb-6">
+        Nova pesma
+      </h1>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {error && <p className="text-red-600 text-sm">{error}</p>}
@@ -87,11 +78,12 @@ export default function NewSongPage() {
           <label className="block text-sm font-semibold text-black mb-1">
             Izvođač
           </label>
+
           <input
             type="text"
             value={artist}
             onChange={(e) => handleArtistChange(e.target.value)}
-            className="w-full border p-2"
+            className="w-full border p-2 rounded text-gray-800"
             required
           />
 
@@ -100,12 +92,16 @@ export default function NewSongPage() {
               {suggestions.map((a) => (
                 <div
                   key={a.id}
-                  className="p-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => {
+                  className="p-2 hover:bg-gray-100 cursor-pointer text-gray-800"
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+
                     setArtist(a.name)
                     setBio(a.bio || "")
                     setDiscography(a.discography || "")
-                    setCategory(a.category || "ostalo")
+                    if (a.category) {
+                      setCategory(a.category.trim().toLowerCase())
+                    }
                     setSuggestions([])
                   }}
                 >
@@ -125,7 +121,7 @@ export default function NewSongPage() {
             <button
               type="button"
               onClick={() => setShowBio(!showBio)}
-              className="text-sm text-blue-600"
+              className="text-sm text-blue-600 font-medium"
             >
               {showBio ? "Zatvori" : bio ? "Edit" : "Dodaj"}
             </button>
@@ -136,7 +132,7 @@ export default function NewSongPage() {
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               rows={5}
-              className="w-full border p-2"
+              className="w-full border p-2 rounded text-gray-800"
             />
           )}
         </div>
@@ -150,7 +146,7 @@ export default function NewSongPage() {
             <button
               type="button"
               onClick={() => setShowDisc(!showDisc)}
-              className="text-sm text-blue-600"
+              className="text-sm text-blue-600 font-medium"
             >
               {showDisc ? "Zatvori" : discography ? "Edit" : "Dodaj"}
             </button>
@@ -161,7 +157,7 @@ export default function NewSongPage() {
               value={discography}
               onChange={(e) => setDiscography(e.target.value)}
               rows={5}
-              className="w-full border p-2"
+              className="w-full border p-2 rounded text-gray-800"
             />
           )}
         </div>
@@ -175,7 +171,7 @@ export default function NewSongPage() {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border p-2"
+            className="w-full border p-2 rounded text-gray-800"
             required
           />
         </div>
@@ -188,7 +184,7 @@ export default function NewSongPage() {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full border p-2"
+            className="w-full border p-2 rounded text-gray-800"
           >
             <option value="narodne">Narodne</option>
             <option value="domace">Domaće</option>
@@ -205,14 +201,14 @@ export default function NewSongPage() {
             value={lyrics}
             onChange={(e) => setLyrics(e.target.value)}
             rows={16}
-            className="w-full border p-3"
+            className="w-full border p-3 rounded text-gray-800"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="bg-black text-white px-6 py-2 disabled:opacity-50"
+          className="bg-black text-white px-6 py-2 rounded disabled:opacity-50"
         >
           {loading ? "Čuvam..." : "Sačuvaj"}
         </button>
