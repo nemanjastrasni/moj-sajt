@@ -5,11 +5,11 @@ import { resolveMusic } from "@/lib/music/resolver"
 import type { Metadata } from "next"
 
 type Props = {
-  params: {
+  params: Promise<{
     category: string
     artist: string
     slug: string
-  }
+  }>
 }
 
 export async function generateMetadata(
