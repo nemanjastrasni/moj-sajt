@@ -3,7 +3,9 @@ import { prisma } from "@/lib/prisma"
 import type { Metadata } from "next"
 
 type Props = {
-  params: { category: string }
+  params: Promise<{
+    category: string
+  }>
 }
 
 function formatCategory(category: string) {
@@ -16,7 +18,8 @@ function formatCategory(category: string) {
 export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
-  const pretty = formatCategory(params.category)
+  const { category } = await params
+  const pretty = formatCategory(category)
 
   return {
     title: `${pretty} pesme – Akordi i tekstovi`,
@@ -25,7 +28,7 @@ export async function generateMetadata(
 }
 
 export default async function CategoryPage({ params }: Props) {
-  const category = params.category
+  const { category } = await params
 
   const SR_LATIN = [
     "A","B","C","Č","Ć","D","DŽ","Đ","E","F","G","H",
