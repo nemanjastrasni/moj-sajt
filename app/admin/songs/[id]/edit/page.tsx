@@ -2,12 +2,14 @@ import { prisma } from "@/lib/prisma"
 import { notFound, redirect } from "next/navigation"
 
 type Props = {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function EditSongPage({ params }: Props) {
+  const { id } = await params
+
   const song = await prisma.song.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { artist: true },
   })
 
@@ -15,7 +17,7 @@ export default async function EditSongPage({ params }: Props) {
     notFound()
   }
 
-  const songId = song.id // 👈 izvlačimo ID odmah
+  const songId = song.id
 
   async function updateSong(formData: FormData) {
     "use server"
