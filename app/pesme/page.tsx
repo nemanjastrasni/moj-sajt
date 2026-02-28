@@ -2,12 +2,14 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
-export default async function CategoryPage({
-  params,
-}: {
-  params: { category: string }
-}) {
-  const { category } = params
+type Props = {
+  params: Promise<{
+    category: string
+  }>
+}
+
+export default async function CategoryPage({ params }: Props) {
+  const { category } = await params
 
   const artists = await prisma.artist.findMany({
     where: { category },
