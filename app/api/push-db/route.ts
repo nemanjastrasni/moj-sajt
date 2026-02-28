@@ -1,3 +1,5 @@
+export const runtime = "nodejs"
+
 import { exec } from "child_process"
 import { NextResponse } from "next/server"
 
