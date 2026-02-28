@@ -15,7 +15,7 @@ type Props = {
 export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
-  const { artist, slug } = params
+  const { artist, slug } = await params
 
   const song = await prisma.song.findFirst({
     where: {
@@ -43,7 +43,7 @@ export async function generateMetadata(
 }
 
 export default async function SongPage({ params }: Props) {
-  const { artist, slug } = params
+  const { artist, slug } = await params
 
   const song = await prisma.song.findFirst({
     where: {
