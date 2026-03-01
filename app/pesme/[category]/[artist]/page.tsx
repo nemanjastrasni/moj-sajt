@@ -13,9 +13,10 @@ type Props = {
 export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
+  const { artist } = params
 
   const artistData = await prisma.artist.findUnique({
-    where: { slug: params.artist },
+    where: { slug: artist },
   })
 
   if (!artistData) {
@@ -31,7 +32,6 @@ export async function generateMetadata(
 }
 
 export default async function ArtistPage({ params }: Props) {
-
   const { category, artist } = params
 
   const artistData = await prisma.artist.findFirst({
@@ -50,10 +50,18 @@ export default async function ArtistPage({ params }: Props) {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10 text-white">
-
-      <h1 className="text-3xl font-bold mb-8">
+      <h1 className="text-3xl font-bold mb-6">
         {artistData.name}
       </h1>
+
+      <div className="mb-10">
+        <Link
+          href={`/pesme/${artistData.category}/${artistData.slug}/info`}
+          className="inline-block border border-red-500 text-red-400 px-4 py-1 rounded hover:bg-red-500 hover:text-white transition"
+        >
+          Biografija →
+        </Link>
+      </div>
 
       {artistData.songs.length === 0 ? (
         <p className="text-gray-400">Nema pesama.</p>
@@ -62,7 +70,7 @@ export default async function ArtistPage({ params }: Props) {
           {artistData.songs.map((song) => (
             <li key={song.id}>
               <Link
-                href={`/pesme/${category}/${artist}/${song.slug}`}
+                href={`/pesme/${artistData.category}/${artistData.slug}/${song.slug}`}
                 className="text-blue-400 hover:text-blue-300 hover:underline text-lg"
               >
                 {song.title}
@@ -71,7 +79,6 @@ export default async function ArtistPage({ params }: Props) {
           ))}
         </ul>
       )}
-
     </div>
   )
 }
