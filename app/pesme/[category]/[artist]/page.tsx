@@ -3,16 +3,10 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import type { Metadata } from "next"
 
-type Props = {
-  params: {
-    category: string
-    artist: string
-  }
-}
-
 export async function generateMetadata(
-  { params }: Props
+  { params }: any
 ): Promise<Metadata> {
+
   const { artist } = params
 
   const artistData = await prisma.artist.findUnique({
@@ -31,7 +25,8 @@ export async function generateMetadata(
   }
 }
 
-export default async function ArtistPage({ params }: Props) {
+export default async function ArtistPage({ params }: any) {
+
   const { category, artist } = params
 
   const artistData = await prisma.artist.findFirst({
