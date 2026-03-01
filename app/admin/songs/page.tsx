@@ -15,25 +15,23 @@ export default async function AdminSongsPage({
   const page = Number(searchParams?.page || 1)
 
   const where: Prisma.SongWhereInput = q
-    ? {
-        OR: [
-          {
-            title: {
+  ? {
+      OR: [
+        {
+          title: {
+            contains: q,
+          },
+        },
+        {
+          artist: {
+            name: {
               contains: q,
-              mode: Prisma.QueryMode.insensitive,
             },
           },
-          {
-            artist: {
-              name: {
-                contains: q,
-                mode: Prisma.QueryMode.insensitive,
-              },
-            },
-          },
-        ],
-      }
-    : {}
+        },
+      ],
+    }
+  : {}
 
   const total = await prisma.song.count({ where })
   const totalPages = Math.ceil(total / PAGE_SIZE)
