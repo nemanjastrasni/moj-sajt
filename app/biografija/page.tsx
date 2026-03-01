@@ -7,62 +7,74 @@ const letters = [
   "S","Š","T","U","V","Z","Ž"
 ]
 
+const categories = [
+  { key: "domace", label: "Domaće" },
+  { key: "strane", label: "Strane" },
+  { key: "narodne", label: "Narodne" },
+]
+
 export default async function BiografijePage() {
+
   const artists = await prisma.artist.findMany({
+    where: {
+      category: { not: null },
+    },
     orderBy: { name: "asc" },
   })
 
-  const grouped = letters.reduce((acc, letter) => {
-    acc[letter] = artists.filter((artist) =>
-      artist.name
-        .toUpperCase()
-        .startsWith(letter)
-    )
-    return acc
-  }, {} as Record<string, typeof artists>)
-
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10 text-white">
-      <h1 className="text-3xl font-bold mb-8">
+    <div className="max-w-6xl mx-auto px-6 py-10 text-white">
+      <h1 className="text-3xl font-bold mb-10">
         Biografije izvođača
       </h1>
 
-      <div className="flex flex-wrap gap-3 mb-10">
-        {letters.map((letter) => (
-          <a
-            key={letter}
-            href={`#${letter}`}
-            className="px-3 py-1 border border-gray-600 rounded hover:bg-gray-800"
-          >
-            {letter}
-          </a>
-        ))}
-      </div>
+      {categories.map((cat) => {
 
-      <div className="space-y-10">
-        {letters.map((letter) =>
-          grouped[letter]?.length > 0 ? (
-            <div key={letter} id={letter}>
-              <h2 className="text-2xl font-semibold mb-4">
-                {letter}
-              </h2>
+        const categoryArtists = artists.filter(
+          (a) => a.category === cat.key
+        )
 
-              <ul className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {grouped[letter].map((artist) => (
-                  <li key={artist.slug}>
-                    <Link
-                      href={`/pesme/${artist.category}/${artist.slug}/info`}
-                      className="text-blue-400 hover:text-blue-300 hover:underline transition"
-                    >
-                      {artist.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null
-        )}
-      </div>
+        if (categoryArtists.length === 0) return null
+
+        return (
+          <div key={cat.key} className="mb-14">
+
+            <h2 className="text-2xl font-bold mb-6 border-b border-gray-700 pb-2">
+              {cat.label}
+            </h2>
+
+            {letters.map((letter) => {
+
+              const filtered = categoryArtists.filter((artist) =>
+                artist.name.toUpperCase().startsWith(letter)
+              )
+
+              if (filtered.length === 0) return null
+
+              return (
+                <div key={letter} className="mb-6">
+                  <h3 className="text-xl font-semibold mb-3">
+                    {letter}
+                  </h3>
+
+                  <ul className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {filtered.map((artist) => (
+                      <li key={artist.slug}>
+                        <Link
+                          href={`/pesme/${artist.category}/${artist.slug}/info`}
+                          className="text-blue-400 hover:text-blue-300 hover:underline transition"
+                        >
+                          {artist.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            })}
+          </div>
+        )
+      })}
     </div>
   )
 }

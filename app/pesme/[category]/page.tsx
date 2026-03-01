@@ -3,9 +3,9 @@ import { prisma } from "@/lib/prisma"
 import type { Metadata } from "next"
 
 type Props = {
-  params: Promise<{
+  params: {
     category: string
-  }>
+  }
 }
 
 function formatCategory(category: string) {

@@ -4,16 +4,18 @@ import Link from "next/link"
 import type { Metadata } from "next"
 
 type Props = {
-  params: Promise<{ category: string; artist: string }>
+  params: {
+    category: string
+    artist: string
+  }
 }
 
 export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
-  const { artist } = await params
 
   const artistData = await prisma.artist.findUnique({
-    where: { slug: artist },
+    where: { slug: params.artist },
   })
 
   if (!artistData) {
@@ -24,18 +26,18 @@ export async function generateMetadata(
 
   return {
     title: `${artistData.name} – Biografija, Diskografija i Pesme`,
-    description: `Biografija, diskografija i pesme izvođača ${artistData.name}. Akordi i tekstovi na GitaraAkordi.`,
+    description: `Biografija, diskografija i pesme izvođača ${artistData.name}.`,
   }
 }
 
 export default async function ArtistPage({ params }: Props) {
-  const { category, artist } = await params
 
-  if (!category || !artist) notFound()
+  const { category, artist } = params
 
   const artistData = await prisma.artist.findFirst({
     where: {
       slug: artist,
+      category: category,
     },
     include: {
       songs: {
@@ -49,18 +51,9 @@ export default async function ArtistPage({ params }: Props) {
   return (
     <div className="max-w-4xl mx-auto px-6 py-10 text-white">
 
-      <h1 className="text-3xl font-bold mb-6">
+      <h1 className="text-3xl font-bold mb-8">
         {artistData.name}
       </h1>
-
-      <div className="mb-10">
-        <Link
-          href={`/pesme/${artistData.category}/${artistData.slug}/info`}
-          className="inline-block border border-red-500 text-red-400 px-4 py-1 rounded hover:bg-red-500 hover:text-white transition"
-        >
-          Biografija →
-        </Link>
-      </div>
 
       {artistData.songs.length === 0 ? (
         <p className="text-gray-400">Nema pesama.</p>
@@ -69,7 +62,7 @@ export default async function ArtistPage({ params }: Props) {
           {artistData.songs.map((song) => (
             <li key={song.id}>
               <Link
-                href={`/pesme/${artistData.category}/${artistData.slug}/${song.slug}`}
+                href={`/pesme/${category}/${artist}/${song.slug}`}
                 className="text-blue-400 hover:text-blue-300 hover:underline text-lg"
               >
                 {song.title}
