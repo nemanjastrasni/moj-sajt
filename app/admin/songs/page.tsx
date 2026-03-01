@@ -1,35 +1,34 @@
 // app/admin/songs/page.tsx
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
-
-type Props = {
-  searchParams?: {
-    q?: string
-    sort?: string
-    page?: string
-  }
-}
+import { Prisma } from "@prisma/client"
 
 const PAGE_SIZE = 10
 
 export default async function AdminSongsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; sort?: string; page?: string }>
+  searchParams?: { q?: string; sort?: string; page?: string }
 }) {
-  const params = await searchParams
+  const q = searchParams?.q ?? ""
+  const sort = searchParams?.sort ?? "createdAt"
+  const page = Number(searchParams?.page || 1)
 
-  const q = params?.q ?? ""
-  const sort = params?.sort ?? "createdAt"
-  const page = Number(params?.page || 1)
-
-  const where = q
+  const where: Prisma.SongWhereInput = q
     ? {
         OR: [
-          { title: { contains: q, mode: "insensitive" } },
+          {
+            title: {
+              contains: q,
+              mode: Prisma.QueryMode.insensitive,
+            },
+          },
           {
             artist: {
-              name: { contains: q, mode: "insensitive" },
+              name: {
+                contains: q,
+                mode: Prisma.QueryMode.insensitive,
+              },
             },
           },
         ],
@@ -105,8 +104,10 @@ export default async function AdminSongsPage({
             {songs.map((song, i) => (
               <tr
                 key={song.id}
-                className={`${i % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-200 transition text-gray-900`}
-               >
+                className={`${
+                  i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                } hover:bg-gray-200 transition text-gray-900`}
+              >
                 <td className="p-3">{song.title}</td>
                 <td className="p-3">{song.artist.name}</td>
                 <td className="p-3 text-center">
