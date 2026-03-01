@@ -5,33 +5,41 @@ import { Prisma } from "@prisma/client"
 
 const PAGE_SIZE = 10
 
+type SearchParams = {
+  q?: string
+  sort?: string
+  page?: string
+}
+
 export default async function AdminSongsPage({
   searchParams,
 }: {
-  searchParams?: { q?: string; sort?: string; page?: string }
+  searchParams: Promise<SearchParams>
 }) {
-  const q = searchParams?.q ?? ""
-  const sort = searchParams?.sort ?? "createdAt"
-  const page = Number(searchParams?.page || 1)
+  const params = await searchParams
+
+  const q = params?.q ?? ""
+  const sort = params?.sort ?? "createdAt"
+  const page = Number(params?.page || 1)
 
   const where: Prisma.SongWhereInput = q
-  ? {
-      OR: [
-        {
-          title: {
-            contains: q,
-          },
-        },
-        {
-          artist: {
-            name: {
+    ? {
+        OR: [
+          {
+            title: {
               contains: q,
             },
           },
-        },
-      ],
-    }
-  : {}
+          {
+            artist: {
+              name: {
+                contains: q,
+              },
+            },
+          },
+        ],
+      }
+    : {}
 
   const total = await prisma.song.count({ where })
   const totalPages = Math.ceil(total / PAGE_SIZE)
@@ -49,7 +57,6 @@ export default async function AdminSongsPage({
 
   return (
     <div>
-      {/* HEADER */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Pesme</h1>
 
@@ -61,7 +68,6 @@ export default async function AdminSongsPage({
         </Link>
       </div>
 
-      {/* SEARCH + SORT */}
       <form className="flex gap-4 mb-6">
         <input
           name="q"
@@ -84,7 +90,6 @@ export default async function AdminSongsPage({
         </button>
       </form>
 
-      {/* TABLE */}
       {songs.length === 0 ? (
         <p className="text-gray-500">Nema rezultata.</p>
       ) : (
@@ -140,7 +145,6 @@ export default async function AdminSongsPage({
         </table>
       )}
 
-      {/* PAGINATION */}
       {totalPages > 1 && (
         <div className="flex gap-2 mt-6">
           {Array.from({ length: totalPages }).map((_, i) => {
