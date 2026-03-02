@@ -5,9 +5,13 @@ import Link from "next/link"
 export const dynamic = "force-dynamic"
 
 export async function generateMetadata({ params }: any) {
+  const { category, artist } = await params
 
-  const artistData = await prisma.artist.findUnique({
-    where: { slug: params.artist },
+  const artistData = await prisma.artist.findFirst({
+    where: {
+      slug: artist,
+      category,
+    },
   })
 
   if (!artistData) {
@@ -20,30 +24,50 @@ export async function generateMetadata({ params }: any) {
 }
 
 export default async function ArtistPage({ params }: any) {
+  const { category, artist } = await params
 
   const artistData = await prisma.artist.findFirst({
     where: {
-      slug: params.artist,
-      category: params.category,
+      slug: artist,
+      category,
     },
     include: {
-      songs: true,
+      songs: {
+        orderBy: { title: "asc" },
+      },
     },
   })
 
   if (!artistData) notFound()
 
   return (
-    <div>
-      <h1>{artistData.name}</h1>
+    <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
+      <h1 style={{ fontSize: "28px", marginBottom: "10px" }}>
+        {artistData.name}
+      </h1>
 
-      {artistData.songs.map((song) => (
-        <div key={song.id}>
-          <Link href={`/pesme/${params.category}/${params.artist}/${song.slug}`}>
+      {/* LINK KA BIOGRAFIJI */}
+      <div style={{ marginBottom: "25px" }}>
+        <Link
+          href={`/biografija/${artistData.slug}`}
+          style={{ color: "#2563eb", fontWeight: 600 }}
+        >
+          Pogledaj biografiju
+        </Link>
+      </div>
+
+      {artistData.songs.length === 0 && <p>Nema pesama.</p>}
+
+      <div style={{ display: "grid", gap: "8px" }}>
+        {artistData.songs.map((song) => (
+          <Link
+            key={song.id}
+            href={`/pesme/${category}/${artist}/${song.slug}`}
+          >
             {song.title}
           </Link>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }

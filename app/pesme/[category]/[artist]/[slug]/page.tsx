@@ -47,9 +47,12 @@ export default async function SongPage({ params }: Props) {
 
   const song = await prisma.song.findFirst({
     where: {
-      slug,
-      artist: { slug: artist },
-    },
+  slug,
+  artist: {
+    slug: artist,
+    category: (await params).category,
+  },
+},
     include: {
       artist: true,
     },

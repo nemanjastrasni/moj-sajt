@@ -52,21 +52,23 @@ export async function POST(req: Request) {
 
   if (!artist) {
     artist = await prisma.artist.create({
-      data: {
-        name: artistName,
-        slug: artistSlug,
-        bio: artistBio ?? "",
-        discography: artistDiscography ?? "",
-      },
-    })
+  data: {
+    name: artistName,
+    slug: artistSlug,
+    bio: artistBio ?? "",
+    discography: artistDiscography ?? "",
+    category, // 🔥 DODATO
+  },
+})
   } else {
-    artist = await prisma.artist.update({
-      where: { id: artist.id },
-      data: {
-        bio: artistBio ?? artist.bio,
-        discography: artistDiscography ?? artist.discography,
-      },
-    })
+   artist = await prisma.artist.update({
+  where: { id: artist.id },
+  data: {
+    bio: artistBio ?? artist.bio,
+    discography: artistDiscography ?? artist.discography,
+    category, // 🔥 DODATO
+  },
+})
   }
 
   // Kreiraj pesmu

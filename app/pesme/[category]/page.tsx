@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { prisma } from "@/lib/prisma"
 import type { Metadata } from "next"
 
 export const dynamic = "force-dynamic"
@@ -14,8 +13,7 @@ function formatCategory(category: string) {
 export async function generateMetadata(
   { params }: any
 ): Promise<Metadata> {
-
-  const { category } = params
+  const { category } = await params
   const pretty = formatCategory(category)
 
   return {
@@ -25,8 +23,7 @@ export async function generateMetadata(
 }
 
 export default async function CategoryPage({ params }: any) {
-
-  const { category } = params
+  const { category } = await params
 
   const SR_LATIN = [
     "A","B","C","Č","Ć","D","DŽ","Đ","E","F","G","H",
@@ -34,57 +31,30 @@ export default async function CategoryPage({ params }: any) {
     "S","Š","T","U","V","Z","Ž"
   ]
 
-  const artists = await prisma.artist.findMany({
-    where: { category },
-    orderBy: { name: "asc" },
-  })
-
-  if (!artists.length) {
-    return <div style={{ padding: 40 }}>Nema izvođača.</div>
-  }
-
-  function getFirstLetter(name: string) {
-    const upper = name.toUpperCase()
-    if (upper.startsWith("DŽ")) return "DŽ"
-    if (upper.startsWith("LJ")) return "LJ"
-    if (upper.startsWith("NJ")) return "NJ"
-    return upper.charAt(0)
-  }
-
-  const grouped: Record<string, typeof artists> = {}
-
-  artists.forEach((artist) => {
-    const letter = getFirstLetter(artist.name)
-    if (!grouped[letter]) grouped[letter] = []
-    grouped[letter].push(artist)
-  })
-
   return (
     <div style={{ padding: "40px", maxWidth: "1000px", margin: "0 auto" }}>
-      <h1 style={{ fontSize: "32px", marginBottom: "20px" }}>
-        Kategorija: {formatCategory(category)}
+      <h1 style={{ fontSize: "32px", marginBottom: "30px" }}>
+        {formatCategory(category)}
       </h1>
 
-      {SR_LATIN.map((letter) => {
-        if (!grouped[letter]) return null
-
-        return (
-          <div key={letter}>
-            <h2>{letter}</h2>
-
-            <div style={{ display: "grid", gap: "10px" }}>
-              {grouped[letter].map((artist) => (
-                <Link
-                  key={artist.id}
-                  href={`/pesme/${category}/${artist.slug}`}
-                >
-                  {artist.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )
-      })}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+        {SR_LATIN.map((letter) => (
+          <Link
+            key={letter}
+            href={`/pesme/${category}/slovo/${letter}`}
+            style={{
+              padding: "6px 10px",
+              border: "1px solid #ccc",
+              borderRadius: "6px",
+              textDecoration: "none",
+              color: "#2563eb",
+              fontWeight: 600,
+            }}
+          >
+            {letter}
+          </Link>
+        ))}
+      </div>
     </div>
   )
 }

@@ -14,7 +14,6 @@ export async function GET(req: Request) {
   const search = searchParams.get("search")
   const name = searchParams.get("name")
 
-  // ✅ Tačno ime (za automatsku kategoriju)
   if (name) {
     const artist = await prisma.artist.findFirst({
       where: { name },
@@ -22,40 +21,51 @@ export async function GET(req: Request) {
 
     if (!artist) return NextResponse.json(null)
 
-    return NextResponse.json({
-      id: artist.id,
-      name: artist.name,
-      slug: artist.slug,
-      bio: artist.bio ?? "",
-      discography: artist.discography ?? "",
-      image: artist.image,
-      category: artist.category,
-    })
+    return NextResponse.json(artist)
   }
 
-  // ✅ Autocomplete
   if (search) {
     const artists = await prisma.artist.findMany({
       where: {
-        name: {
-          contains: search,
-        },
+        name: { contains: search },
       },
       orderBy: { name: "asc" },
     })
 
-    return NextResponse.json(
-      artists.map((a) => ({
-        id: a.id,
-        name: a.name,
-        bio: a.bio ?? "",
-        discography: a.discography ?? "",
-        slug: a.slug,
-        image: a.image,
-        category: a.category,
-      }))
-    )
+    return NextResponse.json(artists)
   }
 
   return NextResponse.json([])
+}
+
+export async function POST(req: Request) {
+  const session = await getServerSession(authOptions)
+
+  if (!session || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const body = await req.json()
+
+  const { name, slug, bio, discography, image, category } = body
+
+  if (!name || !slug || !category) {
+    return NextResponse.json(
+      { error: "Missing required fields" },
+      { status: 400 }
+    )
+  }
+
+  const artist = await prisma.artist.create({
+    data: {
+      name,
+      slug,
+      bio,
+      discography,
+      image,
+      category, // 🔥 OVO JE BILO KLJUČNO
+    },
+  })
+
+  return NextResponse.json(artist)
 }
