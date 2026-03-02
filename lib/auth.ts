@@ -15,6 +15,9 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user }) {
+      console.log("JWT USER:", user)
+      console.log("ADMIN EMAILS:", adminEmails)
+
       if (user?.email) {
         token.role = adminEmails.includes(user.email)
           ? "admin"
@@ -25,6 +28,8 @@ export const authOptions: NextAuthOptions = {
         token.role = "user"
       }
 
+      console.log("FINAL TOKEN ROLE:", token.role)
+
       return token
     },
 
@@ -32,6 +37,9 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.role = token.role as "admin" | "user"
       }
+
+      console.log("SESSION ROLE:", session.user?.role)
+
       return session
     },
   },

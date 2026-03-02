@@ -2,11 +2,13 @@ import { prisma } from "@/lib/prisma"
 import { notFound, redirect } from "next/navigation"
 
 type Props = {
-  params: Promise<{ id: string }>
+  params: {
+    id: string
+  }
 }
 
 export default async function EditArtistPage({ params }: Props) {
-  const { id } = await params
+  const { id } = params
 
   const artist = await prisma.artist.findUnique({
     where: { id },
