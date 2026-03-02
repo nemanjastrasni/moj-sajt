@@ -17,9 +17,9 @@ export default async function AdminLayout({
   }
 
   // ADMIN PROVERA PO EMAIL-U
-  if (session.user.email !== "nemanjaivanovic979@gmail.com") {
-    redirect("/")
-  }
+  if (session.user.email?.toLowerCase() !== "nemanjaivanovic979@gmail.com") {
+  redirect("/")
+}
 
   return (
     <div className="flex min-h-screen">
