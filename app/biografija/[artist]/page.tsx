@@ -25,16 +25,18 @@ export default async function BiographyPage({ params }: any) {
 
       {/* DISKOGRAFIJA */}
       {artistData.discography && (
-        <div>
-          <h2 style={{ fontSize: "22px", marginBottom: "10px" }}>
-            Diskografija
-          </h2>
+  <div>
+    <h2 style={{ fontSize: "22px", marginBottom: "10px" }}>
+      Diskografija
+    </h2>
 
-          <div style={{ whiteSpace: "pre-line" }}>
-            {artistData.discography}
-          </div>
-        </div>
-      )}
+    <div style={{ whiteSpace: "pre-line" }}>
+      {typeof artistData.discography === "string"
+        ? artistData.discography
+        : JSON.stringify(artistData.discography, null, 2)}
+    </div>
+  </div>
+)}
     </div>
   )
 }
