@@ -4,10 +4,6 @@ import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
 import BackButton from "@/app/components/BackButton"
 
-<header className="flex justify-between items-center mb-6">
-  <h1 className="text-2xl font-bold">Tvoj Header</h1>
-  <BackButton />
-</header>
 export default async function AdminLayout({
   children,
 }: {
@@ -20,14 +16,14 @@ export default async function AdminLayout({
     redirect("/api/auth/signin")
   }
 
-  // nije admin
+  // ADMIN PROVERA PO EMAIL-U
   if (session.user.email !== "nemanjaiIvanovic979@gmail.com") {
-  redirect("/")
-}
+    redirect("/")
   }
 
   return (
     <div className="flex min-h-screen">
+
       {/* SIDEBAR */}
       <aside className="w-64 bg-black text-white p-6 space-y-4">
         <h2 className="text-xl font-bold">Admin</h2>
@@ -47,6 +43,11 @@ export default async function AdminLayout({
 
       {/* CONTENT */}
       <main className="flex-1 p-8 bg-gray-50">
+        <header className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Admin Panel</h1>
+          <BackButton />
+        </header>
+
         {children}
       </main>
     </div>
