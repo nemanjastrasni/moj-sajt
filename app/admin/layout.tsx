@@ -21,8 +21,9 @@ export default async function AdminLayout({
   }
 
   // nije admin
-  if (session.user.role !== "admin") {
-    redirect("/")
+  if (session.user.email !== "nemanjaiIvanovic979@gmail.com") {
+  redirect("/")
+}
   }
 
   return (
