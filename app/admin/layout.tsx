@@ -17,7 +17,7 @@ export default async function AdminLayout({
   }
 
   // ADMIN PROVERA PO EMAIL-U
-  if (session.user.email !== "nemanjaiIvanovic979@gmail.com") {
+  if (session.user.email !== "nemanjaivanovic979@gmail.com") {
     redirect("/")
   }
 
