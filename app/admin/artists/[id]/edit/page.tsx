@@ -1,14 +1,12 @@
 import { prisma } from "@/lib/prisma"
 import { notFound, redirect } from "next/navigation"
 
-type Props = {
-  params: {
-    id: string
-  }
-}
-
-export default async function EditArtistPage({ params }: Props) {
-  const { id } = params
+export default async function EditArtistPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
 
   const artist = await prisma.artist.findUnique({
     where: { id },
@@ -16,41 +14,35 @@ export default async function EditArtistPage({ params }: Props) {
 
   if (!artist) notFound()
 
-  const artistId = artist.id
-
   async function updateArtist(formData: FormData) {
     "use server"
 
     const name = formData.get("name") as string
     const bio = formData.get("bio") as string
     const image = formData.get("image") as string
-    const category = (formData.get("category") as string)?.toLowerCase().trim()  // ✅ DODATO
+    const category = (formData.get("category") as string)?.toLowerCase().trim()
     const discographyRaw = formData.get("discography") as string
 
     let parsedDiscography: string[] = []
-
-if (discographyRaw?.trim()) {
-  parsedDiscography = discographyRaw
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-}
 
     if (discographyRaw?.trim()) {
       try {
         parsedDiscography = JSON.parse(discographyRaw)
       } catch {
-        parsedDiscography = discographyRaw.split("\n").filter(Boolean)
+        parsedDiscography = discographyRaw
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean)
       }
     }
 
     await prisma.artist.update({
-      where: { id: artistId },
+      where: { id },
       data: {
         name,
         bio,
         image,
-        category,          // ✅ DODATO
+        category,
         discography: parsedDiscography,
       },
     })
@@ -63,7 +55,6 @@ if (discographyRaw?.trim()) {
       <h1 className="text-2xl font-bold mb-6">Edit izvođač</h1>
 
       <form action={updateArtist} className="space-y-4">
-
         <div>
           <label className="block text-sm mb-1">Ime</label>
           <input
@@ -120,7 +111,6 @@ if (discographyRaw?.trim()) {
         <button className="bg-black text-white px-4 py-2 rounded">
           Sačuvaj izmene
         </button>
-
       </form>
     </div>
   )
