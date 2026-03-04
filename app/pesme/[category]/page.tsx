@@ -11,8 +11,9 @@ function formatCategory(category: string) {
 }
 
 export async function generateMetadata(
-  { params }: any
+  { params }: { params: Promise<{ category: string }> }
 ): Promise<Metadata> {
+
   const { category } = await params
   const pretty = formatCategory(category)
 
@@ -22,7 +23,10 @@ export async function generateMetadata(
   }
 }
 
-export default async function CategoryPage({ params }: any) {
+export default async function CategoryPage(
+  { params }: { params: Promise<{ category: string }> }
+) {
+
   const { category } = await params
 
   const SR_LATIN = [
