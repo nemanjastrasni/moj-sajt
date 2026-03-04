@@ -221,7 +221,7 @@ export default function SongClient({ song, media }: Props) {
         </div>
 
         {/* DESNA STRANA - VIDEO */}
-        {media?.platform === "youtube" && media?.embedUrl && (
+        {media?.embedUrl && (
   <div className="lg:sticky lg:top-24 h-fit">
     <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
       <iframe
