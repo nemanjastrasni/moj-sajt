@@ -221,18 +221,19 @@ export default function SongClient({ song, media }: Props) {
         </div>
 
         {/* DESNA STRANA - VIDEO */}
-        {media?.platform === "youtube" && (
-          <div className="lg:sticky lg:top-24 h-fit">
-            <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
-              <iframe
-                src={media.embedUrl}
-                title="YouTube player"
-                className="w-full aspect-video"
-                allowFullScreen
-              />
-            </div>
-          </div>
-        )}
+        {media?.platform === "youtube" && media?.embedUrl && (
+  <div className="lg:sticky lg:top-24 h-fit">
+    <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+      <iframe
+        src={media.embedUrl}
+        title="YouTube player"
+        className="w-full aspect-video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    </div>
+  </div>
+)}
 
       </div>
     </div>
