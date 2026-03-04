@@ -6,22 +6,24 @@ const letters = [
 "K","L","LJ","M","N","NJ","O","P","R","S","Š","T","U","V","Z","Ž"
 ]
 
-export default function CategoryPage({ params }: { params: { category: string } }) {
+export default function PesmePage() {
   return (
     <div style={{ padding: "40px" }}>
-      <h1>Izaberi slovo</h1>
+      <h1>Izaberi kategoriju</h1>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-        {letters.map((l) => (
-          <Link
-            key={l}
-            href={`/pesme/${params.category}/slovo/${l}`}
-            style={{ border: "1px solid #ccc", padding: "6px 10px" }}
-          >
-            {l}
-          </Link>
-        ))}
-      </div>
+      <ul>
+        <li>
+          <Link href="/pesme/domace">Domaće</Link>
+        </li>
+
+        <li>
+          <Link href="/pesme/strane">Strane</Link>
+        </li>
+
+        <li>
+          <Link href="/pesme/narodne">Narodne</Link>
+        </li>
+      </ul>
     </div>
   )
 }
