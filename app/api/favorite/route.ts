@@ -5,13 +5,31 @@ import { prisma } from "@/lib/prisma"
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions)
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
 
   const { songId } = await req.json()
 
+  const userId = (session.user as any).id
+
+  const existing = await prisma.favorite.findUnique({
+    where: {
+      userId_songId: {
+        userId,
+        songId,
+      },
+    },
+  })
+
+  if (existing) {
+    return NextResponse.json(existing)
+  }
+
   const favorite = await prisma.favorite.create({
     data: {
-      userId: (session.user as any).id,
+      userId,
       songId,
     },
   })
@@ -21,14 +39,19 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   const session = await getServerSession(authOptions)
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
 
   const { songId } = await req.json()
+
+  const userId = (session.user as any).id
 
   await prisma.favorite.delete({
     where: {
       userId_songId: {
-        userId: (session.user as any).id,
+        userId,
         songId,
       },
     },

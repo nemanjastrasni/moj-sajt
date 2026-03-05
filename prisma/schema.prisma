@@ -28,12 +28,13 @@ model User {
 
 model Artist {
   id           String   @id @default(cuid())
-  slug         String   @unique        // galija, ekv...
-  name         String                  // Galija
+  slug         String   @unique
+  name         String
   image        String?
   bio          String?
-  discography  Json?                   // niz albuma (stringovi)
-  category    String?
+  discography  Json?
+  category     String?
+
   songs        Song[]
 
   createdAt    DateTime @default(now())
@@ -43,9 +44,9 @@ model Artist {
 
 model Song {
   id        String   @id @default(cuid())
-  slug      String               // decimen
+  slug      String
   title     String
-  category  String               // narodne | domace | strane
+  category  String
 
   lyrics    String
   chords    String?
@@ -123,6 +124,7 @@ model Playlist {
 
   user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   songs     PlaylistSong[]
+
   createdAt DateTime       @default(now())
 }
 

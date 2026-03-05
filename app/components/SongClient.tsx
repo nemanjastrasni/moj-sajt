@@ -5,6 +5,7 @@ import Chord from "./Chord"
 
 type Props = {
   song: {
+    id: string
     title: string
     artist: string
     content?: string
@@ -120,7 +121,7 @@ export default function SongClient({ song, media }: Props) {
   useEffect(() => {
 
   function handleScroll() {
-    if (window.scrollY > 400) {
+    if (window.scrollY > 350) {
       setMiniPlayer(true)
     } else {
       setMiniPlayer(false)
@@ -244,13 +245,39 @@ export default function SongClient({ song, media }: Props) {
           </div>
 
           {/* TITLE */}
-          <h1 className="text-3xl font-bold mb-2">
-            {title}
-          </h1>
+          <div className="flex items-center gap-4 mb-2">
+  <h1 className="text-3xl font-bold">
+    {title}
+  </h1>
 
-          <h2 className="text-lg text-gray-500 mb-6">
-            {artist}
-          </h2>
+  <button
+    onClick={async () => {
+      try {
+        const res = await fetch("/api/favorites", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ songId: song.id }),
+        })
+
+        if (!res.ok) {
+          alert("Morate biti ulogovani")
+          return
+        }
+
+        alert("Pesma dodata u favorite ⭐")
+      } catch (err) {
+        console.error(err)
+      }
+    }}
+    className="text-yellow-400 text-xl hover:scale-110 transition"
+  >
+    ⭐
+  </button>
+</div>
+
+<h2 className="text-lg text-gray-500 mb-6">
+  {artist}
+</h2>
 
           {/* CONTENT */}
           <div
@@ -270,8 +297,8 @@ export default function SongClient({ song, media }: Props) {
   <div
     className={
       miniPlayer
-        ? "fixed bottom-6 right-6 w-[320px] z-50 shadow-2xl border border-gray-800 rounded-xl overflow-hidden"
-        : "lg:sticky lg:top-28 h-fit"
+        ? "lg:sticky lg:top-20 h-fit scale-90 origin-top transition-all duration-300"
+        : "lg:sticky lg:top-28 h-fit transition-all duration-300"
     }
   >
 
