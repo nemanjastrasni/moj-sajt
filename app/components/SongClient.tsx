@@ -3,17 +3,16 @@
 import { useState, useRef, useEffect } from "react"
 import Chord from "./Chord"
 
-// SAMO TIPA PROMENA: dodato lyrics i chords, zadržan content za kompatibilnost
 type Props = {
   song: {
     title: string
     artist: string
-    content?: string  
+    content?: string
     lyrics?: string
     chords?: string
     category?: string
-    artistSlug?: string   
-    artistName?: string 
+    artistSlug?: string
+    artistName?: string
   }
   media?: {
     platform: string
@@ -22,21 +21,18 @@ type Props = {
 }
 
 export default function SongClient({ song, media }: Props) {
-  const [transpose, setTranspose] = useState(0)
 
+  const [transpose, setTranspose] = useState(0)
   const [showVideo, setShowVideo] = useState(true)
 
-  // AUTO SCROLL
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
   const [scrollSpeed, setScrollSpeed] = useState(1)
   const scrollRef = useRef<NodeJS.Timeout | null>(null)
 
-  // FONT SIZE
   const [textSize, setTextSize] = useState(18)
   const [chordSize, setChordSize] = useState(18)
 
-  // Preferiraj lyrics ako postoji, fallback na content
-  const { title, artist, content, lyrics, chords } = song
+  const { title, artist, content, lyrics } = song
   const displayContent = lyrics || content || ""
 
   const NOTES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
@@ -55,40 +51,44 @@ export default function SongClient({ song, media }: Props) {
     return NOTES[newIndex] + rest
   }
 
-
   function renderContent(text: string, chordSize: number) {
-  const chordRegex = /(?<!\S)[A-GH](#|b)?(m|maj|min|maj7|7|sus|sus4|dim|aug|add\d*)?(\d*)?(\/[A-GH](#|b)?)?(?!\S)/g
 
-  return text.split("\n").map((line, i) => {
-    const parts = []
-    let lastIndex = 0
-    let match
+    const chordRegex =
+      /(?<!\S)[A-GH](#|b)?(m|maj|min|maj7|7|sus|sus4|dim|aug|add\d*)?(\d*)?(\/[A-GH](#|b)?)?(?!\S)/g
 
-    while ((match = chordRegex.exec(line)) !== null) {
-      if (match.index > lastIndex) {
-        parts.push(line.slice(lastIndex, match.index))
+    return text.split("\n").map((line, i) => {
+
+      const parts = []
+      let lastIndex = 0
+      let match
+
+      while ((match = chordRegex.exec(line)) !== null) {
+
+        if (match.index > lastIndex) {
+          parts.push(line.slice(lastIndex, match.index))
+        }
+
+        parts.push(
+          <Chord
+            key={match.index}
+            chord={transposeChord(match[0])}
+            size={chordSize}
+          />
+        )
+
+        lastIndex = chordRegex.lastIndex
       }
 
-      parts.push(
-        <Chord
-          key={match.index}
-          chord={transposeChord(match[0])}
-          size={chordSize}
-        />
-      )
+      if (lastIndex < line.length) {
+        parts.push(line.slice(lastIndex))
+      }
 
-      lastIndex = chordRegex.lastIndex
-    }
-
-    if (lastIndex < line.length) {
-      parts.push(line.slice(lastIndex))
-    }
-
-    return <div key={i}>{parts}</div>
-  })
-}
+      return <div key={i}>{parts}</div>
+    })
+  }
 
   function startAutoScroll() {
+
     if (scrollRef.current) return
 
     setIsAutoScrolling(true)
@@ -99,32 +99,37 @@ export default function SongClient({ song, media }: Props) {
   }
 
   function stopAutoScroll() {
+
     if (scrollRef.current) {
       clearInterval(scrollRef.current)
       scrollRef.current = null
     }
+
     setIsAutoScrolling(false)
   }
 
   useEffect(() => {
+
     return () => {
       if (scrollRef.current) clearInterval(scrollRef.current)
     }
+
   }, [])
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
 
-      <div className="grid lg:grid-cols-[1fr_minmax(300px,380px)] gap-8">
+      <div className="grid lg:grid-cols-[1fr_380px] gap-10">
 
         {/* LEVA STRANA */}
         <div>
 
-          {/* MINI TOOLBAR */}
+          {/* TOOLBAR */}
           <div className="mb-6 flex items-center gap-6 text-sm text-gray-400 border-b border-gray-800 pb-3">
-            
-            {/* TONALITET */}
+
+            {/* TON */}
             <div className="flex items-center gap-2">
+
               <span className="uppercase tracking-wide text-xs">Ton</span>
 
               <button
@@ -141,9 +146,9 @@ export default function SongClient({ song, media }: Props) {
               <button
                 onClick={() => setTranspose(t => t + 1)}
                 className="px-2 hover:text-white"
-               >
-                    +
-                </button>
+              >
+                +
+              </button>
 
               <button
                 onClick={() => setTranspose(0)}
@@ -151,10 +156,12 @@ export default function SongClient({ song, media }: Props) {
               >
                 reset
               </button>
+
             </div>
 
             {/* SCROLL */}
             <div className="flex items-center gap-2">
+
               <span className="uppercase tracking-wide text-xs">Scroll</span>
 
               <button
@@ -172,10 +179,12 @@ export default function SongClient({ song, media }: Props) {
                 onChange={(e) => setScrollSpeed(Number(e.target.value))}
                 className="w-20"
               />
+
             </div>
 
             {/* TEKST */}
             <div className="flex items-center gap-2">
+
               <span className="uppercase tracking-wide text-xs">Tekst</span>
 
               <input
@@ -186,10 +195,12 @@ export default function SongClient({ song, media }: Props) {
                 onChange={(e) => setTextSize(Number(e.target.value))}
                 className="w-20"
               />
+
             </div>
 
             {/* AKORDI */}
             <div className="flex items-center gap-2">
+
               <span className="uppercase tracking-wide text-xs">Akordi</span>
 
               <input
@@ -200,21 +211,20 @@ export default function SongClient({ song, media }: Props) {
                 onChange={(e) => setChordSize(Number(e.target.value))}
                 className="w-20"
               />
+
             </div>
+
+            {/* VIDEO */}
+            {media && (
+              <button
+                onClick={() => setShowVideo(!showVideo)}
+                className="px-2 text-xs border border-gray-700 rounded hover:text-white"
+              >
+                VIDEO {showVideo ? "ON" : "OFF"}
+              </button>
+            )}
 
           </div>
-
-          {/* VIDEO */}
-            <div className="flex items-center gap-2">
-            <span className="uppercase tracking-wide text-xs">Video</span>
-
-            <button
-             onClick={() => setShowVideo(!showVideo)}
-            className="px-2 text-xs border border-gray-700 rounded hover:text-white"
-           >
-             {showVideo ? "ON" : "OFF"}
-          </button>
-            </div>
 
           {/* TITLE */}
           <h1 className="text-3xl font-bold mb-2">
@@ -234,29 +244,35 @@ export default function SongClient({ song, media }: Props) {
           </div>
 
         </div>
-        {/* dugme za skrivanje youtube VIDEO */}
-        
-        <button onClick={() => setShowVideo(!showVideo)}>
-           VIDEO
-          </button>
 
-        {/* DESNA STRANA - VIDEO */}
-        
-        {showVideo && media && (
-  <div className="lg:sticky lg:top-32 h-fit">
-    <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
-      <iframe
-        src={media.embedUrl}
-        title="YouTube player"
-        className="w-full aspect-video"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      />
-    </div>
-  </div>
-)}
+        {/* DESNA STRANA - YOUTUBE */}
+        <div>
+
+          {showVideo && media?.embedUrl && (
+
+            <div className="lg:sticky lg:top-28 h-fit">
+
+              <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+
+                <iframe
+                  src={media.embedUrl}
+                  title="YouTube player"
+                  className="w-full aspect-video"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+
+              </div>
+
+            </div>
+
+          )}
+
+        </div>
 
       </div>
+
     </div>
   )
 }
+
