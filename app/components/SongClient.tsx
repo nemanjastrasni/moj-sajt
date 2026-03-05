@@ -115,7 +115,7 @@ export default function SongClient({ song, media }: Props) {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
 
-      <div className="grid lg:grid-cols-[1fr_420px] gap-12">
+      <div className="grid lg:grid-cols-[1fr_minmax(300px,380px)] gap-8">
 
         {/* LEVA STRANA */}
         <div>
@@ -243,7 +243,7 @@ export default function SongClient({ song, media }: Props) {
         {/* DESNA STRANA - VIDEO */}
         
         {showVideo && media?.embedUrl && (
-  <div className="lg:sticky lg:top-28 h-fit">
+  <div className="lg:sticky lg:top-32 h-fit">
     <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
       <iframe
         src={media.embedUrl}
