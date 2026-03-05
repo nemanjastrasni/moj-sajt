@@ -4,11 +4,13 @@ import { prisma } from "@/lib/prisma"
 export default async function AdminArtistsPage({
   searchParams,
 }: {
-  searchParams: { search?: string; category?: string; letter?: string }
+  searchParams: Promise<{ search?: string; category?: string; letter?: string }>
 }) {
-  const search = searchParams.search ?? ""
-  const category = searchParams.category ?? ""
-  const letter = searchParams.letter ?? ""
+  const params = await searchParams
+
+const search = params.search ?? ""
+const category = params.category ?? ""
+const letter = params.letter ?? ""
   const artists = await prisma.artist.findMany({
   where: {
   ...(search && {
