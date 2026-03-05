@@ -1,10 +1,34 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 
-export default async function AdminArtistsPage() {
+export default async function AdminArtistsPage({
+  searchParams,
+}: {
+  searchParams: { search?: string; category?: string; letter?: string }
+}) {
+  const search = searchParams.search ?? ""
+  const category = searchParams.category ?? ""
+  const letter = searchParams.letter ?? ""
   const artists = await prisma.artist.findMany({
-    orderBy: { name: "asc" },
-  })
+  where: {
+  ...(search && {
+    name: {
+      contains: search,
+      mode: "insensitive",
+    },
+  }),
+  ...(category && {
+    category,
+  }),
+  ...(letter && {
+    name: {
+      startsWith: letter,
+      mode: "insensitive",
+    },
+  }),
+},
+  orderBy: { name: "asc" },
+})
 
   return (
     <div className="max-w-6xl">
@@ -12,6 +36,32 @@ export default async function AdminArtistsPage() {
   <h1 className="text-2xl font-bold text-gray-900">
     Izvođači
   </h1>
+  
+  <form className="flex gap-3 mb-6">
+  <input
+  name="search"
+  placeholder="Pretraga izvođača..."
+  className="border p-2 rounded w-64"
+  list="artists"
+/>
+
+<datalist id="artists">
+  {artists.map((artist) => (
+    <option key={artist.id} value={artist.name} />
+  ))}
+</datalist>
+
+  <select name="category" className="border p-2 rounded">
+    <option value="">Sve kategorije</option>
+    <option value="domace">Domaće</option>
+    <option value="strane">Strane</option>
+    <option value="narodne">Narodne</option>
+  </select>
+
+  <button className="bg-gray-800 text-white px-4 rounded">
+    Primeni
+  </button>
+</form>
 
   <Link
     href="/admin/artists/new"
