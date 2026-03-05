@@ -222,14 +222,14 @@ export default function SongClient({ song, media }: Props) {
 
         </div>
         {/* dugme za skrivanje youtube VIDEO */}
-        const [showVideo, setShowVideo] = useState(true)
+        
         <button onClick={() => setShowVideo(!showVideo)}>
            VIDEO
           </button>
 
         {/* DESNA STRANA - VIDEO */}
         
-        {media?.embedUrl && (
+        {showVideo && media?.embedUrl && (
   <div className="lg:sticky lg:top-40 h-fit">
     <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
       <iframe
