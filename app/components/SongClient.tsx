@@ -252,6 +252,7 @@ export default function SongClient({ song, media }: Props) {
 
   <button
     onClick={async () => {
+      console.log("klik", song.id)   // DODAJ OVU LINIJU
       try {
         const res = await fetch("/api/favorites", {
           method: "POST",

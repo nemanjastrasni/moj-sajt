@@ -72,16 +72,17 @@ export default async function SongPage({ params }: Props) {
 
   return (
     <SongClient
-      song={{
-        title: song.title,
-        artist: song.artist.name,
-        lyrics: song.lyrics ?? undefined,
-        chords: song.chords ?? undefined,
-        category: song.artist.category ?? undefined,
-        artistSlug: song.artist.slug,
-        artistName: song.artist.name,
-      }}
-      media={media}
-    />
+  song={{
+    id: song.id,
+    title: song.title,
+    artist: song.artist.name,
+    lyrics: song.lyrics ?? undefined,
+    chords: song.chords ?? undefined,
+    category: song.artist.category ?? undefined,
+    artistSlug: song.artist.slug,
+    artistName: song.artist.name,
+  }}
+  media={media}
+/>
   )
 }
