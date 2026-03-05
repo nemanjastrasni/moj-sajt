@@ -24,6 +24,7 @@ export default function SongClient({ song, media }: Props) {
 
   const [transpose, setTranspose] = useState(0)
   const [showVideo, setShowVideo] = useState(true)
+  const [miniPlayer, setMiniPlayer] = useState(false)
 
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
   const [scrollSpeed, setScrollSpeed] = useState(1)
@@ -116,6 +117,22 @@ export default function SongClient({ song, media }: Props) {
 
   }, [])
 
+  useEffect(() => {
+
+  function handleScroll() {
+    if (window.scrollY > 400) {
+      setMiniPlayer(true)
+    } else {
+      setMiniPlayer(false)
+    }
+  }
+
+  window.addEventListener("scroll", handleScroll)
+
+  return () => window.removeEventListener("scroll", handleScroll)
+
+}, [])
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
 
@@ -181,7 +198,7 @@ export default function SongClient({ song, media }: Props) {
               />
 
             </div>
-
+            
             {/* TEKST */}
             <div className="flex items-center gap-2">
 
@@ -248,25 +265,31 @@ export default function SongClient({ song, media }: Props) {
         {/* DESNA STRANA - YOUTUBE */}
         <div>
 
-          {showVideo && media?.embedUrl && (
+           {showVideo && media?.embedUrl && (
 
-            <div className="lg:sticky lg:top-28 h-fit">
+  <div
+    className={
+      miniPlayer
+        ? "fixed bottom-6 right-6 w-[320px] z-50 shadow-2xl border border-gray-800 rounded-xl overflow-hidden"
+        : "lg:sticky lg:top-28 h-fit"
+    }
+  >
 
-              <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+    <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
 
-                <iframe
-                  src={media.embedUrl}
-                  title="YouTube player"
-                  className="w-full aspect-video"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+      <iframe
+        src={media.embedUrl}
+        title="YouTube player"
+        className="w-full aspect-video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
 
-              </div>
+    </div>
 
-            </div>
+  </div>
 
-          )}
+)}
 
         </div>
 
