@@ -8,7 +8,7 @@ type Props = {
   song: {
     title: string
     artist: string
-    content?: string  // ostaje za kompatibilnost sa postojećim renderContent
+    content?: string  
     lyrics?: string
     chords?: string
     category?: string
@@ -23,6 +23,8 @@ type Props = {
 
 export default function SongClient({ song, media }: Props) {
   const [transpose, setTranspose] = useState(0)
+
+  const [showVideo, setShowVideo] = useState(true)
 
   // AUTO SCROLL
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
@@ -219,10 +221,16 @@ export default function SongClient({ song, media }: Props) {
           </div>
 
         </div>
+        {/* dugme za skrivanje youtube VIDEO */}
+        const [showVideo, setShowVideo] = useState(true)
+        <button onClick={() => setShowVideo(!showVideo)}>
+           VIDEO
+          </button>
 
         {/* DESNA STRANA - VIDEO */}
+        
         {media?.embedUrl && (
-  <div className="lg:sticky lg:top-24 h-fit">
+  <div className="lg:sticky lg:top-40 h-fit">
     <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
       <iframe
         src={media.embedUrl}
