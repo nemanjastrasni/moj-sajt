@@ -8,9 +8,18 @@ export default async function AdminArtistsPage() {
 
   return (
     <div className="max-w-6xl">
-      <h1 className="text-2xl font-bold mb-6 text-gray-900">
-        Izvođači
-      </h1>
+      <div className="flex justify-between items-center mb-6">
+  <h1 className="text-2xl font-bold text-gray-900">
+    Izvođači
+  </h1>
+
+  <Link
+    href="/admin/artists/new"
+    className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+  >
+    + Novi izvođač
+  </Link>
+</div>
 
       {artists.length === 0 ? (
         <p className="text-gray-500">Nema izvođača.</p>
@@ -28,12 +37,27 @@ export default async function AdminArtistsPage() {
           <tbody>
             {artists.map((artist) => (
               <tr key={artist.id} className="border-t">
-                <td className="p-3">{artist.name}</td>
+                <td className="p-3">
+                       <Link
+                       href={`/admin/artists/${artist.id}/edit`}
+                          className="text-blue-600 hover:underline"
+                        >
+                     {artist.name}
+                        </Link>
+                 </td>
                 <td className="p-3 text-gray-500">{artist.slug}</td>
                 <td className="p-3">{artist.category ?? "-"}</td>
                 <td className="p-3 text-center">
-                  {artist.image ? "✔" : "—"}
-                </td>
+                    {artist.image ? (
+                  <img
+                   src={artist.image}
+                   alt={artist.name}
+                    className="w-12 h-12 object-cover rounded mx-auto"
+                   />
+                  ) : (
+                   "—"
+                    )}
+               </td>
                 <td className="p-3 text-center">
                   <Link
                     href={`/admin/artists/${artist.id}/edit`}

@@ -29,16 +29,22 @@ export default async function AdminLayout({
         <h2 className="text-xl font-bold">Admin</h2>
 
         <nav className="space-y-2 text-sm">
-          <a href="/admin" className="block hover:underline">
-            Dashboard
-          </a>
-          <a href="/admin/songs" className="block hover:underline">
-            Pesme
-          </a>
-          <a href="/admin/korisnici" className="block hover:underline">
-            Korisnici
-          </a>
-        </nav>
+  <a href="/admin" className="block hover:underline">
+    Dashboard
+  </a>
+
+  <a href="/admin/artists" className="block hover:underline">
+    Izvođači
+  </a>
+
+  <a href="/admin/songs" className="block hover:underline">
+    Pesme
+  </a>
+
+  <a href="/admin/korisnici" className="block hover:underline">
+    Korisnici
+  </a>
+</nav>
       </aside>
 
       {/* CONTENT */}

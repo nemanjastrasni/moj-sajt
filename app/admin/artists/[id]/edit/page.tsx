@@ -66,11 +66,16 @@ export default async function EditArtistPage({
 
         <div>
           <label className="block text-sm mb-1">Kategorija</label>
-          <input
-            name="category"
-            defaultValue={artist.category ?? ""}
-            className="border p-2 w-full rounded"
-          />
+          <select
+  name="category"
+  defaultValue={artist.category ?? ""}
+  className="border p-2 w-full rounded"
+>
+  <option value="">-- izaberi --</option>
+  <option value="domace">Domaće</option>
+  <option value="strane">Strane</option>
+  <option value="narodne">Narodne</option>
+</select>
         </div>
 
         <div>
