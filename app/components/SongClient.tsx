@@ -242,7 +242,7 @@ export default function SongClient({ song, media }: Props) {
 
         {/* DESNA STRANA - VIDEO */}
         
-        {showVideo && media?.embedUrl && (
+        {showVideo && media && (
   <div className="lg:sticky lg:top-32 h-fit">
     <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
       <iframe
