@@ -203,6 +203,19 @@ export default function SongClient({ song, media }: Props) {
             </div>
 
           </div>
+
+          {/* VIDEO */}
+            <div className="flex items-center gap-2">
+            <span className="uppercase tracking-wide text-xs">Video</span>
+
+            <button
+             onClick={() => setShowVideo(!showVideo)}
+            className="px-2 text-xs border border-gray-700 rounded hover:text-white"
+           >
+             {showVideo ? "ON" : "OFF"}
+          </button>
+            </div>
+
           {/* TITLE */}
           <h1 className="text-3xl font-bold mb-2">
             {title}
@@ -230,7 +243,7 @@ export default function SongClient({ song, media }: Props) {
         {/* DESNA STRANA - VIDEO */}
         
         {showVideo && media?.embedUrl && (
-  <div className="lg:sticky lg:top-40 h-fit">
+  <div className="lg:sticky lg:top-28 h-fit">
     <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
       <iframe
         src={media.embedUrl}
