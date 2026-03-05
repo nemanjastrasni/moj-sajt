@@ -45,6 +45,7 @@ const letter = params.letter ?? ""
   placeholder="Pretraga izvođača..."
   className="border p-2 rounded w-64"
   list="artists"
+  defaultValue={search}
 />
 
 <datalist id="artists">
@@ -53,7 +54,7 @@ const letter = params.letter ?? ""
   ))}
 </datalist>
 
-  <select name="category" className="border p-2 rounded">
+  <select name="category" defaultValue={category} className="border p-2 rounded">
     <option value="">Sve kategorije</option>
     <option value="domace">Domaće</option>
     <option value="strane">Strane</option>
