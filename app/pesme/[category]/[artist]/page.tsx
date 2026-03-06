@@ -32,10 +32,16 @@ export default async function ArtistPage({ params }: any) {
       category,
     },
     include: {
-      songs: {
-        orderBy: { title: "asc" },
-      },
+  songs: {
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      chords: true
     },
+    orderBy: { title: "asc" },
+  },
+},
   })
 
   if (!artistData) notFound()
@@ -67,10 +73,10 @@ export default async function ArtistPage({ params }: any) {
            <span
   style={{
     marginRight: "6px",
-    color: /\b[A-G][#b]?(m|maj7|sus4|dim|aug)?\b/.test(song.chords || "") ? "#2563eb" : "#9ca3af"
+    color: song.chords ? "#2563eb" : "#9ca3af"
   }}
 >
-  {/\b[A-G][#b]?(m|maj7|sus4|dim|aug)?\b/.test(song.chords || "") ? "🎸" : "🎵"}
+  {song.chords ? "🎸" : "🎵"}
 </span>
 {song.title}
           </Link>
