@@ -10,6 +10,16 @@ function formatCategory(category: string) {
   return category
 }
 
+function normalizeLetter(letter: string) {
+  const decoded = decodeURIComponent(letter).toUpperCase()
+
+  if (decoded === "DŽ") return "DŽ"
+  if (decoded === "LJ") return "LJ"
+  if (decoded === "NJ") return "NJ"
+
+  return decoded
+}
+
 function getFirstLetter(name: string) {
   const upper = name.trim().toUpperCase()
 
@@ -21,21 +31,26 @@ function getFirstLetter(name: string) {
 }
 
 export default async function LetterPage({ params }: any) {
-  const { category, letter } = await params
+  const { category, letter: rawLetter } = await params
+
+  const letter = normalizeLetter(rawLetter)
 
   const artists = await prisma.artist.findMany({
-    where: { category },
-    orderBy: { name: "asc" },
-  })
+  where: { category },
+  orderBy: { name: "asc" },
+  include: {
+    songs: true,
+  },
+})
 
   const filtered = artists.filter(
-    (artist) => getFirstLetter(artist.name) === letter.toUpperCase()
+    (artist) => getFirstLetter(artist.name) === letter
   )
 
   return (
     <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
       <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>
-        {formatCategory(category)} – {letter.toUpperCase()}
+        {formatCategory(category)} – {letter}
       </h1>
 
       {filtered.length === 0 ? (
@@ -47,7 +62,7 @@ export default async function LetterPage({ params }: any) {
               key={artist.id}
               href={`/pesme/${category}/${artist.slug}`}
             >
-              {artist.name}
+              {artist.name} ({artist.songs.length})
             </Link>
           ))}
         </div>

@@ -89,7 +89,14 @@ const letter = params.letter ?? ""
           </thead>
           <tbody>
             {artists.map((artist) => (
-              <tr key={artist.id} className="border-t">
+              <tr
+                 key={artist.id}
+                 className={`border-t
+                 ${!artist.bio && !artist.discography ? "bg-red-50" : ""}
+                 ${artist.bio && !artist.discography ? "bg-yellow-50" : ""}
+                 ${artist.bio && artist.discography ? "bg-green-50" : ""}
+         `}
+  >
                 <td className="p-3">
                        <Link
                        href={`/admin/artists/${artist.id}/edit`}
