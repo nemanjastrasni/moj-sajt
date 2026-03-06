@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: any) {
 }
 
 export default async function ArtistPage({ params }: any) {
-  const { category, artist } = await params
+  const { category, artist } = params
 
   const artistData = await prisma.artist.findFirst({
     where: {
