@@ -42,36 +42,22 @@ export default async function CategoryPage(
       </h1>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-        {await Promise.all(
-  SR_LATIN.map(async (letter) => {
-
-    const artists = await prisma.artist.findMany({
-      where: { category },
-      select: { name: true }
-    })
-
-    const hasArtist = artists.some((a: { name: string }) =>
-  a.name.toUpperCase().startsWith(letter)
-)
-
-    return (
-      <Link
-        key={letter}
-        href={`/pesme/${category}/slovo/${letter}`}
-        style={{
-          padding: "6px 10px",
-          border: "1px solid #ccc",
-          borderRadius: "6px",
-          textDecoration: "none",
-          color: hasArtist ? "#2563eb" : "#9ca3af",
-          fontWeight: 600,
-        }}
-      >
-        {letter}
-      </Link>
-    )
-  })
-)}
+        {SR_LATIN.map((letter) => (
+          <Link
+            key={letter}
+            href={`/pesme/${category}/slovo/${letter}`}
+            style={{
+              padding: "6px 10px",
+              border: "1px solid #ccc",
+              borderRadius: "6px",
+              textDecoration: "none",
+              color: "#2563eb",
+              fontWeight: 600,
+            }}
+          >
+            {letter}
+          </Link>
+        ))}
       </div>
     </div>
   )
