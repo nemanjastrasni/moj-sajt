@@ -5,9 +5,12 @@ export default async function CategoryPage({ params }: any) {
   const category = params.category
 
   const artists = await prisma.artist.findMany({
-    where: { category },
-    orderBy: { name: "asc" }
-  })
+  where: {
+    category,
+    bio: { not: null }
+  },
+  orderBy: { name: "asc" }
+})
 
   return (
     <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
