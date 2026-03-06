@@ -24,7 +24,7 @@ export default function Page() {
         {playlists.map((p) => (
           <Link
             key={p.slug}
-            href={`/playlist/${p.slug}`}
+            href={`/plejliste/${p.slug}`}
             className="block border p-4 rounded hover:bg-gray-100"
           >
             {p.title}
