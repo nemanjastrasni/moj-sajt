@@ -1,8 +1,33 @@
-export default function PlejlistePage() {
+import Link from "next/link"
+
+const playlists = [
+  { slug: "easy-guitar", title: "Easy Guitar Songs" },
+  { slug: "acoustic-balkan", title: "Acoustic Balkan Songs" },
+  { slug: "rock-90s", title: "Rock 90s Songs" },
+]
+
+export default function Page() {
   return (
-    <div>
-      <h1>Plejliste</h1>
-      <p>Akustične, početničke, rock balade…</p>
+    <div className="max-w-4xl mx-auto p-6">
+
+      <h1 className="text-3xl font-bold mb-6">
+        Guitar Playlists
+      </h1>
+
+      <div className="space-y-3">
+
+        {playlists.map((p) => (
+          <Link
+            key={p.slug}
+            href={`/playlist/${p.slug}`}
+            className="block border p-4 rounded hover:bg-gray-100"
+          >
+            {p.title}
+          </Link>
+        ))}
+
+      </div>
+
     </div>
-  );
+  )
 }
