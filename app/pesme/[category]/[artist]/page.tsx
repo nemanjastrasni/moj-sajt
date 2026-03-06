@@ -49,7 +49,7 @@ export default async function ArtistPage({ params }: any) {
       {/* LINK KA BIOGRAFIJI */}
       <div style={{ marginBottom: "25px" }}>
         <Link
-          href={`/biografija/${artistData.slug}`}
+          href={`/biografija/${category}/${artistData.slug}`}
           style={{ color: "#2563eb", fontWeight: 600 }}
         >
           Pogledaj biografiju

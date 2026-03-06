@@ -28,12 +28,19 @@ export default async function BiographyPage({ params }: any) {
             marginBottom: "30px"
           }}
         />
+        
       )}
 
       {/* IME */}
       <h1 style={{ fontSize: "32px", marginBottom: "20px" }}>
         {artistData.name}
       </h1>
+      <a
+  href={`/pesme/${artistData.category}/${artistData.slug}`}
+  className="text-blue-500 underline block mb-6"
+>
+  → Pogledaj pesme izvođača
+</a>
 
       {/* BIOGRAFIJA */}
       <div style={{ marginBottom: "40px", whiteSpace: "pre-line" }}>
@@ -48,9 +55,24 @@ export default async function BiographyPage({ params }: any) {
           </h2>
 
           <div style={{ whiteSpace: "pre-line" }}>
-            {typeof artistData.discography === "string"
-              ? artistData.discography
-              : JSON.stringify(artistData.discography, null, 2)}
+            {Array.isArray(artistData.discography) && (
+  <div className="space-y-1">
+    {artistData.discography.map((item: any, i: number) => {
+       const text = String(item)
+
+      const match = text.match(/(\d{4})/)
+      const year = match ? match[0] : ""
+      const album = text.replace(/\(\d{4}\)/, "").trim()
+
+      return (
+        <div key={i} className="flex gap-4">
+          <div className="w-16 text-gray-400">{year}</div>
+          <div>{album}</div>
+        </div>
+      )
+    })}
+  </div>
+)}
           </div>
         </div>
       )}
