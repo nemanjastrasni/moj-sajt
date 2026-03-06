@@ -34,11 +34,12 @@ export default async function ArtistPage({ params }: any) {
     include: {
   songs: {
     select: {
-      id: true,
-      slug: true,
-      title: true,
-      chords: true
-    },
+  id: true,
+  slug: true,
+  title: true,
+  chords: true,
+  lyrics: true
+},
     orderBy: { title: "asc" },
   },
 },
@@ -76,7 +77,7 @@ export default async function ArtistPage({ params }: any) {
     color: song.chords ? "#2563eb" : "#9ca3af"
   }}
 >
-  {song.chords ? "🎸" : "🎵"}
+  {/\[[A-G][^\]]*\]/.test(song.lyrics) ? "🎸" : "🎵"}
 </span>
 {song.title}
           </Link>
