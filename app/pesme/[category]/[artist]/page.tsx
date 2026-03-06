@@ -65,14 +65,14 @@ export default async function ArtistPage({ params }: any) {
             href={`/pesme/${category}/${artist}/${song.slug}`}
           >
            <span
-              style={{
-               marginRight: "6px",
-               color: song.chords ? "#2563eb" : "#9ca3af"
-              }}
-               >
-            {song.chords ? "🎸" : "🎵"}
-            </span>
-           {song.title}
+  style={{
+    marginRight: "6px",
+    color: song.chords && song.chords.length > 0 ? "#2563eb" : "#9ca3af"
+  }}
+>
+  {song.chords && song.chords.length > 0 ? "🎸" : "🎵"}
+</span>
+{song.title}
           </Link>
         ))}
       </div>
