@@ -67,10 +67,10 @@ export default async function ArtistPage({ params }: any) {
            <span
   style={{
     marginRight: "6px",
-    color: song.chords && song.chords.trim() !== "" ? "#2563eb" : "#9ca3af"
+    color: /\b[A-G][#b]?(m|maj7|sus4|dim|aug)?\b/.test(song.chords || "") ? "#2563eb" : "#9ca3af"
   }}
 >
-  {song.chords && song.chords.trim() !== "" ? "🎸" : "🎵"}
+  {/\b[A-G][#b]?(m|maj7|sus4|dim|aug)?\b/.test(song.chords || "") ? "🎸" : "🎵"}
 </span>
 {song.title}
           </Link>
