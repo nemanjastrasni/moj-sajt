@@ -1,25 +1,23 @@
 import Link from "next/link"
 import { getPlaylist } from "@/lib/music/playlists"
 
-type Props = {
-  params: {
-    slug: string
-  }
-}
+export default async function PlaylistPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
 
-export default async function PlaylistPage({ params }: Props) {
-
-  const songs = await getPlaylist(params.slug)
+  const { slug } = await params
+  const songs = await getPlaylist(slug)
 
   return (
     <div className="max-w-4xl mx-auto p-6">
 
       <h1 className="text-3xl font-bold mb-6">
-        Playlist: {params.slug}
+        Playlist: {slug}
       </h1>
 
       <div className="space-y-3">
-
         {songs.map((song) => (
           <Link
             key={song.id}
@@ -29,7 +27,6 @@ export default async function PlaylistPage({ params }: Props) {
             {song.artist.name} — {song.title}
           </Link>
         ))}
-
       </div>
 
     </div>
