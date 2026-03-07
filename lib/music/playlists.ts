@@ -1,5 +1,27 @@
 import { prisma } from "@/lib/prisma"
 
+function extractChords(text: string) {
+  const matches = text.match(/[A-G][#b]?m?(maj7|7|sus4|dim|aug)?/g) || []
+  return [...new Set(matches)]
+}
+
+export async function getEasyGuitarSongs() {
+  const songs = await prisma.song.findMany()
+
+  return songs.filter(song => {
+    const chords = extractChords(song.chords || song.lyrics || "")
+    return chords.length <= 5
+  })
+}
+
+export async function getFourChordSongs() {
+  const songs = await prisma.song.findMany()
+
+  return songs.filter(song => {
+    const chords = extractChords(song.chords || song.lyrics || "")
+    return chords.length === 4
+  })
+}
 export async function getPlaylist(slug: string) {
 
   const playlists: Record<string, any> = {

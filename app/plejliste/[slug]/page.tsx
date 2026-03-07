@@ -8,44 +8,83 @@ export default async function PlaylistPage({ params }: any) {
 
   const { slug } = params
 
-  if (slug !== "easy-guitar" && slug !== "four-chords") {
-  notFound()
-}
+ if (
+  slug !== "easy-guitar" &&
+  slug !== "four-chords" &&
+  slug !== "beginner-songs" &&
+  slug !== "narodne" &&
+  slug !== "kafanske"
+) {
+  }
 
   const allSongs = await prisma.song.findMany({
-  include: {
-    artist: true
-  }
-})
+    include: {
+      artist: true
+    }
+  })
 
-const songs = allSongs.filter((song) => {
+  const songs = allSongs.filter((song) => {
 
-  if (!song.lyrics) return false
+    if (!song.lyrics) return false
 
-  const chords = song.lyrics.match(/\[[A-G][^\]]*\]/g) || []
-  const uniqueChords = [...new Set(chords)]
+    const chords = song.lyrics.match(/\[[A-G][^\]]*\]/g) || []
+    const uniqueChords = [...new Set(chords)]
 
-  if (slug === "easy-guitar") {
-    return uniqueChords.length <= 5
-  }
+    if (slug === "easy-guitar") {
+      return uniqueChords.length <= 5
+    }
 
-  if (slug === "four-chords") {
-    return uniqueChords.length === 4
-  }
+    if (slug === "four-chords") {
+      return uniqueChords.length === 4
+    }
+    if (slug === "beginner-songs") {
+  return uniqueChords.length <= 3
+}
+    if (slug === "narodne") {
+  return song.category === "narodne"
+}
 
-  return false
+if (slug === "kafanske") {
+  return song.category === "kafanske"
+}
 
-}).slice(0, 30)
+    return false
+
+  })
+.sort(() => Math.random() - 0.5)
+.slice(0, 30)
+
+  const title =
+  slug === "easy-guitar"
+    ? "Easy Guitar Songs"
+    : slug === "four-chords"
+    ? "Four Chord Songs"
+    : slug === "beginner-songs"
+    ? "Beginner Guitar Songs"
+    : slug === "narodne"
+    ? "Narodne Pesme"
+    : "Kafanske Pesme"
+
+  const description =
+  slug === "easy-guitar"
+    ? "Jednostavne pesme koje su pogodne za početnike na gitari."
+    : slug === "four-chords"
+    ? "Pesme koje koriste samo četiri akorda."
+    : slug === "beginner-songs"
+    ? "Najlakše pesme za početnike na gitari."
+    : slug === "narodne"
+    ? "Najpoznatije narodne pesme za gitaru."
+    : "Najpoznatije kafanske pesme za gitaru."
 
   return (
     <div className="max-w-4xl mx-auto p-6">
 
       <h1 className="text-3xl font-bold mb-6">
-        Easy Guitar Songs
+        {title}
       </h1>
 
       <p className="text-gray-500 mb-8">
-        Jednostavne pesme koje su pogodne za početnike na gitari.
+        {description}
       </p>
 
       <div className="space-y-3">
