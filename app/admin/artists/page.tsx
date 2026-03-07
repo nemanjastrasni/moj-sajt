@@ -4,11 +4,11 @@ import { prisma } from "@/lib/prisma"
 export default async function AdminArtistsPage({
   searchParams,
 }: {
-  searchParams: { search?: string; category?: string; letter?: string }
+  searchParams: Promise<{ search?: string; category?: string; letter?: string }>
 }) {
-  const params = searchParams
 
-const search = params.search ?? ""
+  const params = await searchParams
+  const search = params?.search || ""
 const category = params.category ?? ""
 const letter = params.letter ?? ""
   const artists = await prisma.artist.findMany({
@@ -41,6 +41,7 @@ const letter = params.letter ?? ""
   
   <form className="flex gap-3 mb-6">
   <input
+  type="text"
   name="search"
   placeholder="Pretraga izvođača..."
   className="border p-2 rounded w-64"
