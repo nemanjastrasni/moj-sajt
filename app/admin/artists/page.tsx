@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma"
 export default async function AdminArtistsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; category?: string; letter?: string }>
+  searchParams: { search?: string; category?: string; letter?: string }
 }) {
-  const params = await searchParams
+  const params = searchParams
 
 const search = params.search ?? ""
 const category = params.category ?? ""

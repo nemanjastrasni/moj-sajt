@@ -54,6 +54,14 @@ export default async function AdminSongsPage({
     skip: (page - 1) * PAGE_SIZE,
     take: PAGE_SIZE,
   })
+    async function deleteSong(id: string) {
+  "use server"
+
+  await prisma.song.delete({
+    where: { id }
+  })
+}
+
 
   return (
     <div>
@@ -126,18 +134,14 @@ export default async function AdminSongsPage({
 
                   <span className="text-gray-400">|</span>
 
-                  <form
-                    action={`/admin/songs/${song.id}/delete`}
-                    method="POST"
-                    className="inline"
-                  >
-                    <button
-                      type="submit"
-                      className="text-red-600 hover:underline"
-                    >
-                      Delete
-                    </button>
-                  </form>
+                 <form action={deleteSong.bind(null, song.id)} className="inline">
+                <button
+                    type="submit"
+                     className="text-red-600 hover:underline"
+                   >
+                     Delete
+                </button>
+              </form>
                 </td>
               </tr>
             ))}

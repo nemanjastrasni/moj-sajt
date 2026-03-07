@@ -12,6 +12,7 @@ export default function NewArtistPage() {
 if (!slug) {
   slug = (formData.get("name") as string)
     .toLowerCase()
+    .trim()
     .replace(/\s+/g, "-")
     .replace(/[^\w\-]+/g, "")
 }
@@ -25,7 +26,13 @@ if (!slug) {
       ?.split("\n")
       .map((line) => line.trim())
       .filter(Boolean)
+    const exists = await prisma.artist.findFirst({
+      where: { slug }
+   })
 
+      if (exists) {
+      throw new Error("Artist already exists")
+  }
     await prisma.artist.create({
       data: {
         name,
