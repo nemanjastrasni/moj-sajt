@@ -50,7 +50,7 @@ model Song {
 
   lyrics    String
   chords    String?
-  hasChords Boolean @default(true)
+  
   artistId  String
   artist    Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
 
