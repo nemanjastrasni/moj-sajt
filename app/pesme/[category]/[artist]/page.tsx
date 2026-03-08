@@ -77,7 +77,7 @@ export default async function ArtistPage({ params }: any) {
     color: song.chords ? "#2563eb" : "#9ca3af"
   }}
 >
-  {/\[[A-G][^\]]*\]/.test(song.lyrics) ? "🎸" : "🎵"}
+  {song.chords ? "🎸" : "🎵"}
 </span>
 {song.title}
           </Link>
