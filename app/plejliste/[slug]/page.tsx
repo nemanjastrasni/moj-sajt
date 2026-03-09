@@ -1,116 +1,141 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
-import { notFound } from "next/navigation"
-
-export const dynamic = "force-dynamic"
 
 export default async function PlaylistPage({ params }: any) {
 
-  const { slug } = params
+const { slug } = params
 
- if (
-  slug !== "easy-guitar" &&
-  slug !== "four-chords" &&
-  slug !== "beginner-songs" &&
-  slug !== "narodne" &&
-  slug !== "kafanske"
-) {
+let songs: any[] = []
+
+if (slug === "4-akorda") {
+
+const allSongs = await prisma.song.findMany({
+  include: {
+    artist: { select: { slug: true } }
   }
+})
 
-  const allSongs = await prisma.song.findMany({
-    include: {
-      artist: true
-    }
-  })
+songs = allSongs.filter((song) => {
 
-  const songs = allSongs.filter((song) => {
+const chords = song.lyrics?.match(/\b[A-G](#|b)?(m|maj|min|sus|dim|aug)?\d*\b/g) || []
 
-    if (!song.lyrics) return false
+const uniqueChords = [...new Set(chords)]
 
-    const chords = song.lyrics.match(/\[[A-G][^\]]*\]/g) || []
-    const uniqueChords = [...new Set(chords)]
+return uniqueChords.length <= 4 && uniqueChords.length > 0
 
-    if (slug === "easy-guitar") {
-      return uniqueChords.length <= 5
-    }
+}).slice(0,100)
 
-    if (slug === "four-chords") {
-      return uniqueChords.length === 4
-    }
-    if (slug === "beginner-songs") {
-  return uniqueChords.length <= 3
 }
-    if (slug === "narodne") {
-  return song.category === "narodne"
+if (slug === "beginner") {
+
+const allSongs = await prisma.song.findMany({
+  include: {
+    artist: { select: { slug: true } }
+  }
+})
+
+songs = allSongs.filter((song) => {
+
+const chords = song.lyrics?.match(/\b[A-G](#|b)?(m|maj|min|sus|dim|aug)?\d*\b/g) || []
+
+const uniqueChords = [...new Set(chords)]
+
+const barre = ["F", "Bm", "F#m", "B", "Cm", "Gm"]
+
+return uniqueChords.length > 0 && !uniqueChords.some(c => barre.includes(c))
+
+}).slice(0,100)
+
 }
 
-if (slug === "kafanske") {
-  return song.category === "kafanske"
+if (slug === "acoustic") {
+  if (slug === "rock") {
+
+songs = await prisma.song.findMany({
+  where: {
+    category: "strane"
+  },
+  take: 100,
+  orderBy: { title: "asc" },
+  include: {
+    artist: { select: { slug: true } }
+  }
+})
+
 }
 
-    return false
+if (slug === "pop") {
 
-  })
-.sort(() => Math.random() - 0.5)
-.slice(0, 30)
+songs = await prisma.song.findMany({
+  where: {
+    category: "strane"
+  },
+  take: 100,
+  orderBy: { title: "asc" },
+  include: {
+    artist: { select: { slug: true } }
+  }
+})
 
-  const title =
-  slug === "easy-guitar"
-    ? "Easy Guitar Songs"
-    : slug === "four-chords"
-    ? "Four Chord Songs"
-    : slug === "beginner-songs"
-    ? "Beginner Guitar Songs"
-    : slug === "narodne"
-    ? "Narodne Pesme"
-    : "Kafanske Pesme"
+}
 
-  const description =
-  slug === "easy-guitar"
-    ? "Jednostavne pesme koje su pogodne za početnike na gitari."
-    : slug === "four-chords"
-    ? "Pesme koje koriste samo četiri akorda."
-    : slug === "beginner-songs"
-    ? "Najlakše pesme za početnike na gitari."
-    : slug === "narodne"
-    ? "Najpoznatije narodne pesme za gitaru."
-    : "Najpoznatije kafanske pesme za gitaru."
+if (slug === "narodne") {
 
-  return (
-    <div className="max-w-4xl mx-auto p-6">
+songs = await prisma.song.findMany({
+  where: {
+    category: "narodne"
+  },
+  take: 100,
+  orderBy: { title: "asc" },
+  include: {
+    artist: { select: { slug: true } }
+  }
+})
 
-      <h1 className="text-3xl font-bold mb-6">
-        {title}
-      </h1>
+}
 
-      <p className="text-gray-500 mb-8">
-        {description}
-      </p>
+const allowed = ["G","C","D","Em","Am"]
 
-      <div className="space-y-3">
+const allSongs = await prisma.song.findMany({
+  include: {
+    artist: { select: { slug: true } }
+  }
+})
 
-        {songs.map((song) => (
+songs = allSongs.filter((song) => {
 
-          <Link
-            key={song.id}
-            href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
-            className="block border p-4 rounded hover:bg-gray-100"
-          >
+const chords = song.lyrics?.match(/\b[A-G](#|b)?(m|maj|min|sus|dim|aug)?\d*\b/g) || []
 
-            <div className="font-medium">
-              {song.title}
-            </div>
+const uniqueChords = [...new Set(chords)]
 
-            <div className="text-sm text-gray-500">
-              {song.artist.name}
-            </div>
+return uniqueChords.length > 0 && uniqueChords.every(c => allowed.includes(c))
 
-          </Link>
+}).slice(0,100)
 
-        ))}
+}
 
-      </div>
+return (
+<div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
 
-    </div>
-  )
+<h1>{slug}</h1>
+
+<div style={{ display: "grid", gap: "8px" }}>
+
+{songs.map((song) => (
+
+<Link
+key={song.id}
+href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+>
+
+{song.title}
+
+</Link>
+
+))}
+
+</div>
+</div>
+)
+
 }
