@@ -21,9 +21,11 @@ gap: "40px"
 >
 
 <div>
-<h3>🎧 Generisane</h3>
+<h3 style={{fontSize:"22px",color:"#facc15",marginBottom:"10px"}}>
+🎧 Generisane
+</h3>
 
-<div style={{ display: "grid", gap: "6px" }}>
+<div style={{ display: "grid", gap: "10px", marginTop:"10px" }}>
 <Link href="/plejliste/4-akorda">4 akorda</Link>
 <Link href="/plejliste/beginner">Beginner gitara</Link>
 <Link href="/plejliste/acoustic">Acoustic / unplugged</Link>
@@ -34,7 +36,7 @@ gap: "40px"
 <div>
 <h3>🎸 Žanr</h3>
 
-<div style={{ display: "grid", gap: "6px" }}>
+<div style={{ display: "grid", gap: "10px", marginTop:"10px" }}>
 <Link href="/plejliste/rock">Rock</Link>
 <Link href="/plejliste/pop">Pop</Link>
 <Link href="/plejliste/narodne">Narodne</Link>
@@ -46,7 +48,7 @@ gap: "40px"
 <div>
 <h3>⭐ Admin</h3>
 
-<div style={{ display: "grid", gap: "6px" }}>
+<div style={{ display: "grid", gap: "10px", marginTop:"10px" }}>
 <Link href="/plejliste/gitarski-klasici">Gitarski klasici</Link>
 <Link href="/plejliste/kafanske">Kafanske pesme</Link>
 </div>

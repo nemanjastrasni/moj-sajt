@@ -63,9 +63,16 @@ return (
 
 <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
 
-<h1>{slug} - {category}</h1>
+<h1 style={{
+fontSize:"26px",
+marginBottom:"30px",
+color:"#38bdf8",
+textTransform:"capitalize"
+}}>
+{slug} - {category}
+</h1>
 
-<div style={{ display: "grid", gap: "8px" }}>
+<div style={{ display: "grid", gap: "12px", fontSize:"18px" }}>
 
 {songs.map((song) => (
 

@@ -12,19 +12,18 @@ return (
 {slug}
 </h1>
 
-<div style={{ display: "grid", gap: "12px" }}>
+<div style={{
+display:"flex",
+gap:"40px",
+fontSize:"20px",
+marginTop:"20px"
+}}>
 
-<Link href={`/plejliste/${slug}/domace`}>
-DOMAĆE
-</Link>
+<Link style={{color:"#22c55e"}} href={`/plejliste/${slug}/domace`}>DOMAĆE</Link>
 
-<Link href={`/plejliste/${slug}/strane`}>
-STRANE
-</Link>
+<Link style={{color:"#3b82f6"}} href={`/plejliste/${slug}/strane`}>STRANE</Link>
 
-<Link href={`/plejliste/${slug}/narodne`}>
-NARODNE
-</Link>
+<Link style={{color:"#f97316"}} href={`/plejliste/${slug}/narodne`}>NARODNE</Link>
 
 </div>
 
