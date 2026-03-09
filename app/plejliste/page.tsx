@@ -21,7 +21,7 @@ gap: "40px"
 >
 
 <div>
-<h3 style={{fontSize:"22px",color:"#facc15",marginBottom:"10px"}}>
+<h3 style={{fontSize:"22px",color:"#facc15",marginBottom:"10px",display:"flex",alignItems:"center",gap:"6px"}}>
 🎧 Generisane
 </h3>
 
@@ -67,8 +67,7 @@ gap: "40px"
 </div>
 
 </div>
-
-<h3 style={{fontSize:"22px",color:"#38bdf8",marginBottom:"10px"}}>
+<h3 style={{fontSize:"22px",color:"#38bdf8",marginBottom:"10px",display:"flex",alignItems:"center",gap:"6px"}}>
 🎧 Liste za slušanje
 </h3>
 
