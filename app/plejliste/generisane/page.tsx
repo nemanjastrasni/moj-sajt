@@ -1,29 +1,27 @@
 import Link from "next/link"
 
-export default function PlaylistCategoryPage({ params }: any) {
-
-const { slug } = params
+export default function GeneratedPlaylistsPage() {
 
 return (
 
 <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
 
 <h1 style={{ fontSize: "28px", marginBottom: "30px" }}>
-{slug}
+Generisane playliste
 </h1>
 
 <div style={{ display: "grid", gap: "12px" }}>
 
-<Link href={`/plejliste/${slug}/domace`}>
-DOMAĆE
+<Link href="/plejliste/4-akorda">
+4 akorda
 </Link>
 
-<Link href={`/plejliste/${slug}/strane`}>
-STRANE
+<Link href="/plejliste/beginner">
+Beginner gitara
 </Link>
 
-<Link href={`/plejliste/${slug}/narodne`}>
-NARODNE
+<Link href="/plejliste/acoustic">
+Acoustic
 </Link>
 
 </div>

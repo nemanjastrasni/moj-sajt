@@ -13,6 +13,9 @@ Plejliste
 
 <div>
 <h2>🎧 Generisane</h2>
+<Link href="/plejliste/generisane">
+Sve generisane
+</Link>
 <ul>
 <li><Link href="/playliste/4-akorda">4 akorda</Link></li>
 <li><Link href="/playliste/beginner">Beginner gitara</Link></li>
@@ -49,4 +52,5 @@ Plejliste
 
 </div>
 </div>
-)}
+)
+}
