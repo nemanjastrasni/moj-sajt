@@ -14,18 +14,29 @@ Plejliste
 style={{
 display: "grid",
 gridTemplateColumns: "repeat(5, 1fr)",
-maxWidth: "900px",
+maxWidth: "1100px",
 margin: "0 auto",
 gap: "40px"
 }}
 >
 
+{/* GENERISANE */}
+
 <div>
-<h3 style={{fontSize:"22px",color:"#facc15",marginBottom:"10px",display:"flex",alignItems:"center",gap:"6px"}}>
+
+<h3 style={{
+fontSize:"22px",
+color:"#facc15",
+marginBottom:"10px",
+display:"flex",
+alignItems:"center",
+gap:"6px",
+whiteSpace:"nowrap"
+}}>
 🎧 Generisane
 </h3>
 
-<div style={{ display: "grid", gap: "10px", marginTop:"10px" }}>
+<div style={{ display: "grid", gap: "10px" }}>
 <Link href="/plejliste/4-akorda">4 akorda</Link>
 <Link href="/plejliste/beginner">Beginner gitara</Link>
 <Link href="/plejliste/acoustic">Acoustic / unplugged</Link>
@@ -33,10 +44,23 @@ gap: "40px"
 
 </div>
 
-<div>
-<h3 style={{fontSize:"22px",color:"#2cfa15",marginBottom:"10px"}}>🎸 Žanr</h3>
+{/* ZANR */}
 
-<div style={{ display: "grid", gap: "10px", marginTop:"10px" }}>
+<div>
+
+<h3 style={{
+fontSize:"22px",
+color:"#2cfa15",
+marginBottom:"10px",
+display:"flex",
+alignItems:"center",
+gap:"6px",
+whiteSpace:"nowrap"
+}}>
+🎸 Žanr
+</h3>
+
+<div style={{ display: "grid", gap: "10px" }}>
 <Link href="/plejliste/rock">Rock</Link>
 <Link href="/plejliste/pop">Pop</Link>
 <Link href="/plejliste/narodne">Narodne</Link>
@@ -45,33 +69,70 @@ gap: "40px"
 
 </div>
 
-<div>
-<h3 style={{fontSize:"22px",color:"#fa1515",marginBottom:"10px"}}>
-    ⭐ Admin</h3>
+{/* ADMIN */}
 
-<div style={{ display: "grid", gap: "10px", marginTop:"10px" }}>
+<div>
+
+<h3 style={{
+fontSize:"22px",
+color:"#fa1515",
+marginBottom:"10px",
+display:"flex",
+alignItems:"center",
+gap:"6px",
+whiteSpace:"nowrap"
+}}>
+⭐ Admin
+</h3>
+
+<div style={{ display: "grid", gap: "10px" }}>
 <Link href="/plejliste/gitarski-klasici">Gitarski klasici</Link>
 <Link href="/plejliste/kafanske">Kafanske pesme</Link>
 </div>
 
 </div>
 
-<div>
-<h3 style={{fontSize:"22px",color:"#1534fa",marginBottom:"10px"}}>
-    👤 User</h3>
+{/* USER */}
 
-<div style={{ display: "grid", gap: "6px" }}>
+<div>
+
+<h3 style={{
+fontSize:"22px",
+color:"#1534fa",
+marginBottom:"10px",
+display:"flex",
+alignItems:"center",
+gap:"6px",
+whiteSpace:"nowrap"
+}}>
+👤 User
+</h3>
+
+<div style={{ display: "grid", gap: "10px" }}>
 <Link href="/profil/plejliste">Moje plejliste</Link>
 <Link href="/plejliste/top-user">Top 20 user playlisti</Link>
 <Link href="/plejliste/pesme-koje-znam">Pesme koje mogu da sviram</Link>
 </div>
 
 </div>
-<h3 style={{fontSize:"22px",color:"#38bdf8",marginBottom:"10px",display:"flex",alignItems:"center",gap:"6px"}}>
+
+{/* LISTE ZA SLUSANJE */}
+
+<div>
+
+<h3 style={{
+fontSize:"22px",
+color:"#38bdf8",
+marginBottom:"10px",
+display:"flex",
+alignItems:"center",
+gap:"6px",
+whiteSpace:"nowrap"
+}}>
 🎧 Liste za slušanje
 </h3>
 
-<div style={{ display:"grid", gap:"10px", marginTop:"10px" }}>
+<div style={{ display:"grid", gap:"10px" }}>
 
 <Link href="/plejliste/slusanje-domace">
 20 najslušanijih domaćih
@@ -91,6 +152,7 @@ gap: "40px"
 
 </div>
 
+</div>
 
 )
 
