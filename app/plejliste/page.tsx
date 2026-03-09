@@ -34,7 +34,7 @@ gap: "40px"
 </div>
 
 <div>
-<h3>🎸 Žanr</h3>
+<h3 style={{fontSize:"22px",color:"#2cfa15",marginBottom:"10px"}}>🎸 Žanr</h3>
 
 <div style={{ display: "grid", gap: "10px", marginTop:"10px" }}>
 <Link href="/plejliste/rock">Rock</Link>
@@ -46,7 +46,8 @@ gap: "40px"
 </div>
 
 <div>
-<h3>⭐ Admin</h3>
+<h3 style={{fontSize:"22px",color:"#fa1515",marginBottom:"10px"}}>
+    ⭐ Admin</h3>
 
 <div style={{ display: "grid", gap: "10px", marginTop:"10px" }}>
 <Link href="/plejliste/gitarski-klasici">Gitarski klasici</Link>
@@ -56,7 +57,8 @@ gap: "40px"
 </div>
 
 <div>
-<h3>👤 User</h3>
+<h3 style={{fontSize:"22px",color:"#1534fa",marginBottom:"10px"}}>
+    👤 User</h3>
 
 <div style={{ display: "grid", gap: "6px" }}>
 <Link href="/profil/plejliste">Moje plejliste</Link>
