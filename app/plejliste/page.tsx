@@ -13,7 +13,7 @@ Plejliste
 <div
 style={{
 display: "grid",
-gridTemplateColumns: "repeat(4, 1fr)",
+gridTemplateColumns: "repeat(5, 1fr)",
 maxWidth: "900px",
 margin: "0 auto",
 gap: "40px"
@@ -68,9 +68,30 @@ gap: "40px"
 
 </div>
 
+<h3 style={{fontSize:"22px",color:"#38bdf8",marginBottom:"10px"}}>
+🎧 Liste za slušanje
+</h3>
+
+<div style={{ display:"grid", gap:"10px", marginTop:"10px" }}>
+
+<Link href="/plejliste/slusanje-domace">
+20 najslušanijih domaćih
+</Link>
+
+<Link href="/plejliste/slusanje-strane">
+20 najslušanijih stranih
+</Link>
+
+<Link href="/plejliste/slusanje-narodne">
+20 najslušanijih narodnih
+</Link>
+
 </div>
 
 </div>
+
+</div>
+
 
 )
 
