@@ -119,7 +119,7 @@ return (
 
 <h1>{slug}</h1>
 
-<div style={{ display: "grid", gap: "8px" }}>
+<div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "30px" }}>
 
 {songs.map((song) => (
 
