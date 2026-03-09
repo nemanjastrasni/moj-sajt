@@ -71,22 +71,12 @@ export default async function ArtistPage({ params }: any) {
             key={song.id}
             href={`/pesme/${category}/${artist}/${song.slug}`}
           >
-           <span
-  style={{
-    marginRight: "6px",
-    color: /^(A|Am|A#|B|Bm|C|Cm|C#|D|Dm|D#|E|Em|F|Fm|F#|G|Gm|G#)/m.test(song.lyrics)
-      ? "#2563eb"
-      : "#9ca3af"
-  }}
->
-  {/^(A|Am|A#|B|Bm|C|Cm|C#|D|Dm|D#|E|Em|F|Fm|F#|G|Gm|G#)/m.test(song.lyrics)
-    ? "🎸"
-    : "🎵"}
-</span>
+           {song.chords?.trim() ? "🎸 " : "🎵 "}
 {song.title}
-          </Link>
-        ))}
-      </div>
-    </div>
+</Link>
+))
+}
+</div>
+</div>
   )
 }
