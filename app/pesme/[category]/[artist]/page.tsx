@@ -71,7 +71,9 @@ export default async function ArtistPage({ params }: any) {
             key={song.id}
             href={`/pesme/${category}/${artist}/${song.slug}`}
           >
-           {song.chords?.trim() ? "🎸 " : "🎵 "}
+{/^(A|Am|A#|Bb|B|Bm|C|Cm|C#|Db|D|Dm|D#|Eb|E|Em|F|Fm|F#|Gb|G|Gm|G#|Ab)/m.test(song.lyrics)
+  ? "🎸 "
+  : "🎵 "}
 {song.title}
 </Link>
 ))
