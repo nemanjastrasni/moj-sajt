@@ -34,6 +34,7 @@ model Artist {
   bio          String?
   discography  Json?
   category     String?
+  members Json?
 
   songs        Song[]
 
