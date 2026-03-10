@@ -27,7 +27,7 @@ return uniqueChords.length <= 4 && uniqueChords.length > 0
 }).slice(0,100)
 
 }
-if (slug === "Beginner") {
+if (slug === "beginner") {
 
 songs = allSongs.filter((song) => {
 
@@ -43,7 +43,7 @@ return uniqueChords.length > 0 && !uniqueChords.some(c => barre.includes(c))
 
 }
 
-if (slug === "Acoustic") {
+if (slug === "acoustic") {
 
 const allowed = ["G","C","D","Em","Am"]
 
