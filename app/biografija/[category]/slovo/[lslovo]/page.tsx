@@ -3,7 +3,8 @@ import { prisma } from "@/lib/prisma"
 
 export default async function ArtistsByLetter({ params }: any){
 
-const { category, letter } = params
+const { category, slovo } = params
+const letter = slovo
 
 let artists
 
