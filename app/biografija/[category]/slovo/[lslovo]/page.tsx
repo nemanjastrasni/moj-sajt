@@ -6,7 +6,7 @@ export default async function ArtistsByLetter({ params }: { params: Promise<{ ca
 const { category, slovo } = await params
 const letter = slovo
 
-let artists
+let artists = []
 
 if(letter === "#"){
 
@@ -44,7 +44,7 @@ Izvođači - {letter.toUpperCase()}
 
 <div style={{display:"grid",gap:"8px"}}>
 
-{artists.map(a=>(
+{artists?.map(a=>(
 <Link
 key={a.id}
 href={`/biografija/${category}/${a.slug}`}
