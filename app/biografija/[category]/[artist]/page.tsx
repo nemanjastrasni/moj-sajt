@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
+import CyrillicToTranslit from "cyrillic-to-translit-js"
 
 export const dynamic = "force-dynamic"
 
@@ -44,7 +45,7 @@ export default async function BiographyPage({ params }: any) {
 
       {/* BIOGRAFIJA */}
       <div style={{ marginBottom: "40px", whiteSpace: "pre-line" }}>
-        {artistData.bio || "Biografija nije dostupna."}
+        {new (CyrillicToTranslit as any)().transform(artistData.bio || "Biografija nije dostupna.")}
       </div>
 
       {/* DISKOGRAFIJA */}
