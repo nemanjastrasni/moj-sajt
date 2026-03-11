@@ -9,16 +9,14 @@ const letter = (slovo || "").toUpperCase()
 let artists = []
 
 if(letter === "#"){
-
 artists = await prisma.artist.findMany({
-where:{
-category,
-name:{
-startsWith: "0"
-}
-},
+where:{ category },
 orderBy:{ name:"asc" }
 })
+
+artists = artists.filter(a =>
+a.name?.toUpperCase().startsWith(letter)
+)
 
 }else{
 
