@@ -59,7 +59,7 @@ export default async function BioCategory({ params }: any) {
         {letters.map((letter) => (
           <Link
             key={letter}
-            href={`/biografija/${category}/${letter.toLowerCase()}`}
+            href={`/biografija/${category}/slovo/${letter.toLowerCase()}`}
             style={{
               border: "1px solid #555",
               padding: "8px 12px",
