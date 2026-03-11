@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"
 export default async function ArtistsByLetter({ params }: { params: Promise<{ category: string; slovo: string }> }){
 
 const { category, slovo } = await params
-const letter = slovo || ""
+const letter = (slovo || "").toUpperCase()
 
 let artists = []
 
