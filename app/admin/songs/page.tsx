@@ -76,7 +76,7 @@ export default async function AdminSongsPage({
         {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((l) => (
           <Link
             key={l}
-            href={`?letter=${l}`}
+            href={`/admin/songs?letter=${l}`}
             className={`px-2 py-1 rounded ${
               letter === l
                 ? "bg-black text-white"
@@ -187,7 +187,7 @@ export default async function AdminSongsPage({
               return (
                 <Link
                   key={p}
-                  href={`?q=${q}&sort=${sort}&letter=${letter}&page=${p}`}
+                  href={`/admin/songs?q=${q}&sort=${sort}&letter=${letter}&page=${p}`}
                   className={`px-3 py-1 border rounded ${
                     p === page
                       ? "bg-black text-white"
