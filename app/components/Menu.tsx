@@ -9,8 +9,7 @@ export default function Menu() {
   const { data: session } = useSession()
 
   return (
-    <nav className="relative flex justify-between items-start pt-6 pb-6 px-10 bg-red-700 text-black shadow-md">
-      
+   <nav className="relative z-50 flex justify-between items-start pt-6 pb-6 px-10 bg-red-700 text-black shadow-md overflow-hidden">
       {/* LEVA STRANA */}
       <div className="relative z-10 space-y-6">
 
