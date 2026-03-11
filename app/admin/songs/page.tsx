@@ -69,10 +69,10 @@ export default async function AdminSongsPage({
   }
 
   return (
-    <div className="flex gap-6">
+    <div className="flex gap-6 items-start">
       
       {/* A-Z sidebar */}
-      <div className="flex flex-col gap-1 text-sm">
+      <div className="flex flex-col gap-1 text-sm h-fit">
         {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((l) => (
           <Link
             key={l}
