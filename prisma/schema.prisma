@@ -5,7 +5,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 /* ================= USER ================= */
@@ -33,6 +32,7 @@ model Artist {
   name         String
   image        String?
   bio          String?
+  bioShort String?
   discography  Json?
   category     String?
   members Json?
