@@ -26,7 +26,8 @@ artists = await prisma.artist.findMany({
 where:{
 category,
 name:{
-contains: letter
+startsWith: letter,
+mode: "insensitive"
 }
 },
 orderBy:{ name:"asc" }
