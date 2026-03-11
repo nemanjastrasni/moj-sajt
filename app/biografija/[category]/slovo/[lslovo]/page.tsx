@@ -1,9 +1,9 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 
-export default async function ArtistsByLetter({ params }: { params: { category: string; slovo: string } }){
+export default async function ArtistsByLetter({ params }: { params: Promise<{ category: string; slovo: string }> }){
 
-const { category, slovo } = params
+const { category, slovo } = await params
 const letter = slovo
 
 let artists
