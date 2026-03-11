@@ -58,7 +58,6 @@ return uniqueChords.length > 0 && uniqueChords.every(c => allowed.includes(c))
 }).slice(0,100)
 
 }
-
 return (
 
 <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>

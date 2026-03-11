@@ -1,5 +1,6 @@
 import Link from "next/link"
 import type { Metadata } from "next"
+import { prisma } from "@/lib/prisma"
 
 export const dynamic = "force-dynamic"
 
@@ -29,23 +30,42 @@ export default async function CategoryPage(
 
   const { category } = await params
 
-  const SR_LATIN = [
-    "A","B","C","Č","Ć","D","DŽ","Đ","E","F","G","H",
-    "I","J","K","L","LJ","M","N","NJ","O","P","R",
-    "S","Š","T","U","V","Z","Ž"
-  ]
+  const songs = await prisma.song.findMany({
+    where:{ category },
+    select:{ title:true }
+  })
+
+  const lettersSet = new Set<string>()
+
+  songs.forEach(song=>{
+
+    if(!song.title) return
+
+    const first = song.title[0].toUpperCase()
+
+    if(/[0-9]/.test(first)){
+      lettersSet.add("#")
+    }else{
+      lettersSet.add(first)
+    }
+
+  })
+
+  const letters = Array.from(lettersSet).sort()
 
   return (
     <div style={{ padding: "40px", maxWidth: "1000px", margin: "0 auto" }}>
+
       <h1 style={{ fontSize: "32px", marginBottom: "30px" }}>
         {formatCategory(category)}
       </h1>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-        {SR_LATIN.map((letter) => (
+
+        {letters.map((letter)=>(
           <Link
             key={letter}
-            href={`/pesme/${category}/slovo/${letter}`}
+            href={`/pesme/${category}/slovo/${letter.toLowerCase()}`}
             style={{
               padding: "6px 10px",
               border: "1px solid #ccc",
@@ -58,7 +78,9 @@ export default async function CategoryPage(
             {letter}
           </Link>
         ))}
+
       </div>
+
     </div>
   )
 }

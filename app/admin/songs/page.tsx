@@ -9,6 +9,7 @@ type SearchParams = {
   q?: string
   sort?: string
   page?: string
+  letter?: string
 }
 
 export default async function AdminSongsPage({
@@ -21,25 +22,29 @@ export default async function AdminSongsPage({
   const q = params?.q ?? ""
   const sort = params?.sort ?? "createdAt"
   const page = Number(params?.page || 1)
+  const letter = params?.letter ?? ""
 
-  const where: Prisma.SongWhereInput = q
-    ? {
-        OR: [
-          {
-            title: {
-              contains: q,
+  const where: Prisma.SongWhereInput = {
+    ...(q
+      ? {
+          OR: [
+            {
+              title: { contains: q },
             },
-          },
-          {
-            artist: {
-              name: {
-                contains: q,
+            {
+              artist: {
+                name: { contains: q },
               },
             },
-          },
-        ],
-      }
-    : {}
+          ],
+        }
+      : {}),
+    ...(letter
+      ? {
+          title: { startsWith: letter },
+        }
+      : {}),
+  }
 
   const total = await prisma.song.count({ where })
   const totalPages = Math.ceil(total / PAGE_SIZE)
@@ -54,121 +59,149 @@ export default async function AdminSongsPage({
     skip: (page - 1) * PAGE_SIZE,
     take: PAGE_SIZE,
   })
-    async function deleteSong(id: string) {
-  "use server"
 
-  await prisma.song.delete({
-    where: { id }
-  })
-}
+  async function deleteSong(id: string) {
+    "use server"
 
+    await prisma.song.delete({
+      where: { id },
+    })
+  }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Pesme</h1>
-
-        <Link
-          href="/admin/songs/new"
-          className="bg-black text-white px-4 py-2 text-sm rounded"
-        >
-          + Nova pesma
-        </Link>
+    <div className="flex gap-6">
+      
+      {/* A-Z sidebar */}
+      <div className="flex flex-col gap-1 text-sm">
+        {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((l) => (
+          <Link
+            key={l}
+            href={`?letter=${l}`}
+            className={`px-2 py-1 rounded ${
+              letter === l
+                ? "bg-black text-white"
+                : "hover:bg-gray-200"
+            }`}
+          >
+            {l}
+          </Link>
+        ))}
       </div>
 
-      <form className="flex gap-4 mb-6">
-        <input
-          name="q"
-          defaultValue={q}
-          placeholder="Pretraga (naslov / izvođač)"
-          className="border p-2 w-64 rounded"
-        />
+      {/* main content */}
+      <div className="flex-1">
 
-        <select
-          name="sort"
-          defaultValue={sort}
-          className="border p-2 rounded"
-        >
-          <option value="createdAt">Najnovije</option>
-          <option value="title">Naslov A–Z</option>
-        </select>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Pesme</h1>
 
-        <button className="bg-gray-800 text-white px-4 rounded">
-          Primeni
-        </button>
-      </form>
-
-      {songs.length === 0 ? (
-        <p className="text-gray-500">Nema rezultata.</p>
-      ) : (
-        <table className="w-full text-sm border border-gray-200 rounded overflow-hidden">
-          <thead className="bg-gray-100 text-gray-900">
-            <tr>
-              <th className="p-3 text-left">Naslov</th>
-              <th className="p-3 text-left">Izvođač</th>
-              <th className="p-3 text-center">Kategorija</th>
-              <th className="p-3 text-center">Akcije</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {songs.map((song, i) => (
-              <tr
-                key={song.id}
-                className={`${
-                  i % 2 === 0 ? "bg-white" : "bg-gray-50"
-                } hover:bg-gray-200 transition text-gray-900`}
-              >
-                <td className="p-3">{song.title}</td>
-                <td className="p-3">{song.artist.name}</td>
-                <td className="p-3 text-center">
-                  {song.category || "-"}
-                </td>
-                <td className="p-3 text-center space-x-3">
-                  <Link
-                    href={`/admin/songs/${song.id}/edit`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Edit
-                  </Link>
-
-                  <span className="text-gray-400">|</span>
-
-                 <form action={deleteSong.bind(null, song.id)} className="inline">
-                <button
-                    type="submit"
-                     className="text-red-600 hover:underline"
-                   >
-                     Delete
-                </button>
-              </form>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-
-      {totalPages > 1 && (
-        <div className="flex gap-2 mt-6">
-          {Array.from({ length: totalPages }).map((_, i) => {
-            const p = i + 1
-            return (
-              <Link
-                key={p}
-                href={`?q=${q}&sort=${sort}&page=${p}`}
-                className={`px-3 py-1 border rounded ${
-                  p === page
-                    ? "bg-black text-white"
-                    : "bg-white hover:bg-gray-100"
-                }`}
-              >
-                {p}
-              </Link>
-            )
-          })}
+          <Link
+            href="/admin/songs/new"
+            className="bg-black text-white px-4 py-2 text-sm rounded"
+          >
+            + Nova pesma
+          </Link>
         </div>
-      )}
+
+        <form className="flex gap-4 mb-6">
+          <input
+            name="q"
+            defaultValue={q}
+            placeholder="Pretraga (naslov / izvođač)"
+            className="border p-2 w-64 rounded"
+          />
+
+          <select
+            name="sort"
+            defaultValue={sort}
+            className="border p-2 rounded"
+          >
+            <option value="createdAt">Najnovije</option>
+            <option value="title">Naslov A–Z</option>
+          </select>
+
+          <button className="bg-gray-800 text-white px-4 rounded">
+            Primeni
+          </button>
+        </form>
+
+        {songs.length === 0 ? (
+          <p className="text-gray-500">Nema rezultata.</p>
+        ) : (
+          <table className="w-full text-sm border border-gray-200 rounded overflow-hidden">
+            <thead className="bg-gray-100 text-gray-900">
+              <tr>
+                <th className="p-3 text-left">Naslov</th>
+                <th className="p-3 text-left">Izvođač</th>
+                <th className="p-3 text-center">Kategorija</th>
+                <th className="p-3 text-center">Akcije</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {songs.map((song, i) => (
+                <tr
+                  key={song.id}
+                  className={`${
+                    i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  } hover:bg-gray-200 transition text-gray-900`}
+                >
+                  <td className="p-3">{song.title}</td>
+                  <td className="p-3">{song.artist.name}</td>
+                  <td className="p-3 text-center">
+                    {song.category || "-"}
+                  </td>
+
+                  <td className="p-3 text-center space-x-3">
+                    <Link
+                      href={`/admin/songs/${song.id}/edit`}
+                      className="text-blue-600 hover:underline"
+                    >
+                      Edit
+                    </Link>
+
+                    <span className="text-gray-400">|</span>
+
+                    <form
+                      action={deleteSong.bind(null, song.id)}
+                      className="inline"
+                    >
+                      <button
+                        type="submit"
+                        className="text-red-600 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {totalPages > 1 && (
+          <div className="flex gap-2 mt-6">
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const p = i + 1
+
+              return (
+                <Link
+                  key={p}
+                  href={`?q=${q}&sort=${sort}&letter=${letter}&page=${p}`}
+                  className={`px-3 py-1 border rounded ${
+                    p === page
+                      ? "bg-black text-white"
+                      : "bg-white hover:bg-gray-100"
+                  }`}
+                >
+                  {p}
+                </Link>
+              )
+            })}
+          </div>
+        )}
+
+      </div>
     </div>
   )
 }
