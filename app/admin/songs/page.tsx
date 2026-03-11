@@ -24,8 +24,14 @@ export default async function AdminSongsPage({
   const where: Prisma.SongWhereInput = q
     ? {
         OR: [
-          { title: { contains: q } },
-          { artist: { name: { contains: q } } },
+          {
+            title: { contains: q },
+          },
+          {
+            artist: {
+              name: { contains: q },
+            },
+          },
         ],
       }
     : {}
@@ -36,17 +42,16 @@ export default async function AdminSongsPage({
   const songs = await prisma.song.findMany({
     where,
     include: { artist: true },
-    orderBy:
-      sort === "title"
-        ? { title: "asc" }
-        : { createdAt: "desc" },
+    orderBy: sort === "title" ? { title: "asc" } : { createdAt: "desc" },
     skip: (page - 1) * PAGE_SIZE,
     take: PAGE_SIZE,
   })
 
   async function deleteSong(id: string) {
     "use server"
-    await prisma.song.delete({ where: { id } })
+    await prisma.song.delete({
+      where: { id },
+    })
   }
 
   return (
@@ -70,11 +75,7 @@ export default async function AdminSongsPage({
           className="border p-2 w-64 rounded"
         />
 
-        <select
-          name="sort"
-          defaultValue={sort}
-          className="border p-2 rounded"
-        >
+        <select name="sort" defaultValue={sort} className="border p-2 rounded">
           <option value="createdAt">Najnovije</option>
           <option value="title">Naslov A–Z</option>
         </select>
@@ -107,9 +108,7 @@ export default async function AdminSongsPage({
               >
                 <td className="p-3">{song.title}</td>
                 <td className="p-3">{song.artist.name}</td>
-                <td className="p-3 text-center">
-                  {song.category || "-"}
-                </td>
+                <td className="p-3 text-center">{song.category || "-"}</td>
 
                 <td className="p-3 text-center space-x-3">
                   <Link
