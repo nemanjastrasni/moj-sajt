@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"
 export default async function ArtistsByLetter({ params }: { params: Promise<{ category: string; slovo: string }> }){
 
 const { category, slovo } = await params
-const letter = slovo
+const letter = slovo || ""
 
 let artists = []
 
@@ -39,7 +39,7 @@ return(
 <div style={{padding:"40px"}}>
 
 <h1 style={{fontSize:"28px",marginBottom:"20px"}}>
-Izvođači - {letter.toUpperCase()}
+Izvođači - {letter?.toUpperCase()}
 </h1>
 
 <div style={{display:"grid",gap:"8px"}}>
