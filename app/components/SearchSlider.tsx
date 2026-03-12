@@ -21,14 +21,18 @@ export default function SearchSlider() {
               onClick={(e) => e.stopPropagation()}
               value={query}
               onChange={async (e) => {
-                const value = e.target.value
-                setQuery(value)
-        
+  const value = e.target.value
+  setQuery(value)
 
-                const res = await fetch(`/api/search?q=${value}`)
-                const data = await res.json()
-                setResults(data)
-              }}
+  if (value.length < 2) {
+    setResults([])
+    return
+  }
+
+  const res = await fetch(`/api/search?q=${value}`)
+  const data = await res.json()
+  setResults(data)
+}}
               placeholder="Search..."
               className="bg-transparent outline-none w-full px-3 text-black"
             />

@@ -64,13 +64,13 @@ export default function Menu() {
 
         <div className="string w-[28rem] ml-36 relative group">
   <span>Kontakt</span>
-  <span className="absolute left-[12rem] -rotate-12 text-gray-400 text-sm pointer-events-none">
+  <span className="absolute left-[12rem] italic text-gray-300 pointer-events-none">
   Traženje pesama
 </span>
 
   <input
     type="text"
-    placeholder="Search songs..."
+    placeholder=""
     className="absolute top-0 left-[12rem] w-[16rem] opacity-0 group-hover:opacity-100 bg-transparent outline-none text-white"
   />
 </div>
