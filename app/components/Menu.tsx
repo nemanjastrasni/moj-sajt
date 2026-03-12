@@ -60,7 +60,9 @@ export default function Menu() {
         <Link href="/biografija" className="string w-96 ml-28 block">
           <span>Biografija</span>
         </Link>
+
 {/* SEARCH */}
+
         <div className="string w-[28rem] ml-36 relative group">
   <span>Kontakt</span>
   <span className="absolute left-[12rem] italic text-gray-400 opacity-30 pointer-events-none select-none">
@@ -68,12 +70,26 @@ export default function Menu() {
 </span>
 
   <input
-    type="text"
-    placeholder=""
-    className="absolute top-0 left-[12rem] w-[16rem] opacity-0 group-hover:opacity-100 bg-transparent outline-none text-white"
-  />
+  value={query}
+  onChange={async (e) => {
+    const value = e.target.value
+    setQuery(value)
+
+    if (value.length < 2) {
+      setResults([])
+      return
+    }
+
+    const res = await fetch(`/api/search?q=${value}`)
+    const data = await res.json()
+    setResults(data)
+  }}
+  type="text"
+  placeholder=""
+  className="absolute top-0 left-[12rem] w-[16rem] opacity-0 group-hover:opacity-100 bg-transparent outline-none text-white"
+/>
   {results.length > 0 && (
-  <div className="fixed top-[60%] left-[26rem] w-[20rem] bg-black text-white shadow-lg rounded z-[9999]">
+  <div className="relative mt-2 w-[20rem] bg-black text-white shadow-lg rounded z-[999]">
     {results.map((song) => (
       <a
         key={song.id}
@@ -87,11 +103,6 @@ export default function Menu() {
 )}
 </div>
         
-        
-        
-
-        
-
         {/* ✅ ADMIN LINK – samo admin */}
         {session?.user?.role === "admin" && (
           <Link
