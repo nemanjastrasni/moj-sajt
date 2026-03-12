@@ -62,18 +62,16 @@ export default function Menu() {
           <span>Biografija</span>
         </Link>
 
-        <Link href="/kontakt" className="string w-[28rem] ml-36 block">
-          <span>Kontakt</span>
-        </Link>
-
-        {/* SEARCH */}
         <div className="string w-[28rem] ml-36 relative group">
+  <span>Kontakt</span>
+
   <input
     type="text"
     placeholder="Search songs..."
-    className="absolute top-0 left-0 w-full h-full opacity-0 group-hover:opacity-100 bg-transparent outline-none px-2 text-white"
+    className="absolute top-0 left-[12rem] w-[16rem] opacity-0 group-hover:opacity-100 bg-transparent outline-none text-white"
   />
 </div>
+        {/* SEARCH */}
         
         
 
