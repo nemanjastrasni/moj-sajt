@@ -28,6 +28,19 @@ export default function SearchSlider() {
     setResults([])
     return
   }
+  {results.length > 0 && (
+  <div className="absolute top-8 left-[12rem] w-[20rem] bg-black text-white shadow-lg rounded">
+    {results.map((song) => (
+      <a
+        key={song.id}
+        href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+        className="block px-3 py-2 hover:bg-gray-800"
+      >
+        {song.artist.name} – {song.title}
+      </a>
+    ))}
+  </div>
+)}
 
   const res = await fetch(`/api/search?q=${value}`)
   const data = await res.json()
