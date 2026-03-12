@@ -9,6 +9,9 @@ export default function Menu() {
   const [openPesme, setOpenPesme] = useState(false)
   const { data: session } = useSession()
 
+  const [query, setQuery] = useState("")
+  const [results, setResults] = useState<any[]>([])
+
   return (
    <nav className="relative z-50 flex justify-between items-start pt-6 pb-6 px-10 bg-red-700 text-black shadow-md overflow-hidden">
       {/* LEVA STRANA */}
@@ -17,8 +20,7 @@ export default function Menu() {
         <Link href="/" className="string w-64 block">
           <span>Home</span>
         </Link>
-      {/* SEARCH */}
-      <SearchSlider /> 
+      
         {/* PESME DROPDOWN */}
         <div>
           <button
@@ -63,6 +65,39 @@ export default function Menu() {
         <Link href="/kontakt" className="string w-[28rem] ml-36 block">
           <span>Kontakt</span>
         </Link>
+        
+        {/* SEARCH */}
+
+        <div className="relative group w-[28rem] ml-36">
+        <div className="h-[2px] bg-gray-300 group-hover:h-10 transition-all duration-300 rounded"></div>
+
+         <input
+  value={query}
+  onChange={async (e) => {
+    const value = e.target.value
+    setQuery(value)
+
+    const res = await fetch(`/api/search?q=${value}`)
+    const data = await res.json()
+    setResults(data)
+  }}
+  placeholder="Search..."
+  className="absolute top-0 left-0 w-full h-10 opacity-0 group-hover:opacity-100 bg-transparent outline-none px-3 text-white"
+/>
+{results.length > 0 && (
+  <div className="absolute top-10 left-0 w-full bg-black text-white shadow-lg rounded">
+    {results.map((song) => (
+      <Link
+        key={song.id}
+        href={`/pesme/${song.category}/${song.artistSlug}/${song.slug}`}
+        className="block px-3 py-2 hover:bg-gray-800"
+      >
+        {song.artist} – {song.title}
+      </Link>
+    ))}
+  </div>
+)}
+        </div>
 
         {/* ✅ ADMIN LINK – samo admin */}
         {session?.user?.role === "admin" && (
