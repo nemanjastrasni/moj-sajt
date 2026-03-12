@@ -13,7 +13,7 @@ export default function Menu() {
   const [results, setResults] = useState<any[]>([])
 
   return (
-   <nav className="relative z-50 flex justify-between items-start pt-6 pb-6 px-10 bg-red-700 text-black shadow-md overflow-hidden">
+   <nav className="relative z-50 flex justify-between items-start pt-6 pb-6 px-10 bg-red-700 text-black shadow-md overflow-visible">
       {/* LEVA STRANA */}
       <div className="relative z-10 space-y-6">
 
