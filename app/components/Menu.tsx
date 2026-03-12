@@ -31,7 +31,7 @@ export default function Menu() {
           </button>
 
           <div
-            className={`overflow-hidden transition-all duration-500 ease-in-out ${
+            className={` transition-all duration-500 ease-in-out ${
               openPesme ? "max-h-40 opacity-100 mt-6" : "max-h-0 opacity-0"
             }`}
           >
