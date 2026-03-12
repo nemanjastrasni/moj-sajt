@@ -16,7 +16,7 @@ export default function SearchSlider() {
         flex items-center justify-center`}
       >
         {open && (
-          <div className="relative w-full">
+          <div className="relative w-full overflow-visible">
             <input
               value={query}
               onChange={async (e) => {
