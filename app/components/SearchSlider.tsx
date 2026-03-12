@@ -10,18 +10,20 @@ export default function SearchSlider() {
   return (
     <div className="relative flex items-center">
       <div
-        onClick={() => setOpen(!open)}
-        className={`bg-yellow-500 rounded-full transition-all duration-300 cursor-pointer
+        onClick={() => !open && setOpen(true)}
+        className={`bg-gradient-to-r from-gray-200 via-gray-400 to-gray-200 rounded-full transition-all duration-300 cursor-pointer
         ${open ? "w-64 h-10" : "w-3 h-20"}
         flex items-center justify-center`}
       >
         {open && (
           <div className="relative w-full">
             <input
+              onClick={(e) => e.stopPropagation()}
               value={query}
               onChange={async (e) => {
                 const value = e.target.value
                 setQuery(value)
+        
 
                 const res = await fetch(`/api/search?q=${value}`)
                 const data = await res.json()
