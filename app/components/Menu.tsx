@@ -89,12 +89,12 @@ export default function Menu() {
   className="absolute top-0 left-[12rem] w-[16rem] opacity-0 group-hover:opacity-100 bg-transparent outline-none text-white"
 />
   {results.length > 0 && (
-  <div className="relative mt-2 w-[20rem] bg-black text-white shadow-lg rounded z-[999]">
+  <div className="relative mt-2 w-[22rem] bg-gradient-to-b from-neutral-900/90 to-neutral-800/90 backdrop-blur-md text-gray-100 shadow-2xl rounded-xl border border-gray-600/30 z-[999]">
     {results.map((song) => (
       <a
         key={song.id}
         href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
-        className="block px-3 py-2 hover:bg-gray-800"
+        className="block px-4 py-2 hover:bg-white/10 transition rounded-md font-medium tracking-wide"
       >
         {song.artist.name} – {song.title}
       </a>

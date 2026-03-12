@@ -15,7 +15,8 @@ html, body {
 body {
   background: radial-gradient(circle at center, #111 0%, #000 100%);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  font-family: "Georgia", "Palatino Linotype", serif;
+  
 }
 
 /* ========================= */
