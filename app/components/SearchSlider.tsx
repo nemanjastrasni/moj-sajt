@@ -18,37 +18,21 @@ export default function SearchSlider() {
         {open && (
           <div className="relative w-full">
             <input
-              onClick={(e) => e.stopPropagation()}
               value={query}
               onChange={async (e) => {
-  const value = e.target.value
-  setQuery(value)
+                const value = e.target.value
+                setQuery(value)
 
-  if (value.length < 2) {
-    setResults([])
-    return
-  }
-  {results.length > 0 && (
-  <div className="absolute top-8 left-[12rem] w-[20rem] bg-black text-white shadow-lg rounded">
-    {results.map((song) => (
-      <a
-        key={song.id}
-        href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
-        className="block px-3 py-2 hover:bg-gray-800"
-      >
-        {song.artist.name} – {song.title}
-      </a>
-    ))}
-  </div>
-)}
+                if (value.length < 2) {
+                  setResults([])
+                  return
+                }
 
-  const res = await fetch(`/api/search?q=${value}`)
-  const data = await res.json()
-  setResults(data)
-}}
-
-
-              placeholder="Search..."
+                const res = await fetch(`/api/search?q=${value}`)
+                const data = await res.json()
+                setResults(data)
+              }}
+              placeholder=""
               className="bg-transparent outline-none w-full px-3 text-black"
             />
 
@@ -57,10 +41,10 @@ export default function SearchSlider() {
                 {results.map((song) => (
                   <a
                     key={song.id}
-                    href={`/pesme/${song.category}/${song.artistSlug}/${song.slug}`}
+                    href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
                     className="block px-3 py-2 hover:bg-gray-200"
                   >
-                    {song.artist} – {song.title}
+                    {song.artist.name} – {song.title}
                   </a>
                 ))}
               </div>
