@@ -1,16 +1,11 @@
-// app/api/search/route.ts
-
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
-export async function GET(request: Request) {
-
-  const { searchParams } = new URL(request.url)
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
   const q = searchParams.get("q") || ""
 
-  if (!q) {
-    return NextResponse.json({ songs: [], artists: [] })
-  }
+  if (!q) return NextResponse.json([])
 
   const songs = await prisma.song.findMany({
     where: {
@@ -19,22 +14,8 @@ export async function GET(request: Request) {
         mode: "insensitive"
       }
     },
-    include: { artist: true },
-    take: 5
+    take: 10
   })
 
-  const artists = await prisma.artist.findMany({
-    where: {
-      name: {
-        contains: q,
-        mode: "insensitive"
-      }
-    },
-    take: 5
-  })
-
-  return NextResponse.json({
-    songs,
-    artists
-  })
+  return NextResponse.json(songs)
 }

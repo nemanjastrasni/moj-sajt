@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { signIn, signOut, useSession } from "next-auth/react"
+import SearchSlider from "./SearchSlider"
 
 export default function Menu() {
   const [openPesme, setOpenPesme] = useState(false)
@@ -16,7 +17,8 @@ export default function Menu() {
         <Link href="/" className="string w-64 block">
           <span>Home</span>
         </Link>
-
+      {/* SEARCH */}
+      <SearchSlider /> 
         {/* PESME DROPDOWN */}
         <div>
           <button
