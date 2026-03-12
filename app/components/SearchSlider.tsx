@@ -33,6 +33,8 @@ export default function SearchSlider() {
   const data = await res.json()
   setResults(data)
 }}
+
+
               placeholder="Search..."
               className="bg-transparent outline-none w-full px-3 text-black"
             />

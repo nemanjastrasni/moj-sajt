@@ -64,7 +64,7 @@ export default function Menu() {
 
         <div className="string w-[28rem] ml-36 relative group">
   <span>Kontakt</span>
-  <span className="absolute left-[12rem] italic text-gray-300 pointer-events-none">
+  <span className="absolute left-[12rem] italic text-gray-400 opacity-30 pointer-events-none select-none">
   Traženje pesama
 </span>
 
