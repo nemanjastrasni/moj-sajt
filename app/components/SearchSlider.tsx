@@ -37,7 +37,7 @@ export default function SearchSlider() {
             />
 
             {results.length > 0 && (
-              <div className="absolute top-10 left-0 w-full bg-white text-black shadow-lg rounded">
+              <div className="absolute top-10 left-0 w-full bg-white text-black shadow-lg rounded z-50">
                 {results.map((song) => (
                   <a
                     key={song.id}
