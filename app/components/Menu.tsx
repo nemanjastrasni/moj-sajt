@@ -60,7 +60,7 @@ export default function Menu() {
         <Link href="/biografija" className="string w-96 ml-28 block">
           <span>Biografija</span>
         </Link>
-
+{/* SEARCH */}
         <div className="string w-[28rem] ml-36 relative group">
   <span>Kontakt</span>
   <span className="absolute left-[12rem] italic text-gray-400 opacity-30 pointer-events-none select-none">
@@ -73,7 +73,7 @@ export default function Menu() {
     className="absolute top-0 left-[12rem] w-[16rem] opacity-0 group-hover:opacity-100 bg-transparent outline-none text-white"
   />
   {results.length > 0 && (
-  <div className="absolute top-12 left-[12rem] w-[20rem] bg-black text-white shadow-lg rounded z-[999]">
+  <div className="fixed top-[60%] left-[26rem] w-[20rem] bg-black text-white shadow-lg rounded z-[9999]">
     {results.map((song) => (
       <a
         key={song.id}
@@ -86,7 +86,7 @@ export default function Menu() {
   </div>
 )}
 </div>
-        {/* SEARCH */}
+        
         
         
 
