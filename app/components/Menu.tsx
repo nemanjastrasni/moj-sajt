@@ -14,7 +14,6 @@ export default function Menu() {
 
   return (
    <nav className="relative z-50 flex justify-between items-start pt-6 pb-6 px-10 bg-red-700 text-black shadow-md overflow-visible">
-      {/* LEVA STRANA */}
       <div className="relative z-10 space-y-6">
 
         <Link href="/" className="string w-64 block">
@@ -73,6 +72,19 @@ export default function Menu() {
     placeholder=""
     className="absolute top-0 left-[12rem] w-[16rem] opacity-0 group-hover:opacity-100 bg-transparent outline-none text-white"
   />
+  {results.length > 0 && (
+  <div className="absolute top-12 left-[12rem] w-[20rem] bg-black text-white shadow-lg rounded z-[999]">
+    {results.map((song) => (
+      <a
+        key={song.id}
+        href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+        className="block px-3 py-2 hover:bg-gray-800"
+      >
+        {song.artist.name} – {song.title}
+      </a>
+    ))}
+  </div>
+)}
 </div>
         {/* SEARCH */}
         
