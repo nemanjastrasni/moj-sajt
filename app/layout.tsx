@@ -10,6 +10,8 @@ const poppins = Poppins({
   weight: ["400", "500", "700", "800"],
 })
 
+
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://gitarakordi.com"),
   title: {

@@ -1,19 +1,100 @@
 const axios = require("axios")
 const cheerio = require("cheerio")
 const { PrismaClient } = require("@prisma/client")
-
 const prisma = new PrismaClient()
-
 async function getWikiPage(name) {
-
 const wikis = ["sr","sh","en"]
+const fs = require("fs")
+const path = require("path")
+const sharp = require("sharp")
+const DISCOGS_TOKEN = "YOUR_DISCOGS_TOKEN"
+
+async function getArtistGenre(name) {
+
+try {
+
+const search = await axios.get(
+`https://api.discogs.com/database/search?q=${encodeURIComponent(name)}&type=artist&token=${DISCOGS_TOKEN}`
+)
+
+if (!search.data.results.length) return null
+
+const result = search.data.results[0]
+
+if (!result.genre) return null
+
+return result.genre[0]
+
+} catch {
+return null
+}
+
+}
+
+async function getDiscogsAlbums(name) {
+
+try {
+
+const search = await axios.get(
+`https://api.discogs.com/database/search?q=${encodeURIComponent(name)}&type=artist&token=${DISCOGS_TOKEN}`
+)
+
+if (!search.data.results.length) return []
+
+const result = search.data.results.find(r =>
+r.type === "artist" &&
+(
+(r.country && ["Yugoslavia","Serbia","Croatia","Bosnia","Slovenia","Macedonia"].includes(r.country)) ||
+(r.title && r.title.toLowerCase().includes(name.toLowerCase()))
+)
+)
+
+if (!result) return []
+
+const artistId = result.id
+
+const releases = await axios.get(
+`https://api.discogs.com/artists/${artistId}/releases?token=${DISCOGS_TOKEN}`
+)
+
+return releases.data.releases
+.filter(r => r.type === "master")
+.slice(0,10)
+.map(r => ({
+title: r.title,
+year: r.year
+}))
+
+} catch {
+return []
+}
+
+}
+
+async function saveArtistImage(url, slug) {
+
+const file = path.join(__dirname, "../public/artists", `${slug}.jpg`)
+
+const res = await axios({
+url,
+responseType: "arraybuffer"
+})
+
+await sharp(res.data)
+.resize(1200, 675, { fit: "cover" })
+.webp({ quality: 85 })
+.toFile(file.replace(".jpg",".webp"))
+
+return `/artists/${slug}.webp`
+}
 
 for (const lang of wikis) {
 
 try {
 
 const searchUrl =
-`https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(name)}&format=json`
+`https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(name + " muzika")}&format=json`
+
 
 const search = await axios.get(searchUrl,{
 headers:{
@@ -45,9 +126,34 @@ return null
 
 function extractData(html) {
 
+    const image = $(".infobox img").first().attr("src")
+
+let imageUrl = null
+
+const img = $(".infobox img").filter((i,el)=>{
+const alt = $(el).attr("alt") || ""
+return !alt.toLowerCase().includes("logo")
+}).first()
+
+if (img.length) {
+
+const src = img.attr("src")
+const width = parseInt(img.attr("width") || "0")
+
+if (width >= 900) {
+imageUrl = src.startsWith("http") ? src : `https:${src}`
+imageUrl = imageUrl.replace(/\/\d+px/, "/1200px")
+}
+
+}
+
 const $ = cheerio.load(html)
 
-const bio = $("p").first().text()
+const bio = $(".mw-parser-output > p")
+  .map((i,el)=>$(el).text())
+  .get()
+  .slice(0,6)
+  .join("\n\n")
 
 let members = []
 
@@ -64,7 +170,10 @@ members = td.text().split("\n").map(x=>x.trim()).filter(Boolean)
 
 const albums = []
 
-$("li").each((i,li)=>{
+$("#Discography, #Diskografija")
+.nextUntil("h2")
+.find("li")
+.each((i,li)=>{
 
 const text = $(li).text()
 if (
@@ -87,7 +196,7 @@ year
 
 })
 
-return { bio, members, albums }
+return { bio, members, albums, imageUrl }
 }
 
 async function run() {
@@ -112,7 +221,11 @@ where: { id: artist.id },
 data: {
 bio: data.bio,
 members: data.members,
-discography: data.albums
+discography: data.albums.length
+? data.albums
+: await getDiscogsAlbums(artist.name),
+genre: await getArtistGenre(artist.name),
+image: data.imageUrl ? await saveArtistImage(data.imageUrl, artist.slug) : null
 }
 })
 

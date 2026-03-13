@@ -1,17 +1,26 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { signIn, signOut, useSession } from "next-auth/react"
-import SearchSlider from "./SearchSlider"
+
 
 export default function Menu() {
   const [openPesme, setOpenPesme] = useState(false)
   const { data: session } = useSession()
-
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<any[]>([])
+  const [visits,setVisits] = useState(0)
+  
 
+  useEffect(()=>{
+fetch("/api/analytics",{method:"POST"})
+
+fetch("/api/analytics-count")
+.then(r=>r.json())
+.then(d=>setVisits(d.count))
+},[])
+  
   return (
    <nav className="relative z-50 flex justify-between items-start pt-6 pb-6 px-10 bg-red-700 text-black shadow-md overflow-visible">
       <div className="relative z-10 space-y-6">
@@ -19,6 +28,8 @@ export default function Menu() {
         <Link href="/" className="string w-64 block">
           <span>Home</span>
         </Link>
+
+        
       
         {/* PESME DROPDOWN */}
         <div>
@@ -116,11 +127,17 @@ export default function Menu() {
 
       {/* DESNA STRANA – LOGIN */}
       <div className="relative z-10 flex items-center gap-4">
+        {session?.user?.role === "admin" && (
+  <div className="text-xs text-white mr-4">
+    👥 {visits}
+  </div>
+)}
         {!session ? (
           <button
             onClick={() => signIn("github")}
             className="px-5 py-2 bg-black text-white rounded-lg hover:opacity-80 transition"
           >
+            
             Login with GitHub
           </button>
         ) : (
@@ -132,6 +149,11 @@ export default function Menu() {
                 className="w-10 h-10 rounded-full border"
               />
             )}
+            {session?.user?.role === "admin" && (
+  <div className="text-xs text-white mr-4">
+    👥 {visits}
+  </div>
+)}
 
             {/* IME + ROLE */}
             <div className="flex flex-col leading-tight">
