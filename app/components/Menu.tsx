@@ -5,6 +5,7 @@ import Link from "next/link"
 import { signIn, signOut, useSession } from "next-auth/react"
 
 
+
 export default function Menu() {
   const [openPesme, setOpenPesme] = useState(false)
   const { data: session } = useSession()
@@ -153,6 +154,12 @@ fetch("/api/analytics-count")
   <div className="text-xs text-white mr-4">
     👥 {visits}
   </div>
+)}
+   {/*login dugme */}
+{session ? (
+  <button onClick={() => signOut()}>Logout</button>
+) : (
+  <button onClick={() => signIn()}>Login</button>
 )}
 
             {/* IME + ROLE */}

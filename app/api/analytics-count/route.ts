@@ -3,10 +3,12 @@ import { NextResponse } from "next/server"
 
 export async function GET(){
 
+const today = new Date().toISOString().slice(0,10)
+
 const data: any = await prisma.$queryRaw`
-SELECT SUM(visits) as total FROM analytics
+SELECT visits FROM analytics WHERE day = ${today}
 `
 
-return NextResponse.json({count:data[0].total || 0})
+return NextResponse.json({count:data[0]?.visits || 0})
 
 }
