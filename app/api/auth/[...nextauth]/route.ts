@@ -6,8 +6,6 @@ import { prisma } from "@/lib/prisma"
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
 
-  debug: true,
-
   secret: process.env.NEXTAUTH_SECRET,
 
   providers: [
@@ -19,22 +17,18 @@ const handler = NextAuth({
 
   callbacks: {
     async jwt({ token }) {
-
       if (token.email === "nemanjaivanovic979@gmail.com") {
         token.role = "admin"
       } else {
         token.role = "user"
       }
-
       return token
     },
 
     async session({ session, token }) {
-
       if (session.user) {
         session.user.role = token.role
       }
-
       return session
     },
   },
