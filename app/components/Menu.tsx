@@ -139,7 +139,7 @@ fetch("/api/analytics-count")
   {/* USER LOGIN */}
   {!session ? (
     <button
-      onClick={() => signIn()}
+      onClick={() => signIn("github")}
       className="px-5 py-2 bg-black text-white rounded-lg hover:opacity-80 transition"
     >
       Login
@@ -173,7 +173,7 @@ fetch("/api/analytics-count")
       </div>
 
       <button
-        onClick={() => signOut({ callbackUrl: "/" })}
+        onClick={() => signOut({ callbackUrl: "/api/auth/signin" })}
         className="px-3 py-1 bg-gray-200 rounded-md text-sm hover:bg-gray-300 transition"
       >
         Logout
