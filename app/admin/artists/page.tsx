@@ -12,26 +12,29 @@ export default async function AdminArtistsPage({
   const category = params.category ?? ""
   const letter = params.letter ?? ""
 
-  const artists = await prisma.artist.findMany({
-    where: {
-      ...(search && {
-        name: {
-          contains: search,
-          mode: "insensitive",
-        },
-      }),
-      ...(category && {
-        category,
-      }),
-      ...(letter && {
-        name: {
-          startsWith: letter,
-          mode: "insensitive",
-        },
-      }),
-    },
-    orderBy: { name: "asc" },
-  })
+ const artists = await prisma.artist.findMany({
+  where: {
+    ...(search && {
+      name: {
+        contains: search,
+        mode: "insensitive",
+      },
+    }),
+    ...(category && { category }),
+    ...(letter && {
+      name: {
+        startsWith: letter,
+        mode: "insensitive",
+      },
+    }),
+  },
+  include: {
+    _count: {
+      select: { songs: true }
+    }
+  },
+  orderBy: { name: "asc" },
+})
 
   return (
     <div className="max-w-6xl">
@@ -96,6 +99,7 @@ export default async function AdminArtistsPage({
               <th className="p-3 text-left">Kategorija</th>
               <th className="p-3 text-center">Slika</th>
               <th className="p-3 text-center">Akcije</th>
+              <th className="p-3 text-center">Pesama</th>
             </tr>
           </thead>
 
@@ -125,6 +129,9 @@ export default async function AdminArtistsPage({
 
                 <td className="p-3 text-gray-500">{artist.slug}</td>
                 <td className="p-3">{artist.category ?? "-"}</td>
+                <td className="p-3 text-center">
+  {artist._count.songs}
+</td>
 
                 <td className="p-3 text-center">
                   {artist.image ? (
