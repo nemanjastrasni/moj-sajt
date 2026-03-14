@@ -1,6 +1,14 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 
+async function deleteArtist(id: string) {
+"use server"
+
+await prisma.artist.delete({
+where: { id }
+})
+}
+
 export default async function AdminArtistsPage({
   searchParams,
 }: {
@@ -99,7 +107,7 @@ export default async function AdminArtistsPage({
               <th className="p-3 text-left">Kategorija</th>
               <th className="p-3 text-center">Slika</th>
               <th className="p-3 text-center">Pesama</th>
-              <th className="p-3 text-center">Akcije</th>
+              <th className="p-3 text-center w-32">Akcije</th>
             </tr>
           </thead>
 
@@ -129,7 +137,7 @@ export default async function AdminArtistsPage({
 
                 <td className="p-3 text-gray-500">{artist.slug}</td>
                 <td className="p-3">{artist.category ?? "-"}</td>
-                <td className="p-3 text-center">
+                <td className="p-3 text-center whitespace-nowrap">
                   {artist.image ? (
                     <img
                       src={artist.image}
@@ -151,7 +159,7 @@ export default async function AdminArtistsPage({
                   </Link>
                 <span className="mx-2 text-gray-400">|</span>
 
-                <form method="POST" action={`/admin/artists/${artist.id}/delete`} className="inline">
+                <form action={deleteArtist.bind(null, artist.id)} className="inline">
                  <button className="text-red-600 hover:underline">
                     Delete
                  </button>

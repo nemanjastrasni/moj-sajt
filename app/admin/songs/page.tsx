@@ -9,6 +9,7 @@ type SearchParams = {
   sort?: string
   page?: string
   letter?: string
+  artist?: string
 }
 
 export default async function AdminSongsPage({
@@ -20,6 +21,7 @@ export default async function AdminSongsPage({
 
   const q = params?.q ?? ""
   const letter = params?.letter ?? ""
+  const artist = params?.artist ?? ""
   const sort = params?.sort ?? "createdAt"
   const page = Number(params?.page || 1)
 
@@ -33,8 +35,12 @@ export default async function AdminSongsPage({
   ...(letter && {
     title: { startsWith: letter, mode: "insensitive" },
   }),
-}
-
+   ...(artist && {
+    artist: {
+      name: { contains: artist, mode: "insensitive" }
+    }
+  }),
+ }
   const total = await prisma.song.count({ where })
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
@@ -73,6 +79,18 @@ export default async function AdminSongsPage({
           placeholder="Pretraga (naslov / izvođač)"
           className="border p-2 w-64 rounded"
         />
+        <input
+name="artist"
+defaultValue={artist}
+placeholder="Izvođač"
+className="border p-2 w-48 rounded"
+/>
+        <select name="letter" defaultValue={letter} className="border p-2 rounded">
+            <option value="">Sva slova</option>
+             {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((l) => (
+<option key={l} value={l}>{l}</option>
+    ))}
+             </select>
 
         <select name="sort" defaultValue={sort} className="border p-2 rounded">
            <option value="">Sve kategorije</option>

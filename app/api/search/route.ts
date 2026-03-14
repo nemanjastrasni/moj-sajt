@@ -14,14 +14,14 @@ export async function GET(req: Request) {
       OR: [
         {
           title: {
-            contains: q,
+            startsWith: q,
             mode: "insensitive"
           }
         },
         {
           artist: {
             name: {
-              contains: q,
+              startsWith: q,
               mode: "insensitive"
             }
           }
