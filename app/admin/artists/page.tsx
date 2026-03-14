@@ -116,7 +116,7 @@ export default async function AdminArtistsPage({
                   </Link>
 
                   <Link
-                    href={`/admin/artists/${artist.id}/merge`}
+                    href={`/admin/artists/${artist.id}/edit/merge`}
                     className="text-purple-600 ml-2"
                   >
                     Merge

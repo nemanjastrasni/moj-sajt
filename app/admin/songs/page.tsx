@@ -8,6 +8,7 @@ type SearchParams = {
   q?: string
   sort?: string
   page?: string
+  letter?: string
 }
 
 export default async function AdminSongsPage({
@@ -18,23 +19,21 @@ export default async function AdminSongsPage({
   const params = await searchParams
 
   const q = params?.q ?? ""
+  const letter = params?.letter ?? ""
   const sort = params?.sort ?? "createdAt"
   const page = Number(params?.page || 1)
 
-  const where: Prisma.SongWhereInput = q
-    ? {
-        OR: [
-          {
-           title: { contains: q, mode: "insensitive" },
-          },
-          {
-            artist: {
-              name: { contains: q, mode: "insensitive" }
-            },
-          },
-        ],
-      }
-    : {}
+  const where: Prisma.SongWhereInput = {
+  ...(q && {
+    OR: [
+      { title: { contains: q, mode: "insensitive" } },
+      { artist: { name: { contains: q, mode: "insensitive" } } },
+    ],
+  }),
+  ...(letter && {
+    title: { startsWith: letter, mode: "insensitive" },
+  }),
+}
 
   const total = await prisma.song.count({ where })
   const totalPages = Math.ceil(total / PAGE_SIZE)
