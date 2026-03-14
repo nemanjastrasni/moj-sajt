@@ -24,25 +24,30 @@ const handler = NextAuth({
   ],
 
   callbacks: {
-    async jwt({ token }) {
 
-      if (token.email === "nemanjaivanovic979@gmail.com") {
-        token.role = "admin"
-      } else {
-        token.role = "user"
-      }
+  async jwt({ token }) {
 
-      return token
-    },
+    if (token.email === "nemanjaivanovic979@gmail.com") {
+      token.role = "admin"
+    } else {
+      token.role = "user"
+    }
 
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.role = token.role
-      }
-      return session
-    },
+    return token
   },
 
+  async session({ session, token }) {
+    if (session.user) {
+      session.user.role = token.role
+    }
+    return session
+  },
+
+  async redirect({ url, baseUrl }) {
+    return baseUrl
+  },
+
+},
   secret: process.env.NEXTAUTH_SECRET,
 })
 

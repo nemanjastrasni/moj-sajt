@@ -173,7 +173,7 @@ fetch("/api/analytics-count")
       </div>
 
       <button
-        onClick={() => signOut()}
+        onClick={() => signOut({ callbackUrl: "/" })}
         className="px-3 py-1 bg-gray-200 rounded-md text-sm hover:bg-gray-300 transition"
       >
         Logout
