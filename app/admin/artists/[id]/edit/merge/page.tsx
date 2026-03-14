@@ -32,16 +32,22 @@ export default async function MergeArtist({
       <h1>Merge {artist?.name}</h1>
 
       <form action={merge}>
-        <select name="targetId">
-          {artists.map(a => (
-            <option key={a.id} value={a.id}>
-              {a.name}
-            </option>
-          ))}
-        </select>
+              <select name="targetId">
+              {artists.map(a => (
+              <option key={a.id} value={a.id}>
+               {a.name}
+                 </option>
+       ))}
+           </select>
 
-        <button type="submit">Merge</button>
-      </form>
+          <button
+          type="submit"
+          className="bg-black text-white px-4 py-2 rounded ml-2"
+        >
+         Merge
+          </button>
+
+          </form>
     </div>
   )
 }
