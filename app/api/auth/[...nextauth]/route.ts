@@ -5,8 +5,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 
 const handler = NextAuth({
-  debug: true,
- // adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma),
 
   session: {
     strategy: "jwt",
@@ -25,9 +24,20 @@ const handler = NextAuth({
   ],
 
   callbacks: {
+    async jwt({ token }) {
+
+      if (token.email === "nemanjaivanovic979@gmail.com") {
+        token.role = "admin"
+      } else {
+        token.role = "user"
+      }
+
+      return token
+    },
+
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.sub
+        session.user.role = token.role
       }
       return session
     },
