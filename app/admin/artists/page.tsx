@@ -98,8 +98,8 @@ export default async function AdminArtistsPage({
               <th className="p-3 text-left">Slug</th>
               <th className="p-3 text-left">Kategorija</th>
               <th className="p-3 text-center">Slika</th>
-              <th className="p-3 text-center">Akcije</th>
               <th className="p-3 text-center">Pesama</th>
+              <th className="p-3 text-center">Akcije</th>
             </tr>
           </thead>
 
@@ -130,10 +130,6 @@ export default async function AdminArtistsPage({
                 <td className="p-3 text-gray-500">{artist.slug}</td>
                 <td className="p-3">{artist.category ?? "-"}</td>
                 <td className="p-3 text-center">
-  {artist._count.songs}
-</td>
-
-                <td className="p-3 text-center">
                   {artist.image ? (
                     <img
                       src={artist.image}
@@ -146,6 +142,7 @@ export default async function AdminArtistsPage({
                 </td>
 
                 <td className="p-3 text-center">
+                  {artist._count.songs}
                   <Link
                     href={`/admin/artists/${artist.id}/edit`}
                     className="text-blue-600 hover:underline"
@@ -154,7 +151,7 @@ export default async function AdminArtistsPage({
                   </Link>
                 <span className="mx-2 text-gray-400">|</span>
 
-                <form action={`/admin/artists/${artist.id}/delete`} className="inline">
+                <form method="POST" action={`/admin/artists/${artist.id}/delete`} className="inline">
                  <button className="text-red-600 hover:underline">
                     Delete
                  </button>
