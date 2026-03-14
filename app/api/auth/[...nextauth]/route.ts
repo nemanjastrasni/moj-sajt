@@ -5,7 +5,8 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 
 const handler = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  debug: true,
+ // adapter: PrismaAdapter(prisma),
 
   session: {
     strategy: "jwt",
