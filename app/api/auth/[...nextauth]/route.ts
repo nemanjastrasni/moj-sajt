@@ -5,6 +5,8 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 
 const handler = NextAuth({
+  useSecureCookies: true,
+  
   adapter: PrismaAdapter(prisma),
 
   session: {
