@@ -115,79 +115,73 @@ fetch("/api/analytics-count")
 )}
 </div>
         
-        {/* ✅ ADMIN LINK – samo admin */}
-        {session?.user?.role === "admin" && (
-          <Link
-            href="/admin"
-            className="string w-[30rem] ml-44 block font-semibold"
-          >
-            <span>Admin</span>
-          </Link>
-        )}
+       {/* ✅ ADMIN LINK – samo admin */}
+{session?.user?.role === "admin" && (
+  <Link
+    href="/admin"
+    className="string w-[30rem] ml-44 block font-semibold"
+  >
+    <span>Admin</span>
+  </Link>
+)}
+</div>
+
+{/* DESNA STRANA – LOGIN (USER) */}
+<div className="relative z-10 flex items-center gap-4">
+
+  {/* ADMIN ANALYTICS */}
+  {session?.user?.role === "admin" && (
+    <div className="text-xs text-white mr-4">
+      👥 {visits}
+    </div>
+  )}
+
+  {/* USER LOGIN */}
+  {!session ? (
+    <button
+      onClick={() => signIn()}
+      className="px-5 py-2 bg-black text-white rounded-lg hover:opacity-80 transition"
+    >
+      Login
+    </button>
+  ) : (
+    <div className="flex items-center gap-3">
+
+      {session.user?.image && (
+        <img
+          src={session.user.image}
+          alt="avatar"
+          className="w-10 h-10 rounded-full border"
+        />
+      )}
+
+      {/* IME + ROLE */}
+      <div className="flex flex-col leading-tight">
+        <span className="text-sm font-medium text-red-700">
+          {session.user?.name}
+        </span>
+
+        <span
+          className={`text-[10px] uppercase tracking-wide font-semibold ${
+            session.user?.role === "admin"
+              ? "text-blue-400"
+              : "text-gray-600"
+          }`}
+        >
+          {session.user?.role}
+        </span>
       </div>
 
-      {/* DESNA STRANA – LOGIN */}
-      <div className="relative z-10 flex items-center gap-4">
-        {session?.user?.role === "admin" && (
-  <div className="text-xs text-white mr-4">
-    👥 {visits}
-  </div>
-)}
-        {!session ? (
-          <button
-            onClick={() => signIn("github")}
-            className="px-5 py-2 bg-black text-white rounded-lg hover:opacity-80 transition"
-          >
-            
-            Login with GitHub
-          </button>
-        ) : (
-          <div className="flex items-center gap-3">
-            {session.user?.image && (
-              <img
-                src={session.user.image}
-                alt="avatar"
-                className="w-10 h-10 rounded-full border"
-              />
-            )}
-            {session?.user?.role === "admin" && (
-  <div className="text-xs text-white mr-4">
-    👥 {visits}
-  </div>
-)}
-   {/*login dugme */}
-{session ? (
-  <button onClick={() => signOut()}>Logout</button>
-) : (
-  <button onClick={() => signIn()}>Login</button>
-)}
+      <button
+        onClick={() => signOut()}
+        className="px-3 py-1 bg-gray-200 rounded-md text-sm hover:bg-gray-300 transition"
+      >
+        Logout
+      </button>
 
-            {/* IME + ROLE */}
-            <div className="flex flex-col leading-tight">
-              <span className="text-sm font-medium text-red-700">
-                {session.user?.name}
-              </span>
-
-              <span
-                className={`text-[10px] uppercase tracking-wide font-semibold ${
-                  session.user?.role === "admin"
-                    ? "text-blue-400"
-                    : "text-gray-600"
-                }`}
-              >
-                {session.user?.role}
-              </span>
-            </div>
-
-            <button
-              onClick={() => signOut()}
-              className="px-3 py-1 bg-gray-200 rounded-md text-sm hover:bg-gray-300 transition"
-            >
-              Logout
-            </button>
-          </div>
-        )}
-      </div>
-    </nav>
+    </div>
+  )}
+</div>
+</nav>
   )
 }
