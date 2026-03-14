@@ -1,8 +1,15 @@
 import { prisma } from "@/lib/prisma"
 
-export default async function MergeArtist({ params }: { params: { id: string } }) {
+export default async function MergeArtist({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+
+  const { id } = await params
+
   const artist = await prisma.artist.findUnique({
-    where: { id: params.id }
+    where: { id }
   })
 
   const artists = await prisma.artist.findMany({
@@ -15,7 +22,7 @@ export default async function MergeArtist({ params }: { params: { id: string } }
     const targetId = formData.get("targetId") as string
 
     await prisma.song.updateMany({
-      where: { artistId: params.id },
+      where: { artistId: id },
       data: { artistId: targetId }
     })
   }
