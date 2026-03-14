@@ -9,6 +9,29 @@ const path = require("path")
 const sharp = require("sharp")
 const DISCOGS_TOKEN = "YOUR_DISCOGS_TOKEN"
 
+
+async function getDiscogsAlbums(name){
+
+try{
+
+const res = await axios.get(
+`https://api.discogs.com/database/search?q=${encodeURIComponent(name)}&type=artist`
+)
+
+if(!res.data.results.length) return []
+
+return res.data.results
+.slice(0,5)
+.map(r=>({
+title:r.title,
+year:r.year || ""
+}))
+
+}catch{
+return []
+}
+
+}
 async function getArtistGenre(name) {
 
 try {
@@ -126,7 +149,7 @@ return null
 
 function extractData(html) {
 
-    const image = $(".infobox img").first().attr("src")
+const $ = cheerio.load(html)
 
 let imageUrl = null
 
@@ -147,13 +170,11 @@ imageUrl = imageUrl.replace(/\/\d+px/, "/1200px")
 
 }
 
-const $ = cheerio.load(html)
-
 const bio = $(".mw-parser-output > p")
-  .map((i,el)=>$(el).text())
-  .get()
-  .slice(0,6)
-  .join("\n\n")
+.map((i,el)=>$(el).text())
+.get()
+.slice(0,6)
+.join("\n\n")
 
 let members = []
 
@@ -221,10 +242,7 @@ where: { id: artist.id },
 data: {
 bio: data.bio,
 members: data.members,
-discography: data.albums.length
-? data.albums
-: await getDiscogsAlbums(artist.name),
-genre: await getArtistGenre(artist.name),
+discography: data.albums,
 image: data.imageUrl ? await saveArtistImage(data.imageUrl, artist.slug) : null
 }
 })
