@@ -6,7 +6,6 @@ import { prisma } from "@/lib/prisma"
 
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
-
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID!,
