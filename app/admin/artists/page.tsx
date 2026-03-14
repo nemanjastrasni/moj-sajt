@@ -9,71 +9,81 @@ export default async function AdminArtistsPage({
 
   const params = await searchParams
   const search = params?.search || ""
-const category = params.category ?? ""
-const letter = params.letter ?? ""
+  const category = params.category ?? ""
+  const letter = params.letter ?? ""
+
   const artists = await prisma.artist.findMany({
-  where: {
-  ...(search && {
-    name: {
-      contains: search,
-      mode: "insensitive",
+    where: {
+      ...(search && {
+        name: {
+          contains: search,
+          mode: "insensitive",
+        },
+      }),
+      ...(category && {
+        category,
+      }),
+      ...(letter && {
+        name: {
+          startsWith: letter,
+          mode: "insensitive",
+        },
+      }),
     },
-  }),
-  ...(category && {
-    category,
-  }),
-  ...(letter && {
-    name: {
-      startsWith: letter,
-      mode: "insensitive",
-    },
-  }),
-},
-  orderBy: { name: "asc" },
-})
+    orderBy: { name: "asc" },
+  })
 
   return (
     <div className="max-w-6xl">
       <div className="flex justify-between items-center mb-6">
-  <h1 className="text-2xl font-bold text-gray-900">
-    Izvođači
-  </h1>
-  
-  <form className="flex gap-3 mb-6">
-  <input
-  type="text"
-  name="search"
-  placeholder="Pretraga izvođača..."
-  className="border p-2 rounded w-64"
-  list="artists"
-  defaultValue={search}
-/>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Izvođači
+        </h1>
 
-<datalist id="artists">
-  {artists.map((artist) => (
-    <option key={artist.id} value={artist.name} />
-  ))}
-</datalist>
+        <form className="flex gap-3 mb-6">
+          <input
+            type="text"
+            name="search"
+            placeholder="Pretraga izvođača..."
+            className="border p-2 rounded w-64"
+            list="artists"
+            defaultValue={search}
+          />
 
-  <select name="category" defaultValue={category} className="border p-2 rounded">
-    <option value="">Sve kategorije</option>
-    <option value="domace">Domaće</option>
-    <option value="strane">Strane</option>
-    <option value="narodne">Narodne</option>
-  </select>
+          <datalist id="artists">
+            {artists.map((artist) => (
+              <option key={artist.id} value={artist.name} />
+            ))}
+          </datalist>
 
-  <button className="bg-gray-800 text-white px-4 rounded">
-    Primeni
-  </button>
-</form>
+          <select name="letter" defaultValue={letter} className="border p-2 rounded">
+            <option value="">Sva slova</option>
+            {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((l) => (
+              <option key={l} value={l}>
+                {l}
+              </option>
+            ))}
+          </select>
 
-  <Link
-    href="/admin/artists/new"
-    className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
-  >
-    + Novi izvođač
-  </Link>
-</div>
+          <select name="category" defaultValue={category} className="border p-2 rounded">
+            <option value="">Sve kategorije</option>
+            <option value="domace">Domaće</option>
+            <option value="strane">Strane</option>
+            <option value="narodne">Narodne</option>
+          </select>
+
+          <button className="bg-gray-800 text-white px-4 rounded">
+            Primeni
+          </button>
+        </form>
+
+        <Link
+          href="/admin/artists/new"
+          className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+        >
+          + Novi izvođač
+        </Link>
+      </div>
 
       {artists.length === 0 ? (
         <p className="text-gray-500">Nema izvođača.</p>
@@ -88,33 +98,46 @@ const letter = params.letter ?? ""
               <th className="p-3 text-center">Akcije</th>
             </tr>
           </thead>
+
           <tbody>
             {artists.map((artist) => (
-             <tr
-  key={artist.id}
-  className={`border-t ${!artist.bio && !artist.discography ? "bg-red-50" : ""} ${artist.bio && !artist.discography ? "bg-yellow-50" : ""} ${artist.bio && artist.discography ? "bg-green-50" : ""}`}
->
+              <tr
+                key={artist.id}
+                className={`border-t ${!artist.bio && !artist.discography ? "bg-red-50" : ""} ${
+                  artist.bio && !artist.discography ? "bg-yellow-50" : ""
+                } ${artist.bio && artist.discography ? "bg-green-50" : ""}`}
+              >
                 <td className="p-3">
-                       <Link
-                       href={`/admin/artists/${artist.id}/edit`}
-                          className="text-blue-600 hover:underline"
-                        >
-                     {artist.name}
-                        </Link>
-                 </td>
+                  <Link
+                    href={`/admin/artists/${artist.id}/edit`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    {artist.name}
+                  </Link>
+
+                  <Link
+                    href={`/admin/artists/${artist.id}/merge`}
+                    className="text-purple-600 ml-2"
+                  >
+                    Merge
+                  </Link>
+                </td>
+
                 <td className="p-3 text-gray-500">{artist.slug}</td>
                 <td className="p-3">{artist.category ?? "-"}</td>
+
                 <td className="p-3 text-center">
-                    {artist.image ? (
-                  <img
-                   src={artist.image}
-                   alt={artist.name}
-                    className="w-12 h-12 object-cover rounded mx-auto"
-                   />
+                  {artist.image ? (
+                    <img
+                      src={artist.image}
+                      alt={artist.name}
+                      className="w-12 h-12 object-cover rounded mx-auto"
+                    />
                   ) : (
-                   "—"
-                    )}
-               </td>
+                    "—"
+                  )}
+                </td>
+
                 <td className="p-3 text-center">
                   <Link
                     href={`/admin/artists/${artist.id}/edit`}

@@ -3,8 +3,10 @@ import { NextResponse } from "next/server"
 
 export default withAuth(
   function middleware(req) {
-    const token = req.nextauth.token
-
+    const token = req.nextauth.token 
+    const config = {
+  matcher: ["/admin/:path*"],
+}
     // ako nije admin → kući
     if (token?.role !== "admin") {
       return NextResponse.redirect(new URL("/", req.url))

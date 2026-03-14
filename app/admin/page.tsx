@@ -8,7 +8,7 @@ export default function AdminPage() {
       </h1>
 
       <p className="text-gray-600">
-        Dobrodošao, admine.
+        Dobrodošao, najlepši admine od svih admina.:)
       </p>
     </div>
   )

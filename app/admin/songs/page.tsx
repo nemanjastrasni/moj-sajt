@@ -55,7 +55,7 @@ export default async function AdminSongsPage({
   }
 
   return (
-    <div>
+    <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Pesme</h1>
 
@@ -88,7 +88,7 @@ export default async function AdminSongsPage({
       {songs.length === 0 ? (
         <p className="text-gray-500">Nema rezultata.</p>
       ) : (
-        <table className="w-full text-sm border border-gray-200 rounded overflow-hidden">
+        <table className="w-full table-auto text-sm border border-gray-200 rounded">
           <thead className="bg-gray-100 text-gray-900">
             <tr>
               <th className="p-3 text-left">Naslov</th>
