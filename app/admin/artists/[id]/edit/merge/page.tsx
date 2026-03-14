@@ -10,13 +10,26 @@ export default async function MergeArtist({
   const { id } = await params
 
   const artist = await prisma.artist.findUnique({
-    where: { id }
+    where: { id },
   })
 
-  const artists = await prisma.artist.findMany({
-    orderBy: { name: "asc" }
+  const search = ""
+
+const artists = await prisma.artist.findMany({
+  where: search
+    ? {
+        name: {
+          contains: search,
+          mode: "insensitive",
+        },
+      }
+    : {},
+  orderBy: { name: "asc" },
+})
+
+  const songsCount = await prisma.song.count({
+    where: { artistId: id },
   })
- 
 
   async function merge(formData: FormData) {
     "use server"
@@ -25,32 +38,54 @@ export default async function MergeArtist({
 
     await prisma.song.updateMany({
       where: { artistId: id },
-      data: { artistId: targetId }
+      data: { artistId: targetId },
     })
+
+    await prisma.artist.delete({
+      where: { id },
+    })
+
     redirect("/admin/artists")
   }
 
   return (
-    <div>
-      <h1>Merge {artist?.name}</h1>
+    <div className="max-w-xl">
 
-      <form action={merge}>
-              <select name="targetId">
-              {artists.map(a => (
-              <option key={a.id} value={a.id}>
-               {a.name}
-                 </option>
-       ))}
-           </select>
+      <h1 className="text-xl font-bold mb-4">
+        Merge {artist?.name}
+      </h1>
 
-          <button
-          type="submit"
-          className="bg-black text-white px-4 py-2 rounded ml-2"
+      <p className="mb-4 text-sm text-gray-600">
+        Ovaj izvođač ima <b>{songsCount}</b> pesama.
+      </p>
+
+      <form action={merge} className="flex gap-3 flex-col">
+         <input
+name="search"
+placeholder="Pretraga izvođača..."
+className="border p-2 rounded"
+/>
+        <select
+          name="targetId"
+          className="border p-2 rounded w-full"
         >
-         Merge
-          </button>
+          {artists
+            .filter((a) => a.id !== id)
+            .map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.name}
+              </option>
+            ))}
+        </select>
 
-          </form>
+        <button
+          type="submit"
+          className="bg-black text-white px-4 rounded"
+        >
+          Merge
+        </button>
+
+      </form>
     </div>
   )
 }

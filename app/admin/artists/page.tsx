@@ -145,6 +145,13 @@ export default async function AdminArtistsPage({
                   >
                     Edit
                   </Link>
+                <span className="mx-2 text-gray-400">|</span>
+
+                <form action={`/admin/artists/${artist.id}/delete`} className="inline">
+                 <button className="text-red-600 hover:underline">
+                    Delete
+                 </button>
+                </form>
                 </td>
               </tr>
             ))}
