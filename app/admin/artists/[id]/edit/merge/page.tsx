@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { redirect } from "next/navigation"
 
 export default async function MergeArtist({
   params,
@@ -15,6 +16,7 @@ export default async function MergeArtist({
   const artists = await prisma.artist.findMany({
     orderBy: { name: "asc" }
   })
+ 
 
   async function merge(formData: FormData) {
     "use server"
@@ -25,6 +27,7 @@ export default async function MergeArtist({
       where: { artistId: id },
       data: { artistId: targetId }
     })
+    redirect("/admin/artists")
   }
 
   return (
