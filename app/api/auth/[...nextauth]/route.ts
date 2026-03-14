@@ -8,6 +8,10 @@ const handler = NextAuth({
 
   secret: process.env.NEXTAUTH_SECRET,
 
+  session: {
+    strategy: "jwt",
+  },
+
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID!,
