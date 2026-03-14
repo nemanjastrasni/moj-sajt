@@ -8,7 +8,9 @@ const handler = NextAuth({
 
   secret: process.env.NEXTAUTH_SECRET,
 
-  
+  session: {
+    strategy: "jwt",
+  },
 
   providers: [
     GitHubProvider({
@@ -18,22 +20,25 @@ const handler = NextAuth({
   ],
 
   callbacks: {
-    async jwt({ token }) {
-      if (token.email === "nemanjaivanovic979@gmail.com") {
-        token.role = "admin"
-      } else {
-        token.role = "user"
+    async jwt({ token, user }) {
+      if (user) {
+        token.role =
+          user.email === "nemanjaivanovic979@gmail.com"
+            ? "admin"
+            : "user"
       }
       return token
     },
 
     async session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role
+        session.user.role = token.role as string
       }
       return session
     },
   },
+
+  debug: true,
 })
 
 export { handler as GET, handler as POST }
