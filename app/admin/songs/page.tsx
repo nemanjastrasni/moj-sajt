@@ -25,11 +25,11 @@ export default async function AdminSongsPage({
     ? {
         OR: [
           {
-            title: { contains: q },
+           title: { contains: q, mode: "insensitive" },
           },
           {
             artist: {
-              name: { contains: q },
+              name: { contains: q, mode: "insensitive" }
             },
           },
         ],
@@ -76,8 +76,12 @@ export default async function AdminSongsPage({
         />
 
         <select name="sort" defaultValue={sort} className="border p-2 rounded">
-          <option value="createdAt">Najnovije</option>
-          <option value="title">Naslov A–Z</option>
+           <option value="">Sve kategorije</option>
+           <option value="domace">Domaće</option>
+           <option value="strane">Strane</option>
+           <option value="narodne">Narodne</option>
+           <option value="createdAt">Najnovije</option>
+           <option value="title">Naslov A–Z</option>
         </select>
 
         <button className="bg-gray-800 text-white px-4 rounded">
