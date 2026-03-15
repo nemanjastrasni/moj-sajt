@@ -34,6 +34,7 @@ export default async function LetterPage({ params }: any) {
   const { category, letter: rawLetter } = await params
 
   const letter = normalizeLetter(rawLetter)
+  const isSpecial = letter === "#"
 
   const artists = await prisma.artist.findMany({
   where: { category },
@@ -43,9 +44,15 @@ export default async function LetterPage({ params }: any) {
   },
 })
 
-  const filtered = artists.filter(
-    (artist) => getFirstLetter(artist.name) === letter
-  )
+  const filtered = artists.filter((artist) => {
+  const first = getFirstLetter(artist.name)
+
+  if (isSpecial) {
+    return !/^[A-ZČĆŽŠĐ]/.test(first)
+  }
+
+  return first === letter
+})
 
   return (
     <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>

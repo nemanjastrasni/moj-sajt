@@ -23,6 +23,23 @@ export async function generateMetadata(
     description: `Lista izvođača i pesama u kategoriji ${pretty}.`,
   }
 }
+export async function generateMetadata({ params }: any) {
+
+  const { category, letter } = params
+
+  const pretty =
+    category === "domace"
+      ? "Domaće"
+      : category === "strane"
+      ? "Strane"
+      : "Narodne"
+
+  return {
+    title: `${pretty} pesme na slovo ${letter.toUpperCase()} – Akordi i tekstovi`,
+    description: `Lista izvođača i pesama na slovo ${letter.toUpperCase()} u kategoriji ${pretty}.`,
+  }
+}
+
 
 export default async function CategoryPage(
   { params }: { params: Promise<{ category: string }> }
@@ -30,28 +47,34 @@ export default async function CategoryPage(
 
   const { category } = await params
 
-  const songs = await prisma.song.findMany({
-    where:{ category },
-    select:{ title:true }
-  })
+  const artists = await prisma.artist.findMany({
+  where:{ category },
+  select:{ name:true }
+})
 
-  const lettersSet = new Set<string>()
+const lettersSet = new Set<string>()
 
-  songs.forEach(song=>{
+artists.forEach(artist=>{
 
-    if(!song.title) return
+  if(!artist.name) return
 
-    const first = song.title[0].toUpperCase()
+  const name = artist.name.trim().toUpperCase()
 
-    if(/[0-9]/.test(first)){
-      lettersSet.add("#")
-    }else{
-      lettersSet.add(first)
-    }
+  if(name.startsWith("DŽ")) return lettersSet.add("DŽ")
+  if(name.startsWith("LJ")) return lettersSet.add("LJ")
+  if(name.startsWith("NJ")) return lettersSet.add("NJ")
 
-  })
+  const first = name[0]
 
-  const letters = Array.from(lettersSet).sort()
+  if(!/^[A-ZČĆŽŠĐ]/.test(first)){
+    lettersSet.add("#")
+  }else{
+    lettersSet.add(first)
+  }
+
+})
+
+const letters = Array.from(lettersSet).sort()
 
   return (
     <div style={{ padding: "40px", maxWidth: "1000px", margin: "0 auto" }}>
