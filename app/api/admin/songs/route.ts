@@ -33,56 +33,62 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const { title, artistName, category, lyrics, chords, artistBio, artistDiscography } = body
+  const { songs, artistName, category, artistBio, artistDiscography } = body
 
-  if (!title || !artistName) {
+  if (!songs || songs.length === 0 || !artistName) {
     return NextResponse.json(
-      { error: "Title and artistName are required" },
+      { error: "Songs and artistName are required" },
       { status: 400 }
     )
   }
 
-  const songSlug = slugify(title)
   const artistSlug = slugify(artistName)
 
-  // Pronađi ili kreiraj/update artista
+  // pronađi ili kreiraj artista
   let artist = await prisma.artist.findFirst({
     where: { name: artistName },
   })
 
   if (!artist) {
     artist = await prisma.artist.create({
-  data: {
-    name: artistName,
-    slug: artistSlug,
-    bio: artistBio ?? "",
-    discography: artistDiscography ?? "",
-    category, // 🔥 DODATO
-  },
-})
+      data: {
+        name: artistName,
+        slug: artistSlug,
+        bio: artistBio ?? "",
+        discography: artistDiscography ?? "",
+        category,
+      },
+    })
   } else {
-   artist = await prisma.artist.update({
-  where: { id: artist.id },
-  data: {
-    bio: artistBio ?? artist.bio,
-    discography: artistDiscography ?? artist.discography,
-    category, // 🔥 DODATO
-  },
-})
+    artist = await prisma.artist.update({
+      where: { id: artist.id },
+      data: {
+        bio: artistBio ?? artist.bio,
+        discography: artistDiscography ?? artist.discography,
+        category,
+      },
+    })
   }
 
-  // Kreiraj pesmu
-  const song = await prisma.song.create({
-    data: {
-      title,
-      slug: songSlug,
-      category: category ?? "ostalo",
-      lyrics: lyrics ?? "",
-      chords: chords ?? "",
-      artistId: artist.id,
-    },
-    include: { artist: true },
-  })
+  const createdSongs = []
 
-  return NextResponse.json(song, { status: 201 })
+  for (const song of songs) {
+    const songSlug = slugify(song.title)
+
+    const newSong = await prisma.song.create({
+      data: {
+        title: song.title,
+        slug: songSlug,
+        category: category ?? "ostalo",
+        lyrics: song.lyrics ?? "",
+        chords: song.chords ?? "",
+        artistId: artist.id,
+      },
+      include: { artist: true },
+    })
+
+    createdSongs.push(newSong)
+  }
+
+  return NextResponse.json(createdSongs, { status: 201 })
 }

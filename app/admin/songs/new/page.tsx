@@ -27,7 +27,7 @@ export default function NewSongPage() {
       return
     }
 
-    const res = await fetch(`/api/admin/artists?search=${value}`)
+    const res = await fetch(`/api/admin/artists?search=${value.toLowerCase()}`)
     if (!res.ok) {
       setSuggestions([])
       return
