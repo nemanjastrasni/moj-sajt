@@ -32,11 +32,11 @@ export default function RootLayout({
         <Providers>
 
           {/* HEADER */}
-          <header className="w-full border-b border-gray-800 flex flex-col">
+          <header className="w-full border-b border-gray-800 flex flex-col py-1">
             <Menu />
 
             {/* Back dugme dole levo */}
-            <div className="flex justify-start px-6 pb-3">
+            <div className="flex justify-start px-6 pb-1">
               <BackButton />
             </div>
           </header>

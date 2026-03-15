@@ -13,7 +13,7 @@ export default function HomePage() {
           onClick={() => signIn("github")}
           className="px-4 py-2 bg-black text-white rounded-lg hover:opacity-80"
         >
-          Admin Login
+          Lepi Login
         </button>
       </div>
 
