@@ -23,8 +23,8 @@ fetch("/api/analytics-count")
 },[])
   
   return (
-   <nav className="relative z-50 flex justify-between items-start pt-6 pb-6 px-10 bg-red-700 text-black shadow-md overflow-visible">
-      <div className="relative z-10 space-y-6">
+   <nav className="relative z-50 flex justify-between items-start pt-2 pb-2 px-6 bg-red-700 text-black shadow-md overflow-visible">
+      <div className="relative z-10 space-y-2">
 
         <Link href="/" className="string w-64 block">
           <span>Home</span>
