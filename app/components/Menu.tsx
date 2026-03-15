@@ -77,48 +77,54 @@ return (
     <Link href="/biografija" className="string w-96 ml-28 block">
       <span>Biografija</span>
     </Link>
+   
+   {/* KONTAKT*/}
+   <Link href="/kontakt" className="string w-[28rem] ml-36 block">
+  <span>Kontakt</span>
+</Link>
+   {/* SEARCH */}
+<div
+  className="ml-40 mt-1 relative"
+  onMouseEnter={() => document.body.classList.add("search-active")}
+  onMouseLeave={() => document.body.classList.remove("search-active")}
+>
 
-    {/* SEARCH */}
-    <div className="absolute left-1/2 -translate-x-1/2 top-4 relative group">
+  <input
+    value={query}
+    onChange={async (e) => {
+      const value = e.target.value
+      setQuery(value)
 
-      <span>Kontakt</span>
+      if (value.length < 2) {
+        setResults([])
+        return
+      }
 
-      placeholder="Traženje pesama..."
-      <input
-        value={query}
-        onChange={async (e) => {
-          const value = e.target.value
-          setQuery(value)
+      const res = await fetch(`/api/search?q=${value}`)
+      const data = await res.json()
+      setResults(data)
+    }}
+    type="text"
+    placeholder="Traženje pesama..."
+    className="w-[320px] bg-black/40 border border-gray-600 rounded-lg px-3 py-1 text-white outline-none focus:border-blue-400"
+  />
 
-          if (value.length < 2) {
-            setResults([])
-            return
-          }
-
-          const res = await fetch(`/api/search?q=${value}`)
-          const data = await res.json()
-          setResults(data)
-        }}
-        type="text"
-       className="w-[320px] bg-black/40 border border-gray-600 rounded-lg px-3 py-1 text-white outline-none focus:border-blue-400"
-      />
-
-      {results.length > 0 && (
-        <div className="relative mt-2 w-[22rem] bg-gradient-to-b from-neutral-900/90 to-neutral-800/90 backdrop-blur-md text-gray-100 shadow-2xl rounded-xl border border-gray-600/30 z-[999]">
-          {results.map((song) => (
-            <a
-              key={song.id}
-              href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
-              className="block px-4 py-2 hover:bg-white/10 transition rounded-md font-medium tracking-wide"
-            >
-              {song.artist.name} – {song.title}
-            </a>
-          ))}
-        </div>
-      )}
-
+  {results.length > 0 && (
+    <div className="absolute mt-2 w-[320px] bg-gradient-to-b from-neutral-900/90 to-neutral-800/90 backdrop-blur-md text-gray-100 shadow-2xl rounded-xl border border-gray-600/30 z-[999]">
+      {results.map((song) => (
+        <a
+          key={song.id}
+          href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+          className="block px-4 py-2 hover:bg-white/10 transition rounded-md font-medium tracking-wide"
+        >
+          {song.artist.name} – {song.title}
+        </a>
+      ))}
     </div>
+  )}
 
+</div>
+     
     {/* ADMIN */}
     {session?.user?.role === "admin" && (
       <Link
