@@ -117,7 +117,7 @@ return (
   />
 
   {results.length > 0 && (
-    <div className="absolute mt-2 w-[340px] bg-neutral-900 text-gray-100 shadow-2xl rounded-xl border border-gray-600 z-[9999]">
+    <div className="fixed mt-2 w-[340px] bg-neutral-900 text-gray-100 shadow-2xl rounded-xl border border-gray-600 z-[99999]">
       {results.map((song) => (
         <a
           key={song.id}
