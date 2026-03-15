@@ -20,7 +20,10 @@ function normalizeLetter(letter: string) {
   return decoded
 }
 
-function getFirstLetter(name: string) {
+function getFirstLetter(name?: string) {
+
+  if (!name) return ""
+
   const upper = name.trim().toUpperCase()
 
   if (upper.startsWith("DŽ")) return "DŽ"

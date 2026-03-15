@@ -45,7 +45,6 @@ const lettersSet = new Set<string>()
 artists.forEach(artist=>{
 
   if(!artist.name) return
-
   const name = artist.name.trim().toUpperCase()
 
   if(name.startsWith("DŽ")) return lettersSet.add("DŽ")
