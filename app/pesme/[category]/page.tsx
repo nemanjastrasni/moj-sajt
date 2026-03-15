@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: any) {
 
   return {
     ttitle: `${pretty} pesme – Akordi i tekstovi`,
-description: `Lista izvođača i pesama u kategoriji ${pretty}.`,
+    description: `Lista izvođača i pesama u kategoriji ${pretty}.`,
   }
 }
 
@@ -53,12 +53,11 @@ artists.forEach(artist=>{
 
   const first = name[0]
 
-  if(!/^[A-ZČĆŽŠĐ]/.test(first)){
-    lettersSet.add("#")
-  }else{
-    lettersSet.add(first)
-  }
-
+  if(/^[0-9]/.test(first)){
+  lettersSet.add("#")
+}else if(/^[A-ZČĆŽŠĐ]/.test(first)){
+  lettersSet.add(first)
+}
 })
 
 const letters = Array.from(lettersSet).sort()
