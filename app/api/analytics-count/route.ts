@@ -9,6 +9,8 @@ const data: any = await prisma.$queryRaw`
 SELECT visits FROM analytics WHERE day = ${today}
 `
 
-return NextResponse.json({count:data[0]?.visits || 0})
+const count = Array.isArray(data) && data.length > 0 ? data[0].visits : 0
+
+return NextResponse.json({ count })
 
 }
