@@ -79,14 +79,11 @@ return (
     </Link>
 
     {/* SEARCH */}
-    <div className="string w-[28rem] ml-36 relative group">
+    <div className="absolute left-1/2 -translate-x-1/2 top-4 relative group">
 
       <span>Kontakt</span>
 
-      <span className="absolute left-[12rem] italic text-gray-400 opacity-30 pointer-events-none select-none">
-        Traženje pesama
-      </span>
-
+      placeholder="Traženje pesama..."
       <input
         value={query}
         onChange={async (e) => {
@@ -103,7 +100,7 @@ return (
           setResults(data)
         }}
         type="text"
-        className="absolute top-0 left-[12rem] w-[16rem] opacity-0 group-hover:opacity-100 bg-transparent outline-none text-white"
+       className="w-[320px] bg-black/40 border border-gray-600 rounded-lg px-3 py-1 text-white outline-none focus:border-blue-400"
       />
 
       {results.length > 0 && (
