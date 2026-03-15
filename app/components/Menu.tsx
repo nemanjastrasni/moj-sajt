@@ -28,8 +28,7 @@ useEffect(() => {
 
 return (
 
-   <nav className="relative z-50 flex justify-between items-start pt-2 pb-2 pl-2 pr-6 bg-red-700 text-black shadow-md overflow-visible">
-
+   <nav className="relative z-50 flex items-start pt-2 pb-2 pl-2 pr-6 bg-red-700 text-black shadow-md overflow-visible">
 ```
   {/* LEVA STRANA */}
   <div className="relative z-10 space-y-2 flex flex-col items-start">
