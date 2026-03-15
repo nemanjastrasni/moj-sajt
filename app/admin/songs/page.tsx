@@ -61,16 +61,18 @@ export default async function AdminSongsPage({
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-2">
         <h1 className="text-2xl font-bold text-gray-900">Pesme</h1>
 
-        <Link
-          href="/admin/songs/new"
-          className="bg-black text-white px-4 py-2 text-sm rounded"
-        >
-          + Nova pesma
-        </Link>
-      </div>
+        <div className="mt-2 mb-4">
+  <Link
+    href="/admin/songs/new"
+    className="bg-black text-white px-4 py-2 text-sm rounded inline-block"
+  >
+    + Nova pesma
+  </Link>
+</div>
+</div>
 
       <form className="flex gap-4 mb-6">
         <input

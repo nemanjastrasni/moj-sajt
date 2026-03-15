@@ -7,9 +7,10 @@ export default function NewSongPage() {
   const router = useRouter()
 
   const [artist, setArtist] = useState("")
-  const [title, setTitle] = useState("")
   const [category, setCategory] = useState("narodne")
-  const [lyrics, setLyrics] = useState("")
+  const [songs, setSongs] = useState([
+  { title: "", lyrics: "" }
+])
   const [bio, setBio] = useState("")
   const [discography, setDiscography] = useState("")
   const [showBio, setShowBio] = useState(false)
@@ -44,14 +45,13 @@ export default function NewSongPage() {
     const res = await fetch("/api/admin/songs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title,
-        artistName: artist,
-        category,
-        lyrics,
-        artistBio: bio,
-        artistDiscography: discography,
-      }),
+     body: JSON.stringify({
+  songs,
+  artistName: artist,
+  category,
+  artistBio: bio,
+  artistDiscography: discography,
+}),
     })
 
     if (!res.ok) {
@@ -163,18 +163,23 @@ export default function NewSongPage() {
         </div>
 
         {/* NASLOV */}
-        <div>
-          <label className="block text-sm font-semibold text-black mb-1">
-            Naslov pesme
-          </label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full border p-2 rounded text-gray-800"
-            required
-          />
-        </div>
+        {songs.map((song, index) => (
+<div key={index} className="border p-4 rounded mb-4">
+
+<label className="block text-sm font-semibold text-black mb-1">
+Naslov pesme
+</label>
+
+<input
+type="text"
+value={song.title}
+onChange={(e)=>{
+ const newSongs=[...songs]
+ newSongs[index].title=e.target.value
+ setSongs(newSongs)
+}}
+className="w-full border p-2 rounded text-gray-800 mb-3"
+/>
 
         {/* KATEGORIJA */}
         <div>
@@ -193,18 +198,32 @@ export default function NewSongPage() {
         </div>
 
         {/* TEKST */}
-        <div>
-          <label className="block text-sm font-semibold text-black mb-1">
-            Tekst pesme sa akordima
-          </label>
-          <textarea
-            value={lyrics}
-            onChange={(e) => setLyrics(e.target.value)}
-            rows={16}
-            className="w-full border p-3 rounded text-gray-800"
-          />
-        </div>
+        <label className="block text-sm font-semibold text-black mb-1">
+Tekst pesme sa akordima
+</label>
 
+<textarea
+value={song.lyrics}
+onChange={(e)=>{
+ const newSongs=[...songs]
+ newSongs[index].lyrics=e.target.value
+ setSongs(newSongs)
+}}
+rows={14}
+className="w-full border p-3 rounded text-gray-800"
+/>
+
+</div>
+))}
+<button
+type="button"
+onClick={() =>
+ setSongs([...songs,{title:"",lyrics:""}])
+}
+className="bg-gray-800 text-white px-4 py-2 rounded"
+>
++ Dodaj pesmu
+</button>
         <button
           type="submit"
           disabled={loading}
