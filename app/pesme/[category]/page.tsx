@@ -23,8 +23,8 @@ export async function generateMetadata({ params }: any) {
       : "Narodne"
 
   return {
-    title: `${pretty} pesme na slovo ${letter.toUpperCase()} – Akordi i tekstovi`,
-    description: `Lista izvođača i pesama na slovo ${letter.toUpperCase()} u kategoriji ${pretty}.`,
+    ttitle: `${pretty} pesme – Akordi i tekstovi`,
+description: `Lista izvođača i pesama u kategoriji ${pretty}.`,
   }
 }
 
