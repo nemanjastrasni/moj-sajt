@@ -29,7 +29,7 @@ return (
   {/* LEVA STRANA */}
   <div className="relative z-10 space-y-2">
 
-    <Link href="/" className="string w-64 block">
+    <Link href="/" className="string block">
       <span>Home</span>
     </Link>
 
@@ -38,7 +38,7 @@ return (
       <button
         type="button"
         onClick={() => setOpenPesme((v) => !v)}
-        className="string w-72 ml-6 text-left"
+        className="string"
       >
         <span>Pesme</span>
       </button>
@@ -49,33 +49,33 @@ return (
         }`}
       >
         <div className="flex gap-10 ml-16 text-sm">
-          <Link href="/pesme/narodne" className="string w-40">
+          <Link href="/pesme/narodne" className="string">
             <span>Narodne</span>
           </Link>
-          <Link href="/pesme/domace" className="string w-40">
+          <Link href="/pesme/domace" className="string">
             <span>Domaće</span>
           </Link>
-          <Link href="/pesme/strane" className="string w-40">
+          <Link href="/pesme/strane" className="string">
             <span>Strane</span>
           </Link>
         </div>
       </div>
     </div>
 
-    <Link href="/plejliste" className="string w-[22rem] ml-12 block">
+    <Link href="/plejliste" className="string block">
       <span>Plejliste</span>
     </Link>
 
-    <Link href="/akordi" className="string w-80 ml-20 block">
+    <Link href="/akordi" className="string block">
       <span>Akordi</span>
     </Link>
 
-    <Link href="/biografija" className="string w-96 ml-28 block">
+    <Link href="/biografija" className="string block">
       <span>Biografija</span>
     </Link>
 
     {/* SEARCH */}
-    <div className="string w-[28rem] ml-36 relative group">
+    <div className="string">
 
       <span>Kontakt</span>
 
@@ -122,7 +122,7 @@ return (
     {session?.user?.role === "admin" && (
       <Link
         href="/admin"
-        className="string w-[30rem] ml-44 block font-semibold"
+        className="string"
       >
         <span>Admin</span>
       </Link>
