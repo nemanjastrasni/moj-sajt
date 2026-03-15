@@ -23,8 +23,8 @@ fetch("/api/analytics-count")
 },[])
   
   return (
-   <nav className="relative z-50 flex justify-between items-start pt-2 pb-2 px-6 bg-red-700 text-black shadow-md overflow-visible">
-      <div className="relative z-10 space-y-2">
+   <nav className="relative z-50 flex justify-between items-start pt-6 pb-6 px-10 bg-red-700 text-black shadow-md overflow-visible">
+      <div className="relative z-10 flex items-center gap-10">
 
         <Link href="/" className="string w-64 block">
           <span>Home</span>
@@ -37,7 +37,7 @@ fetch("/api/analytics-count")
           <button
             type="button"
             onClick={() => setOpenPesme((v) => !v)}
-            className="string w-72 ml-6 text-left"
+            className="string"
           >
             <span>Pesme</span>
           </button>
@@ -61,21 +61,21 @@ fetch("/api/analytics-count")
           </div>
         </div>
 
-        <Link href="/plejliste" className="string w-[22rem] ml-12 block">
+        <Link href="/plejliste" className="string">
           <span>Plejliste</span>
         </Link>
 
-        <Link href="/akordi" className="string w-80 ml-20 block">
+        <Link href="/akordi" className="string">
           <span>Akordi</span>
         </Link>
 
-        <Link href="/biografija" className="string w-96 ml-28 block">
+        <Link href="/biografija" className="string">
           <span>Biografija</span>
         </Link>
 
 {/* SEARCH */}
 
-        <div className="string w-[28rem] ml-36 relative group">
+        <div className="string">
   <span>Kontakt</span>
   <span className="absolute left-[12rem] italic text-gray-400 opacity-30 pointer-events-none select-none">
   Traženje pesama
