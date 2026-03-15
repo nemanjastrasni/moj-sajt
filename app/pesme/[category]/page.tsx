@@ -11,18 +11,6 @@ function formatCategory(category: string) {
   return category.charAt(0).toUpperCase() + category.slice(1)
 }
 
-export async function generateMetadata(
-  { params }: { params: Promise<{ category: string }> }
-): Promise<Metadata> {
-
-  const { category } = await params
-  const pretty = formatCategory(category)
-
-  return {
-    title: `${pretty} pesme – Akordi i tekstovi`,
-    description: `Lista izvođača i pesama u kategoriji ${pretty}.`,
-  }
-}
 export async function generateMetadata({ params }: any) {
 
   const { category, letter } = params
