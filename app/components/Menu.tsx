@@ -13,23 +13,28 @@ const [visits,setVisits] = useState(0)
 
 useEffect(() => {
 
-  fetch("/api/analytics", { method: "POST" });
+  async function load() {
+    await fetch("/api/analytics", { method: "POST" });
 
-  fetch("/api/analytics-count")
-    .then(r => r.json())
-    .then(d => setVisits(d.count));
+    const r = await fetch("/api/analytics-count");
+    const d = await r.json();
+
+    setVisits(d.count);
+  }
+
+  load();
 
 }, []);
 
 return (
 
-   <nav className="relative z-50 flex justify-between items-start pt-2 pb-2 px-2 bg-red-700 text-black shadow-md overflow-visible">
+   <nav className="relative z-50 flex justify-between items-start pt-2 pb-2 pl-2 pr-6 bg-red-700 text-black shadow-md overflow-visible">
 
 ```
   {/* LEVA STRANA */}
   <div className="relative z-10 space-y-2">
 
-    <Link href="/" className="string block">
+    <Link href="/" className="string w-64 block">
       <span>Home</span>
     </Link>
 
@@ -38,7 +43,7 @@ return (
       <button
         type="button"
         onClick={() => setOpenPesme((v) => !v)}
-        className="string"
+        className="string w-72 ml-6 text-left"
       >
         <span>Pesme</span>
       </button>
@@ -49,33 +54,33 @@ return (
         }`}
       >
         <div className="flex gap-10 ml-16 text-sm">
-          <Link href="/pesme/narodne" className="string">
+          <Link href="/pesme/narodne" className="string w-40">
             <span>Narodne</span>
           </Link>
-          <Link href="/pesme/domace" className="string">
+          <Link href="/pesme/domace" className="string w-40">
             <span>Domaće</span>
           </Link>
-          <Link href="/pesme/strane" className="string">
+          <Link href="/pesme/strane" className="string w-40">
             <span>Strane</span>
           </Link>
         </div>
       </div>
     </div>
 
-    <Link href="/plejliste" className="string block">
+    <Link href="/plejliste" className="string w-[22rem] ml-12 block">
       <span>Plejliste</span>
     </Link>
 
-    <Link href="/akordi" className="string block">
+    <Link href="/akordi" className="string w-80 ml-20 block">
       <span>Akordi</span>
     </Link>
 
-    <Link href="/biografija" className="string block">
+    <Link href="/biografija" className="string w-96 ml-28 block">
       <span>Biografija</span>
     </Link>
 
     {/* SEARCH */}
-    <div className="string">
+    <div className="string w-[28rem] ml-36 relative group">
 
       <span>Kontakt</span>
 
@@ -122,7 +127,7 @@ return (
     {session?.user?.role === "admin" && (
       <Link
         href="/admin"
-        className="string"
+        className="string w-[30rem] ml-44 block font-semibold"
       >
         <span>Admin</span>
       </Link>
