@@ -6,6 +6,7 @@ const PAGE_SIZE = 10
 
 type SearchParams = {
   q?: string
+  category?: string
   sort?: string
   page?: string
   letter?: string
@@ -22,7 +23,7 @@ export default async function AdminSongsPage({
   const q = params?.q ?? ""
   const letter = params?.letter ?? ""
   const artist = params?.artist ?? ""
-  const sort = params?.sort ?? "createdAt"
+  const category = params?.category ?? ""
   const page = Number(params?.page || 1)
 
   const where: Prisma.SongWhereInput = {
@@ -40,6 +41,9 @@ export default async function AdminSongsPage({
       name: { contains: artist, mode: "insensitive" }
     }
   }),
+  ...(category && {
+  category
+}),
  }
   const total = await prisma.song.count({ where })
   const totalPages = Math.ceil(total / PAGE_SIZE)
@@ -47,7 +51,7 @@ export default async function AdminSongsPage({
   const songs = await prisma.song.findMany({
     where,
     include: { artist: true },
-    orderBy: sort === "title" ? { title: "asc" } : { createdAt: "desc" },
+    orderBy: { createdAt: "desc" },
     skip: (page - 1) * PAGE_SIZE,
     take: PAGE_SIZE,
   })
@@ -94,7 +98,7 @@ className="border p-2 w-48 rounded"
     ))}
              </select>
 
-        <select name="sort" defaultValue={sort} className="border p-2 rounded">
+        <select name="category" defaultValue={category} className="border p-2 rounded">
            <option value="">Sve kategorije</option>
            <option value="domace">Domaće</option>
            <option value="strane">Strane</option>
@@ -168,7 +172,7 @@ className="border p-2 w-48 rounded"
             return (
               <Link
                 key={p}
-                href={`?q=${q}&sort=${sort}&page=${p}`}
+                href={`?q=${q}&category=${category}&page=${p}`}
                 className={`px-3 py-1 border rounded ${
                   p === page
                     ? "bg-black text-white"
