@@ -32,7 +32,7 @@ return (
 
 ```
   {/* LEVA STRANA */}
-  <div className="relative z-10 space-y-2">
+  <div className="relative z-10 space-y-2 flex flex-col items-start">
 
     <Link href="/" className="string w-64 block">
       <span>Home</span>
