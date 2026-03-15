@@ -135,7 +135,7 @@ return (
   </div>
 
   {/* DESNA STRANA */}
-  <div className="relative z-10 flex items-center gap-4">
+  <div className="relative z-10 flex items-center gap-4 ml-auto">
 
     {session?.user?.role === "admin" && (
       <div className="text-xs text-white mr-4">
