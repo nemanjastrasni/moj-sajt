@@ -26,6 +26,7 @@ model User {
   favorites     Favorite[]
   playlists     Playlist[]
   sessions      Session[]
+   badge     String   @default("hendrix")
 }
 
 model Artist {
