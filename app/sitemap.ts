@@ -1,5 +1,7 @@
+export const dynamic = "force-dynamic"
 import { prisma } from "@/lib/prisma"
 import type { MetadataRoute } from "next"
+
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://gitarakordi.rs" // kasnije promeni kad kupiš domen
