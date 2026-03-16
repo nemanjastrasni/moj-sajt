@@ -1,5 +1,8 @@
 import GitHubProvider from "next-auth/providers/github"
 import type { NextAuthOptions } from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import bcrypt from "bcrypt"
+import { prisma } from "@/lib/prisma"
 
 const adminEmails = process.env.ADMIN_EMAILS?.split(",") ?? []
 
@@ -9,7 +12,32 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GITHUB_ID!,
       clientSecret: process.env.GITHUB_SECRET!,
     }),
+    CredentialsProvider({
+  name: "Credentials",
+  credentials: {
+    email: {},
+    password: {}
+  },
+  async authorize(credentials) {
+
+    const user = await prisma.user.findUnique({
+      where: { email: credentials?.email }
+    })
+
+    if (!user || !user.password) return null
+
+    const valid = await bcrypt.compare(
+      credentials!.password,
+      user.password
+    )
+
+    if (!valid) return null
+
+    return user
+  }
+}),
   ],
+  
 
   secret: process.env.NEXTAUTH_SECRET,
 
