@@ -9,6 +9,9 @@ const adminEmails = process.env.ADMIN_EMAILS?.split(",") ?? []
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
+  session: {
+  strategy: "jwt",
+},
 
   providers: [
     GitHubProvider({
