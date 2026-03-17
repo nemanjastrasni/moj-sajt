@@ -10,6 +10,5 @@ export default function robots() {
         disallow: "/admin",
       },
     ],
-    sitemap: "https://gitarakordi.com/sitemap.xml",
   }
 }
