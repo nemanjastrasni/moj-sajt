@@ -2,13 +2,11 @@ import GitHubProvider from "next-auth/providers/github"
 import CredentialsProvider from "next-auth/providers/credentials"
 import type { NextAuthOptions } from "next-auth"
 import bcrypt from "bcrypt"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 
 const adminEmails = process.env.ADMIN_EMAILS?.split(",") ?? []
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   session: {
   strategy: "jwt",
 },
