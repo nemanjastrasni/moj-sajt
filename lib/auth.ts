@@ -29,7 +29,11 @@ export const authOptions: NextAuthOptions = {
 
         if (!valid) return null
 
-        return user
+        return {
+  id: user.id,
+  email: user.email,
+  name: user.name,
+}
       },
     }),
   ],
