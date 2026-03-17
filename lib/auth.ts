@@ -10,5 +10,10 @@ export const authOptions: NextAuthOptions = {
   ],
 
   secret: process.env.NEXTAUTH_SECRET,
-  useSecureCookies: true,
+
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      return baseUrl
+    },
+  },
 }
