@@ -13,7 +13,7 @@ export default function SignIn() {
     await signIn("credentials",{
       email,
       password,
-      callbackUrl:"/"
+      redirect: false
     })
   }
 
