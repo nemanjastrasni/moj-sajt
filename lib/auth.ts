@@ -16,6 +16,7 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GITHUB_ID!,
       clientSecret: process.env.GITHUB_SECRET!,
     }),
+    
 
     CredentialsProvider({
       name: "Credentials",
@@ -44,6 +45,10 @@ export const authOptions: NextAuthOptions = {
   ],
 
   secret: process.env.NEXTAUTH_SECRET,
+
+  pages: {
+  signIn: "/signin",
+},
 
   callbacks: {
     async jwt({ token, user }) {
