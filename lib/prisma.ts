@@ -13,7 +13,7 @@ export const prisma =
     log: ["error", "query"],
     datasources: {
       db: {
-        url: "postgresql://postgres.aaxjwagrwhfcasxkycsw:Nenadjebivi12@aws-1-eu-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1",
+        url: "postgresql://neondb_owner:npg_s5w2VvETlnmX@ep-wispy-dawn-alnxam1d-pooler.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
       },
     },
   })
