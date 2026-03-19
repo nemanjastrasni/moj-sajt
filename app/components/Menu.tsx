@@ -131,7 +131,7 @@ return (
 
 </div>
 
-
+<a href="/profile">Profil</a>
   {/* DESNA STRANA */}
   <div className="relative z-10 flex items-center gap-4 ml-auto">
 

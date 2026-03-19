@@ -2,28 +2,33 @@
 
 import { useState } from "react"
 
-export default function Signup() {
-  const [name, setName] = useState("")
+export default function SignupPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [name, setName] = useState("")
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault()
-
+  const handleSignup = async () => {
     await fetch("/api/signup", {
       method: "POST",
-      body: JSON.stringify({ name, email, password })
+      body: JSON.stringify({ name, email, password }),
     })
 
-    alert("Account created")
+    window.location.href = "/login"
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-sm mx-auto mt-20">
-      <input placeholder="Name" onChange={e => setName(e.target.value)} />
-      <input placeholder="Email" onChange={e => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
-      <button type="submit">Sign up</button>
-    </form>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="bg-white p-8 rounded shadow flex flex-col gap-3">
+        
+        <input placeholder="Name" onChange={e => setName(e.target.value)} />
+        <input placeholder="Email" onChange={e => setEmail(e.target.value)} />
+        <input placeholder="Password" type="password" onChange={e => setPassword(e.target.value)} />
+
+        <button onClick={handleSignup}>
+          Signup
+        </button>
+
+      </div>
+    </div>
   )
 }
