@@ -35,13 +35,14 @@ export default function LoginPage() {
         </div>
 
         <button
-          onClick={() =>
-            signIn("credentials", {
-              email,
-              password,
-              callbackUrl: "/"
-            })
-          }
+         onClick={async () => {
+  await signIn("credentials", {
+    email,
+    password,
+    redirect: true,
+    callbackUrl: "/"
+  })
+}}
           className="bg-black text-white py-2 rounded"
         >
           Login
