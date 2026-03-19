@@ -8,7 +8,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  
+
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -16,53 +16,65 @@ export const authOptions: NextAuthOptions = {
         email: {},
         password: {},
       },
-      
-     async authorize(credentials) {
-  try {
-    if (!credentials?.email || !credentials?.password) return null
 
-    const user = await prisma.user.findUnique({
-      where: { email: credentials.email },
-    })
+      async authorize(credentials) {
+        try {
+          if (!credentials?.email || !credentials?.password) return null
 
-    if (!user || !user.password) return null
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+          })
 
-    const valid = await bcrypt.compare(
-      credentials.password,
-      user.password
-    )
+          if (!user || !user.password) return null
 
-    if (!valid) return null
+          const valid = await bcrypt.compare(
+            credentials.password,
+            user.password
+          )
 
-    return {
-      id: String(user.id),
-      email: user.email,
-      name: user.name ?? null,
-    }
-  } catch (err) {
-    throw new Error(String(err))
-  }
-}
+          if (!valid) return null
+
+          return {
+            id: String(user.id),
+            email: user.email,
+            name: user.name ?? null,
+            role: (user as any).role,// ✅ BITNO
+          }
+        } catch (err) {
+          throw new Error(String(err))
+        }
+      },
     }),
+
     GoogleProvider({
-  clientId: process.env.GOOGLE_CLIENT_ID!,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-}),
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
   ],
+
   callbacks: {
-  async jwt({ token, user }) {
-    if (user) {
-      token.role = (user as any).role || "user"
-    }
-    return token
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = (user as any).role || "user"
+      }
+      return token
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        (session.user as any).role = token.role
+      }
+      return session
+    },
+
+    async redirect({ url, baseUrl }) {
+      return baseUrl // ✅ nema više TS error
+    },
   },
-  async session({ session, token }) {
-    if (session.user) {
-      (session.user as any).role = token.role
-    }
-    return session
+
+  pages: {
+    signIn: "/login",
   },
-},
 
   secret: process.env.NEXTAUTH_SECRET,
 }
