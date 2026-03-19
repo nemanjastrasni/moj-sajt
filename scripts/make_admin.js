@@ -1,19 +1,21 @@
 const { PrismaClient } = require("@prisma/client")
 const prisma = new PrismaClient()
 
-await prisma.user.upsert({
-  where: { email: "tvoj@mail.com" },
-  update: { role: "admin" },
-  create: {
-    email: "nemanjaivanovic979@gmail.com",
-    password: "nenadjebivi12",
-    role: "admin"
+async function run() {
+
+  const admins = [
+    "nemanjajivanovic979@gmail.com",
+    "test@test.com"
+  ]
+
+  for (const email of admins) {
+    await prisma.user.update({
+      where: { email },
+      data: { role: "admin" }
+    })
+    console.log("ADMIN:", email)
   }
-})
-  console.log("ADMIN SET")
 
-run().catch
+}
 
-
-
-
+run()
