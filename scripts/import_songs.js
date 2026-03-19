@@ -22,12 +22,16 @@ async function run(){
 for(const category of categories){
 
 const songsDir = path.join(baseDir,category)
+console.log("CHECK:", songsDir, fs.existsSync(songsDir))
 
 if(!fs.existsSync(songsDir)) continue
 
 const files = fs.readdirSync(songsDir)
 
 for(const file of files){
+
+  const filePath = path.join(songsDir, file)
+  if(!fs.statSync(filePath).isFile()) continue
 
 const name = file.replace(".txt","")
 const parts = name.split(" - ")
@@ -54,10 +58,7 @@ category: category
 })
 }
 
-const content = fs.readFileSync(
-path.join(songsDir,file),
-"utf8"
-)
+const content = fs.readFileSync(filePath).toString("utf8")
 
 try{
 
