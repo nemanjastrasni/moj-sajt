@@ -26,6 +26,7 @@ model User {
   favorites     Favorite[]
   playlists     Playlist[]
   sessions      Session[]
+  role String @default("user")
 }
 
 model Artist {

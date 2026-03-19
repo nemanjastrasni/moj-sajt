@@ -1,4 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials"
+import GoogleProvider from "next-auth/providers/google"
 import type { NextAuthOptions } from "next-auth"
 import bcrypt from "bcrypt"
 import { prisma } from "@/lib/prisma"
@@ -7,7 +8,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-
+  
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -15,6 +16,7 @@ export const authOptions: NextAuthOptions = {
         email: {},
         password: {},
       },
+      
      async authorize(credentials) {
   try {
     if (!credentials?.email || !credentials?.password) return null
@@ -42,7 +44,25 @@ export const authOptions: NextAuthOptions = {
   }
 }
     }),
+    GoogleProvider({
+  clientId: process.env.GOOGLE_CLIENT_ID!,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+}),
   ],
+  callbacks: {
+  async jwt({ token, user }) {
+    if (user) {
+      token.role = (user as any).role || "user"
+    }
+    return token
+  },
+  async session({ session, token }) {
+    if (session.user) {
+      (session.user as any).role = token.role
+    }
+    return session
+  },
+},
 
   secret: process.env.NEXTAUTH_SECRET,
 }
