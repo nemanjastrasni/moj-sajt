@@ -3,19 +3,23 @@ const prisma = new PrismaClient()
 
 async function run() {
 
-  const admins = [
-    "nemanjajivanovic979@gmail.com",
-    "test@test.com"
-  ]
+  const email = "nemanjaivanovic979@gmail.com"
 
-  for (const email of admins) {
-    await prisma.user.update({
-      where: { email },
-      data: { role: "admin" }
-    })
-    console.log("ADMIN:", email)
+  const user = await prisma.user.findUnique({
+    where: { email }
+  })
+
+  if (!user) {
+    console.log("USER NE POSTOJI:", email)
+    return
   }
 
+  await prisma.user.update({
+    where: { email },
+    data: { role: "admin" }
+  })
+
+  console.log("ADMIN POSTAVLJEN:", email)
 }
 
 run()
