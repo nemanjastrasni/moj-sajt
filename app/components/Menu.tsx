@@ -10,6 +10,7 @@ const { data: session } = useSession()
 const [query, setQuery] = useState("")
 const [results, setResults] = useState<any[]>([])
 const [visits,setVisits] = useState(0)
+const role = (session?.user as any)?.role
 
 useEffect(() => {
 
@@ -35,6 +36,10 @@ return (
     <Link href="/" className="string w-64 block">
       <span>Home</span>
     </Link>
+    {role === "admin" && (
+  <a href="/admin">Admin</a>
+)}
+<p>{role}</p>
      {/* PESME DROPDOWN */}
      <div>
       <button
