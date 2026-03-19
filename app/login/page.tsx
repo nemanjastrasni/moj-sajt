@@ -9,7 +9,7 @@ export default function LoginPage() {
   const [show, setShow] = useState(false)
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 relative z-50">
       
       <div className="bg-white p-8 rounded-2xl shadow-lg w-80 flex flex-col gap-4">
         
@@ -36,13 +36,13 @@ export default function LoginPage() {
 
         <button
          onClick={async () => {
-  await signIn("credentials", {
-    email,
-    password,
-    redirect: true,
-    callbackUrl: "/"
-  })
-}}
+         await signIn("credentials", {
+           email,
+           password,
+            redirect: true,
+           callbackUrl: "/"
+         })
+        }}
           className="bg-black text-white py-2 rounded"
         >
           Login
@@ -54,7 +54,9 @@ export default function LoginPage() {
         >
           Continue with Google
         </button>
-
+         <a href="/signup" className="text-sm text-blue-500 text-center">
+            Nemaš nalog? Signup
+           </a>
       </div>
     </div>
   )
