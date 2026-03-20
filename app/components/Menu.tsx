@@ -4,6 +4,9 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { signIn, signOut, useSession } from "next-auth/react"
 
+const { data: session } = useSession()
+const [open, setOpen] = useState(false)
+
 export default function Menu() {
 const [openPesme, setOpenPesme] = useState(false)
 const { data: session } = useSession()
@@ -138,61 +141,69 @@ return (
 
 <a href="/profile">Profil</a>
   {/* DESNA STRANA */}
-  <div className="relative z-10 flex items-center gap-4 ml-auto">
+<div className="relative z-10 flex items-center gap-4 ml-auto">
 
-    {session?.user?.role === "admin" && (
-      <div className="text-xs text-white mr-4">
-        👥 {visits}
-      </div>
-    )}
+  {session?.user?.role === "admin" && (
+    <div className="text-xs text-white mr-4">
+      👥 {visits}
+    </div>
+  )}
 
-    {!session ? (
-      <button
-        onClick={() => signIn("github")}
-        className="px-5 py-2 bg-black text-white rounded-lg hover:opacity-80 transition"
-      >
-        Login
-      </button>
-    ) : (
-      <div className="flex items-center gap-3">
+  {!session ? (
+    <button
+      onClick={() => signIn("github")}
+      className="px-5 py-2 bg-black text-white rounded-lg hover:opacity-80 transition"
+    >
+      Login
+    </button>
+  ) : (
+    <div className="relative">
 
-        {session.user?.image && (
-          <img
-            src={session.user.image}
-            alt="avatar"
-            className="w-10 h-10 rounded-full border"
-          />
-        )}
+      {/* AVATAR */}
+      <img
+        src={(session.user as any)?.image || "/avatars/1.png"}
+        onClick={() => setOpen(!open)}
+        className="w-10 h-10 rounded-full cursor-pointer border hover:scale-105 transition"
+      />
 
-        <div className="flex flex-col leading-tight">
-          <span className="text-sm font-medium text-red-700">
-            {session.user?.name}
-          </span>
+      {/* DROPDOWN */}
+      {open && (
+        <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-xl p-2 text-sm z-50">
 
-          <span
-            className={`text-[10px] uppercase tracking-wide font-semibold ${
-              session.user?.role === "admin"
-                ? "text-blue-400"
-                : "text-gray-600"
-            }`}
+          <p className="px-2 py-1 text-gray-500 truncate">
+            {session.user?.email}
+          </p>
+
+          <a
+            href="/profile"
+            className="block px-2 py-2 hover:bg-gray-100 rounded"
           >
-            {session.user?.role}
-          </span>
+            Profil
+          </a>
+
+          {(session.user as any)?.role === "admin" && (
+            <a
+              href="/admin"
+              className="block px-2 py-2 hover:bg-gray-100 rounded"
+            >
+              Admin
+            </a>
+          )}
+
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="w-full text-left px-2 py-2 hover:bg-gray-100 rounded"
+          >
+            Logout
+          </button>
+
         </div>
+      )}
 
-        <button
-          onClick={() => signOut({ callbackUrl: "/api/auth/signin" })}
-          className="px-3 py-1 bg-gray-200 rounded-md text-sm hover:bg-gray-300 transition"
-        >
-          Logout
-        </button>
+    </div>
+  )}
 
-      </div>
-    )}
-
-  </div>
-```
-
-   </nav>
-  )
+    </div>
+  </nav>
+)
 }
