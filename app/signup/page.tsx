@@ -35,29 +35,19 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen grid grid-cols-2">
+    <div
+  className="min-h-screen flex items-center justify-center bg-cover bg-center"
+  style={{ backgroundImage: "url('/guitar.jpg')" }}
+>
 
       {/* LEVA STRANA */}
-      <div
-        className="hidden md:flex items-center justify-center bg-cover bg-center"
-        style={{ backgroundImage: "url('/guitar.jpg')" }}
-      >
-        <div className="bg-black/60 p-10 text-white text-center">
-          <h1 className="text-4xl font-bold mb-4">
-            GitaraAkordi
-          </h1>
-          <p className="text-gray-300">
-            Najveća baza akorda i pesama na Balkanu.
-          </p>
-        </div>
-      </div>
-
+     
       {/* DESNA STRANA */}
       <div className="flex items-center justify-center bg-gray-100">
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-2xl shadow-xl w-96 flex flex-col gap-4"
+          className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-xl w-96 flex flex-col gap-4"
         >
 
           <h1 className="text-2xl font-bold text-center">

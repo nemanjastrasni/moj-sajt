@@ -39,9 +39,7 @@ return (
     <Link href="/" className="string w-64 block">
       <span>Home</span>
     </Link>
-    {role === "admin" && (
-  <a href="/admin">Admin</a>
-)}
+    {/* admin link uklonjen */}
 <p>{role}</p>
      {/* PESME DROPDOWN */}
      <div>
@@ -101,7 +99,7 @@ return (
 
   </div>
      {/* SEARCH CENTER */}
-<div className="absolute left-1/2 -translate-x-1/2 top-20 z-50">
+<div className="absolute left-1/2 -translate-x-1/2 top-32 z-50">
 
   <input
     value={query}
