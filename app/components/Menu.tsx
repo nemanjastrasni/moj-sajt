@@ -101,7 +101,7 @@ return (
 
   </div>
      {/* SEARCH CENTER */}
-<div className="absolute left-1/2 -translate-x-1/2 top-10 z-50">
+<div className="absolute left-1/2 -translate-x-1/2 top-20 z-50">
 
   <input
     value={query}
