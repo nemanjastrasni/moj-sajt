@@ -13,6 +13,19 @@ export default function SignupPage() {
   const [selectedAvatar, setSelectedAvatar] = useState("")
   const [image, setImage] = useState("")
 
+  const avatars = [
+  "/avatars/hendrix.png",
+  "/avatars/page.png",
+  "/avatars/clapton.png",
+  "/avatars/srv.png",
+  "/avatars/slash.png",
+  "/avatars/santana.png",
+  "/avatars/knopfler.png",
+  "/avatars/bbking.png",
+  "/avatars/gilmour.png",
+  "/avatars/vanhalen.png",
+]
+
   const handleSubmit = async (e: any) => {
     e.preventDefault()
 
@@ -102,23 +115,21 @@ export default function SignupPage() {
           </p>
 
           {/* AVATAR GRID */}
-          <div className="grid grid-cols-5 gap-2">
-            {[1,2,3,4,5,6,7,8,9,10].map((i) => (
-              <img
-                key={i}
-                src={`/avatars/${i}.png`}
-                onClick={() => {
-                  setSelectedAvatar(`/avatars/${i}.png`)
-                  setImage("")
-                }}
-                className={`w-14 h-14 rounded-full cursor-pointer border-2 hover:scale-110 transition ${
-                  selectedAvatar === `/avatars/${i}.png`
-                    ? "border-black"
-                    : "border-transparent"
-                }`}
-              />
-            ))}
-          </div>
+         <div className="grid grid-cols-5 gap-2">
+  {avatars.map((a) => (
+    <img
+      key={a}
+      src={a}
+      onClick={() => {
+        setSelectedAvatar(a)
+        setImage(a)
+      }}
+      className={`w-12 h-12 rounded-full cursor-pointer border-2 ${
+        selectedAvatar === a ? "border-blue-500" : "border-transparent"
+      }`}
+    />
+  ))}
+</div>
 
           {error && (
             <p className="text-red-500 text-sm text-center">
