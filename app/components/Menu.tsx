@@ -4,31 +4,31 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { signIn, signOut, useSession } from "next-auth/react"
 
-const { data: session } = useSession()
-const [open, setOpen] = useState(false)
-
 export default function Menu() {
-const [openPesme, setOpenPesme] = useState(false)
-const { data: session } = useSession()
-const [query, setQuery] = useState("")
-const [results, setResults] = useState<any[]>([])
-const [visits,setVisits] = useState(0)
-const role = (session?.user as any)?.role
 
-useEffect(() => {
+  const { data: session } = useSession()
 
-  async function load() {
-    await fetch("/api/analytics", { method: "POST" });
+  const [open, setOpen] = useState(false)
+  const [openPesme, setOpenPesme] = useState(false)
 
-    const r = await fetch("/api/analytics-count");
-    const d = await r.json();
+  const [query, setQuery] = useState("")
+  const [results, setResults] = useState<any[]>([])
 
-    setVisits(d.count);
-  }
+  const [visits, setVisits] = useState(0)
 
-  load();
+  const role = (session?.user as any)?.role
 
-}, []);
+  // (opciono) fetch visits ako koristiš
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/visits")
+        const data = await res.json()
+        setVisits(data.count || 0)
+      } catch {}
+    }
+    load()
+  }, [])
 
 return (
 
