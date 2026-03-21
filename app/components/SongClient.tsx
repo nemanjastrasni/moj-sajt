@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react"
 import Chord from "./Chord"
 
+const [isFav, setIsFav] = useState(false)
+
 type Props = {
   song: {
     id: string
@@ -127,6 +129,14 @@ export default function SongClient({ song, media }: Props) {
       setMiniPlayer(false)
     }
   }
+  useEffect(() => {
+  async function checkFav() {
+    const res = await fetch(`/api/favorite/check?songId=${song.id}`)
+    const data = await res.json()
+    setIsFav(data.isFav)
+  }
+  checkFav()
+}, [song.id])
 
   window.addEventListener("scroll", handleScroll)
 
@@ -244,36 +254,33 @@ export default function SongClient({ song, media }: Props) {
 
           </div>
 
-          {/* TITLE */}
-          <div className="flex items-center gap-4 mb-2">
+       {/* TITLE */}
+<div className="flex items-center gap-4 mb-2">
   <h1 className="text-3xl font-bold">
     {title}
   </h1>
 
-  <button
-    onClick={async () => {
-      console.log("klik", song.id)   // DODAJ OVU LINIJU
-      try {
-        const res = await fetch("/api/favorites", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ songId: song.id }),
-        })
+  {/* FAVORITE START */}
+<button
+  onClick={async () => {
+    const res = await fetch("/api/favorite", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ songId: song.id }),
+    })
 
-        if (!res.ok) {
-          alert("Morate biti ulogovani")
-          return
-        }
+    const data = await res.json()
 
-        alert("Pesma dodata u favorite ⭐")
-      } catch (err) {
-        console.error(err)
-      }
-    }}
-    className="text-yellow-400 text-xl hover:scale-110 transition"
-  >
-    ⭐
-  </button>
+    if (data.added) setIsFav(true)
+    if (data.removed) setIsFav(false)
+  }}
+  className={`text-xl transition ${
+    isFav ? "text-yellow-400" : "text-gray-400"
+  }`}
+>
+  ⭐
+</button>
+
 </div>
 
 <h2 className="text-lg text-gray-500 mb-6">

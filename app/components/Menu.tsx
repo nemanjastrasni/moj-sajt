@@ -88,14 +88,14 @@ return (
 </Link>
      
     {/* ADMIN */}
-    {session?.user?.role === "admin" && (
-      <Link
-        href="/admin"
-        className="string w-[30rem] ml-44 block font-semibold"
-      >
-        <span>Admin</span>
-      </Link>
-    )}
+{session?.user?.role === "admin" && (
+  <Link
+    href="/admin"
+    className="string w-[30rem] ml-44 block font-semibold"
+  >
+    admin
+  </Link>
+)}
 
   </div>
      {/* SEARCH CENTER */}
@@ -181,7 +181,6 @@ return (
 
           {(session.user as any)?.role === "admin" && (
             <a
-              href=""
               className="block px-2 py-2 hover:bg-gray-100 rounded"
             >
               Admin
