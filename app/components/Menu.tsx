@@ -88,7 +88,7 @@ return (
 </Link>
      
     {/* ADMIN */}
-    {session?.user?.role === "admin" && (
+    {session?.user?.role === "" && (
       <Link
         href=""
         className="string w-[30rem] ml-44 block font-semibold"
@@ -141,7 +141,7 @@ return (
   {/* DESNA STRANA */}
 <div className="relative z-10 flex items-center gap-4 ml-auto">
 
-  {session?.user?.role === "admin" && (
+  {session?.user?.role === "" && (
     <div className="text-xs text-white mr-4">
       👥 {visits}
     </div>
@@ -179,9 +179,9 @@ return (
             Profil
           </a>
 
-          {(session.user as any)?.role === "admin" && (
+          {(session.user as any)?.role === "" && (
             <a
-              href="/admin"
+              href=""
               className="block px-2 py-2 hover:bg-gray-100 rounded"
             >
               Admin
