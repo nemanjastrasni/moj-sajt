@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { signIn } from "next-auth/react"
+import Image from "next/image"
 
 export default function SignupPage() {
 
@@ -117,17 +118,17 @@ export default function SignupPage() {
           {/* AVATAR GRID */}
          <div className="grid grid-cols-5 gap-2">
   {avatars.map((a) => (
-    <img
-      key={a}
-      src={a}
-      onClick={() => {
-        setSelectedAvatar(a)
-        setImage(a)
-      }}
-      className={`w-12 h-12 rounded-full cursor-pointer border-2 ${
-        selectedAvatar === a ? "border-blue-500" : "border-transparent"
-      }`}
-    />
+   <img
+  key={a}
+  src={a}
+  onClick={() => {
+    setSelectedAvatar(a)
+    setImage(a)
+  }}
+  className={`w-12 h-12 rounded-full cursor-pointer border-2 ${
+    selectedAvatar === a ? "border-blue-500" : "border-transparent"
+  }`}
+/>
   ))}
 </div>
 

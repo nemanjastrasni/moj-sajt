@@ -90,7 +90,7 @@ return (
     {/* ADMIN */}
     {session?.user?.role === "admin" && (
       <Link
-        href="/admin"
+        href=""
         className="string w-[30rem] ml-44 block font-semibold"
       >
         <span>Admin</span>
