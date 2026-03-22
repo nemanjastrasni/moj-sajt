@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react"
 import Chord from "./Chord"
 
-const [isFav, setIsFav] = useState(false)
 
 type Props = {
   song: {
@@ -28,7 +27,7 @@ export default function SongClient({ song, media }: Props) {
   const [transpose, setTranspose] = useState(0)
   const [showVideo, setShowVideo] = useState(true)
   const [miniPlayer, setMiniPlayer] = useState(false)
-
+  const [isFav, setIsFav] = useState(false)
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
   const [scrollSpeed, setScrollSpeed] = useState(1)
   const scrollRef = useRef<NodeJS.Timeout | null>(null)
@@ -121,14 +120,15 @@ export default function SongClient({ song, media }: Props) {
   }, [])
 
   useEffect(() => {
-
   function handleScroll() {
-    if (window.scrollY > 350) {
-      setMiniPlayer(true)
-    } else {
-      setMiniPlayer(false)
-    }
+    if (window.scrollY > 350) setMiniPlayer(true)
+    else setMiniPlayer(false)
   }
+
+  window.addEventListener("scroll", handleScroll)
+  return () => window.removeEventListener("scroll", handleScroll)
+}, [])
+
   useEffect(() => {
   async function checkFav() {
     const res = await fetch(`/api/favorite/check?songId=${song.id}`)
