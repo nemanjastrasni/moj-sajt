@@ -2,12 +2,6 @@ const axios = require("axios")
 const cheerio = require("cheerio")
 const { PrismaClient } = require("@prisma/client")
 const prisma = new PrismaClient()
-async function getWikiPage(name) {
-const wikis = ["sr","sh","en"]
-const fs = require("fs")
-const path = require("path")
-const sharp = require("sharp")
-const DISCOGS_TOKEN = "YOUR_DISCOGS_TOKEN"
 
 function toLatin(text = "") {
   const map = {
@@ -16,25 +10,6 @@ function toLatin(text = "") {
   }
 
   return text.split("").map(c => map[c] || c).join("")
-}
-
-async function getArtistGenre(name) {
-  try {
-    const search = await axios.get(
-      `https://api.discogs.com/database/search?q=${encodeURIComponent(name)}&type=artist&token=${DISCOGS_TOKEN}`
-    )
-
-    if (!search.data.results.length) return null
-
-    const result = search.data.results[0]
-
-    if (!result.genre) return null
-
-    return result.genre[0]
-
-  } catch {
-    return null
-  }
 }
 
 async function getDiscogsAlbums(name) {
@@ -74,6 +49,34 @@ async function getDiscogsAlbums(name) {
     return []
   }
 }
+
+async function getWikiPage(name) {
+const wikis = ["sr","sh","en"]
+const fs = require("fs")
+const path = require("path")
+const sharp = require("sharp")
+const DISCOGS_TOKEN = "YOUR_DISCOGS_TOKEN"
+
+async function getArtistGenre(name) {
+  try {
+    const search = await axios.get(
+      `https://api.discogs.com/database/search?q=${encodeURIComponent(name)}&type=artist&token=${DISCOGS_TOKEN}`
+    )
+
+    if (!search.data.results.length) return null
+
+    const result = search.data.results[0]
+
+    if (!result.genre) return null
+
+    return result.genre[0]
+
+  } catch {
+    return null
+  }
+}
+
+
 
 async function saveArtistImage(url, slug) {
 
@@ -158,6 +161,11 @@ const bio = toLatin(
     .slice(0,6)
     .join("\n\n")
 )
+const cleanBio = bio
+  .replace(/\[\d+\]/g, "")
+  .replace(/\s+/g, " ")
+  .trim()
+
 
 let members = []
 
@@ -194,16 +202,18 @@ text.match(/\d{4}/) &&
 
 const year = text.match(/\d{4}/)[0]
 
-albums.push({
-  title: toLatin(text.replace(/\(\d{4}\)/,"").trim()),
-  year
-})
+if (albums.length < 10) {
+  albums.push({
+    title: toLatin(text.replace(/\(\d{4}\)/,"").trim()),
+    year
+  })
+}
 
 }
 
 })
 
-return { bio, members, albums, imageUrl }
+return { bio: cleanBio, members, albums, imageUrl }
 }
 
 async function run() {
@@ -211,6 +221,10 @@ async function run() {
 const artists = await prisma.artist.findMany()
 
 for (const artist of artists) {
+    if (artist.bio && artist.discography?.length) {
+  console.log("Skipping:", artist.name)
+  continue
+}
 
 console.log("Processing:", artist.name)
 
@@ -227,10 +241,12 @@ const discogsAlbums = await getDiscogsAlbums(artist.name)
 await prisma.artist.update({
 where: { id: artist.id },
 data: {
-bio: data.bio,
+bio: data.bio?.slice(0, 1200),
 members: data.members,
 discography: discogsAlbums.length ? discogsAlbums : data.albums,
-image: data.imageUrl ? await saveArtistImage(data.imageUrl, artist.slug) : null
+image: data.imageUrl
+  ? await saveArtistImage(data.imageUrl, artist.slug)
+  : artist.image,
 }
 })
 
