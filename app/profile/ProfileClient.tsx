@@ -75,15 +75,32 @@ export default function ProfileClient({ user, favorites }: any) {
           )}
 
           {favorites?.map((f: any) => (
-            <div key={f.id} className="mb-2">
-              <a
-                href={`/pesme/${f.song.slug}`}
-                className="text-blue-600 hover:underline"
-              >
-                {f.song.title}
-              </a>
-            </div>
-          ))}
+  <div key={f.id} className="mb-2 flex items-center justify-between">
+    
+    <a
+      href={`/pesme/${f.song.slug}`}
+      className="text-blue-600 hover:underline"
+    >
+      {f.song.title}
+    </a>
+
+    <button
+      onClick={async () => {
+        await fetch("/api/favorite", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ songId: f.song.id }),
+        })
+
+        location.reload()
+      }}
+      className="text-red-500 ml-4"
+    >
+      ❌
+    </button>
+
+  </div>
+))}
         </div>
 
       </div>

@@ -9,89 +9,70 @@ const path = require("path")
 const sharp = require("sharp")
 const DISCOGS_TOKEN = "YOUR_DISCOGS_TOKEN"
 
+function toLatin(text = "") {
+  const map = {
+    "А":"A","Б":"B","В":"V","Г":"G","Д":"D","Ђ":"Đ","Е":"E","Ж":"Ž","З":"Z","И":"I","Ј":"J","К":"K","Л":"L","Љ":"Lj","М":"M","Н":"N","Њ":"Nj","О":"O","П":"P","Р":"R","С":"S","Т":"T","Ћ":"Ć","У":"U","Ф":"F","Х":"H","Ц":"C","Ч":"Č","Џ":"Dž","Ш":"Š",
+    "а":"a","б":"b","в":"v","г":"g","д":"d","ђ":"đ","е":"e","ж":"ž","з":"z","и":"i","ј":"j","к":"k","л":"l","љ":"lj","м":"m","н":"n","њ":"nj","о":"o","п":"p","р":"r","с":"s","т":"t","ћ":"ć","у":"u","ф":"f","х":"h","ц":"c","ч":"č","џ":"dž","ш":"š"
+  }
 
-async function getDiscogsAlbums(name){
-
-try{
-
-const res = await axios.get(
-`https://api.discogs.com/database/search?q=${encodeURIComponent(name)}&type=artist`
-)
-
-if(!res.data.results.length) return []
-
-return res.data.results
-.slice(0,5)
-.map(r=>({
-title:r.title,
-year:r.year || ""
-}))
-
-}catch{
-return []
+  return text.split("").map(c => map[c] || c).join("")
 }
 
-}
 async function getArtistGenre(name) {
+  try {
+    const search = await axios.get(
+      `https://api.discogs.com/database/search?q=${encodeURIComponent(name)}&type=artist&token=${DISCOGS_TOKEN}`
+    )
 
-try {
+    if (!search.data.results.length) return null
 
-const search = await axios.get(
-`https://api.discogs.com/database/search?q=${encodeURIComponent(name)}&type=artist&token=${DISCOGS_TOKEN}`
-)
+    const result = search.data.results[0]
 
-if (!search.data.results.length) return null
+    if (!result.genre) return null
 
-const result = search.data.results[0]
+    return result.genre[0]
 
-if (!result.genre) return null
-
-return result.genre[0]
-
-} catch {
-return null
-}
-
+  } catch {
+    return null
+  }
 }
 
 async function getDiscogsAlbums(name) {
+  try {
+    const search = await axios.get(
+      `https://api.discogs.com/database/search?q=${encodeURIComponent(name)}&type=artist&token=${DISCOGS_TOKEN}`
+    )
 
-try {
+    if (!search.data.results.length) return []
 
-const search = await axios.get(
-`https://api.discogs.com/database/search?q=${encodeURIComponent(name)}&type=artist&token=${DISCOGS_TOKEN}`
-)
+    const result = search.data.results.find(r =>
+      r.type === "artist" &&
+      (
+        (r.country && ["Yugoslavia","Serbia","Croatia","Bosnia","Slovenia","Macedonia"].includes(r.country)) ||
+        (r.title && r.title.toLowerCase().includes(name.toLowerCase()))
+      )
+    )
 
-if (!search.data.results.length) return []
+    if (!result) return []
 
-const result = search.data.results.find(r =>
-r.type === "artist" &&
-(
-(r.country && ["Yugoslavia","Serbia","Croatia","Bosnia","Slovenia","Macedonia"].includes(r.country)) ||
-(r.title && r.title.toLowerCase().includes(name.toLowerCase()))
-)
-)
+    const artistId = result.id
 
-if (!result) return []
+    const releases = await axios.get(
+      `https://api.discogs.com/artists/${artistId}/releases?token=${DISCOGS_TOKEN}`
+    )
 
-const artistId = result.id
+    return releases.data.releases
+      .filter(r => r.type === "master")
+      .slice(0, 10)
+      .map(r => ({
+        title: r.title,
+        year: r.year
+      }))
 
-const releases = await axios.get(
-`https://api.discogs.com/artists/${artistId}/releases?token=${DISCOGS_TOKEN}`
-)
-
-return releases.data.releases
-.filter(r => r.type === "master")
-.slice(0,10)
-.map(r => ({
-title: r.title,
-year: r.year
-}))
-
-} catch {
-return []
-}
-
+  } catch (e) {
+    console.log("Discogs error:", name)
+    return []
+  }
 }
 
 async function saveArtistImage(url, slug) {
@@ -170,11 +151,13 @@ imageUrl = imageUrl.replace(/\/\d+px/, "/1200px")
 
 }
 
-const bio = $(".mw-parser-output > p")
-.map((i,el)=>$(el).text())
-.get()
-.slice(0,6)
-.join("\n\n")
+const bio = toLatin(
+  $(".mw-parser-output > p")
+    .map((i,el)=>$(el).text())
+    .get()
+    .slice(0,6)
+    .join("\n\n")
+)
 
 let members = []
 
@@ -184,7 +167,10 @@ const th = $(el).find("th").text().toLowerCase()
 const td = $(el).find("td")
 
 if (th.includes("članovi") || th.includes("members")) {
-members = td.text().split("\n").map(x=>x.trim()).filter(Boolean)
+members = td.text()
+  .split("\n")
+  .map(x => toLatin(x.trim()))
+  .filter(Boolean)
 }
 
 })
@@ -209,8 +195,8 @@ text.match(/\d{4}/) &&
 const year = text.match(/\d{4}/)[0]
 
 albums.push({
-title: text.replace(/\(\d{4}\)/,"").trim(),
-year
+  title: toLatin(text.replace(/\(\d{4}\)/,"").trim()),
+  year
 })
 
 }
@@ -236,13 +222,14 @@ continue
 }
 
 const data = extractData(html)
+const discogsAlbums = await getDiscogsAlbums(artist.name)
 
 await prisma.artist.update({
 where: { id: artist.id },
 data: {
 bio: data.bio,
 members: data.members,
-discography: data.albums,
+discography: discogsAlbums.length ? discogsAlbums : data.albums,
 image: data.imageUrl ? await saveArtistImage(data.imageUrl, artist.slug) : null
 }
 })
