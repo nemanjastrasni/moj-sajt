@@ -38,7 +38,8 @@ export const authOptions: NextAuthOptions = {
             id: String(user.id),
             email: user.email,
             name: user.name ?? null,
-            role: (user as any).role,// ✅ BITNO
+            role: (user as any).role,
+            image: user.image || null, // ✅ DODATO
           }
         } catch (err) {
           throw new Error(String(err))
@@ -53,26 +54,28 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
-  if (user?.email) {
-    const dbUser = await prisma.user.findUnique({
-      where: { email: user.email },
-    })
+    async jwt({ token, user }: any) {
+      if (user?.email) {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+        })
 
-    token.role = (dbUser as any)?.role || "user"
-  }
-  return token
-},
+        token.role = (dbUser as any)?.role || "user"
+        token.image = dbUser?.image || user.image || null // ✅ BITNO
+      }
+      return token
+    },
 
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       if (session.user) {
-        (session.user as any).role = token.role
+        session.user.role = token.role
+        session.user.image = token.image // ✅ BITNO
       }
       return session
     },
 
-    async redirect({ url, baseUrl }) {
-      return baseUrl // ✅ nema više TS error
+    async redirect() {
+      return "/" // ✅ FIX (bez TS error)
     },
   },
 

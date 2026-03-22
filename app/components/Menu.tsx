@@ -40,12 +40,7 @@ return (
     <Link href="/" className="string w-64 block">
       <span>Home</span>
     </Link>
-    {/* admin link uklonjen */}
-{session?.user?.name && (
-  <p className="text-sm text-gray-300">
-    User: {session.user.name}
-  </p>
-)}
+    
      {/* PESME DROPDOWN */}
      <div>
       <button
@@ -168,7 +163,20 @@ return (
         onClick={() => setOpen(!open)}
         className="w-10 h-10 rounded-full cursor-pointer border hover:scale-105 transition"
       />
+      {/* admin link uklonjen */}
+<div className="flex items-center gap-2">
+  {session?.user?.name && (
+    <span className="text-sm text-gray-300">
+      {session.user.name}
+    </span>
+  )}
 
+  <img
+    src={(session.user as any)?.image || "/avatars/gilmour.png"}
+    onClick={() => setOpen(!open)}
+    className="w-10 h-10 rounded-full cursor-pointer border hover:scale-105 transition"
+  />
+</div>
       {/* DROPDOWN */}
       {open && (
         <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-xl p-2 text-sm z-50">

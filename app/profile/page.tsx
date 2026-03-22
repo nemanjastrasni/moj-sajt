@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import ProfileClient from "./ProfileClient"
 
+
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions)
 
@@ -11,15 +12,15 @@ export default async function ProfilePage() {
   }
 
   const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    include: {
-  favorites: {
-    include: {
-      song: true
-    }
-  }
-} as any
-  })
+  where: { email: session.user.email },
+  include: {
+    favorites: {
+      include: {
+        song: true,
+      },
+    },
+  },
+})
 
   return <ProfileClient user={user} favorites={(user as any)?.favorites} />
 }
