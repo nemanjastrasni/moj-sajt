@@ -41,7 +41,11 @@ return (
       <span>Home</span>
     </Link>
     {/* admin link uklonjen */}
-<p>{role}</p>
+{session?.user?.name && (
+  <p className="text-sm text-gray-300">
+    User: {session.user.name}
+  </p>
+)}
      {/* PESME DROPDOWN */}
      <div>
       <button
