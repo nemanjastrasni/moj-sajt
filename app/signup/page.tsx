@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { signIn } from "next-auth/react"
-import Image from "next/image"
 
 export default function SignupPage() {
 
@@ -41,7 +40,7 @@ export default function SignupPage() {
         name,
         email,
         password,
-        image: image || selectedAvatar
+        image
       })
     })
 
@@ -111,6 +110,13 @@ export default function SignupPage() {
             }}
           />
 
+          
+          {image && (
+  <img
+    src={image}
+    className="w-16 h-16 rounded-full mx-auto border mb-2"
+  />
+)}
           <p className="text-sm text-gray-500 text-center">
             ili izaberi avatar
           </p>
@@ -122,9 +128,9 @@ export default function SignupPage() {
   key={a}
   src={a}
   onClick={() => {
-    setSelectedAvatar(a)
-    setImage(a)
-  }}
+  setSelectedAvatar(a)
+  setImage(a)
+}}
   className={`w-12 h-12 rounded-full cursor-pointer border-2 ${
     selectedAvatar === a ? "border-blue-500" : "border-transparent"
   }`}
