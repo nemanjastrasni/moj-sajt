@@ -9,7 +9,7 @@ export default function Menu() {
   const { data: session } = useSession()
 
   const [open, setOpen] = useState(false)
-  const [openMobile, setOpenMobile] = useState(false)
+  
   const [openPesme, setOpenPesme] = useState(false)
 
   const [query, setQuery] = useState("")
@@ -33,20 +33,13 @@ export default function Menu() {
 
 return (
 
-   <div className="relative z-[9999] flex justify-between items-center pt-2 pb-2 pl-2 pr-4 bg-red-700 text-black shadow-md overflow-visible">
-    <button
-  onClick={() => setOpenMobile(v => !v)}
-  className="md:hidden text-white text-2xl"
->
-  ☰
-</button>
+   <nav className="relative z-[9999] flex justify-between items-start pt-2 pb-2 pl-2 pr-6 bg-red-700 text-black shadow-md overflow-visible">
   {/* LEVA STRANA */}
-  <div className={`${openMobile ? "flex" : "hidden"} md:flex relative z-10 space-y-2 flex-col items-start absolute md:static top-12 left-0 w-full md:w-auto bg-red-700 md:bg-transparent p-4 md:p-0`}>
+  <div className="relative z-10 space-y-2 flex flex-col items-start">
 
     <Link href="/" className="string w-64 block">
       <span>Home</span>
     </Link>
-    
     {/* admin link uklonjen */}
 <p>{role}</p>
      {/* PESME DROPDOWN */}
@@ -89,7 +82,6 @@ return (
     <Link href="/biografija" className="string w-96 ml-28 block">
       <span>Biografija</span>
     </Link>
-    
    
    {/* KONTAKT*/}
    <Link href="/kontakt" className="string w-[28rem] ml-36 block">
@@ -202,13 +194,14 @@ return (
           >
             Logout
           </button>
-       </div>
+
+        </div>
       )}
 
     </div>
   )}
-     
+
     </div>
-  </div>
+  </nav>
 )
 }

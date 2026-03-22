@@ -55,7 +55,7 @@ const wikis = ["sr","sh","en"]
 const fs = require("fs")
 const path = require("path")
 const sharp = require("sharp")
-const DISCOGS_TOKEN = "YOUR_DISCOGS_TOKEN"
+
 
 async function getArtistGenre(name) {
   try {
@@ -147,7 +147,7 @@ if (img.length) {
 const src = img.attr("src")
 const width = parseInt(img.attr("width") || "0")
 
-if (width >= 900) {
+if (width >= 200) {
 imageUrl = src.startsWith("http") ? src : `https:${src}`
 imageUrl = imageUrl.replace(/\/\d+px/, "/1200px")
 }
