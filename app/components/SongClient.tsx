@@ -35,7 +35,7 @@ export default function SongClient({ song, media }: Props) {
 
   const [textSize, setTextSize] = useState(18)
   const [chordSize, setChordSize] = useState(18)
-
+  if (!song) return null
   const { title, artist, content, lyrics } = song
   const displayContent = lyrics || content || ""
 
@@ -313,7 +313,7 @@ export default function SongClient({ song, media }: Props) {
     <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
 
       <iframe
-        src={media.embedUrl}
+        src={media?.embedUrl}
         title="YouTube player"
         className="w-full aspect-video"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
