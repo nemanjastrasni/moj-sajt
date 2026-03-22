@@ -126,7 +126,10 @@ export default function SongClient({ song, media }: Props) {
   }
 
   window.addEventListener("scroll", handleScroll)
-  return () => window.removeEventListener("scroll", handleScroll)
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll)
+  }
 }, [])
 
   useEffect(() => {
@@ -137,12 +140,6 @@ export default function SongClient({ song, media }: Props) {
   }
   checkFav()
 }, [song.id])
-
-  window.addEventListener("scroll", handleScroll)
-
-  return () => window.removeEventListener("scroll", handleScroll)
-
-}, [])
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
