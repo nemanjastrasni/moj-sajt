@@ -157,25 +157,24 @@ return (
   ) : (
     <div className="relative">
 
-      {/* AVATAR */}
-      <img
-        src={(session.user as any)?.image || "/avatars/1.png"}
-        onClick={() => setOpen(!open)}
-        className="w-10 h-10 rounded-full cursor-pointer border hover:scale-105 transition"
-      />
+    
       {/* admin link uklonjen */}
 <div className="flex items-center gap-2">
+
   {session?.user?.name && (
     <span className="text-sm text-gray-300">
       {session.user.name}
     </span>
   )}
 
-  <img
-    src={(session.user as any)?.image || "/avatars/gilmour.png"}
-    onClick={() => setOpen(!open)}
-    className="w-10 h-10 rounded-full cursor-pointer border hover:scale-105 transition"
-  />
+  { (session.user as any)?.image && (
+    <img
+      src={(session.user as any).image}
+      onClick={() => setOpen(!open)}
+      className="w-10 h-10 rounded-full cursor-pointer border hover:scale-105 transition"
+    />
+  )}
+
 </div>
       {/* DROPDOWN */}
       {open && (

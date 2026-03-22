@@ -21,6 +21,8 @@ export default async function ProfilePage() {
     },
   },
 })
-
+if (!user) {
+  return <div>Korisnik nije pronađen</div>
+}
   return <ProfileClient user={user} favorites={(user as any)?.favorites} />
 }
