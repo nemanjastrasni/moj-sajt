@@ -12,6 +12,9 @@ export default function SignupPage() {
   const [error, setError] = useState("")
   const [selectedAvatar, setSelectedAvatar] = useState("")
   const [image, setImage] = useState("")
+  const [city, setCity] = useState("")
+  const [country, setCountry] = useState("")
+  const [birthYear, setBirthYear] = useState("")
 
   const avatars = [
   "/avatars/hendrix.png",
@@ -40,6 +43,9 @@ export default function SignupPage() {
         name,
         email,
         password,
+        city,
+        country,
+        birthYear,
         image
       })
     })
@@ -92,34 +98,57 @@ export default function SignupPage() {
             onChange={e => setConfirm(e.target.value)}
             className="border px-3 py-2 rounded-lg text-black"
           />
+          <input
+  placeholder="Grad"
+  onChange={(e) => setCity(e.target.value)}
+  className="border px-3 py-2 rounded-lg text-black"
+/>
+
+<input
+  placeholder="Država"
+  onChange={(e) => setCountry(e.target.value)}
+  className="border px-3 py-2 rounded-lg text-black"
+/>
+
+<input
+  placeholder="Godina rođenja"
+  onChange={(e) => setBirthYear(e.target.value)}
+  className="border px-3 py-2 rounded-lg text-black"
+/>
+
 
           {/* UPLOAD */}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0]
-              if (!file) return
+<label className="bg-gray-200 text-black px-4 py-2 rounded-lg cursor-pointer text-center block">
+  📸 Ubaci profilnu sliku
+  <input
+    type="file"
+    accept="image/*"
+    onChange={(e) => {
+      const file = e.target.files?.[0]
+      if (!file) return
 
-              const reader = new FileReader()
-              reader.onloadend = () => {
-                setImage(reader.result as string)
-                setSelectedAvatar("")
-              }
-              reader.readAsDataURL(file)
-            }}
-          />
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImage(reader.result as string)
+        setSelectedAvatar("")
+      }
+      reader.readAsDataURL(file)
+    }}
+    className="hidden"
+  />
+</label>
 
-          
-          {image && (
+{/* PREVIEW */}
+{image && (
   <img
     src={image}
     className="w-16 h-16 rounded-full mx-auto border mb-2"
   />
 )}
-          <p className="text-sm text-gray-500 text-center">
-            ili izaberi avatar
-          </p>
+
+<p className="text-sm text-gray-500 text-center">
+  ili izaberi avatar
+</p>
 
           {/* AVATAR GRID */}
          <div className="grid grid-cols-5 gap-2">

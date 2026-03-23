@@ -73,11 +73,11 @@ const [birthYear, setBirthYear] = useState(user?.birthYear || "")
   onChange={(e) => setConfirmPassword(e.target.value)}
   className="border px-3 py-2 rounded text-black bg-white"
 />
-    <input
+    <textarea
+  placeholder="Kratko o tebi (bio)"
   value={bio}
   onChange={(e) => setBio(e.target.value)}
-  placeholder="Bio / grad / info"
-  className="border px-3 py-2 rounded text-black bg-white"
+  className="border px-3 py-2 rounded text-black"
 />
 <input
   value={city}
@@ -99,7 +99,12 @@ const [birthYear, setBirthYear] = useState(user?.birthYear || "")
   placeholder="Godina rođenja"
   className="border px-3 py-2 rounded text-black bg-white"
 />
-
+{image && (
+  <img
+    src={image}
+    className="w-20 h-20 rounded-full mx-auto border mb-2"
+  />
+)}
         <div className="grid grid-cols-5 gap-2">
           {avatars.map((a) => (
             <img
@@ -112,20 +117,30 @@ const [birthYear, setBirthYear] = useState(user?.birthYear || "")
             />
           ))}
         </div>
-<input
-  type="file"
-  accept="image/*"
-  onChange={(e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+        {image && (
+  <img
+    src={image}
+    className="w-20 h-20 rounded-full mx-auto border mb-2"
+  />
+)}
+<label className="bg-blue-600 text-white py-2 rounded text-center cursor-pointer block mt-2">
+  Promeni profilnu sliku
+  <input
+    type="file"
+    accept="image/*"
+    onChange={(e) => {
+      const file = e.target.files?.[0]
+      if (!file) return
 
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setImage(reader.result as string)
-    }
-    reader.readAsDataURL(file)
-  }}
-/>
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImage(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }}
+    className="hidden"
+  />
+</label>
         <button
           onClick={updateProfile}
           className="bg-blue-600 text-white py-2 rounded"
