@@ -11,16 +11,22 @@ const avatars = [
 ]
 
 export default function ProfileClient({ user, favorites }: any) {
-  const [name, setName] = useState("")
-  const [newPassword, setNewPassword] = useState("")
-  const [image, setImage] = useState("")
+  const [name, setName] = useState(user?.name || "")
+  const [password, setPassword] = useState("")
+  const [image, setImage] = useState(user?.image || "")
 
   async function updateProfile() {
-    await fetch("/api/profile", {
+    await fetch("/api/user/update", {
       method: "POST",
-      body: JSON.stringify({ name, newPassword, image })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        password,
+        image
+      })
     })
 
+    alert("Sačuvano")
     location.reload()
   }
 
@@ -36,15 +42,16 @@ export default function ProfileClient({ user, favorites }: any) {
       <div className="mt-6 flex flex-col gap-3 max-w-sm">
 
         <input
-          placeholder="Novo ime"
+          value={name}
           onChange={(e) => setName(e.target.value)}
+          placeholder="Novo ime"
           className="border px-3 py-2 rounded text-black"
         />
 
         <input
           type="password"
           placeholder="Nova lozinka"
-          onChange={(e) => setNewPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           className="border px-3 py-2 rounded text-black"
         />
 
@@ -54,7 +61,9 @@ export default function ProfileClient({ user, favorites }: any) {
               key={a}
               src={a}
               onClick={() => setImage(a)}
-              className="w-10 h-10 rounded-full cursor-pointer"
+              className={`w-10 h-10 rounded-full cursor-pointer border-2 ${
+                image === a ? "border-blue-500" : "border-transparent"
+              }`}
             />
           ))}
         </div>
@@ -75,32 +84,32 @@ export default function ProfileClient({ user, favorites }: any) {
           )}
 
           {favorites?.map((f: any) => (
-  <div key={f.id} className="mb-2 flex items-center justify-between">
-    
-    <a
-      href={`/pesme/${f.song.slug}`}
-      className="text-blue-600 hover:underline"
-    >
-      {f.song.title}
-    </a>
+            <div key={f.id} className="mb-2 flex items-center justify-between">
+              
+              <a
+                href={`/pesme/${f.song.category}/${f.song.artistSlug}/${f.song.slug}`}
+                className="text-blue-600 hover:underline"
+              >
+                {f.song.title}
+              </a>
 
-    <button
-      onClick={async () => {
-        await fetch("/api/favorite", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ songId: f.song.id }),
-        })
+              <button
+                onClick={async () => {
+                  await fetch("/api/favorite", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ songId: f.song.id }),
+                  })
 
-        location.reload()
-      }}
-      className="text-red-500 ml-4"
-    >
-      ❌
-    </button>
+                  location.reload()
+                }}
+                className="text-red-500 ml-4"
+              >
+                ❌
+              </button>
 
-  </div>
-))}
+            </div>
+          ))}
         </div>
 
       </div>
