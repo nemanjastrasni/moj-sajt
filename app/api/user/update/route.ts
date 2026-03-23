@@ -19,6 +19,9 @@ export async function POST(req: Request) {
 
   if (body.password) {
     data.password = await bcrypt.hash(body.password, 10)
+    if (body.city) data.city = body.city
+if (body.country) data.country = body.country
+if (body.birthYear) data.birthYear = Number(body.birthYear)
   }
 
   await prisma.user.update({

@@ -22,11 +22,15 @@ model User {
   emailVerified DateTime?
   image         String?
   bio           String?
+  city      String?
+  country   String?
+  birthYear Int?
   accounts      Account[]
   favorites     Favorite[]
   playlists     Playlist[]
   sessions      Session[]
   role          String     @default("user")
+
 }
 
 model Artist {

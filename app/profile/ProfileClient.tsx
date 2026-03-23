@@ -13,15 +13,28 @@ const avatars = [
 export default function ProfileClient({ user, favorites }: any) {
   const [name, setName] = useState(user?.name || "")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [bio, setBio] = useState(user?.bio || "")
   const [image, setImage] = useState(user?.image || "")
-
+  const [city, setCity] = useState(user?.city || "")
+const [country, setCountry] = useState(user?.country || "")
+const [birthYear, setBirthYear] = useState(user?.birthYear || "")
+  
   async function updateProfile() {
+    if (password && password !== confirmPassword) {
+    alert("Lozinke se ne poklapaju")
+    return
+  }
     await fetch("/api/user/update", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name,
         password,
+        bio,
+        city,
+        country,
+        birthYear,
         image
       })
     })
@@ -45,15 +58,47 @@ export default function ProfileClient({ user, favorites }: any) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Novo ime"
-          className="border px-3 py-2 rounded text-black"
+          className="border px-3 py-2 rounded text-black bg-white"
         />
 
         <input
           type="password"
           placeholder="Nova lozinka"
           onChange={(e) => setPassword(e.target.value)}
-          className="border px-3 py-2 rounded text-black"
+          className="border px-3 py-2 rounded text-black bg-white"
         />
+         <input
+  type="password"
+  placeholder="Potvrdi lozinku"
+  onChange={(e) => setConfirmPassword(e.target.value)}
+  className="border px-3 py-2 rounded text-black bg-white"
+/>
+    <input
+  value={bio}
+  onChange={(e) => setBio(e.target.value)}
+  placeholder="Bio / grad / info"
+  className="border px-3 py-2 rounded text-black bg-white"
+/>
+<input
+  value={city}
+  onChange={(e) => setCity(e.target.value)}
+  placeholder="Grad"
+  className="border px-3 py-2 rounded text-black bg-white"
+/>
+
+<input
+  value={country}
+  onChange={(e) => setCountry(e.target.value)}
+  placeholder="Država"
+  className="border px-3 py-2 rounded text-black bg-white"
+/>
+
+<input
+  value={birthYear}
+  onChange={(e) => setBirthYear(e.target.value)}
+  placeholder="Godina rođenja"
+  className="border px-3 py-2 rounded text-black bg-white"
+/>
 
         <div className="grid grid-cols-5 gap-2">
           {avatars.map((a) => (
@@ -67,7 +112,20 @@ export default function ProfileClient({ user, favorites }: any) {
             />
           ))}
         </div>
+<input
+  type="file"
+  accept="image/*"
+  onChange={(e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
 
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setImage(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }}
+/>
         <button
           onClick={updateProfile}
           className="bg-blue-600 text-white py-2 rounded"
