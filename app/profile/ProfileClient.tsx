@@ -19,6 +19,7 @@ export default function ProfileClient({ user, favorites }: any) {
   const [city, setCity] = useState(user?.city || "")
 const [country, setCountry] = useState(user?.country || "")
 const [birthYear, setBirthYear] = useState(user?.birthYear || "")
+const [showPassword, setShowPassword] = useState(false)
   
   async function updateProfile() {
     if (password && password !== confirmPassword) {
@@ -62,17 +63,31 @@ const [birthYear, setBirthYear] = useState(user?.birthYear || "")
         />
 
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="Nova lozinka"
           onChange={(e) => setPassword(e.target.value)}
           className="border px-3 py-2 rounded text-black bg-white"
         />
+        <button
+  type="button"
+  onClick={() => setShowPassword(v => !v)}
+  className="text-sm text-blue-600"
+>
+  {showPassword ? "Sakrij" : "Prikaži"} lozinku
+</button>
          <input
-  type="password"
+  type={showPassword ? "text" : "password"}
   placeholder="Potvrdi lozinku"
   onChange={(e) => setConfirmPassword(e.target.value)}
   className="border px-3 py-2 rounded text-black bg-white"
 />
+<button
+  type="button"
+  onClick={() => setShowPassword(v => !v)}
+  className="text-sm text-blue-600"
+>
+  {showPassword ? "Sakrij" : "Prikaži"} lozinku
+</button>
     <textarea
   placeholder="Kratko o tebi (bio)"
   value={bio}

@@ -17,8 +17,8 @@ export async function POST(req: Request) {
     if (body.name) data.name = body.name
     if (body.image) data.image = body.image
 
-    if (body.password) {
-    data.password = await bcrypt.hash(body.password, 10)
+    if (body.password && !body.password.startsWith("$2b$")) {
+  data.password = await bcrypt.hash(body.password, 10)
     if (body.city) data.city = body.city
     if (body.country) data.country = body.country
     if (body.birthYear) data.birthYear = Number(body.birthYear)
