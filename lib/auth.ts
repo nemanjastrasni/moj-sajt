@@ -4,7 +4,7 @@ import type { NextAuthOptions } from "next-auth"
 import bcrypt from "bcrypt"
 import { prisma } from "@/lib/prisma"
 
-export const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {debug: true,
   session: {
     strategy: "jwt",
   },
@@ -47,10 +47,10 @@ export const authOptions: NextAuthOptions = {
       },
     }),
 
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
+   // GoogleProvider({
+     // clientId: process.env.GOOGLE_CLIENT_ID!,
+      //clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    //}),
   ],
 
   callbacks: {
