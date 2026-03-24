@@ -73,24 +73,29 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user }: any) {
-      if (user?.email) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: user.email },
-        })
+  if (user?.email) {
+    const dbUser = await prisma.user.findUnique({
+      where: { email: user.email },
+    })
 
-        token.role = (dbUser as any)?.role || "user"
-        token.image = dbUser?.image || user.image || null
-      }
-      return token
-    },
+    token.role = (dbUser as any)?.role || "user"
+
+    // ❌ NEMA image više
+  }
+
+  return token
+},
 
     async session({ session, token }: any) {
-      if (session.user) {
-        session.user.role = token.role
-        session.user.image = token.image
-      }
-      return session
-    },
+  if (session.user) {
+    session.user.role = token.role
+
+    // ❌ NEMA image više
+    session.user.image = null
+  }
+
+  return session
+},
 
     async redirect() {
       return "/"
