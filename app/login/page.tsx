@@ -23,40 +23,52 @@ export default function LoginPage() {
           className="border px-3 py-2 rounded"
         />
 
-        <div className="flex gap-2">
-          <input
-            type={show ? "text" : "password"}
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className="border px-3 py-2 rounded flex-1"
-          />
-          <button onClick={() => setShow(!show)}>👁</button>
-        </div>
+        <div className="flex flex-col gap-1">
+  <input
+    type={show ? "text" : "password"}
+    placeholder="Password"
+    value={password}
+    onChange={e => setPassword(e.target.value)}
+    className="border px-3 py-2 rounded text-black bg-white"
+  />
+
+  <button
+    type="button"
+    onClick={() => setShow(!show)}
+    className="text-sm text-blue-500 text-left"
+  >
+    {show ? "Sakrij" : "Prikaži"} lozinku
+  </button>
+</div>
 
         <button
-         onClick={async () => {
-         await signIn("credentials", {
-           email,
-           password,
-            redirect: true,
-           callbackUrl: "/"
-         })
-        }}
-          className="bg-black text-white py-2 rounded"
-        >
-          Login
-        </button>
+  type="button"
+  onClick={() => {
+    console.log("LOGIN CLICK")
 
-        <button
-          onClick={() => signIn("google", { callbackUrl: "/" })}
-          className="border py-2 rounded"
-        >
-          Continue with Google
-        </button>
-         <a href="/signup" className="text-sm text-blue-500 text-center">
-            Nemaš nalog? Signup
-           </a>
+    signIn("credentials", {
+      email,
+      password,
+      redirect: true,
+      callbackUrl: "/"
+    })
+  }}
+  className="bg-black text-white py-2 rounded z-50 relative"
+>
+  Login
+</button>
+
+<button
+  type="button"
+  onClick={() => signIn("google", { callbackUrl: "/" })}
+  className="border py-2 rounded"
+>
+  Continue with Google
+</button>
+
+<a href="/signup" className="text-sm text-blue-500 text-center">
+  Nemaš nalog? Signup
+</a>
       </div>
     </div>
   )
