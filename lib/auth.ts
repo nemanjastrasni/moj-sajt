@@ -1,10 +1,11 @@
 import CredentialsProvider from "next-auth/providers/credentials"
-import GoogleProvider from "next-auth/providers/google"
 import type { NextAuthOptions } from "next-auth"
 import bcrypt from "bcrypt"
 import { prisma } from "@/lib/prisma"
 
-export const authOptions: NextAuthOptions = {debug: true,
+export const authOptions: NextAuthOptions = {
+  debug: true,
+
   session: {
     strategy: "jwt",
   },
@@ -18,39 +19,56 @@ export const authOptions: NextAuthOptions = {debug: true,
       },
 
       async authorize(credentials) {
-        try {
-          if (!credentials?.email || !credentials?.password) return null
+        console.log("LOGIN START")
 
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
-          })
+        if (!credentials?.email || !credentials?.password) {
+          console.log("NO CREDENTIALS")
+          return null
+        }
 
-          if (!user || !user.password) return null
+        console.log("EMAIL INPUT:", credentials.email)
 
-          const valid = await bcrypt.compare(
-            credentials.password,
-            user.password
-          )
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        })
 
-          if (!valid) return null
+        console.log("USER FROM DB:", user)
 
-          return {
-            id: String(user.id),
-            email: user.email,
-            name: user.name ?? null,
-            role: (user as any).role,
-            image: user.image || null, // ✅ DODATO
-          }
-        } catch (err) {
-          throw new Error(String(err))
+        if (!user) {
+          console.log("NO USER")
+          return null
+        }
+
+        if (!user.password) {
+          console.log("NO PASSWORD IN DB")
+          return null
+        }
+
+        console.log("HASH FROM DB:", user.password)
+
+        const valid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        )
+
+        console.log("PASSWORD VALID:", valid)
+
+        if (!valid) {
+          console.log("WRONG PASSWORD")
+          return null
+        }
+
+        console.log("SUCCESS LOGIN")
+
+        return {
+          id: String(user.id),
+          email: user.email,
+          name: user.name ?? null,
+          role: (user as any).role,
+          image: user.image || null,
         }
       },
     }),
-
-   // GoogleProvider({
-     // clientId: process.env.GOOGLE_CLIENT_ID!,
-      //clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    //}),
   ],
 
   callbacks: {
@@ -61,7 +79,7 @@ export const authOptions: NextAuthOptions = {debug: true,
         })
 
         token.role = (dbUser as any)?.role || "user"
-        token.image = dbUser?.image || user.image || null // ✅ BITNO
+        token.image = dbUser?.image || user.image || null
       }
       return token
     },
@@ -69,13 +87,13 @@ export const authOptions: NextAuthOptions = {debug: true,
     async session({ session, token }: any) {
       if (session.user) {
         session.user.role = token.role
-        session.user.image = token.image // ✅ BITNO
+        session.user.image = token.image
       }
       return session
     },
 
     async redirect() {
-      return "/" // ✅ FIX (bez TS error)
+      return "/"
     },
   },
 
