@@ -99,7 +99,7 @@ return (
 
   </div>
      {/* SEARCH CENTER */}
-<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-[9999]">
+<div className="absolute left-1/2 -translate-x-1/2 top-20 z-[9999]">
 
   <input
     value={query}
