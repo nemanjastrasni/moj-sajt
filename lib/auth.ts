@@ -61,12 +61,11 @@ export const authOptions: NextAuthOptions = {
         console.log("SUCCESS LOGIN")
 
         return {
-          id: String(user.id),
-          email: user.email,
-          name: user.name ?? null,
-          role: (user as any).role,
-          image: user.image || null,
-        }
+  id: String(user.id),
+  email: user.email,
+  name: user.name ?? null,
+  role: (user as any).role,
+}
       },
     }),
   ],
@@ -74,7 +73,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
   async jwt({ token, user }) {
     if (user) {
-      token.id = user.id
+      token.id = String(user.id)
       token.email = user.email
       token.role = user.role
     }
