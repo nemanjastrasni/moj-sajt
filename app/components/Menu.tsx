@@ -99,7 +99,7 @@ return (
 
   </div>
      {/* SEARCH CENTER */}
-<div className="absolute left-1/2 -translate-x-1/2 top-32 z-50">
+<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-[9999]">
 
   <input
     value={query}
@@ -122,7 +122,7 @@ return (
   />
 
   {results.length > 0 && (
-    <div className="fixed mt-2 w-[340px] bg-neutral-900 text-gray-100 shadow-2xl rounded-xl border border-gray-600 z-[99999]">
+   <div className="absolute mt-2 w-[340px] bg-neutral-900 text-gray-100 shadow-2xl rounded-xl border border-gray-600 z-[99999]">
       {results.map((song) => (
         <a
           key={song.id}
@@ -176,7 +176,7 @@ return (
 </div>
       {/* DROPDOWN */}
       {open && (
-        <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-xl p-2 text-sm z-50">
+        <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-xl p-2 text-sm z-[99999]">
 
           <p className="px-2 py-1 text-gray-500 truncate">
             {session.user?.email}
