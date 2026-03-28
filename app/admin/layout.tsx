@@ -33,6 +33,10 @@ export default async function AdminLayout({
     Dashboard
   </a>
 
+  <a href="/admin/edit" className="block hover:underline">
+  Edit tabela
+</a>
+
   <a href="/admin/artists" className="block hover:underline">
     Izvođači
   </a>
