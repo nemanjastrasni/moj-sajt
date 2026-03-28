@@ -55,9 +55,9 @@ export default function SongClient({ song, media }: Props) {
   }
 
   function renderContent(text: string, chordSize: number) {
-
+    
     const chordRegex =
-      /(?<!\S)[A-GH](#|b)?(m|maj|min|maj7|7|sus|sus4|dim|aug|add\d*)?(\d*)?(\/[A-GH](#|b)?)?(?!\S)/g
+      /(?<!\S)[A-GH](#|b)?(m|maj|min|maj7|7|sus|sus4|dim|aug|add\d*)?(\d*)?(\/[A-GH](#|b)?)?(?!\S)/gi
 
     return text.split("\n").map((line, i) => {
 
@@ -307,17 +307,15 @@ export default function SongClient({ song, media }: Props) {
     }
   >
 
-    <div className="border border-gray-800 rounded-xl overflow-hidden shadow-xl">
-
-      <iframe
-        src={media?.embedUrl}
-        title="YouTube player"
-        className="w-full aspect-video"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      />
-
-    </div>
+    <div className="relative w-full" style={{ paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src={media?.embedUrl}
+    title="YouTube player"
+    className="absolute top-0 left-0 w-full h-full"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+  />
+</div>
 
   </div>
 
