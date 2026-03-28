@@ -3,14 +3,19 @@ import { prisma } from "@/lib/prisma"
 export default async function AdminEdit({ searchParams }: any) {
 
   const q = searchParams?.q || ""
-
+  const category = searchParams?.category || ""
   const songs = await prisma.song.findMany({
     where: {
-      OR: [
-        { title: { contains: q, mode: "insensitive" } },
-        { artist: { name: { contains: q, mode: "insensitive" } } }
-      ]
-    },
+  ...(category ? { category } : {}),
+  ...(q
+    ? {
+        OR: [
+          { title: { contains: q, mode: "insensitive" } },
+          { artist: { name: { contains: q, mode: "insensitive" } } }
+        ]
+      }
+    : {})
+},
     include: { artist: true },
     take: 100
   })
@@ -44,12 +49,14 @@ export default async function AdminEdit({ searchParams }: any) {
 
   </form>
 
-  <table className="w-full text-sm">
+  <table className="w-full text-sm text-black">
 
     <thead>
       <tr className="text-left border-b border-gray-700">
         <th>Title</th>
+        <th>Slug</th>
         <th>Artist</th>
+        <th>Artist Slug</th>
         <th>Category</th>
         <th>Slug</th>
         <th>Edit</th>
@@ -61,7 +68,9 @@ export default async function AdminEdit({ searchParams }: any) {
         <tr key={s.id} className="border-b border-gray-800">
 
           <td>{s.title}</td>
+          <td>{s.slug}</td>
           <td>{s.artist?.name}</td>
+          <td>{s.artist?.slug}</td>
           <td>{s.category}</td>
           <td>{s.slug}</td>
 
