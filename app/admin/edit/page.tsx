@@ -6,18 +6,16 @@ export default async function AdminEdit({ searchParams }: any) {
     select: { id: true, name: true }
   })
   const q = searchParams?.q || ""
-const category = searchParams?.category || ""
+  const category = searchParams?.category || ""
   const songs = await prisma.song.findMany({
   where: {
-    ...(category ? { category } : {}),
-    ...(q
-      ? {
-          OR: [
-            { title: { contains: q, mode: "insensitive" } }
-          ]
-        }
-      : {})
-  },
+  ...(category && category !== "" ? { category } : {}),
+  ...(q
+    ? {
+        title: { contains: q, mode: "insensitive" }
+      }
+    : {})
+},
   include: { artist: true },
   orderBy: { category: "asc" },
   take: 200
@@ -27,6 +25,32 @@ const category = searchParams?.category || ""
     <div className="p-6">
 
       <h1 className="text-2xl font-bold mb-6">Edit tabela</h1>
+
+<form method="GET" className="mb-4 flex gap-2">
+
+  <input
+    name="q"
+    defaultValue={searchParams?.q || ""}
+    placeholder="Search title..."
+    className="p-2 border w-full"
+  />
+
+  <select
+    name="category"
+    defaultValue={searchParams?.category || ""}
+    className="p-2 border"
+  >
+    <option value="">All</option>
+    <option value="domace">Domace</option>
+    <option value="narodne">Narodne</option>
+    <option value="strane">Strane</option>
+  </select>
+
+  <button className="px-4 bg-gray-800 text-white">
+    Filter
+  </button>
+
+</form>
 
       <table className="w-full text-sm text-black">
 
@@ -47,11 +71,32 @@ const category = searchParams?.category || ""
           {songs.map((s) => (
             <tr key={s.id} className="border-b border-gray-800">
 
-              <td>{s.title}</td>
+              <td>
+  <form action={`/api/admin/song/${s.id}`} method="POST">
+    <input
+      name="title"
+      defaultValue={s.title}
+      className="bg-transparent border-b"
+      onBlur={(e) => e.currentTarget.form?.submit()}
+    />
+  </form>
+</td>
               <td>{s.slug}</td>
               <td>{s.artist?.name}</td>
               <td>{s.artistId}</td>
-              <td>{s.category}</td>
+              <td>
+  <form action={`/api/admin/song/${s.id}`} method="POST">
+    <select
+      name="category"
+      defaultValue={s.category}
+      onChange={(e) => e.currentTarget.form?.submit()}
+    >
+      <option value="domace">Domace</option>
+      <option value="narodne">Narodne</option>
+      <option value="strane">Strane</option>
+    </select>
+  </form>
+</td>
               <td className="max-w-[200px] truncate">
                  {s.artist?.bio || "-"}
                    </td>
