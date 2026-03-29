@@ -71,52 +71,69 @@ take: 200
         </thead>
 
       <tbody>
-          {songs.map((s) => (
-            <tr key={s.id} className="border-b border-gray-800">
+  {songs.map((s) => (
+    <tr key={s.id} className="border-b border-gray-800">
 
-              <td>
-  <form action={`/api/admin/song/${s.id}`} method="POST">
-    <input
-      name="title"
-      defaultValue={s.title}
-      className="bg-transparent border-b"
-      onBlur={(e) => e.currentTarget.form?.submit()}
-    />
-  </form>
-</td>
-              <td>{s.slug}</td>
-              <td>{s.artist ? s.artist.name : "NO ARTIST"}</td>
-              <td>{s.artistId}</td>
-              <td>
-  <form action={`/api/admin/song/${s.id}`} method="POST">
-    <select
-      name="category"
-      defaultValue={s.category}
-      onChange={(e) => e.currentTarget.form?.submit()}
-    >
-      <option value="domace">Domace</option>
-      <option value="narodne">Narodne</option>
-      <option value="strane">Strane</option>
-    </select>
-  </form>
-</td>
-              <td className="max-w-[200px] truncate">
-                 {s.artist ? s.artist.bio : "-"}
-                   </td>
+      {/* TITLE EDIT (ENTER umesto onBlur) */}
+      <td>
+        <form action={`/api/admin/song/${s.id}`} method="POST">
+          <input
+            name="title"
+            defaultValue={s.title}
+            className="bg-transparent border-b"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault()
+                e.currentTarget.form?.submit()
+              }
+            }}
+          />
+        </form>
+      </td>
 
-              <td>
-                  {s.artist ? (s.artist.image ? "YES" : "-") : "-"}
-              </td>
+      <td>{s.slug}</td>
 
-              <td>
-                <Link href={`/admin/songs/${s.id}`} className="text-blue-500">
-  Edit
-</Link>
-              </td>
+      {/* ARTIST SAFE */}
+      <td>{s.artist ? s.artist.name : "NO ARTIST"}</td>
 
-            </tr>
-          ))}
-        </tbody>
+      <td>{s.artistId}</td>
+
+      {/* CATEGORY EDIT */}
+      <td>
+        <form action={`/api/admin/song/${s.id}`} method="POST">
+          <select
+            name="category"
+            defaultValue={s.category}
+            onChange={(e) => e.currentTarget.form?.submit()}
+            className="bg-white text-black"
+          >
+            <option value="domace">Domace</option>
+            <option value="narodne">Narodne</option>
+            <option value="strane">Strane</option>
+          </select>
+        </form>
+      </td>
+
+      {/* BIO SAFE */}
+      <td className="max-w-[200px] truncate">
+        {s.artist ? s.artist.bio || "-" : "-"}
+      </td>
+
+      {/* IMAGE SAFE */}
+      <td>
+        {s.artist ? (s.artist.image ? "YES" : "-") : "-"}
+      </td>
+
+      {/* EDIT LINK */}
+      <td>
+        <a href={`/admin/songs/${s.id}`} className="text-blue-500">
+          Edit
+        </a>
+      </td>
+
+    </tr>
+  ))}
+</tbody>
 
       </table>
 
