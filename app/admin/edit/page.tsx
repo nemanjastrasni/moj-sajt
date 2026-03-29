@@ -21,17 +21,10 @@ export default async function AdminEdit({ searchParams }: any) {
       : {})
   },
   include: {
-    artist: {
-      select: {
-        id: true,
-        name: true,
-        bio: true,
-        image: true
-      }
-    }
-  },
-  orderBy: { category: "asc" },
-  take: 200
+  artist: true
+},
+orderBy: { category: "asc" },
+take: 200
 })
 
   return (
