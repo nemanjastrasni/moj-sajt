@@ -1,7 +1,11 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(
+  req: Request,
+  context: { params: { id: string } }
+) {
+  const { params } = context
 
   const formData = await req.formData()
 
