@@ -3,9 +3,9 @@ import { NextResponse } from "next/server"
 
 export async function POST(
   req: Request,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { params } = context
+  const { id } = await params
 
   const formData = await req.formData()
 
@@ -14,12 +14,12 @@ export async function POST(
   const artistId = formData.get("artistId") as string
 
   await prisma.song.update({
-    where: { id: params.id },
+    where: { id },
     data: {
-  ...(category ? { category } : {}),
-  ...(title ? { title } : {}),
-  ...(artistId ? { artistId } : {})
-}
+      ...(category ? { category } : {}),
+      ...(title ? { title } : {}),
+      ...(artistId ? { artistId } : {})
+    }
   })
 
   return NextResponse.redirect(new URL("/admin/edit", req.url))
