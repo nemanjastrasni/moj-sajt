@@ -9,21 +9,9 @@ export default async function AdminEdit({ searchParams }: any) {
   const category = searchParams?.category || ""
   
   const songs = await prisma.song.findMany({
-    
-    where: {
-  ...(category ? { category } : {}),
-  ...(q
-    ? {
-        OR: [
-          { title: { contains: q, mode: "insensitive" } }
-        ]
-      }
-    : {})
-},
-    include: { artist: true },
-    take: 100
-  })
-
+  include: { artist: true },
+  take: 10
+})
   return (
     <div className="p-6">
 
