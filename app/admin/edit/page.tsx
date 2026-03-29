@@ -8,15 +8,16 @@ export default async function AdminEdit({ searchParams }: any) {
   const q = searchParams?.q || ""
   const category = searchParams?.category || ""
   const songs = await prisma.song.findMany({
-  where: {
-  ...(category && category !== "" ? { category } : {}),
-  ...(q
-    ? {
-        title: { contains: q, mode: "insensitive" }
+  include: {
+    artist: {
+      select: {
+        id: true,
+        name: true,
+        bio: true,
+        image: true
       }
-    : {})
-},
-  include: { artist: true },
+    }
+  },
   orderBy: { category: "asc" },
   take: 200
 })
