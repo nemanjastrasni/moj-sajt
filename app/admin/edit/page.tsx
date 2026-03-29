@@ -108,7 +108,7 @@ export default async function AdminEdit({ searchParams }: any) {
     <select
       name="category"
       defaultValue={s.category || ""}
-      className="bg-gray-900 text-white"
+      className="bg-white-900 text-black"
       onChange={(e) => e.currentTarget.form?.submit()}
     >
       <option value="domace">Domace</option>
@@ -117,9 +117,6 @@ export default async function AdminEdit({ searchParams }: any) {
     </select>
   </form>
 </td>
-
-          <td>{s.slug}</td>
-
 
           <td>
             <a
