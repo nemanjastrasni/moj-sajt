@@ -68,53 +68,15 @@ export default async function AdminEdit({ searchParams }: any) {
           </tr>
         </thead>
 
-        <tbody>
-          {songs.map((s) => (
-            <tr key={s.id} className="border-b border-gray-800">
-
-              <td>
-  <form action={`/api/admin/song/${s.id}`} method="POST">
-    <input
-      name="title"
-      defaultValue={s.title}
-      className="bg-transparent border-b"
-      onBlur={(e) => e.currentTarget.form?.submit()}
-    />
-  </form>
-</td>
-              <td>{s.slug}</td>
-              <td>{s.artist?.name}</td>
-              <td>{s.artistId}</td>
-              <td>
-  <form action={`/api/admin/song/${s.id}`} method="POST">
-    <select
-      name="category"
-      defaultValue={s.category}
-      onChange={(e) => e.currentTarget.form?.submit()}
-    >
-      <option value="domace">Domace</option>
-      <option value="narodne">Narodne</option>
-      <option value="strane">Strane</option>
-    </select>
-  </form>
-</td>
-              <td className="max-w-[200px] truncate">
-                 {s.artist?.bio || "-"}
-                   </td>
-
-              <td>
-                  {s.artist?.image ? "YES" : "-"}
-              </td>
-
-              <td>
-                <a href={`/admin/songs/${s.id}`}>
-  Edit
-</a>
-              </td>
-
-            </tr>
-          ))}
-        </tbody>
+      <tbody>
+  {songs.map((s) => (
+    <tr key={s.id}>
+      <td>{s.title}</td>
+      <td>{s.slug}</td>
+      <td>{s.artistId}</td>
+    </tr>
+  ))}
+</tbody>
 
       </table>
 
