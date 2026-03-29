@@ -98,7 +98,10 @@ export default async function AdminEdit({ searchParams }: any) {
     </select>
   </form>
 </td>
-          <td>{s.artist?.slug}</td>
+
+          <td className="text-gray-500">{s.artist?.slug}</td>
+
+
           <td>
   <form action={`/api/admin/song/${s.id}`} method="POST">
     <select
@@ -113,7 +116,9 @@ export default async function AdminEdit({ searchParams }: any) {
     </select>
   </form>
 </td>
+
           <td>{s.slug}</td>
+
 
           <td>
             <a
