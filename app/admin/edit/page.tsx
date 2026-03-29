@@ -30,14 +30,14 @@ export default async function AdminEdit({ searchParams }: any) {
 
   <input
     name="q"
-    defaultValue={searchParams?.q || ""}
+    defaultValue={q}
     placeholder="Search title..."
     className="p-2 border w-full"
   />
 
   <select
     name="category"
-    defaultValue={searchParams?.category || ""}
+    defaultValue={category}
     className="p-2 border"
   >
     <option value="">All</option>
