@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/prisma"
 
 export default async function AdminEdit({ searchParams }: any) {
-
+  
+  const artists = await prisma.artist.findMany({
+  select: { id: true, name: true }
+})
   const q = searchParams?.q || ""
   const category = searchParams?.category || ""
   const songs = await prisma.song.findMany({
@@ -51,7 +54,7 @@ export default async function AdminEdit({ searchParams }: any) {
 
   <table className="w-full text-sm text-black">
 
-    <thead>
+    <thead className="sticky top-0 bg-white z-10">
       <tr className="text-left border-b border-gray-700">
         <th>Title</th>
         <th>Slug</th>
@@ -67,11 +70,49 @@ export default async function AdminEdit({ searchParams }: any) {
       {songs.map((s) => (
         <tr key={s.id} className="border-b border-gray-800">
 
-          <td>{s.title}</td>
+          <td>
+  <form action={`/api/admin/song/${s.id}`} method="POST">
+    <input
+      name="title"
+      defaultValue={s.title}
+      className="bg-transparent border-b border-gray-600 outline-none"
+      onBlur={(e) => e.currentTarget.form?.submit()}
+    />
+  </form>
+</td>
           <td>{s.slug}</td>
-          <td>{s.artist?.name}</td>
+          <td>
+  <form action={`/api/admin/song/${s.id}`} method="POST">
+    <select
+      name="artistId"
+      defaultValue={s.artistId || ""}
+      className="bg-gray-900 text-white"
+      onChange={(e) => e.currentTarget.form?.submit()}
+    >
+      <option value="">Select</option>
+      {artists.map((a) => (
+        <option key={a.id} value={a.id}>
+          {a.name}
+        </option>
+      ))}
+    </select>
+  </form>
+</td>
           <td>{s.artist?.slug}</td>
-          <td>{s.category}</td>
+          <td>
+  <form action={`/api/admin/song/${s.id}`} method="POST">
+    <select
+      name="category"
+      defaultValue={s.category || ""}
+      className="bg-gray-900 text-white"
+      onChange={(e) => e.currentTarget.form?.submit()}
+    >
+      <option value="domace">Domace</option>
+      <option value="narodne">Narodne</option>
+      <option value="strane">Strane</option>
+    </select>
+  </form>
+</td>
           <td>{s.slug}</td>
 
           <td>
