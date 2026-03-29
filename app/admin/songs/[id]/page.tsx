@@ -2,12 +2,18 @@ import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 
 export default async function SongEdit({ params }: any) {
+
   const song = await prisma.song.findUnique({
     where: { id: params.id },
     include: { artist: true }
   })
 
   if (!song) return notFound()
+
+  const artists = await prisma.artist.findMany({
+    select: { id: true, name: true },
+    orderBy: { name: "asc" }
+  })
 
   return (
     <div className="p-6 text-black">
@@ -23,8 +29,25 @@ export default async function SongEdit({ params }: any) {
           className="border p-2"
         />
 
+        {/* ARTIST SELECT */}
+        <select
+          name="artistId"
+          defaultValue={song.artistId}
+          className="border p-2"
+        >
+          {artists.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.name}
+            </option>
+          ))}
+        </select>
+
         {/* CATEGORY */}
-        <select name="category" defaultValue={song.category} className="border p-2">
+        <select
+          name="category"
+          defaultValue={song.category}
+          className="border p-2"
+        >
           <option value="domace">Domace</option>
           <option value="narodne">Narodne</option>
           <option value="strane">Strane</option>
