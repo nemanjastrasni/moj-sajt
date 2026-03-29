@@ -7,8 +7,9 @@ export default async function AdminEdit({ searchParams }: any) {
   })
 
   const songs = await prisma.song.findMany({
-    take: 10
-  })
+  include: { artist: true },
+  take: 10
+})
 
   return (
     <div className="p-6">
@@ -21,6 +22,7 @@ export default async function AdminEdit({ searchParams }: any) {
           <tr className="text-left border-b border-gray-700">
             <th>Title</th>
             <th>Slug</th>
+            <th>Artist</th>
             <th>ArtistId</th>
             <th>Category</th>
             <th>Edit</th>
@@ -33,6 +35,7 @@ export default async function AdminEdit({ searchParams }: any) {
 
               <td>{s.title}</td>
               <td>{s.slug}</td>
+              <td>{s.artist?.name}</td>
               <td>{s.artistId}</td>
               <td>{s.category}</td>
 
