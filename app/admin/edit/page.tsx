@@ -7,7 +7,9 @@ export default async function AdminEdit({ searchParams }: any) {
 })
   const q = searchParams?.q || ""
   const category = searchParams?.category || ""
+  
   const songs = await prisma.song.findMany({
+    
     where: {
   ...(category ? { category } : {}),
   ...(q
@@ -61,7 +63,6 @@ export default async function AdminEdit({ searchParams }: any) {
         <th>Artist</th>
         <th>Artist Slug</th>
         <th>Category</th>
-        <th>Slug</th>
         <th>Edit</th>
       </tr>
     </thead>
@@ -85,7 +86,7 @@ export default async function AdminEdit({ searchParams }: any) {
   <form action={`/api/admin/song/${s.id}`} method="POST">
     <select
       name="artistId"
-      defaultValue={s.artistId || ""}
+      defaultValue={s.artist?.id || ""}
       className="bg-gray-900 text-white"
       onChange={(e) => e.currentTarget.form?.submit()}
     >
