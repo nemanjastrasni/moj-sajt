@@ -1,24 +1,19 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params
-
+export async function POST(req: Request, { params }: any) {
   const formData = await req.formData()
 
-  const category = formData.get("category") as string
   const title = formData.get("title") as string
-  const artistId = formData.get("artistId") as string
+  const category = formData.get("category") as string
+  const lyrics = formData.get("lyrics") as string
 
   await prisma.song.update({
-    where: { id },
+    where: { id: params.id },
     data: {
-      ...(category ? { category } : {}),
       ...(title ? { title } : {}),
-      ...(artistId ? { artistId } : {})
+      ...(category ? { category } : {}),
+      ...(lyrics ? { lyrics } : {})
     }
   })
 
