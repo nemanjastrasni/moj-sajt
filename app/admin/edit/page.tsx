@@ -15,8 +15,7 @@ export default async function AdminEdit({ searchParams }: any) {
   ...(q
     ? {
         OR: [
-          { title: { contains: q, mode: "insensitive" } },
-          { artist: { name: { contains: q, mode: "insensitive" } } }
+          { title: { contains: q, mode: "insensitive" } }
         ]
       }
     : {})
