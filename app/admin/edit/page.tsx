@@ -1,34 +1,125 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 
+
+
 export default async function AdminEdit({ searchParams }: any) {
   
   const q = searchParams?.q || ""
   const category = searchParams?.category || ""
-
+  const letter = searchParams?.letter || ""
+  const artistLetter = searchParams?.artistLetter || ""
+  
   const songs = await prisma.song.findMany({
     where: {
   ...(category && category !== "" ? { category } : {}),
+
   ...(q
     ? {
         OR: [
           {
             title: {
               contains: q,
-              mode: "insensitive"
-            }
+              mode: "insensitive",
+            },
           },
           {
             artist: {
               name: {
                 contains: q,
-                mode: "insensitive"
-              }
-            }
-          }
-        ]
+                mode: "insensitive",
+              },
+            },
+          },
+        ],
       }
-    : {})
+    : {}),
+
+  ...(letter === "#"
+    ? {
+        NOT: [
+          { title: { startsWith: "A" } },
+          { title: { startsWith: "B" } },
+          { title: { startsWith: "C" } },
+          { title: { startsWith: "Č" } },
+          { title: { startsWith: "Ć" } },
+          { title: { startsWith: "D" } },
+          { title: { startsWith: "Đ" } },
+          { title: { startsWith: "E" } },
+          { title: { startsWith: "F" } },
+          { title: { startsWith: "G" } },
+          { title: { startsWith: "H" } },
+          { title: { startsWith: "I" } },
+          { title: { startsWith: "J" } },
+          { title: { startsWith: "K" } },
+          { title: { startsWith: "L" } },
+          { title: { startsWith: "M" } },
+          { title: { startsWith: "N" } },
+          { title: { startsWith: "O" } },
+          { title: { startsWith: "P" } },
+          { title: { startsWith: "R" } },
+          { title: { startsWith: "S" } },
+          { title: { startsWith: "Š" } },
+          { title: { startsWith: "T" } },
+          { title: { startsWith: "U" } },
+          { title: { startsWith: "V" } },
+          { title: { startsWith: "Z" } },
+          { title: { startsWith: "Ž" } },
+        ],
+      }
+    : letter
+    ? {
+        title: {
+          startsWith: letter,
+          mode: "insensitive",
+        },
+      }
+    : {}),
+
+  ...(artistLetter === "#"
+    ? {
+        artist: {
+          NOT: [
+            { name: { startsWith: "A" } },
+            { name: { startsWith: "B" } },
+            { name: { startsWith: "C" } },
+            { name: { startsWith: "Č" } },
+            { name: { startsWith: "Ć" } },
+            { name: { startsWith: "D" } },
+            { name: { startsWith: "Đ" } },
+            { name: { startsWith: "E" } },
+            { name: { startsWith: "F" } },
+            { name: { startsWith: "G" } },
+            { name: { startsWith: "H" } },
+            { name: { startsWith: "I" } },
+            { name: { startsWith: "J" } },
+            { name: { startsWith: "K" } },
+            { name: { startsWith: "L" } },
+            { name: { startsWith: "M" } },
+            { name: { startsWith: "N" } },
+            { name: { startsWith: "O" } },
+            { name: { startsWith: "P" } },
+            { name: { startsWith: "R" } },
+            { name: { startsWith: "S" } },
+            { name: { startsWith: "Š" } },
+            { name: { startsWith: "T" } },
+            { name: { startsWith: "U" } },
+            { name: { startsWith: "V" } },
+            { name: { startsWith: "Z" } },
+            { name: { startsWith: "Ž" } },
+          ],
+        },
+      }
+    : artistLetter
+    ? {
+        artist: {
+          name: {
+            startsWith: artistLetter,
+            mode: "insensitive",
+          },
+        },
+      }
+    : {}),
 },
     include: {
       artist: true
@@ -60,6 +151,34 @@ export default async function AdminEdit({ searchParams }: any) {
           <option value="narodne">Narodne</option>
           <option value="strane">Strane</option>
         </select>
+         
+         <div className="flex flex-wrap gap-1 items-center mt-2">
+  {["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")].map((l) => (
+    <Link
+      key={l}
+      href={`?q=${q}&category=${category}&letter=${letter}&artistLetter=${l}`}
+      className={`px-2 py-1 border rounded text-sm ${
+        searchParams?.artistLetter === l ? "bg-black text-white" : ""
+      }`}
+    >
+      {l} (artist)
+    </Link>
+  ))}
+</div>
+
+        <div className="flex flex-wrap gap-1 items-center">
+  {["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")].map((l) => (
+    <Link
+      key={l}
+      href={`?q=${q}&category=${category}&letter=${l}`}
+      className={`px-2 py-1 border rounded text-sm ${
+        searchParams?.letter === l ? "bg-black text-white" : ""
+      }`}
+    >
+      {l}
+    </Link>
+  ))}
+</div>
 
         <button className="px-4 bg-gray-800 text-white">
           Filter
