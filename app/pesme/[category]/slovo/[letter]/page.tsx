@@ -51,8 +51,8 @@ export default async function LetterPage({ params }: any) {
   const first = getFirstLetter(artist.name)
 
   if (isSpecial) {
-    return !/^[A-ZČĆŽŠĐ]/.test(first)
-  }
+  return !/^[A-ZČĆŽŠĐ]/.test(artist.name.trim().toUpperCase())
+}
 
   return first === letter
 })
