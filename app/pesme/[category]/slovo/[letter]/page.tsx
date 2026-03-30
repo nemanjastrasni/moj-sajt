@@ -37,7 +37,7 @@ export default async function LetterPage({ params }: any) {
   const { category, letter: rawLetter } = await params
 
   const letter = normalizeLetter(rawLetter)
-  const isSpecial = letter === "#"
+  const isSpecial = letter === "#" || letter === "NUM"
 
   const artists = await prisma.artist.findMany({
   where: { category },

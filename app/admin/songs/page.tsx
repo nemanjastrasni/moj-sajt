@@ -118,6 +118,7 @@ className="border p-2 w-48 rounded"
         <table className="w-full table-auto text-sm border border-gray-200 rounded">
           <thead className="bg-gray-100 text-gray-900">
             <tr>
+              
               <th className="p-3 text-left">Naslov</th>
               <th className="p-3 text-left">Izvođač</th>
               <th className="p-3 text-center">Kategorija</th>

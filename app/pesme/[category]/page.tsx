@@ -74,7 +74,7 @@ const letters = Array.from(lettersSet).sort()
         {letters.map((letter)=>(
           <Link
             key={letter}
-            href={`/pesme/${category}/slovo/${letter.toLowerCase()}`}
+            href={`/pesme/${category}/slovo/${letter === "#" ? "num" : letter.toLowerCase()}`}
             style={{
               padding: "6px 10px",
               border: "1px solid #ccc",
