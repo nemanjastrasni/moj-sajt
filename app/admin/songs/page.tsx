@@ -51,7 +51,10 @@ export default async function AdminSongsPage({
   const songs = await prisma.song.findMany({
     where,
     include: { artist: true },
-    orderBy: { createdAt: "desc" },
+    orderBy:
+  params.sort === "title"
+    ? { title: "asc" }
+    : { createdAt: "desc" },
     skip: (page - 1) * PAGE_SIZE,
     take: PAGE_SIZE,
   })
@@ -106,6 +109,12 @@ className="border p-2 w-48 rounded"
            <option value="createdAt">Najnovije</option>
            <option value="title">Naslov A–Z</option>
         </select>
+
+        <select name="sort" defaultValue={params.sort} className="border p-2 rounded">
+  <option value="">Sort</option>
+  <option value="createdAt">Najnovije</option>
+  <option value="title">A–Z</option>
+</select>
 
         <button className="bg-gray-800 text-white px-4 rounded">
           Primeni
@@ -173,7 +182,7 @@ className="border p-2 w-48 rounded"
             return (
               <Link
                 key={p}
-                href={`?q=${q}&category=${category}&page=${p}`}
+                href={`?q=${q}&category=${category}&letter=${letter}&artist=${artist}&sort=${params.sort}&page=${p}`}
                 className={`px-3 py-1 border rounded ${
                   p === page
                     ? "bg-black text-white"
