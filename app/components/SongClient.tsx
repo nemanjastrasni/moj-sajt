@@ -74,7 +74,7 @@ export default function SongClient({ song, media }: Props) {
         parts.push(
           <Chord
             key={match.index}
-            chord={transposeChord(match[0].toUpperCase())}
+            chord={transposeChord(match[0])}
             size={chordSize}
           />
         )
