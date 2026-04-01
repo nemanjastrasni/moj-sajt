@@ -59,8 +59,8 @@ export default function SongClient({ song, media }: Props) {
 }
   function renderContent(text: string, chordSize: number) {
     
-    const chordRegex =
-  /(?<!\S)[A-GH](#|b)?(m|maj|min|maj7|7|sus|sus4|dim|aug|add\d*)?(\d*)?(\/[A-GH](#|b)?)?(?!\S)/g
+   const chordRegex =
+  /(?<!\S)[A-GHa-gh](#|b)?(m|maj|min|maj7|7|sus|sus4|dim|aug|add\d*)?(\d*)?(\/[A-GHa-gh](#|b)?)?(?!\S)/g
 
     return text.split("\n").map((line, i) => {
 
