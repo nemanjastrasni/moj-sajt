@@ -99,7 +99,7 @@ return (
 
   </div>
      {/* SEARCH CENTER */}
-<div className="absolute left-1/2 -translate-x-1/2 top-20 z-[9999]">
+<div className="relative mx-auto mt-4 w-fit z-[9999]">
 
   <input
     value={query}
@@ -122,7 +122,7 @@ return (
   />
 
   {results.length > 0 && (
-   <div className="absolute mt-2 w-[340px] bg-neutral-900 text-gray-100 shadow-2xl rounded-xl border border-gray-600 z-[99999]">
+   <div className="absolute top-full left-0 mt-2 w-[340px] bg-neutral-900 text-gray-100 shadow-2xl rounded-xl border border-gray-600 z-[99999]">
       {results.map((song) => (
         <a
           key={song.id}
