@@ -121,13 +121,13 @@ export default function Menu() {
             {/* ✅ PORTAL DROPDOWN */}
             {open && typeof window !== "undefined" &&
               createPortal(
-                <div className="fixed top-[70px] right-6 w-44 bg-white shadow-lg rounded-xl p-2 text-sm z-[999999]">
+                <div className="fixed top-[70px] right-6 w-44 bg-neutral-900 border border-gray-700 shadow-xl rounded-xl p-2 text-sm z-[999999]">
 
-                  <p className="px-2 py-1 text-gray-500 truncate">
+                  <p className="px-2 py-1 text-gray-400 truncate">
                     {session.user?.email}
                   </p>
 
-                  <a href="/profile" className="block px-2 py-2 hover:bg-gray-100 rounded">
+                  <a className="block px-2 py-2 text-white hover:bg-white/10 rounded">
                     Profil
                   </a>
 
@@ -139,7 +139,7 @@ export default function Menu() {
 
                   <button
                     onClick={() => signOut({ callbackUrl: "/" })}
-                    className="w-full text-left px-2 py-2 hover:bg-gray-100 rounded"
+                    className="w-full text-left px-2 py-2 text-red-400 hover:bg-red-500/10 rounded"
                   >
                     Logout
                   </button>

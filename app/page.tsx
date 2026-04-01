@@ -73,9 +73,9 @@ export default function HomePage() {
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-black/60 z-0" />
+        <div className="absolute inset-0 bg-black/70 z-0" />
 
-        <div className="relative z-10 max-w-3xl px-6">
+        <div className="relative z-10 px-6 text-left max-w-5xl">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Najveća baza akorda i tekstova pesama
           </h1>
