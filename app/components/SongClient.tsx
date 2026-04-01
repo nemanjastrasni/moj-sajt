@@ -67,6 +67,7 @@ export default function SongClient({ song, media }: Props) {
       const parts = []
       let lastIndex = 0
       let match
+    const isChordLine = /^[\sA-GHa-gh#mb0-9\/]+$/.test(line.trim())
 
       while ((match = chordRegex.exec(line)) !== null) {
 
@@ -74,10 +75,31 @@ export default function SongClient({ song, media }: Props) {
           parts.push(line.slice(lastIndex, match.index))
         }
 
-        parts.push(
+        const rawChord = match[0]
+        const chord = normalizeChord(rawChord)
+        const isSingleLetter = chord.length === 1
+        const hasTextAround =
+  /[a-zA-ZčćžšđČĆŽŠĐ]/.test(line[match.index - 1] || "") ||
+  /[a-zA-ZčćžšđČĆŽŠĐ]/.test(line[chordRegex.lastIndex] || "")
+
+// ako je jedno slovo i ima tekst oko njega → NIJE akord
+if (isSingleLetter && hasTextAround) {
+  parts.push(rawChord)
+  lastIndex = chordRegex.lastIndex
+  continue
+}
+
+// ako NIJE chord linija → ostavi tekst
+if (!isChordLine) {
+  parts.push(rawChord)
+  lastIndex = chordRegex.lastIndex
+  continue
+}
+
+parts.push(
   <Chord
     key={match.index}
-    chord={transposeChord(normalizeChord(match[0]))}
+    chord={transposeChord(chord)}
     size={chordSize}
   />
 )
