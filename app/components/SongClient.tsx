@@ -53,7 +53,10 @@ export default function SongClient({ song, media }: Props) {
     const newIndex = (index + transpose + 12) % 12
     return NOTES[newIndex] + rest
   }
-
+  function normalizeChord(chord: string) {
+  if (!chord) return chord
+  return chord[0].toUpperCase() + chord.slice(1)
+}
   function renderContent(text: string, chordSize: number) {
     
     const chordRegex =
@@ -72,12 +75,12 @@ export default function SongClient({ song, media }: Props) {
         }
 
         parts.push(
-          <Chord
-            key={match.index}
-            chord={transposeChord(match[0])}
-            size={chordSize}
-          />
-        )
+  <Chord
+    key={match.index}
+    chord={transposeChord(normalizeChord(match[0]))}
+    size={chordSize}
+  />
+)
 
         lastIndex = chordRegex.lastIndex
       }
