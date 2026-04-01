@@ -64,34 +64,36 @@ export default function HomePage() {
       </div>
 
       {/* HERO */}
-      <section
-        className="relative z-0 h-[520px]flex items-center justify-center text-center"
-        style={{
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=2000)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/70 z-0" />
+      <section className="relative h-[520px] flex items-center">
 
-        <div className="relative z-10 px-6 text-left max-w-5xl">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Najveća baza akorda i tekstova pesama
-          </h1>
+  {/* SLIKA */}
+  <img
+    src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=2000"
+    className="absolute inset-0 w-full h-full object-cover"
+  />
 
-          <p className="text-gray-200 mb-6">
-            Pretraži hiljade pesama za gitaru
-          </p>
+  {/* OVERLAY */}
+  <div className="absolute inset-0 bg-black/70" />
 
-          <Link
-            href="/pesme"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold"
-          >
-            Pogledaj pesme
-          </Link>
-        </div>
-      </section>
+  {/* TEKST */}
+  <div className="relative z-10 px-6 max-w-6xl mx-auto">
+    <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+      Najveća baza akorda i tekstova pesama
+    </h1>
+
+    <p className="text-gray-200 mb-6">
+      Pretraži hiljade pesama za gitaru
+    </p>
+
+    <Link
+      href="/pesme"
+      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold"
+    >
+      Pogledaj pesme
+    </Link>
+  </div>
+
+</section>
 
       {/* KATEGORIJE */}
       <section className="max-w-6xl mx-auto px-6 py-14">
