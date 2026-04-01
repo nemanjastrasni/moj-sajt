@@ -2,8 +2,13 @@
 
 import { signIn } from "next-auth/react"
 import Link from "next/link"
+import { useState } from "react"
 
 export default function HomePage() {
+
+  const [query, setQuery] = useState("")
+  const [results, setResults] = useState<any[]>([])
+
   return (
     <main className="w-full">
 
@@ -15,6 +20,47 @@ export default function HomePage() {
         >
           Lepi Login
         </button>
+      </div>
+
+      {/* SEARCH CENTER */}
+      <div className="w-full flex justify-center mt-6 mb-4 z-[9999]">
+        <div className="relative w-[340px]">
+
+          <input
+            value={query}
+            onChange={async (e) => {
+              const value = e.target.value
+              setQuery(value)
+
+              if (value.length < 2) {
+                setResults([])
+                return
+              }
+
+              const res = await fetch(`/api/search?q=${value}`)
+              const data = await res.json()
+              setResults(data)
+            }}
+            type="text"
+            placeholder="Traženje pesama..."
+            className="w-full bg-black/40 border border-gray-600 rounded-lg px-3 py-2 text-white outline-none focus:border-blue-400"
+          />
+
+          {results.length > 0 && (
+            <div className="absolute top-full left-0 mt-2 w-full bg-neutral-900 text-gray-100 shadow-2xl rounded-xl border border-gray-600 z-[99999]">
+              {results.map((song: any) => (
+                <a
+                  key={song.id}
+                  href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+                  className="block px-4 py-2 hover:bg-white/10 transition"
+                >
+                  {song.artist.name} – {song.title}
+                </a>
+              ))}
+            </div>
+          )}
+
+        </div>
       </div>
 
       {/* HERO */}
