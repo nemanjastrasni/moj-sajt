@@ -18,7 +18,7 @@ export default function HomePage() {
           onClick={() => signIn("github")}
           className="px-4 py-2 bg-black text-white rounded-lg hover:opacity-80"
         >
-          Lepi Login
+        Login
         </button>
       </div>
 
@@ -65,7 +65,7 @@ export default function HomePage() {
 
       {/* HERO */}
       <section
-        className="relative h-[520px] flex items-center justify-center text-center"
+        className="relative z-0 h-[520px]flex items-center justify-center text-center"
         style={{
           backgroundImage:
             "url(https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=2000)",
@@ -73,7 +73,7 @@ export default function HomePage() {
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-black/60 z-0" />
 
         <div className="relative z-10 max-w-3xl px-6">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
