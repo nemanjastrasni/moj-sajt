@@ -137,7 +137,7 @@ return (
 </div>
       {/* DROPDOWN */}
       {open && (
-        <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-xl p-2 text-sm z-[99999]">
+        <div className="absolute right-0 top-full mt-2 w-44 bg-white shadow-lg rounded-xl p-2 text-sm z-[999999]">
 
           <p className="px-2 py-1 text-gray-500 truncate">
             {session.user?.email}

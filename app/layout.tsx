@@ -32,7 +32,7 @@ export default function RootLayout({
         <Providers>
 
           {/* HEADER */}
-          <header className="relative z-[999999] w-full border-b border-gray-800 flex flex-col py-1">
+          <header className="relative z-[999999] overflow-visible">
             <Menu />
 
             {/* Back dugme dole levo */}
