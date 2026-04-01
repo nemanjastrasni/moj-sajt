@@ -33,7 +33,7 @@ export default function Menu() {
 
 return (
 
-   <nav className="relative z-[9999] flex justify-between items-start pt-2 pb-28 pl-2 pr-6 bg-red-700 text-black shadow-md overflow-visible pointer-events-auto">
+   <nav className="relative z-[9999] flex justify-between items-start pt-2 pb-28 pl-2 pr-6 bg-red-700 text-black shadow-md overflow-hidden pointer-events-auto">
   {/* LEVA STRANA */}
   <div className="relative z-10 space-y-2 flex flex-col items-start">
 
