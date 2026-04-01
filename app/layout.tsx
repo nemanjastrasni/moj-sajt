@@ -32,7 +32,8 @@ export default function RootLayout({
         <Providers>
 
           {/* HEADER */}
-          <header className="relative z-[999999] w-full border-b border-gray-800 flex flex-col py-1 overflow-visible">
+          <header className="relative z-[999999] w-full border-b border-gray-800 flex flex-col py-1">
+            <Menu />
 
             {/* Back dugme dole levo */}
             <div className="flex justify-start px-6 pb-1">
