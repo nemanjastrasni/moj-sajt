@@ -2,10 +2,14 @@ import { prisma } from "@/lib/prisma"
 import { notFound, redirect } from "next/navigation"
 
 
+
+
 export default async function EditArtistPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: { q?: string; category?: string }
 }) {
   const { id } = await params
 
@@ -36,7 +40,7 @@ export default async function EditArtistPage({
           .filter(Boolean)
       }
     }
-
+    
     await prisma.artist.update({
       where: { id },
       data: {
@@ -48,7 +52,7 @@ export default async function EditArtistPage({
       },
     })
 
-    redirect("/admin/artists")
+    redirect(`/admin/artists?q=${searchParams?.q || ""}&category=${searchParams?.category || ""}`)
   }
   const artists = await prisma.artist.findMany({
   orderBy: { name: "asc" },
