@@ -3,8 +3,10 @@ import { redirect } from "next/navigation"
 
 export default async function MergeArtist({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ search?: string }>
 }) {
 
   const { id } = await params
@@ -13,7 +15,8 @@ export default async function MergeArtist({
     where: { id },
   })
 
-  const search = ""
+  const sp = await searchParams
+const search = sp?.search || ""
 
 const artists = await prisma.artist.findMany({
   where: search
@@ -70,6 +73,15 @@ const artists = await prisma.artist.findMany({
       <p className="mb-4 text-sm text-gray-600">
         Ovaj izvođač ima <b>{songsCount}</b> pesama.
       </p>
+       
+       <form method="GET" className="mb-3">
+  <input
+    name="search"
+    defaultValue={search}
+    placeholder="Pretraži izvođača..."
+    className="border p-2 rounded w-full"
+  />
+</form>
 
       <form action={merge} className="flex gap-3 flex-col">
          <select
