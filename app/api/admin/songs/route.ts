@@ -44,7 +44,6 @@ export async function POST(req: Request) {
 
   const artistSlug = slugify(artistName)
 
-  // pronađi ili kreiraj artista
   let artist = await prisma.artist.findFirst({
     where: { name: artistName },
   })
@@ -70,25 +69,28 @@ export async function POST(req: Request) {
     })
   }
 
-  const createdSongs = []
+  const results = []
 
   for (const song of songs) {
-    const songSlug = slugify(song.title)
+    try {
+      const songSlug = slugify(song.title)
 
-    const newSong = await prisma.song.create({
-      data: {
-        title: song.title,
-        slug: songSlug,
-        category: category ?? "ostalo",
-        lyrics: song.lyrics ?? "",
-        chords: song.chords ?? "",
-        artistId: artist.id,
-      },
-      include: { artist: true },
-    })
+      await prisma.song.create({
+        data: {
+          title: song.title,
+          slug: songSlug,
+          category: category ?? "ostalo",
+          lyrics: song.lyrics ?? "",
+          chords: song.chords ?? "",
+          artistId: artist.id,
+        },
+      })
 
-    createdSongs.push(newSong)
+      results.push({ title: song.title, status: "OK" })
+    } catch (e) {
+      results.push({ title: song.title, status: "ERROR" })
+    }
   }
 
-  return NextResponse.json(createdSongs, { status: 201 })
+  return NextResponse.json(results, { status: 201 })
 }
