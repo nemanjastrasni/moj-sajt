@@ -51,10 +51,36 @@ const artists = await prisma.artist.findMany({
   throw new Error("Izaberi izvođača za merge")
 }
 
-    await prisma.song.updateMany({
-      where: { artistId: id },
-      data: { artistId: targetId },
+    const songs = await prisma.song.findMany({
+  where: { artistId: id },
+})
+
+for (const song of songs) {
+  let newSlug = song.slug
+  let counter = 2
+
+  while (true) {
+    const exists = await prisma.song.findFirst({
+      where: {
+        artistId: targetId,
+        slug: newSlug,
+      },
     })
+
+    if (!exists) break
+
+    newSlug = `${song.slug}-${counter}`
+    counter++
+  }
+
+  await prisma.song.update({
+    where: { id: song.id },
+    data: {
+      artistId: targetId,
+      slug: newSlug,
+    },
+  })
+}
 
     await prisma.artist.delete({
       where: { id },
