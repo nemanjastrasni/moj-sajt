@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { notFound, redirect } from "next/navigation"
 
+
 export default async function EditArtistPage({
   params,
 }: {
@@ -49,6 +50,26 @@ export default async function EditArtistPage({
 
     redirect("/admin/artists")
   }
+  const artists = await prisma.artist.findMany({
+  orderBy: { name: "asc" },
+})
+
+async function mergeArtist(formData: FormData) {
+  "use server"
+
+  const targetId = formData.get("targetId") as string
+
+  await prisma.song.updateMany({
+    where: { artistId: id },
+    data: { artistId: targetId },
+  })
+
+  await prisma.artist.delete({
+    where: { id },
+  })
+
+  redirect("/admin/artists")
+}
 
   return (
     <div className="max-w-2xl text-gray-900">
@@ -117,6 +138,25 @@ export default async function EditArtistPage({
           Sačuvaj izmene
         </button>
       </form>
+      <hr className="my-6" />
+
+<h2 className="font-bold">Merge u drugog izvođača</h2>
+
+<form action={mergeArtist} className="space-y-2">
+  <select name="targetId" className="border p-2 w-full">
+    {artists
+      .filter((a) => a.id !== artist.id)
+      .map((a) => (
+        <option key={a.id} value={a.id}>
+          {a.name}
+        </option>
+      ))}
+  </select>
+
+  <button className="bg-red-600 text-white px-4 py-2 rounded">
+    MERGE
+  </button>
+</form>
     </div>
   )
 }
