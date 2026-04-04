@@ -61,22 +61,21 @@ const artists = await prisma.artist.findMany({
 
       <form action={merge} className="flex gap-3 flex-col">
          <input
-name="search"
-placeholder="Pretraga izvođača..."
-className="border p-2 rounded"
+  name="targetId"
+  list="artists"
+  placeholder="Pretraži izvođača..."
+  className="border p-2 rounded"
 />
-        <select
-          name="targetId"
-          className="border p-2 rounded w-full"
-        >
-          {artists
-            .filter((a) => a.id !== id)
-            .map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
-        </select>
+
+<datalist id="artists">
+  {artists
+    .filter((a) => a.id !== id)
+    .map((a) => (
+      <option key={a.id} value={a.id}>
+        {a.name}
+      </option>
+    ))}
+</datalist>
 
         <button
           type="submit"
