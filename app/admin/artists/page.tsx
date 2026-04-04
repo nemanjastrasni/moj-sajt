@@ -34,16 +34,52 @@ export default async function AdminArtistsPage({
           ]
         : []),
 
-      ...(letter
-        ? [
-            {
-              name: {
-                startsWith: letter,
-                mode: "insensitive" as const,
-              },
-            },
-          ]
-        : []),
+      ...(letter && letter !== "#"
+  ? [
+      {
+        name: {
+          startsWith: letter,
+          mode: "insensitive" as const,
+        },
+      },
+    ]
+  : []),
+
+...(letter === "#"
+  ? [
+      {
+        NOT: [
+          { name: { startsWith: "A" } },
+          { name: { startsWith: "B" } },
+          { name: { startsWith: "C" } },
+          { name: { startsWith: "Č" } },
+          { name: { startsWith: "Ć" } },
+          { name: { startsWith: "D" } },
+          { name: { startsWith: "Đ" } },
+          { name: { startsWith: "E" } },
+          { name: { startsWith: "F" } },
+          { name: { startsWith: "G" } },
+          { name: { startsWith: "H" } },
+          { name: { startsWith: "I" } },
+          { name: { startsWith: "J" } },
+          { name: { startsWith: "K" } },
+          { name: { startsWith: "L" } },
+          { name: { startsWith: "M" } },
+          { name: { startsWith: "N" } },
+          { name: { startsWith: "O" } },
+          { name: { startsWith: "P" } },
+          { name: { startsWith: "R" } },
+          { name: { startsWith: "S" } },
+          { name: { startsWith: "Š" } },
+          { name: { startsWith: "T" } },
+          { name: { startsWith: "U" } },
+          { name: { startsWith: "V" } },
+          { name: { startsWith: "Z" } },
+          { name: { startsWith: "Ž" } },
+        ],
+      },
+    ]
+  : []),
 
       ...(category ? [{ category }] : []),
     ],
