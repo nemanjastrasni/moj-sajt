@@ -22,27 +22,49 @@ export default async function AdminArtistsPage({
 
  const artists = await prisma.artist.findMany({
   where: {
-    ...(search && {
-      name: {
-        contains: search,
-        mode: "insensitive",
-      },
-    }),
-    ...(category && { category }),
-    ...(letter && {
-      name: {
-        startsWith: letter,
-        mode: "insensitive",
-      },
-    }),
+    AND: [
+      ...(search
+        ? [
+            {
+              name: {
+                contains: search,
+                mode: "insensitive" as const,
+              },
+            },
+          ]
+        : []),
+
+      ...(letter
+        ? [
+            {
+              name: {
+                startsWith: letter,
+                mode: "insensitive" as const,
+              },
+            },
+          ]
+        : []),
+
+      ...(category ? [{ category }] : []),
+    ],
   },
   include: {
     _count: {
-      select: { songs: true }
-    }
+      select: { songs: true },
+    },
   },
-  orderBy: { name: "asc" },
+  orderBy: {
+  songs: {
+    _count: "desc",
+  },
+},
 })
+function getRowColor(count: number) {
+  if (count === 0) return "bg-red-100"
+  if (count < 5) return "bg-yellow-100"
+  if (count > 50) return "bg-green-100"
+  return ""
+}
 
   return (
     <div className="max-w-6xl">
@@ -112,13 +134,12 @@ export default async function AdminArtistsPage({
           </thead>
 
           <tbody>
-            {artists.map((artist) => (
-              <tr
-                key={artist.id}
-                className={`border-t ${!artist.bio && !artist.discography ? "bg-red-50" : ""} ${
-                  artist.bio && !artist.discography ? "bg-yellow-50" : ""
-                } ${artist.bio && artist.discography ? "bg-green-50" : ""}`}
-              >
+  {artists.map((artist) => (
+    <tr
+      key={artist.id}
+      className={`border-t ${getRowColor(artist._count.songs)}`}
+      
+    >
                 <td className="p-3">
                   <Link
                     href={`/admin/artists/${artist.id}/edit`}
@@ -150,21 +171,25 @@ export default async function AdminArtistsPage({
                 </td>
 
                 <td className="p-3 text-center">
-                  {artist._count.songs}
-                  <Link
-                    href={`/admin/artists/${artist.id}/edit`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Edit
-                  </Link>
-                <span className="mx-2 text-gray-400">|</span>
+  {artist._count.songs}
+</td>
 
-                <form action={deleteArtist.bind(null, artist.id)} className="inline">
-                 <button className="text-red-600 hover:underline">
-                    Delete
-                 </button>
-                </form>
-                </td>
+<td className="p-3 text-center">
+  <Link
+    href={`/admin/artists/${artist.id}/edit`}
+    className="text-blue-600 hover:underline font-semibold"
+  >
+    Edit
+  </Link>
+
+  <span className="mx-2 text-gray-400">|</span>
+
+  <form action={deleteArtist.bind(null, artist.id)} className="inline">
+    <button className="text-red-600 hover:underline">
+      Delete
+    </button>
+  </form>
+</td>
               </tr>
             ))}
           </tbody>
