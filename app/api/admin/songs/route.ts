@@ -25,6 +25,22 @@ export async function GET() {
   return NextResponse.json(songs)
 }
 
+async function generateUniqueSlug(base: string) {
+  let slug = base
+  let count = 1
+
+  while (true) {
+    const exists = await prisma.song.findFirst({
+      where: { slug },
+    })
+
+    if (!exists) return slug
+
+    slug = `${base}-${count}`
+    count++
+  }
+}
+
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions)
 
@@ -73,7 +89,8 @@ export async function POST(req: Request) {
 
   for (const song of songs) {
     try {
-      const songSlug = slugify(song.title)
+      const baseSlug = slugify(song.title)
+      const songSlug = await generateUniqueSlug(baseSlug)
 
       await prisma.song.create({
         data: {
