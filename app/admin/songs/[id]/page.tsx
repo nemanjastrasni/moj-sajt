@@ -14,7 +14,7 @@ export default async function SongEdit({ params }: any) {
     select: { id: true, name: true },
     orderBy: { name: "asc" }
   })
-
+  
   return (
     <div className="p-6 text-black">
 
@@ -28,6 +28,20 @@ export default async function SongEdit({ params }: any) {
           defaultValue={song.title}
           className="border p-2"
         />
+        <div>
+  <label className="block text-sm mb-1">Artist</label>
+  <select
+    name="artistId"
+    defaultValue={song.artistId}
+    className="border p-2 w-full"
+  >
+    {artists.map((a) => (
+      <option key={a.id} value={a.id}>
+        {a.name}
+      </option>
+    ))}
+  </select>
+</div>
 
         {/* ARTIST SELECT */}
         <select

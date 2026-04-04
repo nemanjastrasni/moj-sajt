@@ -9,13 +9,16 @@ export async function POST(req: Request, { params }: any) {
   const lyrics = formData.get("lyrics") as string
 
   await prisma.song.update({
-    where: { id: params.id },
-    data: {
-      ...(title ? { title } : {}),
-      ...(category ? { category } : {}),
-      ...(lyrics ? { lyrics } : {})
-    }
-  })
+  where: { id: params.id },
+  data: {
+    ...(title ? { title } : {}),
+    ...(category ? { category } : {}),
+    ...(lyrics ? { lyrics } : {}),
+    ...(formData.get("artistId")
+      ? { artistId: Number(formData.get("artistId")) }
+      : {}),
+  } as any,
+})
 
   return NextResponse.redirect(new URL("/admin/edit", req.url))
 }
