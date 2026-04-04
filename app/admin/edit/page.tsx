@@ -67,6 +67,7 @@ export default async function AdminEdit({ searchParams }: any) {
                 { name: { startsWith: "X" } },
                 { name: { startsWith: "W" } },
                 { name: { startsWith: "Q" } },
+                { name: { startsWith: "#" } },
               ],
             },
           }

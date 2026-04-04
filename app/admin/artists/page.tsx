@@ -127,11 +127,16 @@ function getRowColor(count: number) {
 
           <select name="letter" defaultValue={letter} className="border p-2 rounded">
             <option value="">Sva slova</option>
-            {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((l) => (
-              <option key={l} value={l}>
-                {l}
-              </option>
-            ))}
+            {[
+  "#",
+  "A","B","C","Č","Ć","D","Đ","E","F","G","H",
+  "I","J","K","L","M","N","O","P","R","S","Š",
+  "T","U","V","Z","Ž"
+].map((l) => (
+  <option key={l} value={l}>
+    {l}
+  </option>
+))}
           </select>
 
           <select name="category" defaultValue={category} className="border p-2 rounded">
