@@ -20,11 +20,20 @@ const artists = await prisma.artist.findMany({
     ? {
         name: {
           contains: search,
-          mode: "insensitive",
+          mode: "insensitive" as const,
         },
       }
     : {},
-  orderBy: { name: "asc" },
+  include: {
+    _count: {
+      select: { songs: true },
+    },
+  },
+  orderBy: {
+    songs: {
+      _count: "desc",
+    },
+  },
 })
 
   const songsCount = await prisma.song.count({
@@ -35,6 +44,9 @@ const artists = await prisma.artist.findMany({
     "use server"
 
     const targetId = formData.get("targetId") as string
+    if (!targetId) {
+  throw new Error("Izaberi izvođača za merge")
+}
 
     await prisma.song.updateMany({
       where: { artistId: id },
@@ -60,29 +72,26 @@ const artists = await prisma.artist.findMany({
       </p>
 
       <form action={merge} className="flex gap-3 flex-col">
-         <input
+         <select
   name="targetId"
-  list="artists"
-  placeholder="Pretraži izvođača..."
-  className="border p-2 rounded"
-/>
-
-<datalist id="artists">
+  className="border p-2 rounded w-full"
+>
+  <option value="">-- izaberi izvođača --</option> 
   {artists
     .filter((a) => a.id !== id)
     .map((a) => (
       <option key={a.id} value={a.id}>
-        {a.name}
+        {a.name} ({a._count.songs})
       </option>
     ))}
-</datalist>
+</select>
 
-        <button
-          type="submit"
-          className="bg-black text-white px-4 rounded"
-        >
-          Merge
-        </button>
+<button
+  type="submit"
+  className="bg-black text-white px-4 rounded"
+>
+  Merge
+</button>
 
       </form>
     </div>
