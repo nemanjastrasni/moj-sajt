@@ -4,13 +4,19 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://neondb_owner:npg_s5w2VvETlnmX@ep-wispy-dawn-alnxam1d.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require"
 }
 
 /// =========koliko ljudi posecuje=================
 model Visit {
   id        String    @id @default(cuid())
   createdAt DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model playing_with_neon {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Float? @db.Real
 }
 
 model User {
@@ -21,16 +27,16 @@ model User {
   createdAt     DateTime   @default(now())
   emailVerified DateTime?
   image         String?
+  role          String     @default("user")
+  banned        Boolean    @default(false)
   bio           String?
-  city      String?
-  country   String?
-  birthYear Int?
+  birthYear     Int?
+  city          String?
+  country       String?
   accounts      Account[]
   favorites     Favorite[]
   playlists     Playlist[]
   sessions      Session[]
-  role          String     @default("user")
-
 }
 
 model Artist {
@@ -56,8 +62,8 @@ model Song {
   chords    String?
   artistId  String
   createdAt DateTime?  @default(now()) @db.Timestamptz(6)
-  artist    Artist     @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "song_artist_fk")
   favorites Favorite[]
+  artist    Artist     @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "song_artist_fk")
 
   @@unique([artistId, slug])
 }
@@ -101,9 +107,8 @@ model Favorite {
   userId    String
   songId    String
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id])
-  song Song @relation(fields: [songId], references: [id])
+  song      Song     @relation(fields: [songId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, songId])
 }

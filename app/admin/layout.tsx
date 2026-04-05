@@ -46,8 +46,8 @@ export default async function AdminLayout({
   </a>
 
   <a href="/admin/korisnici" className="block hover:underline">
-    Korisnici
-  </a>
+  Korisnici
+</a>
 </nav>
       </aside>
 
