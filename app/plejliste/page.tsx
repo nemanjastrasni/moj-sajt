@@ -86,8 +86,9 @@ whiteSpace:"nowrap"
 </h3>
 
 <div style={{ display: "grid", gap: "10px" }}>
-<Link href="/plejliste/gitarski-klasici">Gitarski klasici</Link>
-<Link href="/plejliste/kafanske">Kafanske pesme</Link>
+<Link href="/plejliste/domace">Domaće</Link>
+<Link href="/plejliste/strane">Strane</Link>
+<Link href="/plejliste/narodne">Narodne</Link>
 </div>
 
 </div>

@@ -31,6 +31,8 @@ export default function SongClient({ song, media }: Props) {
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
   const [scrollSpeed, setScrollSpeed] = useState(1)
   const scrollRef = useRef<NodeJS.Timeout | null>(null)
+  const [showModal, setShowModal] = useState(false)
+  const [playlistName, setPlaylistName] = useState("")
 
   const [textSize, setTextSize] = useState(18)
   const [chordSize, setChordSize] = useState(18)
@@ -122,7 +124,7 @@ parts.push(
     setIsAutoScrolling(true)
 
     scrollRef.current = setInterval(() => {
-      window.scrollBy(0, scrollSpeed * 0.3)
+      window.scrollBy(0, scrollSpeed * 0.2)
     }, 60)
   }
 
@@ -224,7 +226,8 @@ parts.push(
               <input
                 type="range"
                 min="1"
-                max="6"
+                max="10"
+                step="1"
                 value={scrollSpeed}
                 onChange={(e) => setScrollSpeed(Number(e.target.value))}
                 className="w-20"
@@ -277,7 +280,7 @@ parts.push(
           </div>
 
        {/* TITLE */}
-<div className="flex items-center gap-4 mb-2">
+<div className="flex items-center gap-4 mb-2 relative z-10">
   <h1 className="text-3xl font-bold">
     {title}
   </h1>
@@ -310,20 +313,11 @@ parts.push(
 </h2>
 {/* Playlist */}
 <button
-  onClick={async () => {
-    await fetch("/api/playlist", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        playlistId: "ID_PLAYLISTE", // privremeno
-        songId: song.id,
-      }),
-    })
-  }}
-  className="text-sm px-2 py-1 bg-blue-500 text-white rounded"
->
-  + Playlist
-</button>
+    onClick={() => setShowModal(true)}
+    className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 rounded text-white"
+  >
+    + Playlist
+  </button>
 
           {/* CONTENT */}
           <div
@@ -361,12 +355,55 @@ parts.push(
   </div>
 
 )}
+{showModal && (
+  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div className="bg-gray-900 p-6 rounded w-[300px]">
+      
+      <h2 className="mb-4 text-lg">Nova playlista</h2>
 
+      <input
+        value={playlistName}
+        onChange={(e) => setPlaylistName(e.target.value)}
+        placeholder="Naziv..."
+        className="w-full p-2 mb-4 bg-gray-800 text-white rounded"
+      />
+
+      <button
+        onClick={async () => {
+          const res = await fetch("/api/playlist", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: playlistName }),
+          })
+
+          const data = await res.json()
+
+          await fetch("/api/playlist", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              playlistId: data.id,
+              songId: song.id,
+            }),
+          })
+
+          setShowModal(false)
+          setPlaylistName("")
+        }}
+        className="w-full bg-blue-500 py-2 rounded"
+      >
+        Sačuvaj
+      </button>
+
+    </div>
+  </div>
+)}
         </div>
 
       </div>
 
     </div>
   )
+  
 }
 

@@ -19,11 +19,29 @@ fontSize:"20px",
 marginTop:"20px"
 }}>
 
-<Link style={{color:"#22c55e"}} href={`/plejliste/${slug}/domace`}>DOMAĆE</Link>
+{slug === "narodne" && (
+  <div style={{ display: "flex", gap: "40px", marginTop: "20px" }}>
+    <Link href="/plejliste/kafanske">Kafanske</Link>
+    <Link href="/plejliste/starogradske">Starogradske</Link>
+    <Link href="/plejliste/novije">Novije narodne</Link>
+  </div>
+)}
 
-<Link style={{color:"#3b82f6"}} href={`/plejliste/${slug}/strane`}>STRANE</Link>
+{slug === "strane" && (
+  <div style={{ display: "flex", gap: "40px", marginTop: "20px" }}>
+    <Link href="/plejliste/rock">Rock</Link>
+    <Link href="/plejliste/blues">Blues</Link>
+    <Link href="/plejliste/jazz">Jazz</Link>
+  </div>
+)}
 
-<Link style={{color:"#f97316"}} href={`/plejliste/${slug}/narodne`}>NARODNE</Link>
+{slug === "domace" && (
+  <div style={{ display: "flex", gap: "40px", marginTop: "20px" }}>
+    <Link href="/plejliste/rock-domace">Rock</Link>
+    <Link href="/plejliste/pop">Pop</Link>
+    <Link href="/plejliste/novi-talasi">Novi talasi</Link>
+  </div>
+)}
 
 </div>
 
