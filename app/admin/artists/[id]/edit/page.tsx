@@ -9,7 +9,7 @@ export default async function EditArtistPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ q?: string; category?: string }>
+  searchParams: Promise<{ search?: string; category?: string; letter?: string }>
 }) {
   const { id } = await params
   const sp = await searchParams
@@ -52,7 +52,7 @@ export default async function EditArtistPage({
       },
     })
 
-    redirect(`/admin/artists?q=${sp?.q || ""}&category=${sp?.category || ""}`)
+    redirect(`/admin/artists?search=${sp?.search || ""}&category=${sp?.category || ""}&letter=${sp?.letter || ""}`)
   }
   const artists = await prisma.artist.findMany({
   orderBy: { name: "asc" },
