@@ -7,8 +7,15 @@ export default async function MojePlayliste() {
   const session = await getServerSession(authOptions)
   if (!session) return <div>Nisi ulogovan</div>
 
+  // 👉 uzmi user iz baze preko email
+  const user = await prisma.user.findUnique({
+    where: { email: session.user?.email! },
+  })
+
+  if (!user) return <div>User ne postoji</div>
+
   const playlists = await prisma.playlist.findMany({
-    where: { userId: session.user.id },
+    where: { userId: user.id },
     orderBy: { createdAt: "desc" },
   })
 

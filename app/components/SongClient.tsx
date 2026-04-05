@@ -324,11 +324,44 @@ parts.push(
            <div className="relative inline-block">
 
   <button
-    onClick={() => setShowSelect(!showSelect)}
-    className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 rounded text-white"
-  >
-    + Playlist
-  </button>
+  onClick={async () => {
+    // 👉 nema playlisti → napravi odmah
+    if (playlists.length === 0) {
+      const name = prompt("Naziv playliste")
+      if (!name) return
+
+      // 1. create playlist
+      const res = await fetch("/api/playlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          category: song.category,
+        }),
+      })
+
+      const newPlaylist = await res.json()
+
+      // 2. add song odmah
+      await fetch("/api/playlist", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          playlistId: newPlaylist.id,
+          songId: song.id,
+        }),
+      })
+
+      return
+    }
+
+    // 👉 ima playlisti → dropdown
+    setShowSelect(!showSelect)
+  }}
+  className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 rounded text-white"
+>
+  + Playlist
+</button>
 
   {showSelect && (
     <div className="absolute mt-2 bg-neutral-900 border border-gray-700 rounded p-2 z-50">

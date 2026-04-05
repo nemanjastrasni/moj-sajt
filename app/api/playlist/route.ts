@@ -10,12 +10,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const { name } = await req.json()
+  const { name, category } = await req.json()
+
+  // 🔥 uzmi user preko email
+  const user = await prisma.user.findUnique({
+    where: { email: session.user?.email! },
+  })
+
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 })
+  }
 
   const playlist = await prisma.playlist.create({
     data: {
       name,
-      userId: session.user.id,
+      category, // 🔥 novo
+      userId: user.id,
     },
   })
 

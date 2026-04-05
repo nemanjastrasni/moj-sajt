@@ -117,6 +117,7 @@ model Playlist {
   id        String         @id @default(cuid())
   name      String
   userId    String
+  category String?
   isAdmin   Boolean        @default(false) // 👈 DODAJ
   createdAt DateTime       @default(now())
   user      User           @relation(fields: [userId], references: [id])
