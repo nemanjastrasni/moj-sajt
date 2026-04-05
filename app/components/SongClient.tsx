@@ -343,16 +343,6 @@ parts.push(
 
       const newPlaylist = await res.json()
 
-      // 2. add song odmah
-      await fetch("/api/playlist", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          playlistId: newPlaylist.id,
-          songId: song.id,
-        }),
-      })
-
       return
     }
 
@@ -446,7 +436,11 @@ parts.push(
           const res = await fetch("/api/playlist", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: playlistName }),
+            body: JSON.stringify({
+              name: playlistName,
+              category: song.category,
+              songId: song.id,
+       }),
           })
 
           const data = await res.json()
