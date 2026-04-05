@@ -110,7 +110,7 @@ whiteSpace:"nowrap"
 </h3>
 
 <div style={{ display: "grid", gap: "10px" }}>
-<Link href="/profil/plejliste">Moje plejliste</Link>
+<Link href="/profile/plejliste">Moje plejliste</Link>
 <Link href="/plejliste/top-user">Top 20 user playlisti</Link>
 <Link href="/plejliste/pesme-koje-znam">Pesme koje mogu da sviram</Link>
 </div>
