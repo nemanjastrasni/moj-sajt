@@ -33,12 +33,17 @@ export default async function MojePlayliste() {
       <button
         onClick={async () => {
           const name = prompt("Naziv playliste")
+          const category = prompt("Kategorija: domace / strane / narodne")
+          if (!category) return
           if (!name) return
 
           await fetch("/api/playlist", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name }),
+            body: JSON.stringify({
+             name,
+             category,
+           }),
           })
 
           location.reload()

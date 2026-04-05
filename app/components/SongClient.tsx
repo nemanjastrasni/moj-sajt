@@ -335,9 +335,10 @@ parts.push(
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
-          category: song.category,
-        }),
+         name,
+         category: song.category,
+         songId: song.id,
+    }),
       })
 
       const newPlaylist = await res.json()

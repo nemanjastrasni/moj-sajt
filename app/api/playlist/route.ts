@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const { name, category } = await req.json()
+  const { name, category, songId } = await req.json()
 
   // 🔥 uzmi user preko email
   const user = await prisma.user.findUnique({
@@ -28,9 +28,17 @@ export async function POST(req: Request) {
       userId: user.id,
     },
   })
-
+   if (songId) {
+  await prisma.playlistSong.create({
+    data: {
+      playlistId: playlist.id,
+      songId,
+    },
+  })
+}
   return NextResponse.json(playlist)
 }
+
 
 // ADD SONG TO PLAYLIST
 export async function PUT(req: Request) {
