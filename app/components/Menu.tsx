@@ -4,10 +4,12 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { signIn, signOut, useSession } from "next-auth/react"
 import { createPortal } from "react-dom"
+import { useRouter } from "next/navigation"
 
 export default function Menu() {
 
   const { data: session } = useSession()
+  const router = useRouter()
 
   const [open, setOpen] = useState(false)
   const [openPesme, setOpenPesme] = useState(false)
@@ -118,55 +120,56 @@ export default function Menu() {
               />
             </div>
 
-            {/* ✅ PORTAL DROPDOWN */}
+            {/* ✅ PORTAL DROPDOWN */} 
             {open && typeof window !== "undefined" &&
-              createPortal(
-                <div className="fixed top-[70px] right-6 w-44 bg-neutral-900 border border-gray-700 shadow-xl rounded-xl p-2 text-sm z-[999999]">
+  createPortal(
+    <div className="fixed top-[70px] right-6 w-44 bg-neutral-900 border border-gray-700 shadow-xl rounded-xl p-2 text-sm z-[999999]">
 
-                  <p className="px-2 py-1 text-gray-400 truncate">
-                    {session.user?.email}
-                  </p>
+      <p className="px-2 py-1 text-gray-400 truncate">
+        {session.user?.email}
+      </p>
 
-                  <button
-                        onClick={() => window.location.href = "/profile"}
-                        className="block w-full text-left px-2 py-2 text-white hover:bg-white/10 rounded"
-                >
-                         Profil
-                     </button>
+      <button
+        onClick={() => router.push("/profile")}
+        className="block w-full text-left px-2 py-2 text-white hover:bg-white/10 rounded"
+      >
+        Profil
+      </button>
 
-                  {(session.user as any)?.role === "admin" && (
-                    <button
-                       onClick={() => window.location.href = "/admin"}
-                       className="block w-full text-left px-2 py-2 hover:bg-gray-100 rounded"
-               >
-                <button
-  onClick={() => window.location.href = "/plejliste/moje"}
-  className="block w-full text-left px-2 py-2 text-blue-400 hover:bg-white/10 rounded"
->
-  Moje playliste
-</button>
+      <button
+        onClick={() => router.push("/plejliste/moje")}
+        className="block w-full text-left px-2 py-2 text-blue-400 hover:bg-white/10 rounded"
+      >
+        Moje playliste
+      </button>
 
-<button
-  onClick={() => window.location.href = "/favorite"}
-  className="block w-full text-left px-2 py-2 text-yellow-400 hover:bg-white/10 rounded"
->
-  Favoriti
-</button>
-                         Admin
-                     </button>
-                  )}
-                  <button
-                    onClick={() => signOut({ callbackUrl: "/" })}
-                    className="w-full text-left px-2 py-2 text-red-400 hover:bg-red-500/10 rounded"
-                  >
-                    Logout
-                  </button>
+      <button
+        onClick={() => router.push("/favorite")}
+        className="block w-full text-left px-2 py-2 text-yellow-400 hover:bg-white/10 rounded"
+      >
+        Favoriti
+      </button>
 
-                </div>,
-                document.body
-              )
-            }
+      {(session.user as any)?.role === "admin" && (
+        <button
+          onClick={() => router.push("/admin")}
+          className="block w-full text-left px-2 py-2 hover:bg-gray-100 rounded"
+        >
+          Admin
+        </button>
+      )}
 
+      <button
+        onClick={() => signOut({ callbackUrl: "/" })}
+        className="w-full text-left px-2 py-2 text-red-400 hover:bg-red-500/10 rounded"
+      >
+        Logout
+      </button>
+
+    </div>,
+    document.body
+  )
+}
           </div>
         )}
 
