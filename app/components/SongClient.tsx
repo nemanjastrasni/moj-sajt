@@ -32,7 +32,16 @@ export default function SongClient({ song, media }: Props) {
   const [scrollSpeed, setScrollSpeed] = useState(1)
   const scrollRef = useRef<NodeJS.Timeout | null>(null)
   const [showModal, setShowModal] = useState(false)
+
   const [playlistName, setPlaylistName] = useState("")
+  const [playlists, setPlaylists] = useState<any[]>([])
+  const [showSelect, setShowSelect] = useState(false)
+
+useEffect(() => {
+  fetch("/api/playlist")
+    .then(res => res.json())
+    .then(data => setPlaylists(data))
+}, [])
 
   const [textSize, setTextSize] = useState(18)
   const [chordSize, setChordSize] = useState(18)
@@ -311,13 +320,43 @@ parts.push(
 <h2 className="text-lg text-gray-500 mb-6">
   {artist}
 </h2>
-{/* Playlist */}
-<button
-    onClick={() => setShowModal(true)}
+       {/* Playlist */}
+           <div className="relative inline-block">
+
+  <button
+    onClick={() => setShowSelect(!showSelect)}
     className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 rounded text-white"
   >
     + Playlist
   </button>
+
+  {showSelect && (
+    <div className="absolute mt-2 bg-neutral-900 border border-gray-700 rounded p-2 z-50">
+      
+      {playlists.map((p) => (
+        <div
+          key={p.id}
+          onClick={async () => {
+            await fetch("/api/playlist", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                playlistId: p.id,
+                songId: song.id,
+              }),
+            })
+
+            setShowSelect(false)
+          }}
+          className="px-2 py-1 hover:bg-white/10 cursor-pointer"
+        >
+          {p.name}
+        </div>
+      ))}
+
+    </div>
+  )}
+</div>
 
           {/* CONTENT */}
           <div
