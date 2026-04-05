@@ -217,7 +217,7 @@ function getRowColor(count: number) {
 
 <td className="p-3 text-center">
   <Link
-    href={`/admin/artists/${artist.id}/edit`}
+    href={`/admin/artists/${artist.id}/edit?search=${search}&category=${category}&letter=${letter}`}
     className="text-blue-600 hover:underline font-semibold"
   >
     Edit
