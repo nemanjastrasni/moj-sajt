@@ -1,0 +1,255 @@
+[33mcommit 3ba16bcb035594eebc1a986a0dae76284e2b20a0[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Mon Mar 2 22:23:06 2026 +0100
+
+    Stable version before user system
+
+[33mcommit d9962e618a66d23b06a72c5adc478018d3587c73[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Mon Mar 2 22:20:08 2026 +0100
+
+    Stable version before user system
+
+[33mcommit fdd8c26a510ee6681037b0504e47e0071e2418c0[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Mon Mar 2 19:43:30 2026 +0100
+
+    remove debug logs from auth
+
+[33mcommit f0b4138a9587e19eedabb7884a5561dff599cbf1[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Mon Mar 2 19:27:39 2026 +0100
+
+    fix next15 params admin edit
+
+[33mcommit 27349e813381acc6352b6f96cdb3e52760765dca[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Mon Mar 2 19:21:59 2026 +0100
+
+    debug role
+
+[33mcommit 7d7595dd768888173173fc630f4520e5a45e3e3b[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Mon Mar 2 19:06:49 2026 +0100
+
+    fix admin email
+
+[33mcommit 5dfa5ab7732aa85fb1198874a01d7ee7df3ba3b4[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Mon Mar 2 18:51:56 2026 +0100
+
+    fix: admin layout structure
+
+[33mcommit 6a0aaeffd98d9ab28f8db89d0ca32d00a4564d48[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Mon Mar 2 18:48:30 2026 +0100
+
+    fix: admin layout structure
+
+[33mcommit 9c9380023e358932090530f2d9280d661d36a68b[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Mon Mar 2 18:45:12 2026 +0100
+
+    fix: admin email check
+
+[33mcommit 10b6a4d7aa647e238a4c964ab26e13192acf48d4[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 22:55:33 2026 +0100
+
+    fix: remove PageProps typing from category page
+
+[33mcommit 4548adba34f2bf03a4522fff62f8bb9320c7a9f8[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 22:52:20 2026 +0100
+
+    TEMP remove typing issue
+
+[33mcommit 900466020d14c0a710ae0ad810583a940002e8ed[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 22:49:28 2026 +0100
+
+    hard reset artist page typing
+
+[33mcommit 52a1742ad5ad466cc2480d720be1ed9300bbae1f[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 22:45:39 2026 +0100
+
+    fix: remove custom PageProps typing
+
+[33mcommit 377a6699f178107d1021376553c6ef169264916a[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 22:37:13 2026 +0100
+
+    fix: remove Promise params for Next 15
+
+[33mcommit 24480c2291881dc1be7b5432456e797a4e5ea707[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 22:22:01 2026 +0100
+
+    fix: remove prisma db push from build
+
+[33mcommit 82a0c3086861525e30c4f134364a05c60607d85e[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 21:44:44 2026 +0100
+
+    bio by category
+
+[33mcommit 221522427251972acf5a233fb540f505226cd6a5[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 02:09:18 2026 +0100
+
+    final next15 admin fix
+
+[33mcommit 46cc4ef4201afd2f2cb47700cbb326010895140c[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 02:04:12 2026 +0100
+
+    remove prisma mode filter
+
+[33mcommit bb6004434acdb70853f5137f85dfb39775676244[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 01:58:17 2026 +0100
+
+    fix prisma typing production build
+
+[33mcommit 335096e0ee711012a7fa22250e273febb2283e67[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 01:38:52 2026 +0100
+
+    trigger fresh vercel deploy
+
+[33mcommit d5748edc3efc114b8e568ca249949a12630a9576[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 01:26:23 2026 +0100
+
+    remove temporary push-db api route
+
+[33mcommit a00158d9ea6e375b391cbc3e5580be9fadb30659[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 01:15:58 2026 +0100
+
+    restore normal build script
+
+[33mcommit 5a74bb99d7139b6dc0ebee35fe7a77edda67f99a[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 01:01:39 2026 +0100
+
+    run prisma db push on vercel build
+
+[33mcommit 9356b0dae96567c0d00207bb0a1782c3ba46ad45[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 00:56:36 2026 +0100
+
+    force node runtime for push route
+
+[33mcommit d0ecfebe5acb2bea3ed9e0865ad2a848410ba68c[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 00:53:29 2026 +0100
+
+    fix api route name
+
+[33mcommit c62af46736c7faab8ce09462fe2732f6414b9b75[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sun Mar 1 00:45:20 2026 +0100
+
+    add prisma push script
+
+[33mcommit c2c9eb3bd66e24089042f8e3ef3679a13e0c8d54[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 22:49:16 2026 +0100
+
+    remove legacy ParseSlug
+
+[33mcommit 659995e0f932e1b82edad7c3ec9435d76b855d3a[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 22:45:52 2026 +0100
+
+    remove legacy ParseSlug
+
+[33mcommit 62dbb4b5ff3ba82251a5eafffa5fbca6f13fad51[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 22:41:19 2026 +0100
+
+    fix next15 song page params
+
+[33mcommit 9ad67929e7d9cf05cc9b19b13ac5eb370f52af81[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 22:37:42 2026 +0100
+
+    fix next15 song page params
+
+[33mcommit fc03fa76a12565d5e868929a51673680d1165eec[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 22:33:12 2026 +0100
+
+    fix next15 song page params
+
+[33mcommit ab6d3ea238444a5b86323e7518eec7cb2fa26b1f[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 22:29:59 2026 +0100
+
+    remove invalid api page
+
+[33mcommit 406827207942d2ced9fe498365e78674bb27e158[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 22:26:28 2026 +0100
+
+    fix next15 api params
+
+[33mcommit 1f4f51e62f8d9b72df07ca3c0bc196f90c0761ef[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 22:21:34 2026 +0100
+
+    fix next15 song edit params
+
+[33mcommit aa0dc6a8181d1964dd69b402aac363839d82e4e8[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 21:49:54 2026 +0100
+
+    fix next15 admin params
+
+[33mcommit 48528ebdbfcab524c086dd6fc144b62b677f7396[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 21:42:29 2026 +0100
+
+    disable eslint on build
+
+[33mcommit a406f3af41e624bf74ac697b882b182d5183e681[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 21:26:57 2026 +0100
+
+    remove conflicting route
+
+[33mcommit 7d5dea69e85c732345fecaf2a8a4a54f9a3b1497[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 21:23:38 2026 +0100
+
+    fix next15 params await
+
+[33mcommit 67eb27bac93717539b22d6496f499182989b1c75[m[33m ([m[1;32mfeature/header-back-button[m[33m)[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Sat Feb 28 00:43:24 2026 +0100
+
+    SEO
+
+[33mcommit 93b282087787e177b70e0241b5a7756c59d554b6[m[33m ([m[1;32mfull-db-stable-2[m[33m, [m[1;32mbio-experiment[m[33m)[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Thu Feb 26 00:46:02 2026 +0100
+
+    checkpoint: full DB stable, biografije migrated, discography fixed
+
+[33mcommit 59e271c979e845b40638aab5ea028df57956db5f[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Wed Feb 25 19:29:12 2026 +0100
+
+    checkpoint - artist + song routes stabilized
+
+[33mcommit edbbc4a42f0e3fbf78047b766b22f84a817064e4[m[33m ([m[1;33mtag: [m[1;33mv2-full-db-stable[m[33m, [m[1;32mfull-db-stable[m[33m)[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   Wed Feb 25 00:44:32 2026 +0100
+
+    Full DB migration for artists and categories - stable version
+
+[33mcommit dfb6d1f0c9e4c6348860e836a583d3e36a6ebb3a[m
+Author: nemanjastrasni <nemanjaivanovic979@gmail.com>
+Date:   T

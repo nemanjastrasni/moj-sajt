@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+/* RESET */
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* ROOT */
+:root {
+  --background: #0d0d0d;
+  --foreground: #e5e5e5;
+}
+
+body {
+  background: radial-gradient(circle at center, #111 0%, #000 100%);
+  color: var(--foreground);
+  font-family: "Georgia", "Palatino Linotype", serif;
+  
+}
+
+/* ========================= */
+/* 🎸 HEADER – GITARA VRAT */
+/* ========================= */
+
+nav {
+  position: relative;
+  width: 100%;
+  margin: 0;              /* BITNO */
+  padding: 0 40px 0px 40px;  /* nema padding gore */
+  border-radius: 0;
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.05) 0%,
+      rgba(0,0,0,0.2) 60%
+    ),
+    linear-gradient(
+      90deg,
+      #2a1f1a 0%,
+      #1a1412 25%,
+      #241a15 50%,
+      #140f0d 75%,
+      #2a1f1a 100%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.03) 0px,
+      rgba(255,255,255,0.03) 2px,
+      rgba(0,0,0,0.04) 3px,
+      rgba(0,0,0,0.04) 7px
+    );
+
+  box-shadow:
+    inset 0 0 60px rgba(0,0,0,0.7),
+    inset 0 0 20px rgba(255,255,255,0.04),
+    0 20px 40px rgba(0,0,0,0.6);
+}
+
+/* Metalni pragovi */
+nav::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to right,
+    transparent 0px,
+    transparent 120px,
+    rgba(220,220,220,0.7) 121px,
+    rgba(255,255,255,0.9) 122px,
+    rgba(180,180,180,0.7) 123px,
+    transparent 124px
+  );
+  pointer-events: none;
+  z-index: 0
+  ;
+}
+
+/* ========================= */
+/* 🎵 MENU STRING STIL */
+/* ========================= */
+
+.string {
+  display: block;
+  position: relative;
+
+  font-size:14px;
+  line-height:14px;
+  padding:2px 0;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+        /* dodatno smanjuje tekst */
+
+  color:#3b82f6;
+  transition: color 0.3s ease, transform 0.2s ease;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  z-index: 5;
+}
+
+.string::after {
+  content: "";
+  position: absolute;
+  left:-20px;        /*left: 0;*/
+  bottom:6px;
+  width: 100vw;   /*width: 100vw; zamenio sam ovo za celom duzinom zice*/
+  height: 1.5px;
+  background: linear-gradient(
+  to right,
+  #555,
+  #ddd,
+  #fff,
+  #aaa,
+  #555
+);
+  transition: all 0.3s ease;
+}
+.string:nth-child(1)::after { height:3px }
+.string:nth-child(2)::after { height:2.6px }
+.string:nth-child(3)::after { height:2.2px }
+.string:nth-child(4)::after { height:1.8px }
+.string:nth-child(5)::after { height:1.4px }
+.string:nth-child(6)::after { height:1.2px }
+.string:nth-child(7)::after { height:1px }
+
+.string:hover {
+  color: #4fd1ff;
+  transform: translateX(8px);
+  filter: brightness(1.2);
+}
+@keyframes vibrate {
+  0% { transform: translateY(0px); }
+  25% { transform: translateY(1px); }
+  50% { transform: translateY(-1px); }
+  75% { transform: translateY(1px); }
+  100% { transform: translateY(0px); }
+}
+
+.string:hover::after {
+  height: 3px;
+  animation: vibrate 0.15s linear infinite;
+}
+
+@keyframes vibrate {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(2px); }
+  50%  { transform: translateX(-2px); }
+  75%  { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+
+/* ========================= */
+/* 🎼 CHORD POPUP */
+/* ========================= */
+
+.chord {
+  position: relative;
+  display: inline-block;
+}
+
+.chord-popup {
+  display: none;
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111;
+  padding: 6px;
+  border-radius: 8px;
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+}
+
+.chord-popup img {
+  display: block;
+}
+
+.chord:hover .chord-popup {
+  display: block;
+}
+
+@keyframes stringWave {
+  0% { transform: translateY(0px); }
+  25% { transform: translateY(1px); }
+  50% { transform: translateY(-1px); }
+  75% { transform: translateY(1px); }
+  100% { transform: translateY(0px); }
+}
+.string::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 6px;
+  width: 100vw;
+  height: 2px;
+  background: linear-gradient(to right, #666, #fff, #aaa, #555);
+  transition: all 0.3s ease;
+}
+.search-active .string::after {
+  animation: stringWave 0.25s ease-in-out infinite;
+}

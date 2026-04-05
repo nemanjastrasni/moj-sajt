@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://neondb_owner:npg_s5w2VvETlnmX@ep-wispy-dawn-alnxam1d.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require"
+}
+
+/// =========koliko ljudi posecuje=================
+model Visit {
+  id        String    @id @default(cuid())
+  createdAt DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model playing_with_neon {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Float? @db.Real
+}
+
+model User {
+  id            String     @id @default(cuid())
+  name          String?
+  email         String?    @unique
+  password      String?
+  createdAt     DateTime   @default(now())
+  emailVerified DateTime?
+  image         String?
+  role          String     @default("user")
+  banned        Boolean    @default(false)
+  bio           String?
+  birthYear     Int?
+  city          String?
+  country       String?
+  accounts      Account[]
+  favorites     Favorite[]
+  playlists     Playlist[]
+  sessions      Session[]
+}
+
+model Artist {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  image       String?
+  bio         String?
+  discography Json?
+  category    String?
+  createdAt   DateTime? @default(now()) @db.Timestamptz(6)
+  members     Json?
+  bioShort    String?
+  songs       Song[]
+}
+
+model Song {
+  id        String     @id @default(cuid())
+  slug      String
+  title     String
+  category  String
+  lyrics    String
+  chords    String?
+  artistId  String
+  createdAt DateTime?  @default(now()) @db.Timestamptz(6)
+  favorites Favorite[]
+  artist    Artist     @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "song_artist_fk")
+
+  @@unique([artistId, slug])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  songId    String
+  createdAt DateTime @default(now())
+  song      Song     @relation(fields: [songId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, songId])
+}
+
+model Playlist {
+  id        String         @id @default(cuid())
+  name      String
+  userId    String
+  createdAt DateTime       @default(now())
+  user      User           @relation(fields: [userId], references: [id])
+  songs     PlaylistSong[]
+}
+
+model PlaylistSong {
+  id         String   @id @default(cuid())
+  playlistId String
+  songId     String
+  playlist   Playlist @relation(fields: [playlistId], references: [id])
+}
+
+model analytics {
+  day    DateTime @id @db.Date
+  visits Int?     @default(0)
+}
