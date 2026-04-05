@@ -18,6 +18,9 @@ export default async function MojePlayliste() {
     where: { userId: user.id },
     orderBy: { createdAt: "desc" },
   })
+  const domace = (playlists as any[]).filter(p => p.category === "domace")
+  const strane = (playlists as any[]).filter(p => p.category === "strane")
+  const narodne = (playlists as any[]).filter(p => p.category === "narodne")
 
   return (
     <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
@@ -55,19 +58,48 @@ export default async function MojePlayliste() {
         <div>Nemaš još playlisti</div>
       )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        {playlists.map((p) => (
+      {/* DOMACE */}
+{domace.length > 0 && (
+  <>
+    <h2 style={{ marginTop: "20px" }}>Domaće</h2>
+    {domace.map((p) => (
+      <div key={p.id}>
+        <Link href={`/plejliste/${p.id}`} style={{ color: "#3b82f6" }}>
+          {p.name}
+        </Link>
+      </div>
+    ))}
+  </>
+)}
+
+{/* STRANE */}
+{strane.length > 0 && (
+  <>
+    <h2 style={{ marginTop: "20px" }}>Strane</h2>
+    {strane.map((p) => (
+      <div key={p.id}>
+        <Link href={`/plejliste/${p.id}`} style={{ color: "#3b82f6" }}>
+          {p.name}
+        </Link>
+      </div>
+    ))}
+  </>
+)}
+
+    {/* NARODNE */}
+    {narodne.length > 0 && (
+      <>
+        <h2>Narodne</h2>
+        {narodne.map((p) => (
           <div key={p.id}>
-            <Link
-              href={`/plejliste/${p.id}`}
-              style={{ color: "#3b82f6", fontSize: "18px" }}
-            >
+            <Link href={`/plejliste/${p.id}`}>
               {p.name}
             </Link>
           </div>
         ))}
-      </div>
+      </>
+    )}
 
-    </div>
-  )
+  </div>   
+)
 }
