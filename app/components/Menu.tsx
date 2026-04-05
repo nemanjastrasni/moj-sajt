@@ -141,14 +141,14 @@ export default function Menu() {
                >
                 <button
   onClick={() => window.location.href = "/plejliste/moje"}
-  className="block w-full text-left px-2 py-2 text-white hover:bg-white/10 rounded"
+  className="block w-full text-left px-2 py-2 text-blue-400 hover:bg-white/10 rounded"
 >
   Moje playliste
 </button>
 
 <button
   onClick={() => window.location.href = "/favorite"}
-  className="block w-full text-left px-2 py-2 text-white hover:bg-white/10 rounded"
+  className="block w-full text-left px-2 py-2 text-yellow-400 hover:bg-white/10 rounded"
 >
   Favoriti
 </button>
