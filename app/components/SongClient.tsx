@@ -308,6 +308,22 @@ parts.push(
 <h2 className="text-lg text-gray-500 mb-6">
   {artist}
 </h2>
+{/* Playlist */}
+<button
+  onClick={async () => {
+    await fetch("/api/playlist", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        playlistId: "ID_PLAYLISTE", // privremeno
+        songId: song.id,
+      }),
+    })
+  }}
+  className="text-sm px-2 py-1 bg-blue-500 text-white rounded"
+>
+  + Playlist
+</button>
 
           {/* CONTENT */}
           <div

@@ -117,6 +117,7 @@ model Playlist {
   id        String         @id @default(cuid())
   name      String
   userId    String
+  isAdmin   Boolean        @default(false) // 👈 DODAJ
   createdAt DateTime       @default(now())
   user      User           @relation(fields: [userId], references: [id])
   songs     PlaylistSong[]
@@ -127,7 +128,9 @@ model PlaylistSong {
   playlistId String
   songId     String
   playlist   Playlist @relation(fields: [playlistId], references: [id])
+  @@unique([playlistId, songId])
 }
+
 
 model analytics {
   day    DateTime @id @db.Date
