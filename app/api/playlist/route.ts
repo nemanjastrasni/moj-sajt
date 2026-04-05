@@ -82,4 +82,21 @@ export async function DELETE(req: Request) {
   })
 
   return NextResponse.json({ ok: true })
+  
+}
+export async function GET() {
+  const session = await getServerSession(authOptions)
+  if (!session) return NextResponse.json([])
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user?.email! },
+  })
+
+  if (!user) return NextResponse.json([])
+
+  const playlists = await prisma.playlist.findMany({
+    where: { userId: user.id },
+  })
+
+  return NextResponse.json(playlists)
 }
