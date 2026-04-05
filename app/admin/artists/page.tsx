@@ -17,8 +17,8 @@ export default async function AdminArtistsPage({
 
   const params = await searchParams
   const search = params?.search || ""
-  const category = params.category ?? ""
-  const letter = params.letter ?? ""
+  const category = params?.category || ""
+  const letter = params?.letter || ""
 
  const artists = await prisma.artist.findMany({
   where: {
