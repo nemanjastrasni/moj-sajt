@@ -9,6 +9,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  
 
   providers: [
     CredentialsProvider({
@@ -76,6 +77,7 @@ export const authOptions: NextAuthOptions = {
       token.id = String(user.id)
       token.email = user.email
       token.role = user.role
+      token.image = user.image
     }
     return token
   },
@@ -84,6 +86,7 @@ export const authOptions: NextAuthOptions = {
       session.user.id = token.id as string
       session.user.email = token.email as string
       session.user.role = token.role as string
+      session.user.image = token.image as string
     }
     return session
   },

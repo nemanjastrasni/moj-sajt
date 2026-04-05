@@ -17,31 +17,36 @@ export default function ProfileClient({ user, favorites }: any) {
   const [bio, setBio] = useState(user?.bio || "")
   const [image, setImage] = useState(user?.image || "")
   const [city, setCity] = useState(user?.city || "")
-const [country, setCountry] = useState(user?.country || "")
-const [birthYear, setBirthYear] = useState(user?.birthYear || "")
-const [showPassword, setShowPassword] = useState(false)
+  const [country, setCountry] = useState(user?.country || "")
+  const [birthYear, setBirthYear] = useState(user?.birthYear || "")
+  const [showPassword, setShowPassword] = useState(false)
   
   async function updateProfile() {
     if (password && password !== confirmPassword) {
     alert("Lozinke se ne poklapaju")
     return
   }
-    await fetch("/api/user/update", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        password,
-        bio,
-        city,
-        country,
-        birthYear,
-        image
-      })
-    })
+    const res = await fetch("/api/user/update", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    name,
+    password,
+    bio,
+    city,
+    country,
+    birthYear,
+    image,
+  }),
+})
 
-    alert("Sačuvano")
-    location.reload()
+if (!res.ok) {
+  alert("Greška pri čuvanju")
+  return
+}
+
+alert("Sačuvano")
+window.location.reload()
   }
 
   return (
@@ -189,7 +194,7 @@ const [showPassword, setShowPassword] = useState(false)
                     body: JSON.stringify({ songId: f.song.id }),
                   })
 
-                  location.reload()
+                  window.location.reload()
                 }}
                 className="text-red-500 ml-4"
               >
