@@ -81,20 +81,26 @@ export const authOptions: NextAuthOptions = {
     }
     return token
   },
+
   async session({ session, token }) {
     if (session.user) {
       session.user.id = token.id as string
       session.user.email = token.email as string
       session.user.role = token.role as string
-      session.user.image = token.image as string
+
+      const dbUser = await prisma.user.findUnique({
+        where: { email: session.user.email },
+      })
+
+      session.user.image = dbUser?.image || null
     }
     return session
   },
 
-    async redirect() {
-      return "/"
-    },
+  async redirect() {
+    return "/"
   },
+},
 
   pages: {
     signIn: "/login",

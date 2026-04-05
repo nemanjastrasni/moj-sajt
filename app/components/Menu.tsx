@@ -127,16 +127,21 @@ export default function Menu() {
                     {session.user?.email}
                   </p>
 
-                  <a className="block px-2 py-2 text-white hover:bg-white/10 rounded">
-                    Profil
-                  </a>
+                  <button
+                        onClick={() => window.location.href = "/profile"}
+                        className="block w-full text-left px-2 py-2 text-white hover:bg-white/10 rounded"
+                >
+                         Profil
+                     </button>
 
                   {(session.user as any)?.role === "admin" && (
-                    <a className="block px-2 py-2 hover:bg-gray-100 rounded">
-                      Admin
-                    </a>
+                    <button
+                       onClick={() => window.location.href = "/admin"}
+                       className="block w-full text-left px-2 py-2 hover:bg-gray-100 rounded"
+               >
+                         Admin
+                     </button>
                   )}
-
                   <button
                     onClick={() => signOut({ callbackUrl: "/" })}
                     className="w-full text-left px-2 py-2 text-red-400 hover:bg-red-500/10 rounded"

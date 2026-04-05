@@ -109,7 +109,7 @@ function getRowColor(count: number) {
           Izvođači
         </h1>
 
-        <form className="flex gap-3 mb-6">
+        <form method="GET" action="/admin/artists" className="flex gap-3 mb-6">
           <input
             type="text"
             name="search"

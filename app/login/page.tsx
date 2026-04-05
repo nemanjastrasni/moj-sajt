@@ -9,7 +9,14 @@ export default function LoginPage() {
   const [show, setShow] = useState(false)
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 relative z-50">
+    <div className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
+     style={{ backgroundImage: "url('/login-bg.png')" }}>
+
+  {/* overlay */}
+  <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+
+  {/* sadržaj */}
+  <div className="relative z-10"> relative z-10"
       
       <div className="bg-white p-8 rounded-2xl shadow-lg w-80 flex flex-col gap-4">
         
@@ -71,5 +78,6 @@ export default function LoginPage() {
 </a>
       </div>
     </div>
+  </div>
   )
 }
