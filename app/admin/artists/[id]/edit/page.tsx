@@ -144,23 +144,6 @@ async function mergeArtist(formData: FormData) {
       </form>
       <hr className="my-6" />
 
-<h2 className="font-bold">Merge u drugog izvođača</h2>
-
-<form action={mergeArtist} className="space-y-2">
-  <select name="targetId" className="border p-2 w-full">
-    {artists
-      .filter((a) => a.id !== artist.id)
-      .map((a) => (
-        <option key={a.id} value={a.id}>
-          {a.name}
-        </option>
-      ))}
-  </select>
-
-  <button className="bg-red-600 text-white px-4 py-2 rounded">
-    MERGE
-  </button>
-</form>
     </div>
   )
 }
