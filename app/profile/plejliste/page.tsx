@@ -16,10 +16,8 @@ export default async function Page() {
   const playlists = await prisma.playlist.findMany({
     where: { userId: user.id },
     include: {
-      songs: {
-        include: { song: true },
-      },
-    },
+    songs: true,
+},
     orderBy: { createdAt: "desc" },
   })
 
