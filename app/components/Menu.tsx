@@ -139,6 +139,19 @@ export default function Menu() {
                        onClick={() => window.location.href = "/admin"}
                        className="block w-full text-left px-2 py-2 hover:bg-gray-100 rounded"
                >
+                <button
+  onClick={() => window.location.href = "/plejliste/moje"}
+  className="block w-full text-left px-2 py-2 text-white hover:bg-white/10 rounded"
+>
+  Moje playliste
+</button>
+
+<button
+  onClick={() => window.location.href = "/favorite"}
+  className="block w-full text-left px-2 py-2 text-white hover:bg-white/10 rounded"
+>
+  Favoriti
+</button>
                          Admin
                      </button>
                   )}
