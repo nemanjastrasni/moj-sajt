@@ -12,7 +12,6 @@ export async function POST(req: Request) {
 
   const { name, category, songId } = await req.json()
 
-  // 🔥 uzmi user preko email
   const user = await prisma.user.findUnique({
     where: { email: session.user?.email! },
   })
@@ -24,21 +23,22 @@ export async function POST(req: Request) {
   const playlist = await prisma.playlist.create({
     data: {
       name,
-      category, // 🔥 novo
+      category,
       userId: user.id,
     },
   })
-   if (songId) {
-  await prisma.playlistSong.create({
-    data: {
-      playlistId: playlist.id,
-      songId,
-    },
-  })
-}
+
+  if (songId) {
+    await prisma.playlistSong.create({
+      data: {
+        playlistId: playlist.id,
+        songId,
+      },
+    })
+  }
+
   return NextResponse.json(playlist)
 }
-
 
 // ADD SONG TO PLAYLIST
 export async function PUT(req: Request) {
@@ -63,41 +63,47 @@ export async function PUT(req: Request) {
   }
 }
 
-// REMOVE SONG FROM PLAYLIST
+// DELETE (song ili cela playlista)
 export async function DELETE(req: Request) {
-  const session = await getServerSession(authOptions)
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
-  const { playlistId, songId } = await req.json()
+    const { playlistId, songId } = await req.json()
 
-  // 👉 ako ima songId → briši pesmu
-  if (songId) {
-    await prisma.playlistSong.delete({
-      where: {
-        playlistId_songId: {
-          playlistId,
-          songId,
+    // 👉 briši pesmu iz playliste
+    if (songId) {
+      await prisma.playlistSong.delete({
+        where: {
+          playlistId_songId: {
+            playlistId,
+            songId,
+          },
         },
-      },
+      })
+
+      return NextResponse.json({ ok: true })
+    }
+
+    // 👉 briši celu playlistu
+    await prisma.playlistSong.deleteMany({
+      where: { playlistId },
+    })
+
+    await prisma.playlist.delete({
+      where: { id: playlistId },
     })
 
     return NextResponse.json({ ok: true })
+  } catch (e) {
+    console.error("DELETE ERROR:", e)
+    return NextResponse.json({ error: "Delete failed" }, { status: 500 })
   }
-
-  // 👉 ako nema songId → briši celu playlistu
- await prisma.playlistSong.deleteMany({
-  where: { playlistId },
-})
-
-await prisma.playlist.delete({
-  where: { id: playlistId },
-})
-
-  return NextResponse.json({ ok: true })
 }
 
+// GET USER PLAYLISTS
 export async function GET() {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json([])
@@ -114,6 +120,8 @@ export async function GET() {
 
   return NextResponse.json(playlists)
 }
+
+// EDIT PLAYLIST (rename)
 export async function PATCH(req: Request) {
   const session = await getServerSession(authOptions)
   if (!session) {

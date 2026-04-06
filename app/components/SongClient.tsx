@@ -320,68 +320,91 @@ parts.push(
 <h2 className="text-lg text-gray-500 mb-6">
   {artist}
 </h2>
-       {/* Playlist */}
-           <div className="relative inline-block">
+       {/* PLAYLIST*/}
+          <div className="relative inline-block">
 
   <button
-  onClick={async () => {
-    // 👉 nema playlisti → napravi odmah
-    if (playlists.length === 0) {
-      const name = prompt("Naziv playliste")
-      if (!name) return
+    onClick={async () => {
+      // 👉 nema playlisti → napravi odmah
+      if (playlists.length === 0) {
+        const name = prompt("Naziv playliste")
+        if (!name) return
 
-      // 1. create playlist
-      const res = await fetch("/api/playlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-         name,
-         category: song.category,
-         songId: song.id,
-    }),
-      })
+        await fetch("/api/playlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            category: song.category,
+            songId: song.id,
+          }),
+        })
 
-      const newPlaylist = await res.json()
+        return
+      }
 
-      return
-    }
-
-    // 👉 ima playlisti → dropdown
-    setShowSelect(!showSelect)
-  }}
-  className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 rounded text-white"
->
-  + Playlist
-</button>
+      // 👉 ima playlisti → samo otvori dropdown
+      setShowSelect(!showSelect)
+    }}
+    className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 rounded text-white"
+  >
+    + Playlist
+  </button>
 
   {showSelect && (
-    <div className="absolute mt-2 bg-neutral-900 border border-gray-700 rounded p-2 z-50">
-      
-      {playlists.map((p) => (
-  <div
-    key={p.id}
-    onClick={async () => {
-      await fetch("/api/playlist", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          playlistId: p.id,
-          songId: song.id,
-        }),
-      })
+    <div className="absolute mt-2 bg-neutral-900 border border-gray-700 rounded p-2 z-50 w-64">
 
-      setShowSelect(false)
-    }}
-    className="px-2 py-1 hover:bg-white/10 cursor-pointer flex justify-between items-center"
-  >
-    <span>{p.name}</span>
-    <span className="text-green-400">+</span>
-  </div>
-))}
+      {playlists.map((p) => (
+        <div
+          key={p.id}
+          onClick={async () => {
+            await fetch("/api/playlist", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                playlistId: p.id,
+                songId: song.id,
+              }),
+            })
+
+            setShowSelect(false)
+          }}
+          className="px-2 py-2 hover:bg-white/10 cursor-pointer flex justify-between items-center"
+        >
+          <span className="truncate max-w-[180px]">
+            {p.name}
+          </span>
+          <span className="text-green-400">+</span>
+        </div>
+      ))}
+
+      {/* NOVA PLAYLISTA */}
+      <div
+        onClick={async () => {
+          const name = prompt("Naziv playliste")
+          if (!name) return
+
+          await fetch("/api/playlist", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name,
+              category: song.category,
+              songId: song.id,
+            }),
+          })
+
+          location.reload()
+        }}
+        className="px-2 py-2 hover:bg-white/10 cursor-pointer border-t border-gray-700 mt-1 text-blue-400"
+      >
+        + Nova playlista
+      </div>
+
     </div>
   )}
-</div>
 
+</div>
           {/* CONTENT */}
           <div
             className="font-mono leading-relaxed whitespace-pre-wrap"
@@ -453,7 +476,7 @@ parts.push(
               songId: song.id,
             }),
           })
-
+          
           setShowModal(false)
           setPlaylistName("")
         }}
@@ -470,7 +493,8 @@ parts.push(
       </div>
 
     </div>
+  </div>  
   )
-  
+
 }
 
