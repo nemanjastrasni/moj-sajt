@@ -87,9 +87,13 @@ export async function DELETE(req: Request) {
   }
 
   // 👉 ako nema songId → briši celu playlistu
-  await prisma.playlist.delete({
-    where: { id: playlistId },
-  })
+ await prisma.playlistSong.deleteMany({
+  where: { playlistId },
+})
+
+await prisma.playlist.delete({
+  where: { id: playlistId },
+})
 
   return NextResponse.json({ ok: true })
 }
