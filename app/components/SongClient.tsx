@@ -493,8 +493,7 @@ parts.push(
       </div>
 
     </div>
-  </div>  
+   
   )
-
 }
 
