@@ -72,18 +72,28 @@ export async function DELETE(req: Request) {
 
   const { playlistId, songId } = await req.json()
 
-  await prisma.playlistSong.delete({
-    where: {
-      playlistId_songId: {
-        playlistId,
-        songId,
+  // 👉 ako ima songId → briši pesmu
+  if (songId) {
+    await prisma.playlistSong.delete({
+      where: {
+        playlistId_songId: {
+          playlistId,
+          songId,
+        },
       },
-    },
+    })
+
+    return NextResponse.json({ ok: true })
+  }
+
+  // 👉 ako nema songId → briši celu playlistu
+  await prisma.playlist.delete({
+    where: { id: playlistId },
   })
 
   return NextResponse.json({ ok: true })
-  
 }
+
 export async function GET() {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json([])
@@ -99,4 +109,19 @@ export async function GET() {
   })
 
   return NextResponse.json(playlists)
+}
+export async function PATCH(req: Request) {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const { playlistId, name } = await req.json()
+
+  const updated = await prisma.playlist.update({
+    where: { id: playlistId },
+    data: { name },
+  })
+
+  return NextResponse.json(updated)
 }
