@@ -22,10 +22,10 @@ export async function POST(req: Request) {
 
   const playlist = await prisma.playlist.create({
     data: {
-      name,
-      category,
-      userId: user.id,
-    },
+  name,
+  category: category || "mix", 
+  userId: user.id,
+},
   })
 
   if (songId) {

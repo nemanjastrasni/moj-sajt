@@ -18,16 +18,33 @@ export default async function Page() {
   const playlists = await prisma.playlist.findMany({
     where: { userId: user.id },
     include: {
-    songs: true,
+    songs: {
+    include: {
+      song: true,
+    },
+  },
 },
     orderBy: { createdAt: "desc" },
   })
   
-  const domace = playlists.filter((p: any) => p.category === "domace")
-  const strane = playlists.filter((p: any) => p.category === "strane")
-  const narodne = playlists.filter((p: any) => p.category === "narodne")
-  const mix = playlists.filter((p: any) => !p.category || p.category === "mix")
-  const PlaylistRow = ({ p }: any) => (
+const domace: any[] = []
+const strane: any[] = []
+const narodne: any[] = []
+const mix: any[] = []
+
+playlists.forEach((p: any) => {
+  const categories = p.songs.map((s: any) => s.song.category)
+  const unique = [...new Set(categories)]
+
+  if (unique.length > 1) {
+    mix.push(p)
+  } else {
+    if (unique[0] === "domace") domace.push(p)
+    else if (unique[0] === "strane") strane.push(p)
+    else if (unique[0] === "narodne") narodne.push(p)
+  }
+})
+ const PlaylistRow = ({ p }: any) => (
   <div
     style={{
       display: "flex",
@@ -53,15 +70,17 @@ export default async function Page() {
 )
   
   return (
-  <div style={{ padding: "40px", maxWidth: "700px", margin: "0 auto" }}>
-    <h1 style={{ textAlign: "center", marginBottom: "30px" }}>
-  Moje playliste
-</h1>
+  <div className="max-w-3xl mx-auto px-6 py-10">
+  <h1 className="text-3xl font-bold text-center mb-10 text-white tracking-wide">
+    🎧 Moje playliste
+  </h1>
 
 
     {domace.length > 0 && (
   <>
-    <h2>Domaće</h2>
+    <h2 className="text-xl font-semibold mt-6 mb-2 text-blue-400">
+  🇷🇸 Domaće
+</h2>
     {domace.map((p: any) => (
       <PlaylistRow key={p.id} p={p} />
     ))}
@@ -70,7 +89,9 @@ export default async function Page() {
 
 {strane.length > 0 && (
   <>
-    <h2>Strane</h2>
+    <h2 className="text-xl font-semibold mt-6 mb-2 text-purple-400">
+  🌍 Strane
+</h2>
     {strane.map((p: any) => (
       <PlaylistRow key={p.id} p={p} />
     ))}
@@ -79,7 +100,9 @@ export default async function Page() {
 
 {narodne.length > 0 && (
   <>
-    <h2>Narodne</h2>
+    <h2 className="text-xl font-semibold mt-6 mb-2 text-yellow-400">
+  🎻 Narodne
+</h2>
     {narodne.map((p: any) => (
       <PlaylistRow key={p.id} p={p} />
     ))}
@@ -88,7 +111,9 @@ export default async function Page() {
 
 {mix.length > 0 && (
   <>
-    <h2>Mix</h2>
+    <h2 className="text-xl font-semibold mt-6 mb-2 text-green-400">
+  🔀 Mix
+</h2>
     {mix.map((p: any) => (
       <PlaylistRow key={p.id} p={p} />
     ))}
