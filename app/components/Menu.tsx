@@ -137,7 +137,7 @@ export default function Menu() {
       </button>
 
       <button
-        onClick={() => router.push("/plejliste/moje")}
+        onClick={() => router.push("/profile/plejliste")}
         className="block w-full text-left px-2 py-2 text-blue-400 hover:bg-white/10 rounded"
       >
         Moje playliste

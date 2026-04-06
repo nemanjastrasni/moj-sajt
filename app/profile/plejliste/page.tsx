@@ -79,7 +79,7 @@ playlists.forEach((p: any) => {
     {domace.length > 0 && (
   <>
     <h2 className="text-xl font-semibold mt-6 mb-2 text-blue-400">
-  🇷🇸 Domaće
+  🎶 Domaće
 </h2>
     {domace.map((p: any) => (
       <PlaylistRow key={p.id} p={p} />
