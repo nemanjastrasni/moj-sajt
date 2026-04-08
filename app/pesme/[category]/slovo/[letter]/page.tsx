@@ -68,13 +68,24 @@ export default async function LetterPage({ params }: any) {
       ) : (
         <div style={{ display: "grid", gap: "10px" }}>
           {filtered.map((artist) => (
-            <Link
-              key={artist.id}
-              href={`/pesme/${category}/${artist.slug}`}
-            >
-              {artist.name} ({artist.songs.length})
-            </Link>
-          ))}
+  <Link
+    key={artist.id}
+    href={`/pesme/${category}/${artist.slug}`}
+    className="flex items-center gap-3"
+  >
+    {artist.image && (
+      <img
+        src={artist.image}
+        alt={artist.name}
+        className="w-8 h-8 object-cover rounded-full"
+      />
+    )}
+
+    <span>
+      {artist.name} ({artist.songs.length})
+    </span>
+  </Link>
+))}
         </div>
       )}
     </div>

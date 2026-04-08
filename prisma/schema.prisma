@@ -37,6 +37,7 @@ model User {
   favorites     Favorite[]
   playlists     Playlist[]
   sessions      Session[]
+  listeningPlaylists ListeningPlaylist[] @relation("UserListeningPlaylists")
 }
 
 model Artist {
@@ -140,4 +141,24 @@ model PlaylistSong {
 model analytics {
   day    DateTime @id @db.Date
   visits Int?     @default(0)
+}
+model ListeningPlaylist {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String
+  createdAt DateTime @default(now())
+
+  user User @relation("UserListeningPlaylists", fields: [userId], references: [id])
+  items     ListeningItem[]
+}
+
+model ListeningItem {
+  id          String   @id @default(cuid())
+  playlistId  String
+  title       String?
+  url         String
+  type        String   // "youtube" | "spotify"
+  createdAt   DateTime @default(now())
+
+  playlist    ListeningPlaylist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
 }

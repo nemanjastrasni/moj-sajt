@@ -72,3 +72,20 @@ export async function POST(req: Request) {
 
   return NextResponse.json(artist)
 }
+export async function PATCH(req: Request) {
+  const session = await getServerSession(authOptions)
+
+  if (!session || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const body = await req.json()
+  const { id, name, bio, discography, image, category } = body
+
+  const updated = await prisma.artist.update({
+    where: { id },
+    data: { name, bio, discography, image, category },
+  })
+
+  return NextResponse.json(updated)
+}

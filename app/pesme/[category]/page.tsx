@@ -36,8 +36,8 @@ export default async function CategoryPage(
   const { category } = await params
 
   const artists = await prisma.artist.findMany({
-  where:{ category },
-  select:{ name:true }
+  where: { category },
+  select: { name: true, image: true },
 })
 
 const lettersSet = new Set<string>()
@@ -63,7 +63,29 @@ artists.forEach(artist=>{
 const letters = Array.from(lettersSet).sort()
 
   return (
-    <div style={{ padding: "40px", maxWidth: "1000px", margin: "0 auto" }}>
+  <div className="relative min-h-screen overflow-hidden">
+
+    {/* BACKGROUND */}
+    <div className="absolute inset-0 grid grid-cols-6 opacity-20">
+      {artists.slice(0, 30).map((a, i) =>
+        a.image ? (
+          <img
+            key={i}
+            src={a.image}
+            className="w-full h-full object-cover"
+          />
+        ) : null
+      )}
+    </div>
+
+    {/* OVERLAY */}
+    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+
+    {/* CONTENT */}
+    <div
+      style={{ padding: "40px", maxWidth: "1000px", margin: "0 auto" }}
+      className="relative z-10"
+    >
 
       <h1 style={{ fontSize: "32px", marginBottom: "30px" }}>
         {formatCategory(category)}
@@ -90,6 +112,7 @@ const letters = Array.from(lettersSet).sort()
 
       </div>
 
+    </div>
     </div>
   )
 }

@@ -48,7 +48,20 @@ export default async function ArtistPage({ params }: any) {
   if (!artistData) notFound()
 
   return (
-    <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
+  <div
+    className="relative min-h-screen"
+    style={{
+      backgroundImage: artistData.image ? `url(${artistData.image})` : "none",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }}
+  >
+    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+
+    <div
+      style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}
+      className="relative z-10"
+    >
       <h1 style={{ fontSize: "28px", marginBottom: "10px" }}>
         {artistData.name}
       </h1>
@@ -80,5 +93,7 @@ export default async function ArtistPage({ params }: any) {
 }
 </div>
 </div>
+    </div>
+ 
   )
 }
