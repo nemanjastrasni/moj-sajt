@@ -71,12 +71,20 @@ export default async function LetterPage({ params }: any) {
   <Link
     key={artist.id}
     href={`/pesme/${category}/${artist.slug}`}
-    className="flex items-center gap-3"
+    className="flex items-center gap-3 py-1"
+style={{ alignItems: "center" }}
   >
     {artist.image && (
       <img
         src={artist.image}
         alt={artist.name}
+        style={{
+    width: "28px",
+    height: "28px",
+    borderRadius: "50%",
+    objectFit: "cover",
+    flexShrink: 0,
+  }}
         className="w-8 h-8 object-cover rounded-full"
       />
     )}

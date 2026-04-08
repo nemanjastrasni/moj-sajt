@@ -60,17 +60,15 @@ const images = allImages
   return (
   <div className="relative min-h-screen"
     style={{
-       backgroundImage: images
-    .map((img) => `url(${img})`)
-    .join(", "),
-       backgroundSize: "300px", // 👈 veličina slike
-       backgroundRepeat: "repeat",
-       backgroundPosition: "top left",
-       width: "100%",
-       
+  backgroundImage: artistData.image
+    ? `url(${artistData.image})`
+    : "none",
+  backgroundSize: "300px",
+  backgroundRepeat: "repeat",
+  backgroundPosition: "top left",
 }}
   >
-    <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0" />
+    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-0" />
 
     <div
       style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}
