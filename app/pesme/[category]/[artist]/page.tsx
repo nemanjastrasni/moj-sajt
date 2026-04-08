@@ -6,18 +6,18 @@ export const dynamic = "force-dynamic"
 
 export async function generateMetadata({ params }: any) {
   const { category, artist } = await params
-
+ 
   const artistData = await prisma.artist.findFirst({
     where: {
       slug: artist,
       category,
     },
   })
-
+  
   if (!artistData) {
     return { title: "Izvođač nije pronađen" }
   }
-
+  
   return {
     title: `${artistData.name} – Pesme`,
   }
@@ -46,18 +46,31 @@ export default async function ArtistPage({ params }: any) {
   })
 
   if (!artistData) notFound()
+    const allImages = await prisma.artist.findMany({
+  where: { category },
+  select: { image: true },
+})
+
+const images = allImages
+  .map((a) => a.image)
+  .filter((img: string | null): img is string => Boolean(img))
+  .sort(() => Math.random() - 0.5)
+  .slice(0, 3)
 
   return (
-  <div className="relative min-h-screen flex justify-center"
+  <div className="relative min-h-screen"
     style={{
-       backgroundImage: artistData.image ? `url(${artistData.image})` : "none",
-       backgroundSize: "cover",
-       backgroundPosition: "center",
+       backgroundImage: images
+    .map((img) => `url(${img})`)
+    .join(", "),
+       backgroundSize: "300px", // 👈 veličina slike
+       backgroundRepeat: "repeat",
+       backgroundPosition: "top left",
        width: "100%",
-       maxWidth: "1200px", // 👈 OGRANIČAVA ŠIRINU
+       
 }}
   >
-    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm z-0" />
+    <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0" />
 
     <div
       style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}
