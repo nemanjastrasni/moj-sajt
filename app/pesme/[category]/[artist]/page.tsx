@@ -68,7 +68,7 @@ const images = allImages
   backgroundPosition: "top left",
 }}
   >
-    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-0" />
+    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-0" />
 
     <div
       style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}
