@@ -48,15 +48,16 @@ export default async function ArtistPage({ params }: any) {
   if (!artistData) notFound()
 
   return (
-  <div
-    className="relative min-h-screen"
+  <div className="relative min-h-screen flex justify-center"
     style={{
-      backgroundImage: artistData.image ? `url(${artistData.image})` : "none",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-    }}
+       backgroundImage: artistData.image ? `url(${artistData.image})` : "none",
+       backgroundSize: "cover",
+       backgroundPosition: "center",
+       width: "100%",
+       maxWidth: "1200px", // 👈 OGRANIČAVA ŠIRINU
+}}
   >
-    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm z-0" />
 
     <div
       style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}
