@@ -1,16 +1,22 @@
 import { prisma } from "@/lib/prisma"
-import { notFound } from "next/navigation"
-import ListeningPlaylistClient from "./client"
+import Link from "next/link"
 
-export default async function Page({ params }: any) {
-  const { id } = params
-
-  const playlist = await prisma.listeningPlaylist.findUnique({
-    where: { id },
-    include: { items: true },
+export default async function ListeningPlaylistsPage() {
+  const playlists = await prisma.listeningPlaylist.findMany({
+    orderBy: { createdAt: "desc" },
   })
 
-  if (!playlist) return notFound()
+  return (
+    <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
+      <h1>Moje playliste</h1>
 
-  return <ListeningPlaylistClient playlist={playlist} />
+      <div style={{ display: "grid", gap: "10px", marginTop: "20px" }}>
+        {playlists.map((pl) => (
+          <Link key={pl.id} href={`/listening-playlist/${pl.id}`}>
+            🎧 {pl.name}
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
 }
