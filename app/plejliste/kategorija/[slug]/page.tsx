@@ -21,12 +21,17 @@ export default async function PlaylistSongsPage({ params }: any) {
 }
 
   if (slug === "4-akorda") {
-    songs = allSongs.filter((song) => {
-      const chords = getChords(song.chords)
-      const uniqueChords = [...new Set(chords.map(c => c.replace(/\[|\]/g, "")))]
-      return uniqueChords.length <= 4 && uniqueChords.length > 0
-    }).slice(0, 100)
-  }
+  songs = allSongs.filter((song) => {
+    if (!song.chords) return false
+
+    const chords = song.chords.match(/\[?[A-G][^\s\]]*/g) || []
+    const clean = chords.map(c => c.replace(/\[|\]/g, ""))
+
+    const uniqueChords = [...new Set(clean)]
+
+    return uniqueChords.length > 0 && uniqueChords.length <= 4
+  }).slice(0, 100)
+}
 
   if (slug === "beginner") {
     songs = allSongs.filter((song) => {
