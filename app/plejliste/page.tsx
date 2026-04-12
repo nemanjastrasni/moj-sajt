@@ -134,6 +134,9 @@ whiteSpace:"nowrap"
 </h3>
 
 <div style={{ display:"grid", gap:"10px" }}>
+<Link href="/listening-playlist">
+Moje plejliste za slušanje
+</Link>
 
 <Link href="/plejliste/slusanje-domace">
 20 najslušanijih domaćih
