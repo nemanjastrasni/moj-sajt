@@ -3,15 +3,13 @@ import Link from "next/link"
 
 export default async function PlaylistSongsPage({ params }: any) {
 
-const { category } = params
-
-const [slug, realCategory] = category.split("-")
+const { slug } = params
 
 
 let songs: any[] = []
 
 const allSongs = await prisma.song.findMany({
-where: { category: realCategory },
+where: {},
 include: {
 artist: { select: { slug: true } }
 }
@@ -71,7 +69,7 @@ marginBottom:"30px",
 color:"#38bdf8",
 textTransform:"capitalize"
 }}>
-{slug} - {category}
+{slug.replace("-", " ")}
 </h1>
 
 <div style={{ display: "grid", gap: "12px", fontSize:"18px" }}>
