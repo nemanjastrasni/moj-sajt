@@ -85,9 +85,17 @@ export default async function Page({ params }: any) {
         <h2 className="text-yellow-400 text-xl font-bold mt-8 mb-2">🎻 Narodne</h2>
         {narodne.map((song) => (
           <div key={song.id} className="py-1 border-b border-gray-800">
-            <Link href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}>
-              {song.artist?.name} - {song.title}
-            </Link>
+            <Link
+  href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+  className="block py-1 border-b border-gray-800 hover:bg-[#1a1a1a] hover:text-green-400 transition-all duration-200 px-2 rounded"
+>
+  <span className="text-gray-400 group-hover:text-gray-300">
+    {song.artist?.name}
+  </span>{" "}
+  <span className="text-white">
+    - {song.title}
+  </span>
+</Link>
           </div>
         ))}
 
