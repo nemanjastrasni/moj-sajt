@@ -64,41 +64,66 @@ export default async function Page({ params }: any) {
           {id.replace("-", " ")}
         </h1>
 
-        <h2 className="text-blue-400 text-xl font-bold mb-2">🎵 Domaće</h2>
-        {domace.map((song) => (
-          <div key={song.id} className="py-1 border-b border-gray-800">
-            <Link href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}>
-              {song.artist?.name} - {song.title}
-            </Link>
-          </div>
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-        <h2 className="text-purple-400 text-xl font-bold mt-8 mb-2">🌍 Strane</h2>
-        {strane.map((song) => (
-          <div key={song.id} className="py-1 border-b border-gray-800">
-            <Link href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}>
-              {song.artist?.name} - {song.title}
-            </Link>
+          {/* DOMACE */}
+          <div>
+            <h2 className="text-blue-400 text-xl font-bold mb-3">🎵 Domaće</h2>
+            {domace.map((song) => (
+              <Link
+                key={song.id}
+                href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+                className="block py-1 border-b border-gray-800 hover:bg-[#1a1a1a] hover:text-green-400 transition px-2 rounded"
+              >
+                <span className="text-gray-400">
+                  {song.artist?.name}
+                </span>{" "}
+                <span className="text-white">
+                  - {song.title}
+                </span>
+              </Link>
+            ))}
           </div>
-        ))}
 
-        <h2 className="text-yellow-400 text-xl font-bold mt-8 mb-2">🎻 Narodne</h2>
-        {narodne.map((song) => (
-          <div key={song.id} className="py-1 border-b border-gray-800">
-            <Link
-  href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
-  className="block py-1 border-b border-gray-800 hover:bg-[#1a1a1a] hover:text-green-400 transition-all duration-200 px-2 rounded"
->
-  <span className="text-gray-400 group-hover:text-gray-300">
-    {song.artist?.name}
-  </span>{" "}
-  <span className="text-white">
-    - {song.title}
-  </span>
-</Link>
+          {/* STRANE */}
+          <div>
+            <h2 className="text-purple-400 text-xl font-bold mb-3">🌍 Strane</h2>
+            {strane.map((song) => (
+              <Link
+                key={song.id}
+                href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+                className="block py-1 border-b border-gray-800 hover:bg-[#1a1a1a] hover:text-green-400 transition px-2 rounded"
+              >
+                <span className="text-gray-400">
+                  {song.artist?.name}
+                </span>{" "}
+                <span className="text-white">
+                  - {song.title}
+                </span>
+              </Link>
+            ))}
           </div>
-        ))}
 
+          {/* NARODNE */}
+          <div>
+            <h2 className="text-yellow-400 text-xl font-bold mb-3">🎻 Narodne</h2>
+            {narodne.map((song) => (
+              <Link
+                key={song.id}
+                href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+                className="block py-1 border-b border-gray-800 hover:bg-[#1a1a1a] hover:text-green-400 transition px-2 rounded"
+              >
+                <span className="text-gray-400">
+                  {song.artist?.name}
+                </span>{" "}
+                <span className="text-white">
+                  - {song.title}
+                </span>
+              </Link>
+            ))}
+          </div>
+
+        </div>
       </div>
     )
   }
