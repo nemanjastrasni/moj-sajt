@@ -12,15 +12,15 @@ Generisane playliste
 
 <div style={{ display: "grid", gap: "12px" }}>
 
-<Link href="/plejliste/4-akorda">
+<Link href="/plejliste/generisane/4-akorda">
 4 akorda
 </Link>
 
-<Link href="/plejliste/beginner">
+<Link href="/plejliste/generisane/beginner">
 Beginner gitara
 </Link>
 
-<Link href="/plejliste/acoustic">
+<Link href="/plejliste/generisane/acoustic">
 Acoustic
 </Link>
 

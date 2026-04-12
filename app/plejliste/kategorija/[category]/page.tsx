@@ -3,12 +3,15 @@ import Link from "next/link"
 
 export default async function PlaylistSongsPage({ params }: any) {
 
-const { slug, category } = params
+const { category } = params
+
+const [slug, realCategory] = category.split("-")
+
 
 let songs: any[] = []
 
 const allSongs = await prisma.song.findMany({
-where: { category },
+where: { category: realCategory },
 include: {
 artist: { select: { slug: true } }
 }
