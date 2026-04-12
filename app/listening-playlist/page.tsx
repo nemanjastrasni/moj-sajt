@@ -17,6 +17,11 @@ export default async function ListeningPlaylistsPage() {
       </h1>
 
       {/* CREATE PLAYLIST */}
+
+      <p className="text-sm text-gray-400 mb-3 text-center">
+  Prvo kreiraj playlistu, pa dodaj pesme unutar nje
+</p>
+
       <form
         action="/api/listening-playlist"
         method="POST"
