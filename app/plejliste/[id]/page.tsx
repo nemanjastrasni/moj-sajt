@@ -64,27 +64,27 @@ export default async function Page({ params }: any) {
           {id.replace("-", " ")}
         </h1>
 
-        <h2>🇷🇸 Domaće</h2>
+        <h2 className="text-blue-400 text-xl font-bold mb-2">🎵 Domaće</h2>
         {domace.map((song) => (
-          <div key={song.id}>
+          <div key={song.id} className="py-1 border-b border-gray-800">
             <Link href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}>
               {song.artist?.name} - {song.title}
             </Link>
           </div>
         ))}
 
-        <h2 style={{ marginTop: "30px" }}>🌍 Strane</h2>
+        <h2 className="text-purple-400 text-xl font-bold mt-8 mb-2">🌍 Strane</h2>
         {strane.map((song) => (
-          <div key={song.id}>
+          <div key={song.id} className="py-1 border-b border-gray-800">
             <Link href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}>
               {song.artist?.name} - {song.title}
             </Link>
           </div>
         ))}
 
-        <h2 style={{ marginTop: "30px" }}>🎻 Narodne</h2>
+        <h2 className="text-yellow-400 text-xl font-bold mt-8 mb-2">🎻 Narodne</h2>
         {narodne.map((song) => (
-          <div key={song.id}>
+          <div key={song.id} className="py-1 border-b border-gray-800">
             <Link href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}>
               {song.artist?.name} - {song.title}
             </Link>
