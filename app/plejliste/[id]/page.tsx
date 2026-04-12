@@ -11,17 +11,15 @@ export default async function Page({ params }: any) {
   if (isGenerated) {
 
     const allSongs = await prisma.song.findMany({
-  where: id === "4-akorda"
-    ? {}
-    : id === "beginner"
-    ? {}
-    : id === "acoustic"
-    ? {}
-    : {},
-  include: {
-    artist: { select: { slug: true, name: true } }
-  }
-})
+      where: {
+        category: {
+          in: ["domace", "strane", "narodne"]
+        }
+      },
+      include: {
+        artist: { select: { slug: true, name: true } }
+      }
+    })
 
     const getChords = (song: any) => {
       const text = song.lyrics || song.content || ""
@@ -29,53 +27,70 @@ export default async function Page({ params }: any) {
       return matches.map((c: string) => c.replace(/\[|\]/g, ""))
     }
 
-    let songs: any[] = []
+    let filtered: any[] = []
 
     if (id === "4-akorda") {
-      songs = allSongs.filter((song) => {
+      filtered = allSongs.filter((song) => {
         const unique = [...new Set(getChords(song))] as string[]
         return unique.length > 0 && unique.length <= 4
-      }).slice(0, 100)
+      })
     }
 
     if (id === "beginner") {
       const barre = ["F","Bm","F#m","B","Cm","Gm"]
 
-      songs = allSongs.filter((song) => {
+      filtered = allSongs.filter((song) => {
         const unique = [...new Set(getChords(song))] as string[]
         return unique.length > 0 && !unique.some(c => barre.includes(c))
-      }).slice(0, 100)
+      })
     }
 
     if (id === "acoustic") {
       const allowed = ["G","C","D","Em","Am"]
 
-      songs = allSongs.filter((song) => {
+      filtered = allSongs.filter((song) => {
         const unique = [...new Set(getChords(song))] as string[]
         return unique.length > 0 && unique.every(c => allowed.includes(c))
-      }).slice(0, 100)
+      })
     }
 
-    
+    const domace = filtered.filter(s => s.category === "domace").slice(0,50)
+    const strane = filtered.filter(s => s.category === "strane").slice(0,50)
+    const narodne = filtered.filter(s => s.category === "narodne").slice(0,50)
 
     return (
       <div style={{ padding: "40px" }}>
-        <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>
+        <h1 style={{ fontSize: "28px", marginBottom: "30px" }}>
           {id.replace("-", " ")}
         </h1>
 
-        {songs.map((song) => (
-          <div key={song.id} style={{ padding: "10px 0", borderBottom: "1px solid #222" }}>
+        <h2>🇷🇸 Domaće</h2>
+        {domace.map((song) => (
+          <div key={song.id}>
             <Link href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}>
-              <span className="text-gray-400">
-                {song.artist?.name}
-              </span>{" "}
-              <span className="text-white">
-                - {song.title}
-              </span>
+              {song.artist?.name} - {song.title}
             </Link>
           </div>
         ))}
+
+        <h2 style={{ marginTop: "30px" }}>🌍 Strane</h2>
+        {strane.map((song) => (
+          <div key={song.id}>
+            <Link href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}>
+              {song.artist?.name} - {song.title}
+            </Link>
+          </div>
+        ))}
+
+        <h2 style={{ marginTop: "30px" }}>🎻 Narodne</h2>
+        {narodne.map((song) => (
+          <div key={song.id}>
+            <Link href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}>
+              {song.artist?.name} - {song.title}
+            </Link>
+          </div>
+        ))}
+
       </div>
     )
   }
