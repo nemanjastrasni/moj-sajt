@@ -25,6 +25,7 @@ export default async function ListeningPlaylistsPage() {
         <input
           name="name"
           placeholder="Ime nove playliste..."
+          required
           className="flex-1 p-2 rounded bg-black border border-gray-700"
         />
         <button className="bg-white text-black px-4 py-2 rounded">
