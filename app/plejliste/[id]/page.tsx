@@ -11,10 +11,17 @@ export default async function Page({ params }: any) {
   if (isGenerated) {
 
     const allSongs = await prisma.song.findMany({
-      include: {
-        artist: { select: { slug: true, name: true } }
-      }
-    })
+  where: id === "4-akorda"
+    ? {}
+    : id === "beginner"
+    ? {}
+    : id === "acoustic"
+    ? {}
+    : {},
+  include: {
+    artist: { select: { slug: true, name: true } }
+  }
+})
 
     const getChords = (song: any) => {
       const text = song.lyrics || song.content || ""
@@ -49,9 +56,7 @@ export default async function Page({ params }: any) {
       }).slice(0, 100)
     }
 
-    if (songs.length === 0) {
-      songs = allSongs.slice(0, 20)
-    }
+    
 
     return (
       <div style={{ padding: "40px" }}>
