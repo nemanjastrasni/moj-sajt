@@ -8,50 +8,44 @@ export default async function PlaylistSongsPage({ params }: any) {
   let songs: any[] = []
 
   const allSongs = await prisma.song.findMany({
-    where: {},
     include: {
       artist: { select: { slug: true } }
     }
   })
 
-  // 🔥 regex koji hvata i [G] i G
- const getChords = (text: string | null) => {
-  if (!text) return []
-  return text.match(/\[?[A-G](#|b)?(m|maj|min|sus|dim|aug)?\d*\]?/g) || []
-}
+  // ✅ fallback: chords ili lyrics
+  const getChords = (song: any) => {
+    const text = song.chords || song.lyrics || ""
+    const matches = text.match(/\[?[A-G][^\s\]]*/g) || []
+    return matches.map((c: string) => c.replace(/\[|\]/g, ""))
+  }
 
   if (slug === "4-akorda") {
-  songs = allSongs.filter((song) => {
-    if (!song.chords) return false
-
-    const chords = song.chords.match(/\[?[A-G][^\s\]]*/g) || []
-    const clean = chords.map(c => c.replace(/\[|\]/g, ""))
-
-    const uniqueChords = [...new Set(clean)]
-
-    return uniqueChords.length > 0 && uniqueChords.length <= 4
-  }).slice(0, 100)
-}
+    songs = allSongs.filter((song) => {
+      const uniqueChords = [...new Set(getChords(song))]
+      return uniqueChords.length > 0 && uniqueChords.length <= 4
+    }).slice(0, 100)
+  }
 
   if (slug === "beginner") {
+    const barre = ["F","Bm","F#m","B","Cm","Gm"]
+
     songs = allSongs.filter((song) => {
-      const chords = getChords(song.chords)
-      const uniqueChords = [...new Set(chords.map(c => c.replace(/\[|\]/g, "")))]
-      const barre = ["F","Bm","F#m","B","Cm","Gm"]
-      return uniqueChords.length > 0 && !uniqueChords.some(c => barre.includes(c))
+      const uniqueChords = [...new Set(getChords(song))] as string[]
+      return uniqueChords.length > 0 && !uniqueChords.some((c: string) => barre.includes(c))
     }).slice(0, 100)
   }
 
   if (slug === "acoustic") {
     const allowed = ["G","C","D","Em","Am"]
+
     songs = allSongs.filter((song) => {
-      const chords = getChords(song.chords)
-      const uniqueChords = [...new Set(chords.map(c => c.replace(/\[|\]/g, "")))]
-      return uniqueChords.length > 0 && uniqueChords.every(c => allowed.includes(c))
+      const uniqueChords = [...new Set(getChords(song))] as string[]
+      return uniqueChords.length > 0 && uniqueChords.every((c: string) => allowed.includes(c))
     }).slice(0, 100)
   }
 
-  // fallback ako ništa ne nađe (da vidiš da radi)
+  // fallback (da uvek vidiš nešto)
   if (songs.length === 0) {
     songs = allSongs.slice(0, 20)
   }
