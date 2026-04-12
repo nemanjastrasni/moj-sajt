@@ -19,7 +19,7 @@ if (slug === "4-akorda") {
 
 songs = allSongs.filter((song) => {
 
-const chords = song.lyrics?.match(/\b[A-G](#|b)?(m|maj|min|sus|dim|aug)?\d*\b/g) || []
+const chords = song.chords?.match(/\b[A-G](#|b)?(m|maj|min|sus|dim|aug)?\d*\b/g) || []
 
 const uniqueChords = [...new Set(chords)]
 
@@ -32,7 +32,7 @@ if (slug === "beginner") {
 
 songs = allSongs.filter((song) => {
 
-const chords = song.lyrics?.match(/\b[A-G](#|b)?(m|maj|min|sus|dim|aug)?\d*\b/g) || []
+const chords = song.chords?.match(/\b[A-G](#|b)?(m|maj|min|sus|dim|aug)?\d*\b/g) || []
 
 const uniqueChords = [...new Set(chords)]
 
@@ -50,7 +50,7 @@ const allowed = ["G","C","D","Em","Am"]
 
 songs = allSongs.filter((song) => {
 
-const chords = song.lyrics?.match(/\b[A-G](#|b)?(m|maj|min|sus|dim|aug)?\d*\b/g) || []
+const chords = song.chords?.match(/\b[A-G](#|b)?(m|maj|min|sus|dim|aug)?\d*\b/g) || []
 
 const uniqueChords = [...new Set(chords)]
 
