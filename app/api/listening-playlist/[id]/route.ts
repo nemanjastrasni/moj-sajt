@@ -1,12 +1,10 @@
-import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { NextResponse } from "next/server"
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  const id = params.id
-  console.log("DELETE PLAYLIST:", params.id)
+export async function DELETE(req: Request, context: any) {
+  const id = context.params.id
+
+  console.log("DELETE PLAYLIST:", id)
 
   try {
     await prisma.listeningItem.deleteMany({
