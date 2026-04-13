@@ -1,4 +1,3 @@
-"use client"
 
 import { prisma } from "@/lib/prisma"
 import { useState } from "react"
