@@ -6,7 +6,7 @@ export default function PlaylistPlayer({ playlist }: any) {
   const items = playlist.items
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
-  const [titles, setTitles] = useState<{ [key: string]: string }>({})
+  const [meta, setMeta] = useState<any>({})
 
   const playNext = () => {
     if (activeIndex === null) return
@@ -19,64 +19,93 @@ export default function PlaylistPlayer({ playlist }: any) {
     setActiveIndex(rand)
   }
 
-  // 🔥 FETCH TITLES
+  // 🔥 FETCH TITLE + DURATION
   useEffect(() => {
     items.forEach(async (item: any) => {
       if (item.type !== "youtube") return
 
       const id = extractYoutubeId(item.url)
-      if (!id || titles[id]) return
+      if (!id) return
 
-      const res = await fetch(`/api/youtube-title?id=${id}`)
-      const data = await res.json()
+      try {
+        const res = await fetch(`/api/youtube?id=${id}`)
+        const data = await res.json()
 
-      setTitles((prev) => ({
-        ...prev,
-        [id]: data.title,
-      }))
+        setMeta((prev: any) => ({
+          ...prev,
+          [item.id]: {
+            title: data.title,
+            duration: parseDuration(data.duration),
+          },
+        }))
+      } catch (err) {
+        console.log("YT fetch error", err)
+      }
     })
   }, [items])
+
+  // 🔥 AUTOPLAY NEXT
+  useEffect(() => {
+    if (activeIndex === null) return
+
+    const item = items[activeIndex]
+    const duration = meta[item.id]?.duration
+
+    if (!duration) return
+
+    const timer = setTimeout(() => {
+      playNext()
+    }, duration * 1000)
+
+    return () => clearTimeout(timer)
+  }, [activeIndex, meta])
 
   return (
     <div className="flex gap-10 pb-10 w-full">
 
       {/* LEFT LIST */}
-      <div className="w-64 space-y-2">
+      <div className="w-72 space-y-2">
 
-        {items.map((item: any, index: number) => {
-          const id = extractYoutubeId(item.url)
+        {items.map((item: any, index: number) => (
+          <div
+            key={item.id}
+            onClick={() => setActiveIndex(index)}
+            className={`flex justify-between text-sm p-2 rounded cursor-pointer 
+            ${activeIndex === index ? "bg-white/10" : "hover:bg-white/5"}`}
+          >
+            <div className="flex items-center justify-between w-full">
 
-          return (
-            <div
-              key={item.id}
-              onClick={() => setActiveIndex(index)}
-              className={`flex justify-between text-sm p-2 rounded cursor-pointer 
-              ${activeIndex === index ? "bg-white/10" : "hover:bg-white/5"}`}
-            >
-              <div className="flex justify-between w-full items-center">
-
-                <span className="text-sm">
-                  🎵 {titles[id] || "Loading..."}
-                </span>
-
-                <form
-                  action={`/api/listening-playlist/item/${item.id}`}
-                  method="POST"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button className="text-red-500 text-xs ml-2">
-                    🗑
-                  </button>
-                </form>
-
-              </div>
-
-              <span className="text-gray-400 ml-2">
-                YT
+              {/* TITLE */}
+              <span className="truncate">
+                🎵 {meta[item.id]?.title || "Loading..."}
               </span>
+
+              {/* DURATION */}
+              <span className="text-gray-400 text-xs ml-2">
+                {meta[item.id]?.duration
+                  ? `${Math.floor(meta[item.id].duration / 60)}:${String(
+                      meta[item.id].duration % 60
+                    ).padStart(2, "0")}`
+                  : ""}
+              </span>
+
+              {/* DELETE */}
+              <form
+                action={`/api/listening-playlist/item/${item.id}`}
+                method="POST"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button className="text-red-500 text-xs ml-2">
+                  🗑
+                </button>
+              </form>
             </div>
-          )
-        })}
+
+            <span className="text-gray-400 ml-2">
+              YT
+            </span>
+          </div>
+        ))}
 
       </div>
 
@@ -88,19 +117,24 @@ export default function PlaylistPlayer({ playlist }: any) {
             <div className="mb-2 text-sm">
               Now playing
             </div>
-        <div className="flex gap-3 mb-2">
-  <button onClick={playNext} className="px-2 py-1 bg-white/10 rounded">
-    ⏭
-  </button>
 
-  <button onClick={shuffle} className="px-2 py-1 bg-white/10 rounded">
-    🔀
-  </button>
-</div>
+            <div className="flex gap-3 mb-2">
+              <button onClick={playNext} className="px-2 py-1 bg-white/10 rounded">
+                ⏭
+              </button>
+
+              <button onClick={shuffle} className="px-2 py-1 bg-white/10 rounded">
+                🔀
+              </button>
+            </div>
+
             <iframe
-              src={`https://www.youtube.com/embed/${extractYoutubeId(items[activeIndex].url)}?autoplay=1`}
+              src={`https://www.youtube.com/embed/${extractYoutubeId(
+                items[activeIndex].url
+              )}?autoplay=1`}
               className="w-full h-64 rounded"
-              allow="autoplay"
+              allow="autoplay; fullscreen"
+              allowFullScreen
             />
           </>
         )}
@@ -117,4 +151,12 @@ function extractYoutubeId(url: string) {
     url.match(/v=([^&]+)/) ||
     url.match(/youtu\.be\/([^?]+)/)
   return match?.[1] || ""
+}
+
+function parseDuration(duration: string) {
+  const match = duration.match(/PT(\d+M)?(\d+S)?/)
+  const minutes = match?.[1] ? parseInt(match[1]) : 0
+  const seconds = match?.[2] ? parseInt(match[2]) : 0
+
+  return minutes * 60 + seconds
 }
