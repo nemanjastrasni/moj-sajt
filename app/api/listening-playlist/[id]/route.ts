@@ -6,6 +6,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   const id = params.id
+  console.log("DELETE PLAYLIST:", params.id)
 
   try {
     await prisma.listeningItem.deleteMany({

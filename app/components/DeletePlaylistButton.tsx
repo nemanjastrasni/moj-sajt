@@ -6,12 +6,17 @@ export default function DeletePlaylistButton({ id }: { id: string }) {
   const router = useRouter()
 
   const handleDelete = async () => {
-    await fetch(`/api/listening-playlist/${id}`, {
-      method: "DELETE",
-    })
+  const res = await fetch(`/api/listening-playlist/${id}`, {
+    method: "DELETE",
+  })
 
-    router.refresh()
+  if (!res.ok) {
+    alert("Greška pri brisanju")
+    return
   }
+
+  router.refresh()
+}
 
   return (
     <button
