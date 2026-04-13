@@ -1,13 +1,9 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
-// DELETE (AJAX - dugme)
-export async function DELETE(
-  req: Request,
-  context: { params: { id: string } }
-) {
+export async function DELETE(req: Request, context: any) {
   try {
-    const { id } = context.params
+    const id = context.params.id
 
     await prisma.listeningItem.delete({
       where: { id },
@@ -20,13 +16,9 @@ export async function DELETE(
   }
 }
 
-// POST (form submit fallback)
-export async function POST(
-  req: Request,
-  context: { params: { id: string } }
-) {
+export async function POST(req: Request, context: any) {
   try {
-    const { id } = context.params
+    const id = context.params.id
 
     const item = await prisma.listeningItem.findUnique({
       where: { id },
