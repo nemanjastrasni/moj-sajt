@@ -19,10 +19,10 @@ export default function PlaylistPlayer({ playlist }: any) {
   }
 
   return (
-  <div className="flex gap-6">
+  <div className="flex gap-10 pb-10 max-w-6xl mx-auto">
 
     {/* LEFT LIST */}
-    <div className="w-1/3 space-y-2">
+    <div className="w-1/4 space-y-2">
 
       {items.map((item: any, index: number) => (
         <div
@@ -31,9 +31,22 @@ export default function PlaylistPlayer({ playlist }: any) {
           className={`flex justify-between text-sm p-2 rounded cursor-pointer 
           ${activeIndex === index ? "bg-white/10" : "hover:bg-white/5"}`}
         >
-          <span>
-            🎵 {item.title || "Unknown"}
-          </span>
+          <div className="flex justify-between w-full items-center">
+
+  <span className="truncate">
+    🎵 {item.title || "Pesma"}
+  </span>
+
+  <form
+    action={`/api/listening-playlist/item/${item.id}`}
+    method="POST"
+  >
+    <button className="text-red-500 text-xs ml-2">
+      🗑
+    </button>
+  </form>
+
+</div>
 
           <span className="text-gray-400">
             {item.type === "youtube" ? "YT" : ""}
