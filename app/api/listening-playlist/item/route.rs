@@ -2,31 +2,41 @@ import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
-  const formData = await req.formData()
+  try {
+    const formData = await req.formData()
 
-  const playlistId = formData.get("playlistId") as string
-  const url = formData.get("url") as string
+    const playlistId = formData.get("playlistId") as string
+    const url = formData.get("url") as string
 
-  if (!url || !playlistId) {
-    return NextResponse.json({ error: "missing" }, { status: 400 })
+    if (!playlistId || !url) {
+      return NextResponse.json({ error: "Missing data" }, { status: 400 })
+    }
+
+    // 🔥 DETEKCIJA PLATFORME
+    let type = "youtube"
+
+    if (url.includes("spotify")) {
+      type = "spotify"
+    }
+
+    await prisma.listeningItem.create({
+      data: {
+        playlistId,
+        url,
+        type,
+      },
+    })
+
+    return NextResponse.redirect(
+      new URL(`/listening-playlist/${playlistId}`, req.url)
+    )
+
+  } catch (error) {
+    console.error("ITEM ERROR:", error)
+
+    return NextResponse.json(
+      { error: "Server error" },
+      { status: 500 }
+    )
   }
-
-  let platform = "youtube"
-
-  if (url.includes("spotify")) {
-    platform = "spotify"
-  }
-
-  await prisma.listeningItem.create({
-    data: {
-      playlistId,
-      url,
-      platform,
-      title: url, // kasnije auto title
-    },
-  })
-
-  return NextResponse.redirect(
-    `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/listening-playlist/${playlistId}`
-  )
 }

@@ -22,7 +22,7 @@ export default async function Page({ params }: any) {
 
       {/* ADD ITEM */}
       <form
-        action={`/api/listening-playlist/item`}
+        action="/api/listening-playlist/item"
         method="POST"
         className="flex gap-2 mb-8"
       >
@@ -31,10 +31,14 @@ export default async function Page({ params }: any) {
         <input
           name="url"
           placeholder="YouTube ili Spotify link..."
+          required
           className="flex-1 p-2 rounded bg-black border border-gray-700"
         />
 
-        <button className="bg-white text-black px-4 py-2 rounded">
+        <button
+          type="submit"
+          className="bg-white text-black px-4 py-2 rounded"
+        >
           + Dodaj
         </button>
       </form>
@@ -69,8 +73,22 @@ export default async function Page({ params }: any) {
               />
             )}
 
-            <div className="mt-2 text-sm text-gray-300">
-              {item.title || item.url}
+            <div className="mt-2 text-sm text-gray-300 flex justify-between items-center">
+
+              <span>
+                {item.title || item.url}
+              </span>
+
+              {/* DELETE ITEM */}
+              <form
+                action={`/api/listening-playlist/item/${item.id}`}
+                method="POST"
+              >
+                <button className="text-red-500 hover:text-red-400">
+                  🗑
+                </button>
+              </form>
+
             </div>
 
           </div>
@@ -83,7 +101,9 @@ export default async function Page({ params }: any) {
 
 // 🔥 helpers
 function extractYoutubeId(url: string) {
-  const match = url.match(/v=([^&]+)/) || url.match(/youtu\.be\/([^?]+)/)
+  const match =
+    url.match(/v=([^&]+)/) ||
+    url.match(/youtu\.be\/([^?]+)/)
   return match?.[1] || ""
 }
 
