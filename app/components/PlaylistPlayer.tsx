@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export default function PlaylistPlayer({ playlist }: any) {
   const items = playlist.items
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const [titles, setTitles] = useState<{ [key: string]: string }>({})
 
   const playNext = () => {
     if (activeIndex === null) return
@@ -18,75 +19,94 @@ export default function PlaylistPlayer({ playlist }: any) {
     setActiveIndex(rand)
   }
 
+  // 🔥 FETCH TITLES
+  useEffect(() => {
+    items.forEach(async (item: any) => {
+      if (item.type !== "youtube") return
+
+      const id = extractYoutubeId(item.url)
+      if (!id || titles[id]) return
+
+      const res = await fetch(`/api/youtube-title?id=${id}`)
+      const data = await res.json()
+
+      setTitles((prev) => ({
+        ...prev,
+        [id]: data.title,
+      }))
+    })
+  }, [items])
+
   return (
-  <div className="flex gap-10 pb-10 max-w-6xl mx-auto">
+    <div className="flex gap-10 pb-10 max-w-6xl ml-0">
 
-    {/* LEFT LIST */}
-    <div className="w-1/4 space-y-2">
+      {/* LEFT LIST */}
+      <div className="w-1/5 space-y-2">
 
-      {items.map((item: any, index: number) => (
-        <div
-          key={item.id}
-          onClick={() => setActiveIndex(index)}
-          className={`flex justify-between text-sm p-2 rounded cursor-pointer 
-          ${activeIndex === index ? "bg-white/10" : "hover:bg-white/5"}`}
-        >
-          <div className="flex justify-between w-full items-center">
+        {items.map((item: any, index: number) => {
+          const id = extractYoutubeId(item.url)
 
-  <span className="truncate">
-    🎵 {item.title || "Pesma"}
-  </span>
+          return (
+            <div
+              key={item.id}
+              onClick={() => setActiveIndex(index)}
+              className={`flex justify-between text-sm p-2 rounded cursor-pointer 
+              ${activeIndex === index ? "bg-white/10" : "hover:bg-white/5"}`}
+            >
+              <div className="flex justify-between w-full items-center">
 
-  <form
-    action={`/api/listening-playlist/item/${item.id}`}
-    method="POST"
-  >
-    <button className="text-red-500 text-xs ml-2">
-      🗑
-    </button>
-  </form>
+                <span className="truncate">
+                  🎵 {titles[id] || "Loading..."}
+                </span>
 
-</div>
+                <form
+                  action={`/api/listening-playlist/item/${item.id}`}
+                  method="POST"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button className="text-red-500 text-xs ml-2">
+                    🗑
+                  </button>
+                </form>
 
-          <span className="text-gray-400">
-            {item.type === "youtube" ? "YT" : ""}
-          </span>
-        </div>
-      ))}
+              </div>
+
+              <span className="text-gray-400 ml-2">
+                YT
+              </span>
+            </div>
+          )
+        })}
+
+      </div>
+
+      {/* CENTER PLAYER */}
+      <div className="flex-1">
+
+        {activeIndex !== null && (
+          <>
+            <div className="mb-2 text-sm">
+              Now playing
+            </div>
+
+            <iframe
+              src={`https://www.youtube.com/embed/${extractYoutubeId(items[activeIndex].url)}?autoplay=1`}
+              className="w-full h-64 rounded"
+              allow="autoplay"
+            />
+          </>
+        )}
+
+      </div>
 
     </div>
-
-    {/* CENTER PLAYER */}
-    <div className="flex-1">
-
-      {activeIndex !== null && (
-        <>
-          <div className="mb-2 text-sm">
-            Now playing
-          </div>
-
-          <iframe
-            src={`https://www.youtube.com/embed/${extractYoutubeId(items[activeIndex].url)}?autoplay=1`}
-            className="w-full h-64 rounded"
-            allow="autoplay"
-          />
-        </>
-      )}
-
-    </div>
-
-  </div>
-)
+  )
 }
+
 // helpers
 function extractYoutubeId(url: string) {
   const match =
     url.match(/v=([^&]+)/) ||
     url.match(/youtu\.be\/([^?]+)/)
-  return match?.[1] || ""
-}
-
-function extractSpotifyId(url: string) {
-  const match = url.match(/track\/([a-zA-Z0-9]+)/)
   return match?.[1] || ""
 }

@@ -1,25 +1,19 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
-export async function DELETE(req: Request, context: any) {
+export async function POST(req: Request, context: any) {
   const id = String(context.params.id)
 
   try {
-    // prvo obriši iteme
-    await prisma.listeningItem.deleteMany({
-      where: { playlistId: id },
-    })
-
-    // onda playlistu (safe)
-    const result = await prisma.listeningPlaylist.deleteMany({
+    await prisma.listeningItem.delete({
       where: { id },
     })
 
-    console.log("DELETE RESULT:", result)
-
-    return NextResponse.json({ success: true })
+    return NextResponse.redirect(
+      new URL("/listening-playlist", req.url)
+    )
   } catch (e) {
-    console.error("DELETE ERROR FULL:", e)
+    console.error("DELETE ITEM ERROR:", e)
     return NextResponse.json({ error: "Delete failed" }, { status: 500 })
   }
 }
