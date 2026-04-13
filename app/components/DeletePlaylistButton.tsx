@@ -20,10 +20,13 @@ export default function DeletePlaylistButton({ id }: { id: string }) {
 
   return (
     <button
-      onClick={handleDelete}
-      className="text-red-500 hover:text-red-400"
-    >
-      🗑
-    </button>
+  onClick={(e) => {
+    e.stopPropagation()
+    handleDelete()
+  }}
+  className="text-red-500 hover:text-red-400 ml-4"
+>
+  🗑
+</button>
   )
 }

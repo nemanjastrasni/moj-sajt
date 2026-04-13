@@ -57,7 +57,7 @@ export default async function ListeningPlaylistsPage() {
           >
             
             {/* LEVI DEO (klikabilan) */}
-            <Link href={`/listening-playlist/${pl.id}`} className="flex-1">
+            <Link href={`/listening-playlist/${pl.id}`} className="flex-1 pr-10">
               <div>
                 <div className="text-lg font-semibold">
                   🎧 {pl.name}
