@@ -2,8 +2,8 @@ import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
 export async function DELETE(req: Request, context: any) {
-  const id = context.params.id
-
+  const id = String(context.params.id)
+  console.log("ID TYPE:", typeof id, id)
   console.log("DELETE PLAYLIST:", id)
 
   try {
