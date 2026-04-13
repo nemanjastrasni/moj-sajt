@@ -145,10 +145,10 @@ model analytics {
 model ListeningPlaylist {
   id        String   @id @default(cuid())
   name      String
-  userId    String
+  userId    String?
   createdAt DateTime @default(now())
 
-  user User @relation("UserListeningPlaylists", fields: [userId], references: [id])
+  user User? @relation("UserListeningPlaylists", fields: [userId], references: [id])
   items     ListeningItem[]
 }
 
