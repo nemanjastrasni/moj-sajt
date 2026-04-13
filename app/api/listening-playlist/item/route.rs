@@ -5,15 +5,22 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData()
 
-    const playlistId = formData.get("playlistId") as string
     const url = formData.get("url") as string
+    const playlistId = formData.get("playlistId") as string
 
-    if (!playlistId || !url) {
-      return NextResponse.json({ error: "Missing data" }, { status: 400 })
+    if (!url || !playlistId) {
+      return NextResponse.json(
+        { error: "Missing data" },
+        { status: 400 }
+      )
     }
 
     // 🔥 DETEKCIJA PLATFORME
-    let type = "youtube"
+    let type = "unknown"
+
+    if (url.includes("youtube") || url.includes("youtu.be")) {
+      type = "youtube"
+    }
 
     if (url.includes("spotify")) {
       type = "spotify"
@@ -21,8 +28,8 @@ export async function POST(req: Request) {
 
     await prisma.listeningItem.create({
       data: {
-        playlistId,
         url,
+        playlistId,
         type,
       },
     })
