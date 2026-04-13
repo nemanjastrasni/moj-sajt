@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import DeletePlaylistButton from "../components/DeletePlaylistButton"
 
 export default async function ListeningPlaylistsPage() {
   const playlists = await prisma.listeningPlaylist.findMany({
@@ -54,7 +55,9 @@ export default async function ListeningPlaylistsPage() {
             key={pl.id}
             className="p-4 rounded-lg border border-gray-800 hover:bg-white/5 transition flex justify-between items-center"
           >
-            <Link href={`/listening-playlist/${pl.id}`}>
+            
+            {/* LEVI DEO (klikabilan) */}
+            <Link href={`/listening-playlist/${pl.id}`} className="flex-1">
               <div>
                 <div className="text-lg font-semibold">
                   🎧 {pl.name}
@@ -66,14 +69,9 @@ export default async function ListeningPlaylistsPage() {
               </div>
             </Link>
 
-            <form action={`/api/listening-playlist/${pl.id}`} method="POST">
-              <button
-                type="submit"
-                className="text-red-500 hover:text-red-400"
-              >
-                🗑
-              </button>
-            </form>
+            {/* DESNI DEO (DELETE dugme) */}
+            <DeletePlaylistButton id={pl.id} />
+
           </div>
         ))}
 

@@ -1,6 +1,22 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await prisma.listeningItem.delete({
+      where: { id: params.id },
+    })
+
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: "error" }, { status: 500 })
+  }
+}
+
 export async function POST(req: Request, { params }: any) {
   try {
     const item = await prisma.listeningItem.findUnique({
