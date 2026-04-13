@@ -16,15 +16,14 @@ export async function POST(req: Request) {
     const playlist = await prisma.listeningPlaylist.create({
       data: {
         name,
-        userId: "demo-user", // kasnije stavi session user
       },
     })
 
     return NextResponse.redirect(
-      `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/listening-playlist/${playlist.id}`
-    )
+  new URL("/listening-playlist", req.url)
+)
   } catch (error) {
-    console.error(error)
+    console.error("PLAYLIST ERROR FULL:", error)
 
     return NextResponse.json(
       { error: "Server error" },
@@ -32,6 +31,7 @@ export async function POST(req: Request) {
     )
   }
 }
+
 export async function GET() {
   return NextResponse.json({ ok: true })
 }

@@ -16,12 +16,11 @@ export default async function ListeningPlaylistsPage() {
         🎧 Moje playliste
       </h1>
 
-      {/* CREATE PLAYLIST */}
-
       <p className="text-sm text-gray-400 mb-3 text-center">
-  Prvo kreiraj playlistu, pa dodaj pesme unutar nje
-</p>
+        Prvo kreiraj playlistu, pa dodaj pesme unutar nje
+      </p>
 
+      {/* CREATE PLAYLIST */}
       <form
         action="/api/listening-playlist"
         method="POST"
@@ -33,7 +32,10 @@ export default async function ListeningPlaylistsPage() {
           required
           className="flex-1 p-2 rounded bg-black border border-gray-700"
         />
-        <button className="bg-white text-black px-4 py-2 rounded">
+        <button
+          type="submit"
+          className="bg-white text-black px-4 py-2 rounded"
+        >
           + Kreiraj
         </button>
       </form>
@@ -64,20 +66,14 @@ export default async function ListeningPlaylistsPage() {
               </div>
             </Link>
 
-            <button
-              onClick={async () => {
-                if (!confirm("Obrisati playlistu?")) return
-
-                await fetch(`/api/listening-playlist/${pl.id}`, {
-                  method: "DELETE",
-                })
-
-                window.location.reload()
-              }}
-              className="text-red-500 hover:text-red-400"
-            >
-              🗑
-            </button>
+            <form action={`/api/listening-playlist/${pl.id}`} method="POST">
+              <button
+                type="submit"
+                className="text-red-500 hover:text-red-400"
+              >
+                🗑
+              </button>
+            </form>
           </div>
         ))}
 
