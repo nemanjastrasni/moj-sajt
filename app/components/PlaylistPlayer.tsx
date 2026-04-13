@@ -2,6 +2,13 @@
 
 import { useEffect, useState } from "react"
 
+declare global {
+  interface Window {
+    YT: any
+    onYouTubeIframeAPIReady: any
+  }
+}
+
 export default function PlaylistPlayer({ playlist }: any) {
   const items = playlist.items
 
@@ -44,21 +51,40 @@ export default function PlaylistPlayer({ playlist }: any) {
     })
   }, [items])
 
-  // 🔥 AUTOPLAY NEXT
+  // 🔥 YOUTUBE PLAYER (PRAVI AUTOPLAY)
   useEffect(() => {
     if (activeIndex === null) return
 
-    const item = items[activeIndex]
-    const duration = meta[item.id]?.duration
+    const id = extractYoutubeId(items[activeIndex].url)
 
-    if (!duration) return
+    const loadPlayer = () => {
+      new window.YT.Player("yt-player", {
+        height: "256",
+        width: "100%",
+        videoId: id,
+        playerVars: {
+          autoplay: 1,
+        },
+        events: {
+          onStateChange: (event: any) => {
+            if (event.data === 0) {
+              playNext() // 🔥 kad se završi video
+            }
+          },
+        },
+      })
+    }
 
-    const timer = setTimeout(() => {
-      playNext()
-    }, duration * 1000)
+    if (!window.YT) {
+      const tag = document.createElement("script")
+      tag.src = "https://www.youtube.com/iframe_api"
+      document.body.appendChild(tag)
 
-    return () => clearTimeout(timer)
-  }, [activeIndex, meta])
+      window.onYouTubeIframeAPIReady = loadPlayer
+    } else {
+      loadPlayer()
+    }
+  }, [activeIndex])
 
   return (
     <div className="flex gap-10 pb-10 w-full">
@@ -128,14 +154,8 @@ export default function PlaylistPlayer({ playlist }: any) {
               </button>
             </div>
 
-            <iframe
-              src={`https://www.youtube.com/embed/${extractYoutubeId(
-                items[activeIndex].url
-              )}?autoplay=1`}
-              className="w-full h-64 rounded"
-              allow="autoplay; fullscreen"
-              allowFullScreen
-            />
+            {/* 🔥 YOUTUBE PLAYER DIV */}
+            <div id="yt-player" className="w-full h-64 rounded overflow-hidden" />
           </>
         )}
 
