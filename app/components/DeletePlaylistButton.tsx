@@ -15,7 +15,7 @@ export default function DeletePlaylistButton({ id }: { id: string }) {
     return
   }
 
-  router.refresh()
+  window.location.reload()
 }
 
   return (

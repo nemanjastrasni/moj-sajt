@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import DeletePlaylistButton from "../components/DeletePlaylistButton"
 
+export const dynamic = "force-dynamic"
 export default async function ListeningPlaylistsPage() {
   const playlists = await prisma.listeningPlaylist.findMany({
     orderBy: { createdAt: "desc" },
