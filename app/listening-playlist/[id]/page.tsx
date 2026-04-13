@@ -1,7 +1,9 @@
+"use client"
+
 import { prisma } from "@/lib/prisma"
+import { useState } from "react"
 
 export default async function Page({ params }: any) {
-
   const playlist = await prisma.listeningPlaylist.findUnique({
     where: { id: params.id },
     include: {
@@ -13,8 +15,28 @@ export default async function Page({ params }: any) {
     return <div className="p-10 text-white">Ne postoji</div>
   }
 
+  return <ClientPart playlist={playlist} />
+}
+
+// 🔥 CLIENT DEO
+function ClientPart({ playlist }: any) {
+  const items = playlist.items
+
+  const [activeIndex, setActiveIndex] = useState<number | null>(null)
+
+  const playNext = () => {
+    if (activeIndex === null) return
+    const next = (activeIndex + 1) % items.length
+    setActiveIndex(next)
+  }
+
+  const shuffle = () => {
+    const rand = Math.floor(Math.random() * items.length)
+    setActiveIndex(rand)
+  }
+
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10 text-white">
+    <div className="max-w-3xl mx-auto px-6 py-10 text-white pb-24">
 
       <h1 className="text-3xl font-bold mb-6">
         🎧 {playlist.name}
@@ -35,71 +57,89 @@ export default async function Page({ params }: any) {
           className="flex-1 p-2 rounded bg-black border border-gray-700"
         />
 
-        <button
-          type="submit"
-          className="bg-white text-black px-4 py-2 rounded"
-        >
+        <button className="bg-white text-black px-4 py-2 rounded">
           + Dodaj
         </button>
       </form>
 
       {/* ITEMS */}
-      <div className="grid gap-6">
+      <div className="grid gap-4">
 
-        {playlist.items.length === 0 && (
+        {items.length === 0 && (
           <p className="text-gray-400">Nema pesama još</p>
         )}
 
-        {playlist.items.map((item) => (
-          <div key={item.id} className="border-b border-gray-800 pb-4">
+        {items.map((item: any, index: number) => (
+          <div key={item.id} className="border-b border-gray-800 pb-3">
 
-            {/* YOUTUBE */}
-            {item.type === "youtube" && (
-              <iframe
-                width="100%"
-                height="200"
-                src={`https://www.youtube.com/embed/${extractYoutubeId(item.url)}`}
-                allowFullScreen
-              />
-            )}
+            <div
+              onClick={() => setActiveIndex(index)}
+              className="flex items-center gap-3 p-2 hover:bg-white/5 rounded cursor-pointer"
+            >
 
-            {/* SPOTIFY */}
-            {item.type === "spotify" && (
-              <iframe
-                src={`https://open.spotify.com/embed/track/${extractSpotifyId(item.url)}`}
-                width="100%"
-                height="80"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              />
-            )}
+              {/* thumbnail */}
+              {item.type === "youtube" && (
+                <img
+                  src={`https://img.youtube.com/vi/${extractYoutubeId(item.url)}/0.jpg`}
+                  className="w-16 h-16 object-cover rounded"
+                />
+              )}
 
-            <div className="mt-2 text-sm text-gray-300 flex justify-between items-center">
+              {item.type === "spotify" && (
+                <div className="w-16 h-16 bg-green-500 flex items-center justify-center rounded text-black font-bold">
+                  SP
+                </div>
+              )}
 
-              <span>
+              {/* title */}
+              <div className="flex-1 text-sm">
                 {item.title || item.url}
-              </span>
+              </div>
 
-              {/* DELETE ITEM */}
-              <form
-                action={`/api/listening-playlist/item/${item.id}`}
-                method="POST"
-              >
-                <button className="text-red-500 hover:text-red-400">
-                  🗑
-                </button>
-              </form>
-
+              <div className="text-xs text-gray-400">
+                {item.type === "youtube" ? "YT" : "SP"}
+              </div>
             </div>
 
           </div>
         ))}
 
       </div>
+
+      {/* GLOBAL PLAYER */}
+      {activeIndex !== null && (
+        <div className="fixed bottom-0 left-0 w-full bg-black border-t border-gray-800 p-3">
+
+          <div className="flex items-center gap-3">
+
+            <button onClick={playNext}>⏭</button>
+            <button onClick={shuffle}>🔀</button>
+
+            <div className="flex-1">
+              {items[activeIndex].type === "youtube" && (
+                <iframe
+                  src={`https://www.youtube.com/embed/${extractYoutubeId(items[activeIndex].url)}?autoplay=1`}
+                  className="w-full h-20"
+                  allow="autoplay"
+                />
+              )}
+
+              {items[activeIndex].type === "spotify" && (
+                <iframe
+                  src={`https://open.spotify.com/embed/track/${extractSpotifyId(items[activeIndex].url)}`}
+                  className="w-full h-20"
+                />
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
-// 🔥 helpers
+// helpers
 function extractYoutubeId(url: string) {
   const match =
     url.match(/v=([^&]+)/) ||
