@@ -1,17 +1,24 @@
-import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
 
-export async function DELETE(req: Request, context: any) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  const id = params.id
+
   try {
-    const id = context.params.id
+    await prisma.listeningItem.deleteMany({
+      where: { playlistId: id },
+    })
 
     await prisma.listeningPlaylist.delete({
       where: { id },
     })
 
-    return NextResponse.json({ ok: true })
+    return NextResponse.json({ success: true })
   } catch (e) {
     console.error(e)
-    return NextResponse.json({ error: "fail" }, { status: 500 })
+    return NextResponse.json({ error: "Delete failed" }, { status: 500 })
   }
 }
