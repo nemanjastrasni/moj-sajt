@@ -38,10 +38,10 @@ export default function PlaylistPlayer({ playlist }: any) {
   }, [items])
 
   return (
-    <div className="flex gap-10 pb-10 max-w-6xl ml-0">
+    <div className="flex gap-10 pb-10 w-full">
 
       {/* LEFT LIST */}
-      <div className="w-1/5 space-y-2">
+      <div className="w-64 space-y-2">
 
         {items.map((item: any, index: number) => {
           const id = extractYoutubeId(item.url)
@@ -55,7 +55,7 @@ export default function PlaylistPlayer({ playlist }: any) {
             >
               <div className="flex justify-between w-full items-center">
 
-                <span className="truncate">
+                <span className="text-sm">
                   🎵 {titles[id] || "Loading..."}
                 </span>
 
@@ -88,7 +88,15 @@ export default function PlaylistPlayer({ playlist }: any) {
             <div className="mb-2 text-sm">
               Now playing
             </div>
+        <div className="flex gap-3 mb-2">
+  <button onClick={playNext} className="px-2 py-1 bg-white/10 rounded">
+    ⏭
+  </button>
 
+  <button onClick={shuffle} className="px-2 py-1 bg-white/10 rounded">
+    🔀
+  </button>
+</div>
             <iframe
               src={`https://www.youtube.com/embed/${extractYoutubeId(items[activeIndex].url)}?autoplay=1`}
               className="w-full h-64 rounded"
