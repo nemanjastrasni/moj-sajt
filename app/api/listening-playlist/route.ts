@@ -14,9 +14,7 @@ export async function POST(req: Request) {
       data: { name },
     })
 
-    return NextResponse.redirect(
-      new URL("/listening-playlist", req.url)
-    )
+    return NextResponse.json({ success: true })
   } catch (error) {
     console.error("CREATE ERROR:", error)
     return NextResponse.json({ error: "Server error" }, { status: 500 })

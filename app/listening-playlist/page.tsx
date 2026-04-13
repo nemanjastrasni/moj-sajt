@@ -23,10 +23,19 @@ export default async function ListeningPlaylistsPage() {
 
       {/* CREATE PLAYLIST */}
       <form
-        action="/api/listening-playlist"
-        method="POST"
-        className="flex gap-2 mb-8"
-      >
+  onSubmit={async (e) => {
+    e.preventDefault()
+    const form = e.currentTarget
+    const formData = new FormData(form)
+
+    await fetch("/api/listening-playlist", {
+      method: "POST",
+      body: formData,
+    })
+
+    window.location.reload()
+  }}
+>
         <input
           name="name"
           placeholder="Ime nove playliste..."
