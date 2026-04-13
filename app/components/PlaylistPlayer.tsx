@@ -14,6 +14,7 @@ export default function PlaylistPlayer({ playlist }: any) {
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [meta, setMeta] = useState<any>({})
+  const [player, setPlayer] = useState<any>(null)
 
   const playNext = () => {
     if (activeIndex === null) return
@@ -51,28 +52,26 @@ export default function PlaylistPlayer({ playlist }: any) {
     })
   }, [items])
 
-  // 🔥 YOUTUBE PLAYER (PRAVI AUTOPLAY)
+  // 🔥 INIT PLAYER (SAMO JEDNOM)
   useEffect(() => {
-    if (activeIndex === null) return
-
-    const id = extractYoutubeId(items[activeIndex].url)
-
-    const loadPlayer = () => {
-      new window.YT.Player("yt-player", {
+    const createPlayer = () => {
+      const newPlayer = new window.YT.Player("yt-player", {
         height: "256",
         width: "100%",
-        videoId: id,
+        videoId: "",
         playerVars: {
           autoplay: 1,
         },
         events: {
           onStateChange: (event: any) => {
             if (event.data === 0) {
-              playNext() // 🔥 kad se završi video
+              playNext() // 🔥 kad se završi pesma
             }
           },
         },
       })
+
+      setPlayer(newPlayer)
     }
 
     if (!window.YT) {
@@ -80,11 +79,23 @@ export default function PlaylistPlayer({ playlist }: any) {
       tag.src = "https://www.youtube.com/iframe_api"
       document.body.appendChild(tag)
 
-      window.onYouTubeIframeAPIReady = loadPlayer
+      window.onYouTubeIframeAPIReady = createPlayer
     } else {
-      loadPlayer()
+      createPlayer()
     }
-  }, [activeIndex])
+  }, [])
+
+  // 🔥 PROMENA PESME
+  useEffect(() => {
+    if (!player || activeIndex === null) return
+
+    const id = extractYoutubeId(items[activeIndex].url)
+
+    player.loadVideoById({
+      videoId: id,
+      startSeconds: 0,
+    })
+  }, [activeIndex, player])
 
   return (
     <div className="flex gap-10 pb-10 w-full">
@@ -154,7 +165,7 @@ export default function PlaylistPlayer({ playlist }: any) {
               </button>
             </div>
 
-            {/* 🔥 YOUTUBE PLAYER DIV */}
+            {/* 🔥 PLAYER */}
             <div id="yt-player" className="w-full h-64 rounded overflow-hidden" />
           </>
         )}
