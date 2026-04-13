@@ -14,7 +14,7 @@ export default async function ListeningPlaylistsPage() {
     <div className="max-w-3xl mx-auto px-6 py-10 text-white">
 
       <h1 className="text-3xl font-bold text-center mb-10 tracking-wide">
-        🎧 Moje playliste
+        🎧 Moje playliste za slušanje
       </h1>
 
       <p className="text-sm text-gray-400 mb-3 text-center">
