@@ -1,20 +1,12 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-
-declare global {
-  interface Window {
-    YT: any
-    onYouTubeIframeAPIReady: any
-  }
-}
+import { useEffect, useState } from "react"
 
 export default function PlaylistPlayer({ playlist }: any) {
   const items = playlist.items
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [meta, setMeta] = useState<any>({})
-  const playerRef = useRef<any>(null)
 
   const playNext = () => {
     if (activeIndex === null) return
@@ -52,57 +44,27 @@ export default function PlaylistPlayer({ playlist }: any) {
     })
   }, [items])
 
-  // 🔥 INIT PLAYER (JEDNOM)
+  // 🔥 AUTOPLAY NEXT (timer-based)
   useEffect(() => {
-    const createPlayer = () => {
-  if (playerRef.current || !window.YT || !window.YT.Player) return
+    if (activeIndex === null) return
 
-      playerRef.current = new window.YT.Player("yt-player", {
-        height: "256",
-        width: "100%",
-        videoId: "",
-        playerVars: {
-          autoplay: 1,
-        },
-        events: {
-          onStateChange: (event: any) => {
-            if (event.data === window.YT.PlayerState.ENDED) {
-              playNext()
-            }
-          },
-        },
-      })
-    }
+    const item = items[activeIndex]
+    const duration = meta[item.id]?.duration
 
-    if (!window.YT) {
-      const tag = document.createElement("script")
-      tag.src = "https://www.youtube.com/iframe_api"
-      document.body.appendChild(tag)
+    if (!duration) return
 
-      window.onYouTubeIframeAPIReady = createPlayer
-    } else {
-      createPlayer()
-    }
-  }, [])
+    const timer = setTimeout(() => {
+      playNext()
+    }, (duration + 1.5) * 1000)
 
-  // 🔥 PROMENA PESME
-  useEffect(() => {
-    if (!playerRef.current || activeIndex === null) return
-
-    const id = extractYoutubeId(items[activeIndex].url)
-
-    try {
-      playerRef.current.loadVideoById(id)
-    } catch (e) {
-      console.log("YT load error", e)
-    }
-  }, [activeIndex])
+    return () => clearTimeout(timer)
+  }, [activeIndex, meta])
 
   return (
     <div className="flex gap-10 pb-10 w-full">
 
       {/* LEFT LIST */}
-      <div className="w-72 space-y-2">
+      <div className="w-80 space-y-2">
 
         {items.map((item: any, index: number) => (
           <div
@@ -113,10 +75,12 @@ export default function PlaylistPlayer({ playlist }: any) {
           >
             <div className="flex items-center justify-between w-full">
 
+              {/* TITLE */}
               <span className="truncate">
                 🎵 {meta[item.id]?.title || "Loading..."}
               </span>
 
+              {/* DURATION */}
               <span className="text-gray-400 text-xs ml-2">
                 {meta[item.id]?.duration
                   ? `${Math.floor(meta[item.id].duration / 60)}:${String(
@@ -125,6 +89,7 @@ export default function PlaylistPlayer({ playlist }: any) {
                   : ""}
               </span>
 
+              {/* DELETE */}
               <form
                 action={`/api/listening-playlist/item/${item.id}`}
                 method="POST"
@@ -154,16 +119,31 @@ export default function PlaylistPlayer({ playlist }: any) {
             </div>
 
             <div className="flex gap-3 mb-2">
-              <button onClick={playNext} className="px-2 py-1 bg-white/10 rounded">
+              <button
+                onClick={playNext}
+                className="px-2 py-1 bg-white/10 rounded"
+              >
                 ⏭
               </button>
 
-              <button onClick={shuffle} className="px-2 py-1 bg-white/10 rounded">
+              <button
+                onClick={shuffle}
+                className="px-2 py-1 bg-white/10 rounded"
+              >
                 🔀
               </button>
             </div>
 
-            <div id="yt-player" className="w-full h-64 rounded overflow-hidden" />
+            {/* 🔥 KLJUČNI FIX */}
+            <iframe
+              key={activeIndex}
+              src={`https://www.youtube.com/embed/${extractYoutubeId(
+                items[activeIndex].url
+              )}?autoplay=1`}
+              className="w-full h-64 rounded"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+            />
           </>
         )}
 
