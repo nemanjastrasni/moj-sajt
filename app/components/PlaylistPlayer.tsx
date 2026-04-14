@@ -58,18 +58,18 @@ export default function PlaylistPlayer({ playlist }: any) {
   const item = items[activeIndex]
   const duration = meta[item.id]?.duration
 
-  if (!duration) return
+  // 🔥 fallback ako nema duration
+  const time = duration ? duration - 1 : 180 // 3 min default
 
-  const safeDuration = Math.max(duration - 1, 1)
+  const safeDuration = Math.max(time, 1)
 
-   const timer = setTimeout(() => {
-  playNext()
-}, safeDuration * 1000)
+  const timer = setTimeout(() => {
+    playNext()
+  }, safeDuration * 1000)
 
-return () => {
-  clearTimeout(timer)
-}
+  return () => clearTimeout(timer)
 }, [activeIndex, meta])
+
 
   return (
     <div className="flex gap-10 pb-10 w-full">
@@ -151,14 +151,14 @@ return () => {
 
             {/* 🔥 KLJUČNI FIX */}
             <iframe
-              key={activeIndex}
-              src={`https://www.youtube.com/embed/${extractYoutubeId(
-                items[activeIndex].url
-              )}?autoplay=1`}
-              className="w-full h-64 rounded"
-              allow="autoplay; fullscreen"
-              allowFullScreen
-            />
+  key={activeIndex}
+  src={`https://www.youtube.com/embed/${extractYoutubeId(
+    items[activeIndex].url
+  )}?autoplay=1&mute=0&controls=1`}
+  className="w-full h-64 rounded"
+  allow="autoplay; fullscreen"
+  allowFullScreen
+/>
           </>
         )}
 
