@@ -1,12 +1,20 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+
+declare global {
+  interface Window {
+    YT: any
+    onYouTubeIframeAPIReady: any
+  }
+}
 
 export default function PlaylistPlayer({ playlist }: any) {
   const items = playlist.items
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [meta, setMeta] = useState<any>({})
+  const playerRef = useRef<any>(null)
 
   const playNext = () => {
     if (activeIndex === null) return
@@ -44,22 +52,51 @@ export default function PlaylistPlayer({ playlist }: any) {
     })
   }, [items])
 
-  // 🔥 AUTOPLAY (simple, stabilno)
+  // 🔥 INIT PLAYER (JEDNOM)
   useEffect(() => {
-  if (activeIndex === null) return
+    const createPlayer = () => {
+      if (playerRef.current) return
 
-  const item = items[activeIndex]
-  const duration = meta[item.id]?.duration
+      playerRef.current = new window.YT.Player("yt-player", {
+        height: "256",
+        width: "100%",
+        videoId: "",
+        playerVars: {
+          autoplay: 1,
+        },
+        events: {
+          onStateChange: (event: any) => {
+            if (event.data === window.YT.PlayerState.ENDED) {
+              playNext()
+            }
+          },
+        },
+      })
+    }
 
-  if (!duration) return
+    if (!window.YT) {
+      const tag = document.createElement("script")
+      tag.src = "https://www.youtube.com/iframe_api"
+      document.body.appendChild(tag)
 
-  // 🔥 dodaj buffer (1.5s)
-  const timer = setTimeout(() => {
-    playNext()
-  }, (duration + 1.5) * 1000)
+      window.onYouTubeIframeAPIReady = createPlayer
+    } else {
+      createPlayer()
+    }
+  }, [])
 
-  return () => clearTimeout(timer)
-}, [activeIndex, meta])
+  // 🔥 PROMENA PESME
+  useEffect(() => {
+    if (!playerRef.current || activeIndex === null) return
+
+    const id = extractYoutubeId(items[activeIndex].url)
+
+    try {
+      playerRef.current.loadVideoById(id)
+    } catch (e) {
+      console.log("YT load error", e)
+    }
+  }, [activeIndex])
 
   return (
     <div className="flex gap-10 pb-10 w-full">
@@ -126,16 +163,7 @@ export default function PlaylistPlayer({ playlist }: any) {
               </button>
             </div>
 
-            {/* 🔥 KLJUČ */}
-            <iframe
-              key={activeIndex}
-              src={`https://www.youtube.com/embed/${extractYoutubeId(
-                items[activeIndex].url
-              )}?autoplay=1&mute=1`}
-              className="w-full h-64 rounded"
-              allow="autoplay; fullscreen"
-              allowFullScreen
-            />
+            <div id="yt-player" className="w-full h-64 rounded overflow-hidden" />
           </>
         )}
 
