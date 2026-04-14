@@ -60,18 +60,15 @@ export default function PlaylistPlayer({ playlist }: any) {
 
   if (!duration) return
 
-  let stopped = false
-
   const safeDuration = Math.max(duration - 1, 1)
 
-const timer = setTimeout(() => {
-  if (!stopped) playNext()
+   const timer = setTimeout(() => {
+  playNext()
 }, safeDuration * 1000)
 
-  return () => {
-    stopped = true
-    clearTimeout(timer)
-  }
+return () => {
+  clearTimeout(timer)
+}
 }, [activeIndex, meta])
 
   return (
