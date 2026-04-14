@@ -7,13 +7,20 @@ export default function PlaylistPlayer({ playlist }: any) {
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [meta, setMeta] = useState<any>({})
+  const [isShuffle, setIsShuffle] = useState(false)
 
   const playNext = () => {
-    if (activeIndex === null) return
+  if (activeIndex === null) return
+
+  if (isShuffle) {
+    const rand = Math.floor(Math.random() * items.length)
+    setActiveIndex(rand)
+  } else {
     const next = (activeIndex + 1) % items.length
     setActiveIndex(next)
   }
-
+}
+  
   const shuffle = () => {
     const rand = Math.floor(Math.random() * items.length)
     setActiveIndex(rand)
@@ -55,9 +62,11 @@ export default function PlaylistPlayer({ playlist }: any) {
 
   let stopped = false
 
-  const timer = setTimeout(() => {
-    if (!stopped) playNext()
-  }, (duration + 2) * 1000)
+  const safeDuration = Math.max(duration - 1, 1)
+
+const timer = setTimeout(() => {
+  if (!stopped) playNext()
+}, safeDuration * 1000)
 
   return () => {
     stopped = true
@@ -113,7 +122,9 @@ export default function PlaylistPlayer({ playlist }: any) {
         ))}
 
       </div>
-
+     <div className="text-xs text-gray-400">
+  {isShuffle ? "Shuffle ON" : "Playlist order"}
+</div>
       {/* CENTER PLAYER */}
       <div className="flex-1">
 
@@ -132,11 +143,13 @@ export default function PlaylistPlayer({ playlist }: any) {
               </button>
 
               <button
-                onClick={shuffle}
-                className="px-2 py-1 bg-white/10 rounded"
-              >
-                🔀
-              </button>
+                onClick={() => setIsShuffle(!isShuffle)}
+                className={`px-2 py-1 rounded ${
+                isShuffle ? "bg-green-500 text-black" : "bg-white/10"
+  }`}
+>
+  🔀
+</button>
             </div>
 
             {/* 🔥 KLJUČNI FIX */}
