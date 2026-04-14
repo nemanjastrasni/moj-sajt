@@ -12,7 +12,7 @@ export default function PlaylistPlayer({ playlist }: any) {
   const playNext = () => {
   if (activeIndex === null) return
 
-  if (isShuffle) {
+  if (mode === "shuffle") {
     const rand = Math.floor(Math.random() * items.length)
     setActiveIndex(rand)
   } else {
@@ -52,24 +52,25 @@ export default function PlaylistPlayer({ playlist }: any) {
   }, [items])
 
   // 🔥 AUTOPLAY NEXT (timer-based)
-  useEffect(() => {
+ useEffect(() => {
   if (activeIndex === null) return
 
   const item = items[activeIndex]
-  const duration = meta[item.id]?.duration
 
-  // 🔥 fallback ako nema duration
-  const time = duration ? duration - 1 : 180 // 3 min default
+  // 🔥 fallback ako nema meta još
+  const duration = meta[item.id]?.duration || 180
 
-  const safeDuration = Math.max(time, 1)
+  const safeDuration = Math.max(duration - 1, 1)
+
+  console.log("AUTOPLAY START:", safeDuration)
 
   const timer = setTimeout(() => {
+    console.log("AUTOPLAY NEXT")
     playNext()
   }, safeDuration * 1000)
 
   return () => clearTimeout(timer)
-}, [activeIndex, meta])
-
+}, [activeIndex])
 
   return (
     <div className="flex gap-10 pb-10 w-full">
