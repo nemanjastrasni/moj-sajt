@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 declare global {
   interface Window {
@@ -14,6 +14,7 @@ export default function PlaylistPlayer({ playlist }: any) {
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [meta, setMeta] = useState<any>({})
+  const playerRef = useRef<any>(null)
 
   const playNext = () => {
     if (activeIndex === null) return
@@ -51,24 +52,22 @@ export default function PlaylistPlayer({ playlist }: any) {
     })
   }, [items])
 
-  // 🔥 YOUTUBE PLAYER (PRAVI AUTOPLAY)
+  // 🔥 INIT PLAYER (SAMO JEDNOM)
   useEffect(() => {
-    if (activeIndex === null) return
+    if (playerRef.current) return
 
-    const id = extractYoutubeId(items[activeIndex].url)
-
-    const loadPlayer = () => {
-      new window.YT.Player("yt-player", {
+    const createPlayer = () => {
+      playerRef.current = new window.YT.Player("yt-player", {
         height: "256",
         width: "100%",
-        videoId: id,
+        videoId: "",
         playerVars: {
           autoplay: 1,
         },
         events: {
           onStateChange: (event: any) => {
             if (event.data === 0) {
-              playNext() // 🔥 kad se završi video
+              playNext()
             }
           },
         },
@@ -80,9 +79,22 @@ export default function PlaylistPlayer({ playlist }: any) {
       tag.src = "https://www.youtube.com/iframe_api"
       document.body.appendChild(tag)
 
-      window.onYouTubeIframeAPIReady = loadPlayer
+      window.onYouTubeIframeAPIReady = createPlayer
     } else {
-      loadPlayer()
+      createPlayer()
+    }
+  }, [])
+
+  // 🔥 PROMENA PESME (ključni fix)
+  useEffect(() => {
+    if (!playerRef.current || activeIndex === null) return
+
+    const id = extractYoutubeId(items[activeIndex].url)
+
+    try {
+      playerRef.current.loadVideoById(id)
+    } catch (e) {
+      console.log("load error", e)
     }
   }, [activeIndex])
 
@@ -154,7 +166,6 @@ export default function PlaylistPlayer({ playlist }: any) {
               </button>
             </div>
 
-            {/* 🔥 YOUTUBE PLAYER DIV */}
             <div id="yt-player" className="w-full h-64 rounded overflow-hidden" />
           </>
         )}
