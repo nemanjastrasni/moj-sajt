@@ -52,24 +52,31 @@ export default function PlaylistPlayer({ playlist }: any) {
   }, [items])
 
   // 🔥 AUTOPLAY NEXT (timer-based)
- useEffect(() => {
+useEffect(() => {
   if (activeIndex === null) return
 
   const item = items[activeIndex]
-
-  // 🔥 fallback ako nema meta još
   const duration = meta[item.id]?.duration || 180
 
   const safeDuration = Math.max(duration - 1, 1)
 
-  console.log("AUTOPLAY START:", safeDuration)
+  console.log("MAIN TIMER:", safeDuration)
 
-  const timer = setTimeout(() => {
-    console.log("AUTOPLAY NEXT")
+  const mainTimer = setTimeout(() => {
+    console.log("MAIN NEXT")
     playNext()
   }, safeDuration * 1000)
 
-  return () => clearTimeout(timer)
+  // 🔥 BACKUP (uvek okine posle)
+  const backupTimer = setTimeout(() => {
+    console.log("BACKUP NEXT")
+    playNext()
+  }, (safeDuration + 3) * 1000)
+
+  return () => {
+    clearTimeout(mainTimer)
+    clearTimeout(backupTimer)
+  }
 }, [activeIndex])
 
   return (
