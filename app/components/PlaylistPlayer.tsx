@@ -54,9 +54,10 @@ export default function PlaylistPlayer({ playlist }: any) {
 
   // 🔥 INIT PLAYER (SAMO JEDNOM)
   useEffect(() => {
-    if (playerRef.current) return
+  if (playerRef.current) return
 
-    const createPlayer = () => {
+  const waitForYT = () => {
+    if (window.YT && window.YT.Player) {
       playerRef.current = new window.YT.Player("yt-player", {
         height: "256",
         width: "100%",
@@ -72,18 +73,19 @@ export default function PlaylistPlayer({ playlist }: any) {
           },
         },
       })
-    }
-
-    if (!window.YT) {
-      const tag = document.createElement("script")
-      tag.src = "https://www.youtube.com/iframe_api"
-      document.body.appendChild(tag)
-
-      window.onYouTubeIframeAPIReady = createPlayer
     } else {
-      createPlayer()
+      setTimeout(waitForYT, 200)
     }
-  }, [])
+  }
+
+  if (!window.YT) {
+    const tag = document.createElement("script")
+    tag.src = "https://www.youtube.com/iframe_api"
+    document.body.appendChild(tag)
+  }
+
+  waitForYT()
+}, [])
 
   // 🔥 PROMENA PESME (ključni fix)
   useEffect(() => {
