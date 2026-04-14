@@ -55,7 +55,7 @@ export default function PlaylistPlayer({ playlist }: any) {
   // 🔥 INIT PLAYER (JEDNOM)
   useEffect(() => {
     const createPlayer = () => {
-      if (playerRef.current) return
+  if (playerRef.current || !window.YT || !window.YT.Player) return
 
       playerRef.current = new window.YT.Player("yt-player", {
         height: "256",
