@@ -46,19 +46,20 @@ export default function PlaylistPlayer({ playlist }: any) {
 
   // 🔥 AUTOPLAY (simple, stabilno)
   useEffect(() => {
-    if (activeIndex === null) return
+  if (activeIndex === null) return
 
-    const item = items[activeIndex]
-    const duration = meta[item.id]?.duration
+  const item = items[activeIndex]
+  const duration = meta[item.id]?.duration
 
-    if (!duration) return
+  if (!duration) return
 
-    const timer = setTimeout(() => {
-      playNext()
-    }, duration * 1000)
+  // 🔥 dodaj buffer (1.5s)
+  const timer = setTimeout(() => {
+    playNext()
+  }, (duration + 1.5) * 1000)
 
-    return () => clearTimeout(timer)
-  }, [activeIndex, meta])
+  return () => clearTimeout(timer)
+}, [activeIndex, meta])
 
   return (
     <div className="flex gap-10 pb-10 w-full">
