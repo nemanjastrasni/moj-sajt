@@ -1,37 +1,20 @@
 "use client"
 
-import { useRef , useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 
 export default function PlaylistPlayer({ playlist }: any) {
   const items = playlist.items
-  const [mode, setMode] = useState<"next" | "shuffle">("next")
-  const [activeIndex, setActiveIndex] = useState<number | null>(null)
+
+  const [activeIndex, setActiveIndex] = useState<number>(0)
   const [meta, setMeta] = useState<any>({})
-  const playerRef = useRef<any>(null)
-  const playNext = () => {
-  if (activeIndex === null) return
+  const touchStartX = useRef<number | null>(null)
 
-  if (mode === "shuffle") {
-    const rand = Math.floor(Math.random() * items.length)
-    setActiveIndex(rand)
-  } else {
-    const next = (activeIndex + 1) % items.length
-    setActiveIndex(next)
-  }
-}
-  
-  const shuffle = () => {
-    const rand = Math.floor(Math.random() * items.length)
-    setActiveIndex(rand)
-  }
-
-  // 🔥 FETCH TITLE + DURATION
+  // 🔥 FETCH TITLE
   useEffect(() => {
     items.forEach(async (item: any) => {
       if (item.type !== "youtube") return
 
       const id = extractYoutubeId(item.url)
-      if (!id) return
 
       try {
         const res = await fetch(`/api/youtube?id=${id}`)
@@ -39,31 +22,53 @@ export default function PlaylistPlayer({ playlist }: any) {
 
         setMeta((prev: any) => ({
           ...prev,
-          [item.id]: {
-            title: data.title,
-            duration: parseDuration(data.duration),
-          },
+          [item.id]: { title: data.title },
         }))
-      } catch (err) {
-        console.log("YT fetch error", err)
-      }
+      } catch {}
     })
   }, [items])
 
-  // 🔥 AUTOPLAY NEXT (timer-based)
-useEffect(() => {
-  if (activeIndex === null) return
+  const next = () => {
+    setActiveIndex((prev) => (prev + 1) % items.length)
+  }
 
-  // 🔥 uvek reset kad se promeni pesma
-  const timer = setTimeout(() => {
-    playNext()
-  }, 200000) // ~3min 20s (sigurno ok za većinu)
+  const prev = () => {
+    setActiveIndex((prev) =>
+      prev === 0 ? items.length - 1 : prev - 1
+    )
+  }
 
-  return () => clearTimeout(timer)
-}, [activeIndex])
+  // 🔥 SWIPE
+  const handleTouchStart = (e: any) => {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = (e: any) => {
+    if (touchStartX.current === null) return
+
+    const diff = e.changedTouches[0].clientX - touchStartX.current
+
+    if (diff > 50) prev()
+    if (diff < -50) next()
+
+    touchStartX.current = null
+  }
+
+  const activeItem = items[activeIndex]
+  const activeId = extractYoutubeId(activeItem.url)
 
   return (
-    <div className="flex gap-10 pb-10 w-full">
+    <div className="relative flex gap-10 pb-10 w-full">
+
+      {/* 🔥 BLUR BACKGROUND */}
+      <div
+        className="absolute inset-0 -z-10 opacity-30 blur-2xl"
+        style={{
+          backgroundImage: `url(https://img.youtube.com/vi/${activeId}/0.jpg)`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
 
       {/* LEFT LIST */}
       <div className="w-80 space-y-2">
@@ -72,91 +77,65 @@ useEffect(() => {
           <div
             key={item.id}
             onClick={() => setActiveIndex(index)}
-            className={`flex justify-between text-sm p-2 rounded cursor-pointer 
+            className={`p-2 rounded cursor-pointer text-sm 
             ${activeIndex === index ? "bg-white/10" : "hover:bg-white/5"}`}
           >
-            <div className="flex items-center justify-between w-full">
-
-              {/* TITLE */}
-              <span className="truncate">
-                🎵 {meta[item.id]?.title || "Loading..."}
-              </span>
-
-              {/* DURATION */}
-              <span className="text-gray-400 text-xs ml-2">
-                {meta[item.id]?.duration
-                  ? `${Math.floor(meta[item.id].duration / 60)}:${String(
-                      meta[item.id].duration % 60
-                    ).padStart(2, "0")}`
-                  : ""}
-              </span>
-
-              {/* DELETE */}
-              <form
-                action={`/api/listening-playlist/item/${item.id}`}
-                method="POST"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button className="text-red-500 text-xs ml-2">
-                  🗑
-                </button>
-              </form>
-            </div>
-
-            <span className="text-gray-400 ml-2">
-              YT
-            </span>
+            🎵 {meta[item.id]?.title || "Loading..."}
           </div>
         ))}
 
       </div>
-     <div className="text-xs text-gray-400">
-  {mode === "shuffle" ? "Shuffle ON" : "Playlist order"}
-</div>
-      {/* CENTER PLAYER */}
-      <div className="flex-1">
 
-        {activeIndex !== null && (
-          <>
-            <div className="mb-2 text-sm">
-              Now playing
-            </div>
+      {/* CENTER CAROUSEL */}
+      <div
+        className="flex-1 flex flex-col items-center"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
 
-            <div className="flex gap-3 mb-2">
-              <button
-  onClick={() => setMode("next")}
-  className={`px-2 py-1 rounded ${
-    mode === "next" ? "bg-green-500 text-black" : "bg-white/10"
-  }`}
->
-  ⏭
-</button>
+        <div className="relative w-full h-80 flex items-center justify-center overflow-hidden">
 
-<button
-  onClick={() => setMode("shuffle")}
-  className={`px-2 py-1 rounded ${
-    mode === "shuffle" ? "bg-green-500 text-black" : "bg-white/10"
-  }`}
->
-  🔀
-</button>
-<div className="text-xs text-gray-400">
-  Mode: {mode === "shuffle" ? "Shuffle" : "Playlist"}
-</div>
-            </div>
+          {items.map((item: any, index: number) => {
+            const position = index - activeIndex
 
-            {/* 🔥 KLJUČNI FIX */}
-            <iframe
-  key={activeIndex}
-  src={`https://www.youtube.com/embed/${extractYoutubeId(
-    items[activeIndex].url
-  )}?autoplay=1&mute=0&controls=1`}
-  className="w-full h-64 rounded"
-  allow="autoplay; fullscreen"
-  allowFullScreen
-/>
-          </>
-        )}
+            return (
+              <div
+                key={item.id}
+                className={`absolute transition-all duration-500 ${
+                  position === 0
+                    ? "scale-100 opacity-100 z-10"
+                    : position === -1
+                    ? "scale-75 opacity-40 -translate-x-40"
+                    : position === 1
+                    ? "scale-75 opacity-40 translate-x-40"
+                    : "scale-50 opacity-0"
+                }`}
+              >
+                <iframe
+                  src={`https://www.youtube.com/embed/${extractYoutubeId(
+                    item.url
+                  )}`}
+                  className="w-96 h-56 rounded shadow-xl"
+                  allow="autoplay; fullscreen"
+                />
+              </div>
+            )
+          })}
+
+        </div>
+
+        {/* CONTROLS */}
+        <div className="flex gap-4 mt-4">
+
+          <button onClick={prev} className="px-3 py-1 bg-white/10 rounded">
+            ⬅
+          </button>
+
+          <button onClick={next} className="px-3 py-1 bg-white/10 rounded">
+            ➡
+          </button>
+
+        </div>
 
       </div>
 
@@ -170,12 +149,4 @@ function extractYoutubeId(url: string) {
     url.match(/v=([^&]+)/) ||
     url.match(/youtu\.be\/([^?]+)/)
   return match?.[1] || ""
-}
-
-function parseDuration(duration: string) {
-  const match = duration.match(/PT(\d+M)?(\d+S)?/)
-  const minutes = match?.[1] ? parseInt(match[1]) : 0
-  const seconds = match?.[2] ? parseInt(match[2]) : 0
-
-  return minutes * 60 + seconds
 }
