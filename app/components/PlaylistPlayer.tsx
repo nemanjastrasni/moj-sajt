@@ -54,17 +54,13 @@ export default function PlaylistPlayer({ playlist }: any) {
 useEffect(() => {
   if (activeIndex === null) return
 
-  const item = items[activeIndex]
-  const duration = meta[item.id]?.duration
-
-  if (!duration) return
-
+  // 🔥 uvek reset kad se promeni pesma
   const timer = setTimeout(() => {
     playNext()
-  }, (duration - 2) * 1000)
+  }, 200000) // ~3min 20s (sigurno ok za većinu)
 
   return () => clearTimeout(timer)
-}, [activeIndex, meta])
+}, [activeIndex])
 
   return (
     <div className="flex gap-10 pb-10 w-full">
