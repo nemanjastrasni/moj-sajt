@@ -1,29 +1,33 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useRef, useEffect, useState } from "react"
+
+declare global {
+  interface Window {
+    YT: any
+    onYouTubeIframeAPIReady: any
+  }
+}
 
 export default function PlaylistPlayer({ playlist }: any) {
   const items = playlist.items
+
   const [mode, setMode] = useState<"next" | "shuffle">("next")
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [meta, setMeta] = useState<any>({})
-  const [isShuffle, setIsShuffle] = useState(false)
+
+  const playerRef = useRef<any>(null)
 
   const playNext = () => {
-  if (activeIndex === null) return
+    if (activeIndex === null) return
 
-  if (mode === "shuffle") {
-    const rand = Math.floor(Math.random() * items.length)
-    setActiveIndex(rand)
-  } else {
-    const next = (activeIndex + 1) % items.length
-    setActiveIndex(next)
-  }
-}
-  
-  const shuffle = () => {
-    const rand = Math.floor(Math.random() * items.length)
-    setActiveIndex(rand)
+    if (mode === "shuffle") {
+      const rand = Math.floor(Math.random() * items.length)
+      setActiveIndex(rand)
+    } else {
+      const next = (activeIndex + 1) % items.length
+      setActiveIndex(next)
+    }
   }
 
   // 🔥 FETCH TITLE + DURATION
@@ -51,33 +55,49 @@ export default function PlaylistPlayer({ playlist }: any) {
     })
   }, [items])
 
-  // 🔥 AUTOPLAY NEXT (timer-based)
-useEffect(() => {
-  if (activeIndex === null) return
+  // 🔥 INIT PLAYER (SAMO JEDNOM)
+  useEffect(() => {
+    if (typeof window === "undefined") return
 
-  const item = items[activeIndex]
-  const duration = meta[item.id]?.duration || 180
+    const createPlayer = () => {
+      playerRef.current = new window.YT.Player("yt-player", {
+        height: "256",
+        width: "100%",
+        videoId: "",
+        playerVars: {
+          autoplay: 1,
+        },
+        events: {
+          onStateChange: (event: any) => {
+            if (event.data === 0) {
+              playNext() // 🔥 KRAJ VIDEA
+            }
+          },
+        },
+      })
+    }
 
-  const safeDuration = Math.max(duration - 1, 1)
+    if (!window.YT) {
+      const tag = document.createElement("script")
+      tag.src = "https://www.youtube.com/iframe_api"
+      document.body.appendChild(tag)
 
-  console.log("MAIN TIMER:", safeDuration)
+      window.onYouTubeIframeAPIReady = createPlayer
+    } else {
+      createPlayer()
+    }
+  }, [])
 
-  const mainTimer = setTimeout(() => {
-    console.log("MAIN NEXT")
-    playNext()
-  }, safeDuration * 1000)
+  // 🔥 PROMENA PESME
+  useEffect(() => {
+    if (activeIndex === null) return
 
-  // 🔥 BACKUP (uvek okine posle)
-  const backupTimer = setTimeout(() => {
-    console.log("BACKUP NEXT")
-    playNext()
-  }, (safeDuration + 3) * 1000)
+    const id = extractYoutubeId(items[activeIndex].url)
 
-  return () => {
-    clearTimeout(mainTimer)
-    clearTimeout(backupTimer)
-  }
-}, [activeIndex])
+    if (playerRef.current && id) {
+      playerRef.current.loadVideoById(id)
+    }
+  }, [activeIndex])
 
   return (
     <div className="flex gap-10 pb-10 w-full">
@@ -94,12 +114,10 @@ useEffect(() => {
           >
             <div className="flex items-center justify-between w-full">
 
-              {/* TITLE */}
               <span className="truncate">
                 🎵 {meta[item.id]?.title || "Loading..."}
               </span>
 
-              {/* DURATION */}
               <span className="text-gray-400 text-xs ml-2">
                 {meta[item.id]?.duration
                   ? `${Math.floor(meta[item.id].duration / 60)}:${String(
@@ -108,7 +126,6 @@ useEffect(() => {
                   : ""}
               </span>
 
-              {/* DELETE */}
               <form
                 action={`/api/listening-playlist/item/${item.id}`}
                 method="POST"
@@ -120,63 +137,49 @@ useEffect(() => {
               </form>
             </div>
 
-            <span className="text-gray-400 ml-2">
-              YT
-            </span>
+            <span className="text-gray-400 ml-2">YT</span>
           </div>
         ))}
 
       </div>
-     <div className="text-xs text-gray-400">
-  {isShuffle ? "Shuffle ON" : "Playlist order"}
-</div>
+
       {/* CENTER PLAYER */}
       <div className="flex-1">
 
         {activeIndex !== null && (
           <>
-            <div className="mb-2 text-sm">
-              Now playing
-            </div>
+            <div className="mb-2 text-sm">Now playing</div>
 
             <div className="flex gap-3 mb-2">
               <button
-  onClick={() => setMode("next")}
-  className={`px-2 py-1 rounded ${
-    mode === "next" ? "bg-green-500 text-black" : "bg-white/10"
-  }`}
->
-  ⏭
-</button>
+                onClick={() => setMode("next")}
+                className={`px-2 py-1 rounded ${
+                  mode === "next" ? "bg-green-500 text-black" : "bg-white/10"
+                }`}
+              >
+                ⏭
+              </button>
 
-<button
-  onClick={() => setMode("shuffle")}
-  className={`px-2 py-1 rounded ${
-    mode === "shuffle" ? "bg-green-500 text-black" : "bg-white/10"
-  }`}
->
-  🔀
-</button>
-<div className="text-xs text-gray-400">
-  Mode: {mode === "shuffle" ? "Shuffle" : "Playlist"}
-</div>
+              <button
+                onClick={() => setMode("shuffle")}
+                className={`px-2 py-1 rounded ${
+                  mode === "shuffle" ? "bg-green-500 text-black" : "bg-white/10"
+                }`}
+              >
+                🔀
+              </button>
+
+              <div className="text-xs text-gray-400">
+                Mode: {mode === "shuffle" ? "Shuffle" : "Playlist"}
+              </div>
             </div>
 
-            {/* 🔥 KLJUČNI FIX */}
-            <iframe
-  key={activeIndex}
-  src={`https://www.youtube.com/embed/${extractYoutubeId(
-    items[activeIndex].url
-  )}?autoplay=1&mute=0&controls=1`}
-  className="w-full h-64 rounded"
-  allow="autoplay; fullscreen"
-  allowFullScreen
-/>
+            {/* 🔥 PLAYER */}
+            <div id="yt-player" className="w-full h-64 rounded overflow-hidden" />
           </>
         )}
 
       </div>
-
     </div>
   )
 }
