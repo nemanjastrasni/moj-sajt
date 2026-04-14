@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 
 export default function PlaylistPlayer({ playlist }: any) {
   const items = playlist.items
-
+  const [mode, setMode] = useState<"next" | "shuffle">("next")
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [meta, setMeta] = useState<any>({})
   const [isShuffle, setIsShuffle] = useState(false)
@@ -133,20 +133,25 @@ export default function PlaylistPlayer({ playlist }: any) {
 
             <div className="flex gap-3 mb-2">
               <button
-                onClick={playNext}
-                className="px-2 py-1 bg-white/10 rounded"
-              >
-                ⏭
-              </button>
+  onClick={() => setMode("next")}
+  className={`px-2 py-1 rounded ${
+    mode === "next" ? "bg-green-500 text-black" : "bg-white/10"
+  }`}
+>
+  ⏭
+</button>
 
-              <button
-                onClick={() => setIsShuffle(!isShuffle)}
-                className={`px-2 py-1 rounded ${
-                isShuffle ? "bg-green-500 text-black" : "bg-white/10"
+<button
+  onClick={() => setMode("shuffle")}
+  className={`px-2 py-1 rounded ${
+    mode === "shuffle" ? "bg-green-500 text-black" : "bg-white/10"
   }`}
 >
   🔀
 </button>
+<div className="text-xs text-gray-400">
+  Mode: {mode === "shuffle" ? "Shuffle" : "Playlist"}
+</div>
             </div>
 
             {/* 🔥 KLJUČNI FIX */}
