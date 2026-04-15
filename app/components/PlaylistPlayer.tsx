@@ -5,11 +5,17 @@ import { useEffect, useState, useRef } from "react"
 export default function PlaylistPlayer({ playlist }: any) {
   const items = playlist.items
 
-  const [activeIndex, setActiveIndex] = useState<number>(0)
-  const [meta, setMeta] = useState<any>({})
+  const timerRef = useRef<any>(null)
   const touchStartX = useRef<number | null>(null)
 
- const [mode, setMode] = useState<"play" | "shuffle" | null>(null)
+  const [activeIndex, setActiveIndex] = useState<number>(0)
+  const [meta, setMeta] = useState<any>({})
+  const [mode, setMode] = useState<"play" | "shuffle" | null>(null)
+
+  // 🎯 DERIVED STATE
+  const activeItem = items[activeIndex]
+  const isPlaying = mode === "play"
+  const isShuffle = mode === "shuffle"
 
   // 🔥 FETCH TITLE + DURATION
   useEffect(() => {
@@ -33,6 +39,7 @@ export default function PlaylistPlayer({ playlist }: any) {
     })
   }, [items])
 
+  // ▶ NEXT / PREV
   const next = () => {
     setActiveIndex((prev) => (prev + 1) % items.length)
   }
@@ -43,28 +50,79 @@ export default function PlaylistPlayer({ playlist }: any) {
     )
   }
 
-  // 🔥 AUTOPLAY (GLAVNI DEO)
+  // 🔥 AUTOPLAY (STABILAN)
   useEffect(() => {
-  if (!mode) return
+    if (!isPlaying) return
 
-  const item = items[activeIndex]
-  const duration = meta[item.id]?.duration
+    const id = items[activeIndex]?.id
+    const duration = meta[id]?.duration
 
-  if (!duration) return
+    if (!duration || duration < 5) return
 
-  const timer = setTimeout(() => {
-    if (mode === "play") {
-      setActiveIndex((prev) => (prev + 1) % items.length)
+    console.log("START TIMER:", duration)
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
     }
 
-    if (mode === "shuffle") {
-      const rand = Math.floor(Math.random() * items.length)
-      setActiveIndex(rand)
-    }
-  }, (duration - 1) * 1000)
+    timerRef.current = setTimeout(() => {
+      console.log("NEXT SONG TRIGGER")
 
-  return () => clearTimeout(timer)
-}, [activeIndex, meta, mode])
+      setActiveIndex((prev) => {
+        if (isShuffle) {
+          return Math.floor(Math.random() * items.length)
+        }
+        return (prev + 1) % items.length
+      })
+    }, (duration - 1) * 1000)
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
+    }
+  }, [activeIndex, isPlaying, isShuffle])
+
+  //listner za end
+  useEffect(() => {
+  const interval = setInterval(() => {
+    const iframe = document.getElementById("yt-player") as HTMLIFrameElement
+    if (!iframe) return
+
+    iframe.contentWindow?.postMessage(
+      JSON.stringify({
+        event: "command",
+        func: "getPlayerState",
+      }),
+      "*"
+    )
+  }, 1000)
+
+  const handleMessage = (event: any) => {
+    try {
+      const data = JSON.parse(event.data)
+
+      // 0 = video ended
+      if (data.info === 0) {
+        console.log("YOUTUBE END DETECTED")
+
+        setActiveIndex((prev) => {
+          if (mode === "shuffle") {
+            return Math.floor(Math.random() * items.length)
+          }
+          return (prev + 1) % items.length
+        })
+      }
+    } catch {}
+  }
+
+  window.addEventListener("message", handleMessage)
+
+  return () => {
+    clearInterval(interval)
+    window.removeEventListener("message", handleMessage)
+  }
+}, [mode])
 
   // 🔥 SWIPE
   const handleTouchStart = (e: any) => {
@@ -81,15 +139,16 @@ export default function PlaylistPlayer({ playlist }: any) {
 
     touchStartX.current = null
   }
-  const activeItem = items[activeIndex]
+
   const prevItem = items[(activeIndex - 1 + items.length) % items.length]
   const nextItem = items[(activeIndex + 1) % items.length]
+
   const activeId = extractYoutubeId(activeItem.url)
 
   return (
     <div className="relative flex gap-10 pb-10 w-full">
 
-      {/* 🔥 BLUR BACKGROUND */}
+      {/* 🔥 BACKGROUND */}
       <div
         className="absolute inset-0 -z-10 opacity-30 blur-2xl"
         style={{
@@ -101,7 +160,6 @@ export default function PlaylistPlayer({ playlist }: any) {
 
       {/* LEFT LIST */}
       <div className="w-72 shrink-0 space-y-2 max-h-[400px] overflow-y-auto">
-
         {items.map((item: any, index: number) => (
           <div
             key={item.id}
@@ -112,82 +170,80 @@ export default function PlaylistPlayer({ playlist }: any) {
             🎵 {meta[item.id]?.title || "Loading..."}
           </div>
         ))}
+      </div>
+
+      {/* CENTER PLAYER */}
+      <div
+        className="flex-1 flex flex-col items-center justify-center"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+
+        {/* 🔥 DUGMAD (SADA NA PRAVOM MESTU) */}
+        <div className="flex gap-2 mb-3">
+          <button
+            onClick={() => setMode("play")}
+            className={`px-2 py-1 text-xs rounded-md
+            ${mode === "play"
+              ? "bg-white/20 text-white"
+              : "bg-white/5 text-gray-400 hover:bg-white/10"}`}
+          >
+            ▶ Play
+          </button>
+
+          <button
+            onClick={() => setMode("shuffle")}
+            className={`px-2 py-1 text-xs rounded-md
+            ${mode === "shuffle"
+              ? "bg-white/20 text-white"
+              : "bg-white/5 text-gray-400 hover:bg-white/10"}`}
+          >
+            🔀 Shuffle
+          </button>
+        </div>
+
+        <div className="relative w-full h-80 flex items-center justify-center">
+
+          {/* PREV */}
+          <div className="absolute left-[15%] opacity-40 scale-75">
+            <img
+              src={`https://img.youtube.com/vi/${extractYoutubeId(prevItem.url)}/0.jpg`}
+              className="w-[260px] h-[150px] rounded"
+            />
+          </div>
+
+          {/* CURRENT */}
+          <div className="z-10">
+            <iframe
+              id="yt-player"
+              src={`https://www.youtube.com/embed/${activeId}?enablejsapi=1&autoplay=1`}
+              className="w-[420px] h-[236px] rounded shadow-xl"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+             />
+          </div>
+
+          {/* NEXT */}
+          <div className="absolute right-[15%] opacity-40 scale-75">
+            <img
+              src={`https://img.youtube.com/vi/${extractYoutubeId(nextItem.url)}/0.jpg`}
+              className="w-[260px] h-[150px] rounded"
+            />
+          </div>
+
+        </div>
+
+        {/* strelice */}
+        <div className="flex gap-3 mt-4">
+          <button onClick={prev} className="px-2 py-1 bg-white/10 rounded text-xs">
+            ⬅
+          </button>
+          <button onClick={next} className="px-2 py-1 bg-white/10 rounded text-xs">
+            ➡
+          </button>
+        </div>
 
       </div>
-      {/* Player  controls*/}
-      <div className="flex gap-4 mt-4 justify-center">
-
-  <button
-    onClick={() => setMode("play")}
-    className={`px-3 py-1 rounded ${
-      mode === "play" ? "bg-green-500" : "bg-white/10"
-    }`}
-  >
-    ▶️
-  </button>
-
-  <button
-    onClick={() => setMode("shuffle")}
-    className={`px-3 py-1 rounded ${
-      mode === "shuffle" ? "bg-blue-500" : "bg-white/10"
-    }`}
-  >
-    🔀
-  </button>
-
-</div>
-
-     {/* CENTER CAROUSEL */}
-<div
-  className="flex-1 flex flex-col items-center justify-center"
-  onTouchStart={handleTouchStart}
-  onTouchEnd={handleTouchEnd}
->
-
-  <div className="relative w-full h-80 flex items-center justify-center">
-
-    {/* PREV */}
-    <div className="absolute left-[15%] opacity-40 scale-75 transition-all duration-500">
-      <img
-        src={`https://img.youtube.com/vi/${extractYoutubeId(prevItem.url)}/0.jpg`}
-        className="w-[260px] h-[150px] rounded"
-      />
-    </div>
-
-    {/* CURRENT (FIXED CENTER) */}
-    <div className="z-10">
-      <iframe
-        key={activeIndex}
-        src={`https://www.youtube.com/embed/${activeId}?autoplay=1`}
-        className="w-[420px] h-[236px] rounded shadow-xl"
-        allow="autoplay; fullscreen"
-        allowFullScreen
-      />
-    </div>
-
-    {/* NEXT */}
-    <div className="absolute right-[15%] opacity-40 scale-75 transition-all duration-500">
-      <img
-        src={`https://img.youtube.com/vi/${extractYoutubeId(nextItem.url)}/0.jpg`}
-        className="w-[260px] h-[150px] rounded"
-      />
-    </div>
-
-  </div>
-
-  {/* CONTROLS */}
-  <div className="flex gap-4 mt-4 justify-center">
-    <button onClick={prev} className="px-3 py-1 bg-white/10 rounded">
-      ⬅
-    </button>
-
-    <button onClick={next} className="px-3 py-1 bg-white/10 rounded">
-      ➡
-    </button>
-  </div>
-
-</div>
-
     </div>
   )
 }
@@ -199,6 +255,7 @@ function extractYoutubeId(url: string) {
     url.match(/youtu\.be\/([^?]+)/)
   return match?.[1] || ""
 }
+
 function parseDuration(duration: string) {
   const match = duration.match(/PT(\d+M)?(\d+S)?/)
   const minutes = match?.[1] ? parseInt(match[1]) : 0
