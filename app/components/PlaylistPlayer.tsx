@@ -9,7 +9,7 @@ export default function PlaylistPlayer({ playlist }: any) {
   const [meta, setMeta] = useState<any>({})
   const touchStartX = useRef<number | null>(null)
 
-  // 🔥 FETCH TITLE
+  // 🔥 FETCH TITLE + DURATION
   useEffect(() => {
     items.forEach(async (item: any) => {
       if (item.type !== "youtube") return
@@ -22,7 +22,10 @@ export default function PlaylistPlayer({ playlist }: any) {
 
         setMeta((prev: any) => ({
           ...prev,
-          [item.id]: { title: data.title },
+          [item.id]: {
+            title: data.title,
+            duration: parseDuration(data.duration),
+          },
         }))
       } catch {}
     })
@@ -37,6 +40,20 @@ export default function PlaylistPlayer({ playlist }: any) {
       prev === 0 ? items.length - 1 : prev - 1
     )
   }
+
+  // 🔥 AUTOPLAY (GLAVNI DEO)
+  useEffect(() => {
+    const item = items[activeIndex]
+    const duration = meta[item.id]?.duration
+
+    if (!duration) return
+
+    const timer = setTimeout(() => {
+      next()
+    }, (duration - 1) * 1000) // malo ranije da bude smooth
+
+    return () => clearTimeout(timer)
+  }, [activeIndex, meta])
 
   // 🔥 SWIPE
   const handleTouchStart = (e: any) => {
@@ -150,4 +167,11 @@ function extractYoutubeId(url: string) {
     url.match(/v=([^&]+)/) ||
     url.match(/youtu\.be\/([^?]+)/)
   return match?.[1] || ""
+}
+function parseDuration(duration: string) {
+  const match = duration.match(/PT(\d+M)?(\d+S)?/)
+  const minutes = match?.[1] ? parseInt(match[1]) : 0
+  const seconds = match?.[2] ? parseInt(match[2]) : 0
+
+  return minutes * 60 + seconds
 }
