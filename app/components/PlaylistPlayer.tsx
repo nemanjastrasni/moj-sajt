@@ -55,6 +55,9 @@ export default function PlaylistPlayer({ playlist }: any) {
   }
 
   const activeItem = items[activeIndex]
+  const prevItem = items[(activeIndex - 1 + items.length) % items.length]
+  const nextItem = items[(activeIndex + 1) % items.length]
+
   const activeId = extractYoutubeId(activeItem.url)
 
   return (
@@ -95,32 +98,32 @@ export default function PlaylistPlayer({ playlist }: any) {
 
         <div className="relative w-full h-80 flex items-center justify-center overflow-hidden">
 
-          {items.map((item: any, index: number) => {
-            const position = index - activeIndex
+          {/* PREV */}
+          <div className="absolute scale-75 opacity-40 -translate-x-48">
+            <img
+              src={`https://img.youtube.com/vi/${extractYoutubeId(prevItem.url)}/0.jpg`}
+              className="w-80 h-48 rounded"
+            />
+          </div>
 
-            return (
-              <div
-                key={item.id}
-                className={`absolute transition-all duration-500 ${
-                  position === 0
-                    ? "scale-100 opacity-100 z-10"
-                    : position === -1
-                    ? "scale-75 opacity-40 -translate-x-40"
-                    : position === 1
-                    ? "scale-75 opacity-40 translate-x-40"
-                    : "scale-50 opacity-0"
-                }`}
-              >
-                <iframe
-                  src={`https://www.youtube.com/embed/${extractYoutubeId(
-                    item.url
-                  )}`}
-                  className="w-96 h-56 rounded shadow-xl"
-                  allow="autoplay; fullscreen"
-                />
-              </div>
-            )
-          })}
+          {/* CURRENT */}
+          <div className="z-10">
+            <iframe
+              key={activeIndex}
+              src={`https://www.youtube.com/embed/${activeId}?autoplay=1`}
+              className="w-96 h-56 rounded shadow-xl"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+            />
+          </div>
+
+          {/* NEXT */}
+          <div className="absolute scale-75 opacity-40 translate-x-48">
+            <img
+              src={`https://img.youtube.com/vi/${extractYoutubeId(nextItem.url)}/0.jpg`}
+              className="w-80 h-48 rounded"
+            />
+          </div>
 
         </div>
 
