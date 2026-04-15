@@ -74,7 +74,7 @@ export default function PlaylistPlayer({ playlist }: any) {
       />
 
       {/* LEFT LIST */}
-      <div className="w-80 space-y-2">
+      <div className="w-80 space-y-2 overflow-y-auto max-h-[500px]">
 
         {items.map((item: any, index: number) => (
           <div
@@ -95,45 +95,46 @@ export default function PlaylistPlayer({ playlist }: any) {
   onTouchStart={handleTouchStart}
   onTouchEnd={handleTouchEnd}
 >
-  <div className="relative w-full h-80 overflow-hidden flex items-center justify-center">
-
-    <div
-      className="flex items-center gap-6 transition-transform duration-700 ease-in-out"
-      style={{
-        transform: `translateX(calc(50% - ${activeIndex * 420}px - 210px))`,
-      }}
-    >
+  <div className="w-full flex justify-center overflow-hidden">
+  <div
+    className="flex items-center gap-6 transition-transform duration-700 ease-in-out"
+    style={{
+      transform: `translateX(-${activeIndex * 440}px)`,
+    }}
+  >
       {items.map((item: any, index: number) => {
-        const isActive = index === activeIndex
+  const isActive = index === activeIndex
 
-        return (
-          <div
-            key={item.id}
-            className={`transition-all duration-700 ease-in-out ${
-              isActive ? "scale-100 opacity-100" : "scale-75 opacity-40"
-            }`}
-          >
-            {isActive ? (
-              <iframe
-                key={activeIndex}
-                src={`https://www.youtube.com/embed/${extractYoutubeId(
-                  item.url
-                )}?autoplay=1`}
-                className="w-[420px] h-[236px] rounded shadow-xl"
-                allow="autoplay; fullscreen"
-                allowFullScreen
-              />
-            ) : (
-              <img
-                src={`https://img.youtube.com/vi/${extractYoutubeId(
-                  item.url
-                )}/0.jpg`}
-                className="w-[420px] h-[236px] rounded"
-              />
-            )}
-          </div>
-        )
-      })}
+  return (
+    <div
+      key={item.id}
+      className={`w-[400px] shrink-0 transition-all duration-700 ease-in-out ${
+        isActive
+          ? "scale-100 opacity-100"
+          : "scale-75 opacity-40"
+      }`}
+    >
+      {isActive ? (
+        <iframe
+          key={activeIndex}
+          src={`https://www.youtube.com/embed/${extractYoutubeId(
+            item.url
+          )}?autoplay=1`}
+          className="w-full h-[225px] rounded shadow-xl"
+          allow="autoplay; fullscreen"
+          allowFullScreen
+        />
+      ) : (
+        <img
+          src={`https://img.youtube.com/vi/${extractYoutubeId(
+            item.url
+          )}/0.jpg`}
+          className="w-full h-[225px] rounded"
+        />
+      )}
+    </div>
+  )
+})}
     </div>
 
   </div>
