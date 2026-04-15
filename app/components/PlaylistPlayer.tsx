@@ -74,7 +74,7 @@ export default function PlaylistPlayer({ playlist }: any) {
       />
 
       {/* LEFT LIST */}
-      <div className="w-80 space-y-2 overflow-y-auto max-h-[500px]">
+      <div className="w-72 shrink-0 space-y-2 max-h-[400px] overflow-y-auto">
 
         {items.map((item: any, index: number) => (
           <div
@@ -97,7 +97,7 @@ export default function PlaylistPlayer({ playlist }: any) {
 >
   <div className="w-full flex justify-center overflow-hidden">
   <div
-    className="flex items-center gap-6 transition-transform duration-700 ease-in-out"
+    className="flex items-center gap-3 transition-transform duration-700 ease-in-out"
     style={{
       transform: `translateX(-${activeIndex * 440}px)`,
     }}
@@ -108,7 +108,7 @@ export default function PlaylistPlayer({ playlist }: any) {
   return (
     <div
       key={item.id}
-      className={`w-[400px] shrink-0 transition-all duration-700 ease-in-out ${
+      className={`w-[340px] shrink-0 transition-all duration-700 ease-in-out ${
         isActive
           ? "scale-100 opacity-100"
           : "scale-75 opacity-40"
@@ -120,7 +120,7 @@ export default function PlaylistPlayer({ playlist }: any) {
           src={`https://www.youtube.com/embed/${extractYoutubeId(
             item.url
           )}?autoplay=1`}
-          className="w-full h-[225px] rounded shadow-xl"
+          className="w-full h-[190px] rounded shadow-xl"
           allow="autoplay; fullscreen"
           allowFullScreen
         />
