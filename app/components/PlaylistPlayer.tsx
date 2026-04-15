@@ -91,56 +91,44 @@ export default function PlaylistPlayer({ playlist }: any) {
 
      {/* CENTER CAROUSEL */}
 <div
-  className="flex-1 flex flex-col items-center"
+  className="flex-1 flex flex-col items-center justify-center"
   onTouchStart={handleTouchStart}
   onTouchEnd={handleTouchEnd}
 >
-  <div className="w-full flex justify-center overflow-hidden">
-  <div
-    className="flex items-center gap-3 transition-transform duration-700 ease-in-out"
-    style={{
-      transform: `translateX(-${activeIndex * 440}px)`,
-    }}
-  >
-      {items.map((item: any, index: number) => {
-  const isActive = index === activeIndex
 
-  return (
-    <div
-      key={item.id}
-      className={`w-[340px] shrink-0 transition-all duration-700 ease-in-out ${
-        isActive
-          ? "scale-100 opacity-100"
-          : "scale-75 opacity-40"
-      }`}
-    >
-      {isActive ? (
-        <iframe
-          key={activeIndex}
-          src={`https://www.youtube.com/embed/${extractYoutubeId(
-            item.url
-          )}?autoplay=1`}
-          className="w-full h-[190px] rounded shadow-xl"
-          allow="autoplay; fullscreen"
-          allowFullScreen
-        />
-      ) : (
-        <img
-          src={`https://img.youtube.com/vi/${extractYoutubeId(
-            item.url
-          )}/0.jpg`}
-          className="w-full h-[225px] rounded"
-        />
-      )}
+  <div className="relative w-full h-80 flex items-center justify-center">
+
+    {/* PREV */}
+    <div className="absolute left-[15%] opacity-40 scale-75 transition-all duration-500">
+      <img
+        src={`https://img.youtube.com/vi/${extractYoutubeId(prevItem.url)}/0.jpg`}
+        className="w-[260px] h-[150px] rounded"
+      />
     </div>
-  )
-})}
+
+    {/* CURRENT (FIXED CENTER) */}
+    <div className="z-10">
+      <iframe
+        key={activeIndex}
+        src={`https://www.youtube.com/embed/${activeId}?autoplay=1`}
+        className="w-[420px] h-[236px] rounded shadow-xl"
+        allow="autoplay; fullscreen"
+        allowFullScreen
+      />
+    </div>
+
+    {/* NEXT */}
+    <div className="absolute right-[15%] opacity-40 scale-75 transition-all duration-500">
+      <img
+        src={`https://img.youtube.com/vi/${extractYoutubeId(nextItem.url)}/0.jpg`}
+        className="w-[260px] h-[150px] rounded"
+      />
     </div>
 
   </div>
 
   {/* CONTROLS */}
-  <div className="flex gap-4 mt-4">
+  <div className="flex gap-4 mt-4 justify-center">
     <button onClick={prev} className="px-3 py-1 bg-white/10 rounded">
       ⬅
     </button>
@@ -149,6 +137,7 @@ export default function PlaylistPlayer({ playlist }: any) {
       ➡
     </button>
   </div>
+
 </div>
 
     </div>
