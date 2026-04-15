@@ -9,6 +9,8 @@ export default function PlaylistPlayer({ playlist }: any) {
   const [meta, setMeta] = useState<any>({})
   const touchStartX = useRef<number | null>(null)
 
+ const [mode, setMode] = useState<"play" | "shuffle" | null>(null)
+
   // 🔥 FETCH TITLE + DURATION
   useEffect(() => {
     items.forEach(async (item: any) => {
@@ -43,17 +45,26 @@ export default function PlaylistPlayer({ playlist }: any) {
 
   // 🔥 AUTOPLAY (GLAVNI DEO)
   useEffect(() => {
-    const item = items[activeIndex]
-    const duration = meta[item.id]?.duration
+  if (!mode) return
 
-    if (!duration) return
+  const item = items[activeIndex]
+  const duration = meta[item.id]?.duration
 
-    const timer = setTimeout(() => {
-      next()
-    }, (duration - 1) * 1000) // malo ranije da bude smooth
+  if (!duration) return
 
-    return () => clearTimeout(timer)
-  }, [activeIndex, meta])
+  const timer = setTimeout(() => {
+    if (mode === "play") {
+      setActiveIndex((prev) => (prev + 1) % items.length)
+    }
+
+    if (mode === "shuffle") {
+      const rand = Math.floor(Math.random() * items.length)
+      setActiveIndex(rand)
+    }
+  }, (duration - 1) * 1000)
+
+  return () => clearTimeout(timer)
+}, [activeIndex, meta, mode])
 
   // 🔥 SWIPE
   const handleTouchStart = (e: any) => {
@@ -70,11 +81,9 @@ export default function PlaylistPlayer({ playlist }: any) {
 
     touchStartX.current = null
   }
-
   const activeItem = items[activeIndex]
   const prevItem = items[(activeIndex - 1 + items.length) % items.length]
   const nextItem = items[(activeIndex + 1) % items.length]
-
   const activeId = extractYoutubeId(activeItem.url)
 
   return (
@@ -105,6 +114,28 @@ export default function PlaylistPlayer({ playlist }: any) {
         ))}
 
       </div>
+      {/* Player  controls*/}
+      <div className="flex gap-4 mt-4 justify-center">
+
+  <button
+    onClick={() => setMode("play")}
+    className={`px-3 py-1 rounded ${
+      mode === "play" ? "bg-green-500" : "bg-white/10"
+    }`}
+  >
+    ▶️
+  </button>
+
+  <button
+    onClick={() => setMode("shuffle")}
+    className={`px-3 py-1 rounded ${
+      mode === "shuffle" ? "bg-blue-500" : "bg-white/10"
+    }`}
+  >
+    🔀
+  </button>
+
+</div>
 
      {/* CENTER CAROUSEL */}
 <div
