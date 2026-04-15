@@ -95,58 +95,60 @@ export default function PlaylistPlayer({ playlist }: any) {
   onTouchStart={handleTouchStart}
   onTouchEnd={handleTouchEnd}
 >
+  <div className="relative w-full h-80 overflow-hidden flex items-center justify-center">
 
-  <div className="relative w-full h-80 flex items-center justify-center overflow-hidden">
-
-    {/* PREV */}
     <div
-      className="absolute opacity-40 transition-all duration-700 ease-in-out"
-      style={{ transform: "translateX(-150%) scale(0.8)" }}
+      className="flex items-center gap-6 transition-transform duration-700 ease-in-out"
+      style={{
+        transform: `translateX(calc(50% - ${activeIndex * 420}px - 210px))`,
+      }}
     >
-      <img
-        src={`https://img.youtube.com/vi/${extractYoutubeId(prevItem.url)}/0.jpg`}
-        className="w-80 h-48 rounded"
-      />
-    </div>
+      {items.map((item: any, index: number) => {
+        const isActive = index === activeIndex
 
-    {/* CURRENT */}
-    <div className="z-10 transition-all duration-700 ease-in-out">
-      <iframe
-        key={activeIndex}
-        src={`https://www.youtube.com/embed/${activeId}?autoplay=1`}
-        className="w-96 h-56 rounded shadow-xl"
-        allow="autoplay; fullscreen"
-        allowFullScreen
-      />
-    </div>
-
-    {/* NEXT */}
-    <div
-      className="absolute opacity-40 transition-all duration-700 ease-in-out"
-      style={{ transform: "translateX(150%) scale(0.8)" }}
-    >
-      <img
-        src={`https://img.youtube.com/vi/${extractYoutubeId(nextItem.url)}/0.jpg`}
-        className="w-80 h-48 rounded"
-      />
+        return (
+          <div
+            key={item.id}
+            className={`transition-all duration-700 ease-in-out ${
+              isActive ? "scale-100 opacity-100" : "scale-75 opacity-40"
+            }`}
+          >
+            {isActive ? (
+              <iframe
+                key={activeIndex}
+                src={`https://www.youtube.com/embed/${extractYoutubeId(
+                  item.url
+                )}?autoplay=1`}
+                className="w-[420px] h-[236px] rounded shadow-xl"
+                allow="autoplay; fullscreen"
+                allowFullScreen
+              />
+            ) : (
+              <img
+                src={`https://img.youtube.com/vi/${extractYoutubeId(
+                  item.url
+                )}/0.jpg`}
+                className="w-[420px] h-[236px] rounded"
+              />
+            )}
+          </div>
+        )
+      })}
     </div>
 
   </div>
 
-        {/* CONTROLS */}
-        <div className="flex gap-4 mt-4">
+  {/* CONTROLS */}
+  <div className="flex gap-4 mt-4">
+    <button onClick={prev} className="px-3 py-1 bg-white/10 rounded">
+      ⬅
+    </button>
 
-          <button onClick={prev} className="px-3 py-1 bg-white/10 rounded">
-            ⬅
-          </button>
-
-          <button onClick={next} className="px-3 py-1 bg-white/10 rounded">
-            ➡
-          </button>
-
-        </div>
-
-      </div>
+    <button onClick={next} className="px-3 py-1 bg-white/10 rounded">
+      ➡
+    </button>
+  </div>
+</div>
 
     </div>
   )
