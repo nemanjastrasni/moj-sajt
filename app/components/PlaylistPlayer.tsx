@@ -89,43 +89,49 @@ export default function PlaylistPlayer({ playlist }: any) {
 
       </div>
 
-      {/* CENTER CAROUSEL */}
-      <div
-        className="flex-1 flex flex-col items-center"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
+     {/* CENTER CAROUSEL */}
+<div
+  className="flex-1 flex flex-col items-center"
+  onTouchStart={handleTouchStart}
+  onTouchEnd={handleTouchEnd}
+>
 
-        <div className="relative w-full h-80 flex items-center justify-center overflow-hidden">
+  <div className="relative w-full h-80 flex items-center justify-center overflow-hidden">
 
-          {/* PREV */}
-          <div className="absolute scale-75 opacity-40 -translate-x-48">
-            <img
-              src={`https://img.youtube.com/vi/${extractYoutubeId(prevItem.url)}/0.jpg`}
-              className="w-80 h-48 rounded"
-            />
-          </div>
+    {/* PREV */}
+    <div
+      className="absolute opacity-40 transition-all duration-700 ease-in-out"
+      style={{ transform: "translateX(-150%) scale(0.8)" }}
+    >
+      <img
+        src={`https://img.youtube.com/vi/${extractYoutubeId(prevItem.url)}/0.jpg`}
+        className="w-80 h-48 rounded"
+      />
+    </div>
 
-          {/* CURRENT */}
-          <div className="z-10">
-            <iframe
-              key={activeIndex}
-              src={`https://www.youtube.com/embed/${activeId}?autoplay=1`}
-              className="w-96 h-56 rounded shadow-xl"
-              allow="autoplay; fullscreen"
-              allowFullScreen
-            />
-          </div>
+    {/* CURRENT */}
+    <div className="z-10 transition-all duration-700 ease-in-out">
+      <iframe
+        key={activeIndex}
+        src={`https://www.youtube.com/embed/${activeId}?autoplay=1`}
+        className="w-96 h-56 rounded shadow-xl"
+        allow="autoplay; fullscreen"
+        allowFullScreen
+      />
+    </div>
 
-          {/* NEXT */}
-          <div className="absolute scale-75 opacity-40 translate-x-48">
-            <img
-              src={`https://img.youtube.com/vi/${extractYoutubeId(nextItem.url)}/0.jpg`}
-              className="w-80 h-48 rounded"
-            />
-          </div>
+    {/* NEXT */}
+    <div
+      className="absolute opacity-40 transition-all duration-700 ease-in-out"
+      style={{ transform: "translateX(150%) scale(0.8)" }}
+    >
+      <img
+        src={`https://img.youtube.com/vi/${extractYoutubeId(nextItem.url)}/0.jpg`}
+        className="w-80 h-48 rounded"
+      />
+    </div>
 
-        </div>
+  </div>
 
         {/* CONTROLS */}
         <div className="flex gap-4 mt-4">
