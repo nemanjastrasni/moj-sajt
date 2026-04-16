@@ -17,6 +17,50 @@ export default function PlaylistPlayer({ playlist }: any) {
   const isPlaying = mode === "play"
   const isShuffle = mode === "shuffle"
 
+  useEffect(() => {
+  if (!(window as any).YT) return
+
+  const YT = (window as any).YT
+
+  if (!YT.Player) return
+
+  if (!activeItem) return
+
+  const id = extractYoutubeId(activeItem.url)
+
+  // 🔥 DESTROY ako postoji
+  if ((window as any).player) {
+    ;(window as any).player.destroy()
+  }
+
+  // 🔥 KREIRAJ PLAYER
+  ;(window as any).player = new YT.Player("yt-player", {
+    videoId: id,
+    playerVars: {
+      autoplay: 1,
+    },
+    events: {
+      onReady: (e: any) => {
+        e.target.playVideo()
+      },
+      onStateChange: (event: any) => {
+  if (event.data === 0) {
+    console.log("YT ENDED")
+
+    if (mode === "shuffle") {
+      const randomIndex = Math.floor(Math.random() * items.length)
+      setActiveIndex(randomIndex)
+    }
+
+    if (mode === "play") {
+      setActiveIndex((prev) => (prev + 1) % items.length)
+    }
+  }
+},
+    },
+  })
+}, [activeIndex, mode])
+
   // 🔥 FETCH TITLE + DURATION
   useEffect(() => {
     items.forEach(async (item: any) => {
@@ -49,6 +93,16 @@ export default function PlaylistPlayer({ playlist }: any) {
       prev === 0 ? items.length - 1 : prev - 1
     )
   }
+  // Youtube script
+  useEffect(() => {
+  const tag = document.createElement("script")
+  tag.src = "https://www.youtube.com/iframe_api"
+  document.body.appendChild(tag)
+
+  ;(window as any).onYouTubeIframeAPIReady = () => {
+    console.log("YT API READY")
+  }
+}, [])
 
   // 🔥 AUTOPLAY (STABILAN)
   useEffect(() => {
@@ -182,24 +236,22 @@ export default function PlaylistPlayer({ playlist }: any) {
         {/* 🔥 DUGMAD (SADA NA PRAVOM MESTU) */}
         <div className="flex gap-2 mb-3">
           <button
-            onClick={() => setMode("play")}
-            className={`px-2 py-1 text-xs rounded-md
-            ${mode === "play"
-              ? "bg-white/20 text-white"
-              : "bg-white/5 text-gray-400 hover:bg-white/10"}`}
-          >
-            ▶ Play
-          </button>
+  onClick={() => setMode((prev) => (prev === "play" ? null : "play"))}
+  className={`px-3 py-1 rounded ${
+    mode === "play" ? "bg-green-500" : "bg-white/10"
+  }`}
+>
+  ▶ Play
+</button>
 
-          <button
-            onClick={() => setMode("shuffle")}
-            className={`px-2 py-1 text-xs rounded-md
-            ${mode === "shuffle"
-              ? "bg-white/20 text-white"
-              : "bg-white/5 text-gray-400 hover:bg-white/10"}`}
-          >
-            🔀 Shuffle
-          </button>
+<button
+  onClick={() => setMode((prev) => (prev === "shuffle" ? null : "shuffle"))}
+  className={`px-3 py-1 rounded ${
+    mode === "shuffle" ? "bg-blue-500" : "bg-white/10"
+  }`}
+>
+  🔀 Shuffle
+</button>
         </div>
 
         <div className="relative w-full h-80 flex items-center justify-center">
@@ -214,14 +266,11 @@ export default function PlaylistPlayer({ playlist }: any) {
 
           {/* CURRENT */}
           <div className="z-10">
-            <iframe
-              id="yt-player"
-              src={`https://www.youtube.com/embed/${activeId}?enablejsapi=1&autoplay=1`}
-              className="w-[420px] h-[236px] rounded shadow-xl"
-              allow="autoplay; fullscreen"
-              allowFullScreen
-             />
-          </div>
+  <div
+    id="yt-player"
+    className="w-[420px] h-[236px] rounded shadow-xl overflow-hidden"
+  />
+</div>
 
           {/* NEXT */}
           <div className="absolute right-[15%] opacity-40 scale-75">
