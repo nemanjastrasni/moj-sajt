@@ -1,6 +1,16 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
+export async function DELETE(req: Request) {
+  const { itemId } = await req.json()
+
+  await prisma.listeningItem.delete({
+    where: { id: itemId },
+  })
+
+  return Response.json({ ok: true })
+}
+
 export async function POST(req: Request) {
   try {
     const formData = await req.formData()

@@ -226,7 +226,85 @@ export default function PlaylistPlayer({ playlist }: any) {
             className={`p-2 rounded cursor-pointer text-sm 
             ${activeIndex === index ? "bg-white/10" : "hover:bg-white/5"}`}
           >
-            🎵 {meta[item.id]?.title || "Loading..."}
+            <div className="flex justify-between items-center">
+  <span>
+    🎵 {meta[item.id]?.title || "Loading..."}
+  </span>
+
+  <button
+    onClick={async (e) => {
+      e.stopPropagation()
+
+      await fetch("/api/listening-playlist/item", {
+  method: "DELETE",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ itemId: item.id }),
+})
+
+      location.reload()
+    }}
+    className="text-red-400 text-xs"
+  >
+    ✕
+  </button>
+</div>
+<div className="flex gap-1 ml-2">
+  <button
+    onClick={async (e) => {
+  e.stopPropagation()
+
+  const newItems = [...items]
+  if (index === 0) return
+
+  ;[newItems[index - 1], newItems[index]] =
+    [newItems[index], newItems[index - 1]]
+
+  const newOrderArray = newItems.map(i => i.id)
+
+  await fetch("/api/listening-playlist/reorder", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      playlistId: playlist.id,
+      items: newOrderArray,
+    }),
+  })
+
+  location.reload()
+}}
+    className="text-xs"
+  >
+    ↑
+  </button>
+
+  <button
+    onClick={async (e) => {
+  e.stopPropagation()
+
+  const newItems = [...items]
+  if (index === items.length - 1) return
+
+  ;[newItems[index + 1], newItems[index]] =
+    [newItems[index], newItems[index + 1]]
+
+  const newOrderArray = newItems.map(i => i.id)
+
+  await fetch("/api/listening-playlist/reorder", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      playlistId: playlist.id,
+      items: newOrderArray,
+    }),
+  })
+
+  location.reload()
+}}
+    className="text-xs"
+  >
+    ↓
+  </button>
+</div>
           </div>
         ))}
       </div>

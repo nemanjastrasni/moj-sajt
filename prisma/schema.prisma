@@ -159,6 +159,7 @@ model ListeningItem {
   url         String
   type        String   // "youtube" | "spotify"
   createdAt   DateTime @default(now())
+  order Int @default(0)
 
   playlist    ListeningPlaylist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
 }
