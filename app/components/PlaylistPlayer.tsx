@@ -202,7 +202,7 @@ export default function PlaylistPlayer({ playlist }: any) {
   ? items[(activeIndex + 1) % items.length]
   : null
 
-  const activeId = activeItem ? extractYoutubeId(activeItem.url) : ""
+  const activeId = activeItem?.url ? extractYoutubeId(activeItem.url) : ""
 
   return (
     <div className="relative flex gap-10 pb-10 w-full">
@@ -264,7 +264,7 @@ export default function PlaylistPlayer({ playlist }: any) {
           {/* PREV */}
           <div className="absolute left-[15%] opacity-40 scale-75">
             <img
-              src={`https://img.youtube.com/vi/${extractYoutubeId(prevItem.url)}/0.jpg`}
+              src={`https://img.youtube.com/vi/${prevItem?.url ? extractYoutubeId(prevItem.url) : ""}/0.jpg`}
               className="w-[260px] h-[150px] rounded"
             />
           </div>
@@ -280,7 +280,7 @@ export default function PlaylistPlayer({ playlist }: any) {
           {/* NEXT */}
           <div className="absolute right-[15%] opacity-40 scale-75">
             <img
-              src={`https://img.youtube.com/vi/${extractYoutubeId(nextItem.url)}/0.jpg`}
+              src={`https://img.youtube.com/vi/${nextItem?.url ? extractYoutubeId(nextItem.url) : ""}/0.jpg`}
               className="w-[260px] h-[150px] rounded"
             />
           </div>
