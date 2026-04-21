@@ -10,14 +10,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing name" }, { status: 400 })
     }
 
-    await prisma.listeningPlaylist.create({
+    const playlist = await prisma.listeningPlaylist.create({
       data: { name },
     })
 
     return NextResponse.redirect(
-      new URL("/listening-playlist", req.url),
+      new URL(`/listening-playlist/${playlist.id}`, req.url),
       303
     )
+
   } catch (error) {
     console.error("CREATE ERROR:", error)
     return NextResponse.json({ error: "Server error" }, { status: 500 })
