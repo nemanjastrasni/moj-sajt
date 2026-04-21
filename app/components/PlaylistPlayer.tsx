@@ -13,7 +13,7 @@ export default function PlaylistPlayer({ playlist }: any) {
   const [mode, setMode] = useState<"play" | "shuffle" | null>(null)
 
   // 🎯 DERIVED STATE
-  const activeItem = items[activeIndex]
+  const activeItem = items?.[activeIndex] || null
   const isPlaying = mode === "play"
   const isShuffle = mode === "shuffle"
 
@@ -194,10 +194,15 @@ export default function PlaylistPlayer({ playlist }: any) {
     touchStartX.current = null
   }
 
-  const prevItem = items[(activeIndex - 1 + items.length) % items.length]
-  const nextItem = items[(activeIndex + 1) % items.length]
+  const prevItem = items.length
+  ? items[(activeIndex - 1 + items.length) % items.length]
+  : null
 
-  const activeId = extractYoutubeId(activeItem.url)
+  const nextItem = items.length
+  ? items[(activeIndex + 1) % items.length]
+  : null
+
+  const activeId = activeItem ? extractYoutubeId(activeItem.url) : ""
 
   return (
     <div className="relative flex gap-10 pb-10 w-full">
