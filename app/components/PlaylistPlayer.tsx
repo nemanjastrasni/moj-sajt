@@ -1,4 +1,17 @@
 "use client"
+import {
+  DndContext,
+  closestCenter,
+} from "@dnd-kit/core"
+
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable"
+
+import { CSS } from "@dnd-kit/utilities"
 
 import { useEffect, useState, useRef } from "react"
 
@@ -16,6 +29,7 @@ export default function PlaylistPlayer({ playlist }: any) {
   const activeItem = items?.[activeIndex] || null
   const isPlaying = mode === "play"
   const isShuffle = mode === "shuffle"
+  
 
   useEffect(() => {
   if (!(window as any).YT) return
@@ -219,95 +233,49 @@ export default function PlaylistPlayer({ playlist }: any) {
 
       {/* LEFT LIST */}
       <div className="w-72 shrink-0 space-y-2 max-h-[400px] overflow-y-auto">
-        {items.map((item: any, index: number) => (
-          <div
-            key={item.id}
-            onClick={() => setActiveIndex(index)}
-            className={`p-2 rounded cursor-pointer text-sm 
-            ${activeIndex === index ? "bg-white/10" : "hover:bg-white/5"}`}
-          >
-            <div className="flex justify-between items-center">
-  <span>
-    🎵 {meta[item.id]?.title || "Loading..."}
-  </span>
 
-  <button
-    onClick={async (e) => {
-      e.stopPropagation()
+  <DndContext
+    collisionDetection={closestCenter}
+    onDragEnd={async (event) => {
+      const { active, over } = event
+      if (!over || active.id === over.id) return
 
-      await fetch("/api/listening-playlist/item", {
-  method: "DELETE",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ itemId: item.id }),
-})
+      const oldIndex = items.findIndex((i: any) => i.id === active.id)
+      const newIndex = items.findIndex((i: any) => i.id === over.id)
+
+      const newItems = arrayMove(items, oldIndex, newIndex)
+
+      await fetch("/api/listening-playlist/reorder", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          playlistId: playlist.id,
+          items: newItems.map((i: any) => i.id),
+        }),
+      })
 
       location.reload()
     }}
-    className="text-red-400 text-xs"
   >
-    ✕
-  </button>
+
+    <SortableContext items={items} strategy={verticalListSortingStrategy}>
+
+      {items.map((item: any, index: number) => (
+        <SortableItem
+          key={item.id}
+          item={item}
+          index={index}
+          activeIndex={activeIndex}
+          setActiveIndex={setActiveIndex}
+          meta={meta}
+          items={items}
+          playlist={playlist}
+        />
+      ))}
+
+    </SortableContext>
+  </DndContext>
 </div>
-<div className="flex gap-1 ml-2">
-  <button
-    onClick={async (e) => {
-  e.stopPropagation()
-
-  const newItems = [...items]
-  if (index === 0) return
-
-  ;[newItems[index - 1], newItems[index]] =
-    [newItems[index], newItems[index - 1]]
-
-  const newOrderArray = newItems.map(i => i.id)
-
-  await fetch("/api/listening-playlist/reorder", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      playlistId: playlist.id,
-      items: newOrderArray,
-    }),
-  })
-
-  location.reload()
-}}
-    className="text-xs"
-  >
-    ↑
-  </button>
-
-  <button
-    onClick={async (e) => {
-  e.stopPropagation()
-
-  const newItems = [...items]
-  if (index === items.length - 1) return
-
-  ;[newItems[index + 1], newItems[index]] =
-    [newItems[index], newItems[index + 1]]
-
-  const newOrderArray = newItems.map(i => i.id)
-
-  await fetch("/api/listening-playlist/reorder", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      playlistId: playlist.id,
-      items: newOrderArray,
-    }),
-  })
-
-  location.reload()
-}}
-    className="text-xs"
-  >
-    ↓
-  </button>
-</div>
-          </div>
-        ))}
-      </div>
 
       {/* CENTER PLAYER */}
       <div
@@ -394,4 +362,63 @@ function parseDuration(duration: string) {
   const seconds = match?.[2] ? parseInt(match[2]) : 0
 
   return minutes * 60 + seconds
+}
+
+function SortableItem({
+  item,
+  index,
+  activeIndex,
+  setActiveIndex,
+  meta,
+  items,
+  playlist,
+}: any) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: item.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={() => setActiveIndex(index)}
+      className={`p-2 rounded cursor-grab text-sm 
+      ${activeIndex === index ? "bg-white/10" : "hover:bg-white/5"}`}
+    >
+      <div className="flex justify-between items-center">
+        <span>
+          🎵 {meta[item.id]?.title || "Loading..."}
+        </span>
+
+        {/* DELETE */}
+        <button
+          onClick={async (e) => {
+            e.stopPropagation()
+
+            await fetch("/api/listening-playlist/item", {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ itemId: item.id }),
+            })
+
+            location.reload()
+          }}
+          className="text-red-400 text-xs"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  )
 }
