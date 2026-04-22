@@ -16,9 +16,21 @@ export default async function Page({ params }: any) {
   return (
     <div className="max-w-3xl mx-auto px-6 py-10 text-white">
 
-      <h1 className="text-3xl font-bold mb-6">
-        🎧 {playlist.name}
-      </h1>
+      <form
+  action={`/api/listening-playlist/${playlist.id}/rename`}
+  method="POST"
+  className="flex gap-2 mb-6"
+>
+  <input
+    name="name"
+    defaultValue={playlist.name}
+    className="text-2xl font-bold bg-transparent border-b border-gray-600 outline-none"
+  />
+
+  <button className="text-sm text-green-400">
+    Save
+  </button>
+</form>
 
       {/* ADD ITEM */}
       <form
