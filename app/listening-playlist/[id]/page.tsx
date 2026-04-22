@@ -1,12 +1,15 @@
 import { prisma } from "@/lib/prisma"
 import PlaylistPlayer from "@/app/components/PlaylistPlayer"
+import SortablePlaylist from "@/app/components/SortablePlaylist"
 
 export default async function Page({ params }: any) {
   const playlist = await prisma.listeningPlaylist.findUnique({
     where: { id: params.id },
     include: {
-      items: true,
-    },
+  items: {
+    orderBy: { order: "asc" },
+  },
+}
   })
 
   if (!playlist) {
@@ -54,6 +57,7 @@ export default async function Page({ params }: any) {
 
       {/* PLAYER + ITEMS */}
       <PlaylistPlayer playlist={playlist} />
+      <SortablePlaylist items={playlist.items} />
 
     </div>
   )
