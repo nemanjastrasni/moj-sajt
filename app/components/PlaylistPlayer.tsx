@@ -254,8 +254,6 @@ export default function PlaylistPlayer({ playlist }: any) {
           items: newItems.map((i: any) => i.id),
         }),
       })
-
-      location.reload()
     }}
   >
 
@@ -271,6 +269,7 @@ export default function PlaylistPlayer({ playlist }: any) {
           meta={meta}
           items={items}
           playlist={playlist}
+          setItems={setItems}
         />
       ))}
 
@@ -373,6 +372,7 @@ function SortableItem({
   meta,
   items,
   playlist,
+  setItems,
 }: any) {
   const {
     attributes,
@@ -404,21 +404,21 @@ function SortableItem({
 
         {/* DELETE */}
         <button
-          onClick={async (e) => {
-            e.stopPropagation()
+  onClick={async (e) => {
+    e.stopPropagation()
 
-            await fetch("/api/listening-playlist/item", {
-              method: "DELETE",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ itemId: item.id }),
-            })
+    if (!confirm("Obrisati pesmu?")) return // 🔥 OVDE
 
-            location.reload()
-          }}
-          className="text-red-400 text-xs"
-        >
-          ✕
-        </button>
+    await fetch(`/api/listening-playlist/item/${item.id}`, {
+      method: "DELETE",
+    })
+
+    setItems((prev: any[]) => prev.filter(i => i.id !== item.id))
+  }}
+  className="text-red-400 text-xs"
+>
+  ✕
+</button>
       </div>
     </div>
   )
