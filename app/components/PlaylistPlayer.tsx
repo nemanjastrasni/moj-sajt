@@ -16,7 +16,7 @@ import { CSS } from "@dnd-kit/utilities"
 import { useEffect, useState, useRef } from "react"
 
 export default function PlaylistPlayer({ playlist }: any) {
-  const items = playlist.items
+  const [items, setItems] = useState(playlist.items)
 
   const timerRef = useRef<any>(null)
   const touchStartX = useRef<number | null>(null)
@@ -244,6 +244,7 @@ export default function PlaylistPlayer({ playlist }: any) {
       const newIndex = items.findIndex((i: any) => i.id === over.id)
 
       const newItems = arrayMove(items, oldIndex, newIndex)
+      setItems(newItems)
 
       await fetch("/api/listening-playlist/reorder", {
         method: "PUT",
