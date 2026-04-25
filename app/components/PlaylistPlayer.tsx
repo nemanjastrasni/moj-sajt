@@ -284,24 +284,36 @@ export default function PlaylistPlayer({ playlist }: any) {
 
         {/* 🔥 DUGMAD (SADA NA PRAVOM MESTU) */}
         <div className="flex gap-2 mb-3">
-          <button
-  onClick={() => setMode((prev) => (prev === "play" ? null : "play"))}
-  className={`px-3 py-1 rounded ${
-    mode === "play" ? "bg-green-500" : "bg-white/10"
-  }`}
->
-  ▶ Play
-</button>
+  <button
+    onClick={() => {
+      if (mode === "play" && items.length > 1) {
+        setMode(null)
+      } else {
+        setMode("play")
+      }
+    }}
+    className={`px-3 py-1 rounded ${
+      mode === "play" ? "bg-green-500" : "bg-white/10"
+    }`}
+  >
+    ▶ Play
+  </button>
 
-<button
-  onClick={() => setMode((prev) => (prev === "shuffle" ? null : "shuffle"))}
-  className={`px-3 py-1 rounded ${
-    mode === "shuffle" ? "bg-blue-500" : "bg-white/10"
-  }`}
->
-  🔀 Shuffle
-</button>
-        </div>
+  <button
+    onClick={() => {
+      if (mode === "shuffle" && items.length > 1) {
+        setMode(null)
+      } else {
+        setMode("shuffle")
+      }
+    }}
+    className={`px-3 py-1 rounded ${
+      mode === "shuffle" ? "bg-blue-500" : "bg-white/10"
+    }`}
+  >
+    🔀 Shuffle
+  </button>
+</div>
 
         <div className="relative w-full h-80 flex items-center justify-center">
 
