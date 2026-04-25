@@ -7,10 +7,11 @@ export default async function Page({ params }: any) {
   const playlist = await prisma.listeningPlaylist.findUnique({
     where: { id: params.id },
     include: {
-  items: {
-    orderBy: { order: "asc" },
-  },
-}
+      items: {
+        orderBy: { order: "asc" },
+      },
+      user: true,
+    },
   })
 
   if (!playlist) {
@@ -30,6 +31,16 @@ export default async function Page({ params }: any) {
     defaultValue={playlist.name}
     className="text-2xl font-bold bg-transparent border-b border-gray-600 outline-none"
   />
+  <select
+  name="category"
+  defaultValue={playlist.category ?? "Mix"}
+  className="p-2 rounded bg-black border border-gray-700"
+>
+  <option value="Domace">Domaće</option>
+  <option value="Strane">Strane</option>
+  <option value="Narodne">Narodne</option>
+  <option value="Mix">Mix</option>
+</select>
 
   <button className="text-sm text-green-400">
     Save

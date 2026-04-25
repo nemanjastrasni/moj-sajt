@@ -36,12 +36,13 @@ export default async function ListeningPlaylistsPage() {
         />
         <select
   name="category"
+  defaultValue="Mix"
   className="p-2 rounded bg-black border border-gray-700"
 >
   <option value="Domace">Domaće</option>
   <option value="Strane">Strane</option>
   <option value="Narodne">Narodne</option>
-  <option value="Mix" selected>Mix</option>
+  <option value="Mix">Mix</option>
 </select>
         <button
           type="submit"

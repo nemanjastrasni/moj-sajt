@@ -404,38 +404,30 @@ function SortableItem({
         : "hover:bg-white/5"
     }`}
   >
-    {/* DRAG HANDLE */}
-    <div
-  {...attributes}
-  {...listeners}
-  className="flex justify-between items-center gap-2 touch-none"
->
+    
+  <div className="flex justify-between items-center gap-2">
+  {/* CLICK TO PLAY */}
+  <span
+    onClick={() => setActiveIndex(currentIndex)}
+    className="cursor-pointer flex-1 text-left"
+  >
+    🎵 {meta[item.id]?.title || "Loading..."}
+  </span>
 
-      {/* CLICK TO PLAY */}
-      <span
-        onClick={() => setActiveIndex(currentIndex)}
-        className="cursor-pointer flex-1"
-      >
-        🎵 {meta[item.id]?.title || "Loading..."}
-      </span>
-
-      
-      
-
-      {/* DELETE */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          setDeleteTarget(item)
-        }}
-        className="text-red-400 text-xs"
-      >
-        ✕
-      </button>
-    </div>
-  </div>
+  {/* DELETE */}
+  <button
+    type="button"
+    onClick={(e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setDeleteTarget(item)
+    }}
+    className="text-red-400 text-xs"
+  >
+    ✕
+  </button>
+</div>
+</div>
 )
 }
 

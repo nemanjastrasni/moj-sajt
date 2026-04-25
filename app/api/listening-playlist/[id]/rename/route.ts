@@ -6,6 +6,8 @@ export async function POST(req: Request, context: any) {
     const { id } = context.params
     const formData = await req.formData()
     const name = formData.get("name") as string
+    const category =
+  (formData.get("category") as string) || "Mix"
 
     if (!name) {
       return NextResponse.json({ error: "Missing name" }, { status: 400 })
@@ -13,7 +15,10 @@ export async function POST(req: Request, context: any) {
 
     await prisma.listeningPlaylist.update({
       where: { id },
-      data: { name },
+      data: {
+  name,
+  category,
+},
     })
 
     return NextResponse.redirect(
