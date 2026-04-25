@@ -21,6 +21,19 @@ import { useEffect, useState, useRef } from "react"
 
 export default function PlaylistPlayer({ playlist }: any) {
   const [items, setItems] = useState(playlist.items)
+  const sensors = useSensors(
+  useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 8,
+    },
+  }),
+  useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 150,
+      tolerance: 5,
+    },
+  })
+)
 
   const timerRef = useRef<any>(null)
   const touchStartX = useRef<number | null>(null)
@@ -162,7 +175,8 @@ export default function PlaylistPlayer({ playlist }: any) {
         <div className="w-72 shrink-0 space-y-2 max-h-[400px] overflow-y-auto">
 
           <DndContext
-            collisionDetection={closestCenter}
+  sensors={sensors}
+  collisionDetection={closestCenter}
             onDragEnd={async (event) => {
               const { active, over } = event
 
@@ -401,13 +415,13 @@ function SortableItem({
       </span>
 
       {/* DRAG HANDLE */}
-      <span
-        {...attributes}
-        {...listeners}
-        className="cursor-grab text-gray-400 text-sm px-2"
-      >
-        ☰
-      </span>
+      <div
+  {...attributes}
+  {...listeners}
+  className="cursor-grab text-gray-400 text-sm px-3 py-2 flex items-center"
+>
+  ☰
+</div>
 
       {/* DELETE */}
       <button
@@ -448,3 +462,4 @@ function parseDuration(duration: string) {
 
   return minutes * 60 + seconds
 }
+
