@@ -5,14 +5,19 @@ import SharePlaylistButton from "@/app/components/SharePlaylistButton"
 
 export default async function Page({ params }: any) {
   const playlist = await prisma.listeningPlaylist.findUnique({
-    where: { id: params.id },
-    include: {
-      items: {
-        orderBy: { order: "asc" },
+  where: { id: params.id },
+  select: {
+    id: true,
+    name: true,
+    category: true,
+    user: true,
+    items: {
+      orderBy: {
+        order: "asc",
       },
-      user: true,
     },
-  })
+  }
+})
 
   if (!playlist) {
     return <div className="p-10 text-white">Ne postoji</div>
