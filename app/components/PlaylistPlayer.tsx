@@ -1,4 +1,5 @@
 "use client"
+
 import {
   DndContext,
   closestCenter,
@@ -12,7 +13,6 @@ import {
 } from "@dnd-kit/sortable"
 
 import { CSS } from "@dnd-kit/utilities"
-
 import { useEffect, useState, useRef } from "react"
 
 export default function PlaylistPlayer({ playlist }: any) {
@@ -25,57 +25,84 @@ export default function PlaylistPlayer({ playlist }: any) {
   const [meta, setMeta] = useState<any>({})
   const [mode, setMode] = useState<"play" | "shuffle" | null>(null)
 
-  // 🎯 DERIVED STATE
+  // CUSTOM DELETE MODAL
+  const [deleteTarget, setDeleteTarget] = useState<any>(null)
+
   const activeItem = items?.[activeIndex] || null
-  const isPlaying = mode === "play"
-  const isShuffle = mode === "shuffle"
-  
+  const activeId = activeItem?.url
+    ? extractYoutubeId(activeItem.url)
+    : ""
+
+  const prevItem = items.length
+    ? items[(activeIndex - 1 + items.length) % items.length]
+    : null
+
+  const nextItem = items.length
+    ? items[(activeIndex + 1) % items.length]
+    : null
+
+  const next = () => {
+    setActiveIndex((prev) => (prev + 1) % items.length)
+  }
+
+  const prev = () => {
+    setActiveIndex((prev) =>
+      prev === 0 ? items.length - 1 : prev - 1
+    )
+  }
 
   useEffect(() => {
-  if (!(window as any).YT) return
+    const tag = document.createElement("script")
+    tag.src = "https://www.youtube.com/iframe_api"
+    document.body.appendChild(tag)
 
-  const YT = (window as any).YT
+    ;(window as any).onYouTubeIframeAPIReady = () => {
+      console.log("YT API READY")
+    }
+  }, [])
 
-  if (!YT.Player) return
+  useEffect(() => {
+    if (!(window as any).YT) return
 
-  if (!activeItem) return
+    const YT = (window as any).YT
+    if (!YT.Player) return
+    if (!activeItem) return
 
-  const id = extractYoutubeId(activeItem.url)
+    const id = extractYoutubeId(activeItem.url)
 
-  // 🔥 DESTROY ako postoji
-  if ((window as any).player) {
-    ;(window as any).player.destroy()
-  }
+    if ((window as any).player) {
+      ;(window as any).player.destroy()
+    }
 
-  // 🔥 KREIRAJ PLAYER
-  ;(window as any).player = new YT.Player("yt-player", {
-    videoId: id,
-    playerVars: {
-      autoplay: 1,
-    },
-    events: {
-      onReady: (e: any) => {
-        e.target.playVideo()
+    ;(window as any).player = new YT.Player("yt-player", {
+      videoId: id,
+      playerVars: {
+        autoplay: 1,
       },
-      onStateChange: (event: any) => {
-  if (event.data === 0) {
-    console.log("YT ENDED")
+      events: {
+        onReady: (e: any) => {
+          e.target.playVideo()
+        },
+        onStateChange: (event: any) => {
+          if (event.data === 0) {
+            if (mode === "shuffle") {
+              const randomIndex = Math.floor(
+                Math.random() * items.length
+              )
+              setActiveIndex(randomIndex)
+            }
 
-    if (mode === "shuffle") {
-      const randomIndex = Math.floor(Math.random() * items.length)
-      setActiveIndex(randomIndex)
-    }
+            if (mode === "play") {
+              setActiveIndex((prev) =>
+                (prev + 1) % items.length
+              )
+            }
+          }
+        },
+      },
+    })
+  }, [activeIndex, mode])
 
-    if (mode === "play") {
-      setActiveIndex((prev) => (prev + 1) % items.length)
-    }
-  }
-},
-    },
-  })
-}, [activeIndex, mode])
-
-  // 🔥 FETCH TITLE + DURATION
   useEffect(() => {
     items.forEach(async (item: any) => {
       if (item.type !== "youtube") return
@@ -97,29 +124,6 @@ export default function PlaylistPlayer({ playlist }: any) {
     })
   }, [items])
 
-  // ▶ NEXT / PREV
-  const next = () => {
-    setActiveIndex((prev) => (prev + 1) % items.length)
-  }
-
-  const prev = () => {
-    setActiveIndex((prev) =>
-      prev === 0 ? items.length - 1 : prev - 1
-    )
-  }
-  // Youtube script
-  useEffect(() => {
-  const tag = document.createElement("script")
-  tag.src = "https://www.youtube.com/iframe_api"
-  document.body.appendChild(tag)
-
-  ;(window as any).onYouTubeIframeAPIReady = () => {
-    console.log("YT API READY")
-  }
-}, [])
-
-
-  // 🔥 SWIPE
   const handleTouchStart = (e: any) => {
     touchStartX.current = e.touches[0].clientX
   }
@@ -127,7 +131,8 @@ export default function PlaylistPlayer({ playlist }: any) {
   const handleTouchEnd = (e: any) => {
     if (touchStartX.current === null) return
 
-    const diff = e.changedTouches[0].clientX - touchStartX.current
+    const diff =
+      e.changedTouches[0].clientX - touchStartX.current
 
     if (diff > 50) prev()
     if (diff < -50) next()
@@ -135,170 +140,213 @@ export default function PlaylistPlayer({ playlist }: any) {
     touchStartX.current = null
   }
 
-  const prevItem = items.length
-  ? items[(activeIndex - 1 + items.length) % items.length]
-  : null
-
-  const nextItem = items.length
-  ? items[(activeIndex + 1) % items.length]
-  : null
-
-  const activeId = activeItem?.url ? extractYoutubeId(activeItem.url) : ""
-
   return (
-    <div className="relative flex gap-10 pb-10 w-full">
+    <>
+      <div className="relative flex gap-10 pb-10 w-full">
 
-      {/* 🔥 BACKGROUND */}
-      <div
-        className="absolute inset-0 -z-10 opacity-30 blur-2xl"
-        style={{
-          backgroundImage: `url(https://img.youtube.com/vi/${activeId}/0.jpg)`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      />
+        {/* BACKGROUND */}
+        <div
+          className="absolute inset-0 -z-10 opacity-30 blur-2xl"
+          style={{
+            backgroundImage: `url(https://img.youtube.com/vi/${activeId}/0.jpg)`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
 
-      {/* LEFT LIST */}
-      <div className="w-72 shrink-0 space-y-2 max-h-[400px] overflow-y-auto">
+        {/* LEFT LIST */}
+        <div className="w-72 shrink-0 space-y-2 max-h-[400px] overflow-y-auto">
 
-  <DndContext
-    collisionDetection={closestCenter}
-    onDragEnd={async (event) => {
-      const { active, over } = event
-      if (!over || active.id === over.id) return
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={async (event) => {
+              const { active, over } = event
 
-      const oldIndex = items.findIndex((i: any) => i.id === active.id)
-      const newIndex = items.findIndex((i: any) => i.id === over.id)
+              if (!over || active.id === over.id) return
 
-      const newItems = arrayMove(items, oldIndex, newIndex)
-      setItems(newItems)
+              const oldIndex = items.findIndex(
+                (i: any) => i.id === active.id
+              )
 
-      await fetch("/api/listening-playlist/reorder", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          playlistId: playlist.id,
-          items: newItems.map((i: any) => i.id),
-        }),
-      })
-    }}
-  >
+              const newIndex = items.findIndex(
+                (i: any) => i.id === over.id
+              )
 
-    <SortableContext items={items} strategy={verticalListSortingStrategy}>
+              const newItems = arrayMove(
+                items,
+                oldIndex,
+                newIndex
+              )
 
-      {items.map((item: any) => (
-  <SortableItem
-    key={item.id}
-    item={item}
-    activeIndex={activeIndex}
-    setActiveIndex={setActiveIndex}
-    meta={meta}
-    items={items}
-    setItems={setItems}
-  />
-))}
+              setItems(newItems)
 
-    </SortableContext>
-  </DndContext>
-</div>
-
-      {/* CENTER PLAYER */}
-      <div
-        className="flex-1 flex flex-col items-center justify-center"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
-
-        {/* 🔥 DUGMAD (SADA NA PRAVOM MESTU) */}
-        <div className="flex gap-2 mb-3">
-  <button
-    onClick={() => {
-      if (mode === "play" && items.length > 1) {
-        setMode(null)
-      } else {
-        setMode("play")
-      }
-    }}
-    className={`px-3 py-1 rounded ${
-      mode === "play" ? "bg-green-500" : "bg-white/10"
-    }`}
-  >
-    ▶ Play
-  </button>
-
-  <button
-    onClick={() => {
-      if (mode === "shuffle" && items.length > 1) {
-        setMode(null)
-      } else {
-        setMode("shuffle")
-      }
-    }}
-    className={`px-3 py-1 rounded ${
-      mode === "shuffle" ? "bg-blue-500" : "bg-white/10"
-    }`}
-  >
-    🔀 Shuffle
-  </button>
-</div>
-
-        <div className="relative w-full h-80 flex items-center justify-center">
-
-          {/* PREV */}
-          <div className="absolute left-[15%] opacity-40 scale-75">
-            <img
-              src={`https://img.youtube.com/vi/${prevItem?.url ? extractYoutubeId(prevItem.url) : ""}/0.jpg`}
-              className="w-[260px] h-[150px] rounded"
-            />
-          </div>
-
-          {/* CURRENT */}
-          <div className="z-10">
-  <div
-    id="yt-player"
-    className="w-[420px] h-[236px] rounded shadow-xl overflow-hidden"
-  />
-</div>
-
-          {/* NEXT */}
-          <div className="absolute right-[15%] opacity-40 scale-75">
-            <img
-              src={`https://img.youtube.com/vi/${nextItem?.url ? extractYoutubeId(nextItem.url) : ""}/0.jpg`}
-              className="w-[260px] h-[150px] rounded"
-            />
-          </div>
-
+              await fetch(
+                "/api/listening-playlist/reorder",
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    playlistId: playlist.id,
+                    items: newItems.map(
+                      (i: any) => i.id
+                    ),
+                  }),
+                }
+              )
+            }}
+          >
+            <SortableContext
+              items={items}
+              strategy={verticalListSortingStrategy}
+            >
+              {items.map((item: any) => (
+                <SortableItem
+                  key={item.id}
+                  item={item}
+                  activeIndex={activeIndex}
+                  setActiveIndex={setActiveIndex}
+                  meta={meta}
+                  items={items}
+                  setItems={setItems}
+                  setDeleteTarget={setDeleteTarget}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
         </div>
 
-        {/* strelice */}
-        <div className="flex gap-3 mt-4">
-          <button onClick={prev} className="px-2 py-1 bg-white/10 rounded text-xs">
-            ⬅
-          </button>
-          <button onClick={next} className="px-2 py-1 bg-white/10 rounded text-xs">
-            ➡
-          </button>
-        </div>
+        {/* PLAYER */}
+        <div
+          className="flex-1 flex flex-col items-center justify-center"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div className="flex gap-2 mb-3">
+            <button
+              onClick={() => setMode("play")}
+              className={`px-3 py-1 rounded ${
+                mode === "play"
+                  ? "bg-green-500"
+                  : "bg-white/10"
+              }`}
+            >
+              ▶ Play
+            </button>
 
+            <button
+              onClick={() => setMode("shuffle")}
+              className={`px-3 py-1 rounded ${
+                mode === "shuffle"
+                  ? "bg-blue-500"
+                  : "bg-white/10"
+              }`}
+            >
+              🔀 Shuffle
+            </button>
+          </div>
+
+          <div className="relative w-full h-80 flex items-center justify-center">
+
+            <div className="absolute left-[15%] opacity-40 scale-75">
+              <img
+                src={`https://img.youtube.com/vi/${
+                  prevItem?.url
+                    ? extractYoutubeId(prevItem.url)
+                    : ""
+                }/0.jpg`}
+                className="w-[260px] h-[150px] rounded"
+              />
+            </div>
+
+            <div className="z-10">
+              <div
+                id="yt-player"
+                className="w-[420px] h-[236px] rounded shadow-xl overflow-hidden"
+              />
+            </div>
+
+            <div className="absolute right-[15%] opacity-40 scale-75">
+              <img
+                src={`https://img.youtube.com/vi/${
+                  nextItem?.url
+                    ? extractYoutubeId(nextItem.url)
+                    : ""
+                }/0.jpg`}
+                className="w-[260px] h-[150px] rounded"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-3 mt-4">
+            <button
+              onClick={prev}
+              className="px-2 py-1 bg-white/10 rounded text-xs"
+            >
+              ⬅
+            </button>
+
+            <button
+              onClick={next}
+              className="px-2 py-1 bg-white/10 rounded text-xs"
+            >
+              ➡
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+
+      {/* DELETE MODAL */}
+      {deleteTarget && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999]">
+          <div className="bg-[#111] border border-gray-700 rounded-xl p-6 w-[380px]">
+            <h3 className="text-lg font-semibold mb-3 text-white">
+              Obriši pesmu?
+            </h3>
+
+            <p className="text-sm text-gray-400 mb-6">
+              Da li si siguran da želiš da obrišeš ovu pesmu?
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="px-4 py-2 rounded bg-white/10"
+              >
+                Otkaži
+              </button>
+
+              <button
+                onClick={async () => {
+                  const res = await fetch(
+                    `/api/listening-playlist/item/${deleteTarget.id}`,
+                    {
+                      method: "DELETE",
+                    }
+                  )
+
+                  if (res.ok) {
+                    setItems((prev: any[]) =>
+                      prev.filter(
+                        (i) =>
+                          i.id !== deleteTarget.id
+                      )
+                    )
+                  }
+
+                  setDeleteTarget(null)
+                }}
+                className="px-4 py-2 rounded bg-red-500 text-white"
+              >
+                Obriši
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
-}
-
-// helpers
-function extractYoutubeId(url: string) {
-  const match =
-    url.match(/v=([^&]+)/) ||
-    url.match(/youtu\.be\/([^?]+)/)
-  return match?.[1] || ""
-}
-
-function parseDuration(duration: string) {
-  const match = duration.match(/PT(\d+M)?(\d+S)?/)
-  const minutes = match?.[1] ? parseInt(match[1]) : 0
-  const seconds = match?.[2] ? parseInt(match[2]) : 0
-
-  return minutes * 60 + seconds
 }
 
 function SortableItem({
@@ -307,7 +355,7 @@ function SortableItem({
   setActiveIndex,
   meta,
   items,
-  setItems,
+  setDeleteTarget,
 }: any) {
   const {
     attributes,
@@ -315,21 +363,24 @@ function SortableItem({
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: item.id })
+  } = useSortable({
+    id: item.id,
+  })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   }
 
-  const currentIndex = items.findIndex((i: any) => i.id === item.id)
+  const currentIndex = items.findIndex(
+    (i: any) => i.id === item.id
+  )
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`p-2 rounded text-sm
-      ${
+      className={`p-2 rounded text-sm ${
         activeIndex === currentIndex
           ? "bg-white/10"
           : "hover:bg-white/5"
@@ -337,7 +388,6 @@ function SortableItem({
     >
       <div className="flex justify-between items-center">
 
-        {/* SAMO OVAJ DEO JE DRAGGABLE */}
         <span
           {...attributes}
           {...listeners}
@@ -347,36 +397,41 @@ function SortableItem({
           🎵 {meta[item.id]?.title || "Loading..."}
         </span>
 
-        {/* DELETE BUTTON */}
         <button
           type="button"
-          onClick={async (e) => {
+          onClick={(e) => {
             e.preventDefault()
             e.stopPropagation()
-
-            if (!confirm("Obrisati pesmu?")) return
-
-            const res = await fetch(
-              `/api/listening-playlist/item/${item.id}`,
-              {
-                method: "DELETE",
-              }
-            )
-
-            if (res.ok) {
-              setItems((prev: any[]) =>
-                prev.filter((i) => i.id !== item.id)
-              )
-            } else {
-              alert("Greška pri brisanju")
-            }
+            setDeleteTarget(item)
           }}
           className="text-red-400 text-xs ml-3"
         >
           ✕
         </button>
-
       </div>
     </div>
   )
+}
+
+function extractYoutubeId(url: string) {
+  const match =
+    url.match(/v=([^&]+)/) ||
+    url.match(/youtu\.be\/([^?]+)/)
+
+  return match?.[1] || ""
+}
+
+function parseDuration(duration: string) {
+  const match =
+    duration.match(/PT(\d+M)?(\d+S)?/)
+
+  const minutes = match?.[1]
+    ? parseInt(match[1])
+    : 0
+
+  const seconds = match?.[2]
+    ? parseInt(match[2])
+    : 0
+
+  return minutes * 60 + seconds
 }
