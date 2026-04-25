@@ -138,6 +138,10 @@ whiteSpace:"nowrap"
 Moje plejliste za slušanje
 </Link>
 
+<Link href="/public-listening-playlists">
+  Javne plejliste korisnika
+</Link>
+
 <Link href="/plejliste/slusanje-domace">
 20 najslušanijih domaćih
 </Link>

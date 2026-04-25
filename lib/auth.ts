@@ -93,6 +93,7 @@ export const authOptions: NextAuthOptions = {
       })
 
       session.user.image = dbUser?.image || null
+      session.user.name = dbUser?.name || null
     }
     return session
   },

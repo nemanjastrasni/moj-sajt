@@ -147,6 +147,8 @@ model ListeningPlaylist {
   name      String
   userId    String?
   createdAt DateTime @default(now())
+  category String?
+  isPublic Boolean @default(true)
 
   user User? @relation("UserListeningPlaylists", fields: [userId], references: [id])
   items     ListeningItem[]

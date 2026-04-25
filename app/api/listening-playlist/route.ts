@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 export async function POST(req: Request) {
   try {
@@ -9,10 +11,13 @@ export async function POST(req: Request) {
     if (!name) {
       return NextResponse.json({ error: "Missing name" }, { status: 400 })
     }
-
+    const session = await getServerSession(authOptions)
     const playlist = await prisma.listeningPlaylist.create({
-      data: { name },
-    })
+  data: {
+    name,
+    userId: (session?.user as any)?.id || null,
+  },
+})
 
     return NextResponse.redirect(
       new URL(`/listening-playlist/${playlist.id}`, req.url),
