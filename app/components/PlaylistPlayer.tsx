@@ -420,7 +420,7 @@ function SortableItem({
   onClick={async (e) => {
     e.stopPropagation()
 
-    console.log("DELETE CLICK", item.id)
+    console.log("DELETE URL:", `/api/listening-playlist/item/${item.id}`)
 
     if (!confirm("Obrisati pesmu?")) return
 
@@ -430,8 +430,6 @@ function SortableItem({
         method: "DELETE",
       }
     )
-
-    console.log("DELETE RESPONSE", res.status)
 
     if (res.ok) {
       setItems((prev: any[]) =>
