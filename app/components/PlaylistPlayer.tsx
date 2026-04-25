@@ -119,7 +119,7 @@ export default function PlaylistPlayer({ playlist }: any) {
 }, [])
 
   // 🔥 AUTOPLAY (STABILAN)
-  useEffect(() => {
+  /*useEffect(() => {
     if (!isPlaying) return
 
     const id = items[activeIndex]?.id
@@ -149,10 +149,10 @@ export default function PlaylistPlayer({ playlist }: any) {
         clearTimeout(timerRef.current)
       }
     }
-  }, [activeIndex, isPlaying, isShuffle])
+  }, [activeIndex, isPlaying, isShuffle])*/
 
   //listner za end
-  useEffect(() => {
+  /*useEffect(() => {
   const interval = setInterval(() => {
     const iframe = document.getElementById("yt-player") as HTMLIFrameElement
     if (!iframe) return
@@ -190,7 +190,7 @@ export default function PlaylistPlayer({ playlist }: any) {
     clearInterval(interval)
     window.removeEventListener("message", handleMessage)
   }
-}, [mode])
+}, [mode])*/
 
   // 🔥 SWIPE
   const handleTouchStart = (e: any) => {
