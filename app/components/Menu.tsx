@@ -144,6 +144,13 @@ export default function Menu() {
       </button>
 
       <button
+  onClick={() => router.push("/listening-playlist")}
+  className="block w-full text-left px-2 py-2 text-purple-400 hover:bg-white/10 rounded"
+>
+  Moje playliste za slušanje
+</button>
+
+      <button
         onClick={() => router.push("/favorite")}
         className="block w-full text-left px-2 py-2 text-yellow-400 hover:bg-white/10 rounded"
       >

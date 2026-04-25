@@ -377,40 +377,49 @@ function SortableItem({
   )
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={`p-2 rounded text-sm ${
-        activeIndex === currentIndex
-          ? "bg-white/10"
-          : "hover:bg-white/5"
-      }`}
-    >
-      <div className="flex justify-between items-center">
+  <div
+    ref={setNodeRef}
+    style={style}
+    className={`p-2 rounded text-sm ${
+      activeIndex === currentIndex
+        ? "bg-white/10"
+        : "hover:bg-white/5"
+    }`}
+  >
+    <div className="flex justify-between items-center gap-2">
 
-        <span
-          {...attributes}
-          {...listeners}
-          onClick={() => setActiveIndex(currentIndex)}
-          className="cursor-grab flex-1"
-        >
-          🎵 {meta[item.id]?.title || "Loading..."}
-        </span>
+      {/* CLICK TO PLAY */}
+      <span
+        onClick={() => setActiveIndex(currentIndex)}
+        className="cursor-pointer flex-1"
+      >
+        🎵 {meta[item.id]?.title || "Loading..."}
+      </span>
 
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            setDeleteTarget(item)
-          }}
-          className="text-red-400 text-xs ml-3"
-        >
-          ✕
-        </button>
-      </div>
+      {/* DRAG HANDLE */}
+      <span
+        {...attributes}
+        {...listeners}
+        className="cursor-grab text-gray-400 text-sm px-2"
+      >
+        ☰
+      </span>
+
+      {/* DELETE */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          setDeleteTarget(item)
+        }}
+        className="text-red-400 text-xs"
+      >
+        ✕
+      </button>
     </div>
-  )
+  </div>
+)
 }
 
 function extractYoutubeId(url: string) {
