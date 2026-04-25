@@ -417,23 +417,30 @@ function SortableItem({
         </span>
 
         <button
-          onClick={async (e) => {
-            e.stopPropagation()
+  onClick={async (e) => {
+    e.stopPropagation()
 
-            if (!confirm("Obrisati pesmu?")) return
+    if (!confirm("Obrisati pesmu?")) return
 
-            await fetch(`/api/listening-playlist/item/${item.id}`, {
-              method: "DELETE",
-            })
+    const res = await fetch(
+      `/api/listening-playlist/item/${item.id}`,
+      {
+        method: "DELETE",
+      }
+    )
 
-            setItems((prev: any[]) =>
-              prev.filter((i) => i.id !== item.id)
-            )
-          }}
-          className="text-red-400 text-xs"
-        >
-          ✕
-        </button>
+    if (res.ok) {
+      setItems((prev: any[]) =>
+        prev.filter((i) => i.id !== item.id)
+      )
+    } else {
+      alert("Greška pri brisanju")
+    }
+  }}
+  className="text-red-400 text-xs"
+>
+  ✕
+</button>
       </div>
     </div>
   )
