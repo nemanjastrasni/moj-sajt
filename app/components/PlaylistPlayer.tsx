@@ -118,79 +118,6 @@ export default function PlaylistPlayer({ playlist }: any) {
   }
 }, [])
 
-  // 🔥 AUTOPLAY (STABILAN)
-  /*useEffect(() => {
-    if (!isPlaying) return
-
-    const id = items[activeIndex]?.id
-    const duration = meta[id]?.duration
-
-    if (!duration || duration < 5) return
-
-    console.log("START TIMER:", duration)
-
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-    }
-
-    timerRef.current = setTimeout(() => {
-      console.log("NEXT SONG TRIGGER")
-
-      setActiveIndex((prev) => {
-        if (isShuffle) {
-          return Math.floor(Math.random() * items.length)
-        }
-        return (prev + 1) % items.length
-      })
-    }, (duration - 1) * 1000)
-
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current)
-      }
-    }
-  }, [activeIndex, isPlaying, isShuffle])*/
-
-  //listner za end
-  /*useEffect(() => {
-  const interval = setInterval(() => {
-    const iframe = document.getElementById("yt-player") as HTMLIFrameElement
-    if (!iframe) return
-
-    iframe.contentWindow?.postMessage(
-      JSON.stringify({
-        event: "command",
-        func: "getPlayerState",
-      }),
-      "*"
-    )
-  }, 1000)
-
-  const handleMessage = (event: any) => {
-    try {
-      const data = JSON.parse(event.data)
-
-      // 0 = video ended
-      if (data.info === 0) {
-        console.log("YOUTUBE END DETECTED")
-
-        setActiveIndex((prev) => {
-          if (mode === "shuffle") {
-            return Math.floor(Math.random() * items.length)
-          }
-          return (prev + 1) % items.length
-        })
-      }
-    } catch {}
-  }
-
-  window.addEventListener("message", handleMessage)
-
-  return () => {
-    clearInterval(interval)
-    window.removeEventListener("message", handleMessage)
-  }
-}, [mode])*/
 
   // 🔥 SWIPE
   const handleTouchStart = (e: any) => {
@@ -401,10 +328,7 @@ function SortableItem({
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      onClick={() => setActiveIndex(currentIndex)}
-      className={`p-2 rounded cursor-grab text-sm
+      className={`p-2 rounded text-sm
       ${
         activeIndex === currentIndex
           ? "bg-white/10"
@@ -412,43 +336,46 @@ function SortableItem({
       }`}
     >
       <div className="flex justify-between items-center">
-        <span>
+
+        {/* SAMO OVAJ DEO JE DRAGGABLE */}
+        <span
+          {...attributes}
+          {...listeners}
+          onClick={() => setActiveIndex(currentIndex)}
+          className="cursor-grab flex-1"
+        >
           🎵 {meta[item.id]?.title || "Loading..."}
         </span>
 
+        {/* DELETE BUTTON */}
         <button
-  type="button"
-  draggable={false}
-  onMouseDown={(e) => {
-    e.stopPropagation()
-  }}
-  onClick={async (e) => {
-    e.preventDefault()
-    e.stopPropagation()
+          type="button"
+          onClick={async (e) => {
+            e.preventDefault()
+            e.stopPropagation()
 
-    console.log("X BUTTON CLICKED:", item.id)
+            if (!confirm("Obrisati pesmu?")) return
 
-    if (!confirm("Obrisati pesmu?")) return
+            const res = await fetch(
+              `/api/listening-playlist/item/${item.id}`,
+              {
+                method: "DELETE",
+              }
+            )
 
-    const res = await fetch(
-      `/api/listening-playlist/item/${item.id}`,
-      {
-        method: "DELETE",
-      }
-    )
+            if (res.ok) {
+              setItems((prev: any[]) =>
+                prev.filter((i) => i.id !== item.id)
+              )
+            } else {
+              alert("Greška pri brisanju")
+            }
+          }}
+          className="text-red-400 text-xs ml-3"
+        >
+          ✕
+        </button>
 
-    if (res.ok) {
-      setItems((prev: any[]) =>
-        prev.filter((i) => i.id !== item.id)
-      )
-    } else {
-      alert("Greška pri brisanju")
-    }
-  }}
-  className="text-red-400 text-xs cursor-pointer"
->
-  ✕
-</button>
       </div>
     </div>
   )
