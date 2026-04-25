@@ -1,31 +1,44 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
-export async function DELETE(req: Request, context: any) {
+export async function DELETE(
+  req: Request,
+  { params }: any
+) {
   try {
-    const id = context.params.id
+    const id = String(params.id)
 
     await prisma.listeningItem.delete({
       where: { id },
     })
 
     return NextResponse.json({ ok: true })
-  } catch (err) {
-    console.error(err)
-    return NextResponse.json({ error: "error" }, { status: 500 })
+  } catch (error) {
+    console.error("DELETE ITEM ERROR:", error)
+
+    return NextResponse.json(
+      { error: "Delete failed" },
+      { status: 500 }
+    )
   }
 }
 
-export async function POST(req: Request, context: any) {
+export async function POST(
+  req: Request,
+  { params }: any
+) {
   try {
-    const id = context.params.id
+    const id = String(params.id)
 
     const item = await prisma.listeningItem.findUnique({
       where: { id },
     })
 
     if (!item) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 })
+      return NextResponse.json(
+        { error: "Not found" },
+        { status: 404 }
+      )
     }
 
     await prisma.listeningItem.delete({
@@ -33,7 +46,10 @@ export async function POST(req: Request, context: any) {
     })
 
     return NextResponse.redirect(
-      new URL(`/listening-playlist/${item.playlistId}`, req.url)
+      new URL(
+        `/listening-playlist/${item.playlistId}`,
+        req.url
+      )
     )
   } catch (error) {
     console.error("DELETE ITEM ERROR:", error)
