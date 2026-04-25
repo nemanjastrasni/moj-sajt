@@ -1,34 +1,37 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
-export async function POST(req: Request) {
-  const { id, direction } = await req.json()
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json()
 
-  const item = await prisma.listeningItem.findUnique({
-    where: { id },
-  })
+    const { playlistId, items } = body
 
-  if (!item) return NextResponse.json({ error: "not found" })
+    if (!playlistId || !items?.length) {
+      return NextResponse.json(
+        { error: "Missing data" },
+        { status: 400 }
+      )
+    }
 
-  const swapWith = await prisma.listeningItem.findFirst({
-    where: {
-      playlistId: item.playlistId,
-      order: direction === "up" ? item.order - 1 : item.order + 1,
-    },
-  })
+    await prisma.$transaction(
+      items.map((id: string, index: number) =>
+        prisma.listeningItem.update({
+          where: { id },
+          data: {
+            order: index,
+          },
+        })
+      )
+    )
 
-  if (!swapWith) return NextResponse.json({ ok: true })
+    return NextResponse.json({ ok: true })
+  } catch (error) {
+    console.error("REORDER ERROR:", error)
 
-  await prisma.$transaction([
-    prisma.listeningItem.update({
-      where: { id: item.id },
-      data: { order: swapWith.order },
-    }),
-    prisma.listeningItem.update({
-      where: { id: swapWith.id },
-      data: { order: item.order },
-    }),
-  ])
-
-  return NextResponse.json({ ok: true })
+    return NextResponse.json(
+      { error: "Server error" },
+      { status: 500 }
+    )
+  }
 }
