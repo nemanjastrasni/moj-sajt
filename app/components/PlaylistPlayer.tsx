@@ -417,10 +417,16 @@ function SortableItem({
         </span>
 
         <button
+  type="button"
+  draggable={false}
+  onMouseDown={(e) => {
+    e.stopPropagation()
+  }}
   onClick={async (e) => {
+    e.preventDefault()
     e.stopPropagation()
 
-    console.log("DELETE URL:", `/api/listening-playlist/item/${item.id}`)
+    console.log("X BUTTON CLICKED:", item.id)
 
     if (!confirm("Obrisati pesmu?")) return
 
@@ -439,7 +445,7 @@ function SortableItem({
       alert("Greška pri brisanju")
     }
   }}
-  className="text-red-400 text-xs"
+  className="text-red-400 text-xs cursor-pointer"
 >
   ✕
 </button>
