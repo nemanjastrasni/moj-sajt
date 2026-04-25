@@ -39,9 +39,9 @@ export default async function Page({ params }: any) {
 
       {/* ADD ITEM */}
       <form
-  action={`/api/listening-playlist/${playlist.id}/rename`}
+  action={`/api/listening-playlist/item`}
   method="POST"
-  className="flex items-center gap-3 mb-6"
+  className="flex flex-col md:flex-row items-stretch md:items-center gap-3 mb-6"
 >
         <input type="hidden" name="playlistId" value={playlist.id} />
 
@@ -49,7 +49,7 @@ export default async function Page({ params }: any) {
           name="url"
           placeholder="YouTube link"
           required
-          className="flex-1 p-2 rounded bg-black border border-gray-700"
+          className="flex-1 p-3 rounded bg-black border border-gray-700 min-w-0"
         />
 
         <button className="bg-white text-black px-4 py-2 rounded">
