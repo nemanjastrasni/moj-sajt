@@ -404,7 +404,12 @@ function SortableItem({
         : "hover:bg-white/5"
     }`}
   >
-    <div className="flex justify-between items-center gap-2">
+    {/* DRAG HANDLE */}
+    <div
+  {...attributes}
+  {...listeners}
+  className="flex justify-between items-center gap-2 touch-none"
+>
 
       {/* CLICK TO PLAY */}
       <span
@@ -414,14 +419,8 @@ function SortableItem({
         🎵 {meta[item.id]?.title || "Loading..."}
       </span>
 
-      {/* DRAG HANDLE */}
-      <div
-  {...attributes}
-  {...listeners}
-  className="cursor-grab text-gray-400 text-sm px-3 py-2 flex items-center"
->
-  ☰
-</div>
+      
+      
 
       {/* DELETE */}
       <button
