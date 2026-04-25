@@ -259,19 +259,17 @@ export default function PlaylistPlayer({ playlist }: any) {
 
     <SortableContext items={items} strategy={verticalListSortingStrategy}>
 
-      {items.map((item: any, index: number) => (
-        <SortableItem
-          key={item.id}
-          item={item}
-          index={index}
-          activeIndex={activeIndex}
-          setActiveIndex={setActiveIndex}
-          meta={meta}
-          items={items}
-          playlist={playlist}
-          setItems={setItems}
-        />
-      ))}
+      {items.map((item: any) => (
+  <SortableItem
+    key={item.id}
+    item={item}
+    activeIndex={activeIndex}
+    setActiveIndex={setActiveIndex}
+    meta={meta}
+    items={items}
+    setItems={setItems}
+  />
+))}
 
     </SortableContext>
   </DndContext>
@@ -366,12 +364,10 @@ function parseDuration(duration: string) {
 
 function SortableItem({
   item,
-  index,
   activeIndex,
   setActiveIndex,
   meta,
   items,
-  playlist,
   setItems,
 }: any) {
   const {
@@ -387,38 +383,45 @@ function SortableItem({
     transition,
   }
 
+  const currentIndex = items.findIndex((i: any) => i.id === item.id)
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      onClick={() => setActiveIndex(index)}
-      className={`p-2 rounded cursor-grab text-sm 
-      ${activeIndex === index ? "bg-white/10" : "hover:bg-white/5"}`}
+      onClick={() => setActiveIndex(currentIndex)}
+      className={`p-2 rounded cursor-grab text-sm
+      ${
+        activeIndex === currentIndex
+          ? "bg-white/10"
+          : "hover:bg-white/5"
+      }`}
     >
       <div className="flex justify-between items-center">
         <span>
           🎵 {meta[item.id]?.title || "Loading..."}
         </span>
 
-        {/* DELETE */}
         <button
-  onClick={async (e) => {
-    e.stopPropagation()
+          onClick={async (e) => {
+            e.stopPropagation()
 
-    if (!confirm("Obrisati pesmu?")) return // 🔥 OVDE
+            if (!confirm("Obrisati pesmu?")) return
 
-    await fetch(`/api/listening-playlist/item/${item.id}`, {
-      method: "DELETE",
-    })
+            await fetch(`/api/listening-playlist/item/${item.id}`, {
+              method: "DELETE",
+            })
 
-    setItems((prev: any[]) => prev.filter(i => i.id !== item.id))
-  }}
-  className="text-red-400 text-xs"
->
-  ✕
-</button>
+            setItems((prev: any[]) =>
+              prev.filter((i) => i.id !== item.id)
+            )
+          }}
+          className="text-red-400 text-xs"
+        >
+          ✕
+        </button>
       </div>
     </div>
   )
