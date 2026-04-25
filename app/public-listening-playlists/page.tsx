@@ -9,9 +9,13 @@ export default async function PublicListeningPlaylistsPage() {
       createdAt: "desc",
     },
     include: {
-      items: true,
-      user: true,
+  user: true,
+  items: {
+    orderBy: {
+      order: "asc",
     },
+  },
+},
   })
 
   return (
@@ -23,6 +27,12 @@ export default async function PublicListeningPlaylistsPage() {
       <p className="text-sm text-gray-400 text-center mb-8">
         Javne playliste svih korisnika
       </p>
+      <div className="flex flex-wrap gap-3 justify-center mb-8">
+  <button className="px-4 py-2 rounded bg-white/10">Domaće</button>
+  <button className="px-4 py-2 rounded bg-white/10">Strane</button>
+  <button className="px-4 py-2 rounded bg-white/10">Narodne</button>
+  <button className="px-4 py-2 rounded bg-white/10">Mix</button>
+</div>
 
       <div className="grid gap-4">
         {playlists.map((pl) => (
@@ -34,6 +44,13 @@ export default async function PublicListeningPlaylistsPage() {
             <div className="text-lg font-semibold">
               🎧 {pl.name}
             </div>
+            {pl.items[0]?.url && (
+  <img
+    src={`https://img.youtube.com/vi/${pl.items[0].url.match(/v=([^&]+)/)?.[1] || ""}/0.jpg`}
+    alt=""
+    className="w-full max-w-[220px] h-[120px] object-cover rounded-lg mt-3 mb-3"
+  />
+)}
 
             <div className="text-sm text-gray-400">
   {pl.user?.image ? (

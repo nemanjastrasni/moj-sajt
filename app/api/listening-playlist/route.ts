@@ -7,6 +7,8 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData()
     const name = formData.get("name") as string
+    const category =
+  (formData.get("category") as string) || "Mix"
 
     if (!name) {
       return NextResponse.json({ error: "Missing name" }, { status: 400 })
@@ -14,9 +16,10 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions)
     const playlist = await prisma.listeningPlaylist.create({
   data: {
-    name,
-    userId: (session?.user as any)?.id || null,
-  },
+  name,
+  category,
+  userId: (session?.user as any)?.id || null,
+},
 })
 
     return NextResponse.redirect(

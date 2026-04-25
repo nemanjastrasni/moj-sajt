@@ -34,6 +34,15 @@ export default async function ListeningPlaylistsPage() {
           required
           className="flex-1 p-2 rounded bg-black border border-gray-700"
         />
+        <select
+  name="category"
+  className="p-2 rounded bg-black border border-gray-700"
+>
+  <option value="Domace">Domaće</option>
+  <option value="Strane">Strane</option>
+  <option value="Narodne">Narodne</option>
+  <option value="Mix" selected>Mix</option>
+</select>
         <button
           type="submit"
           className="bg-white text-black px-4 py-2 rounded"
