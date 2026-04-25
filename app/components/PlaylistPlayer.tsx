@@ -420,6 +420,8 @@ function SortableItem({
   onClick={async (e) => {
     e.stopPropagation()
 
+    console.log("DELETE CLICK", item.id)
+
     if (!confirm("Obrisati pesmu?")) return
 
     const res = await fetch(
@@ -428,6 +430,8 @@ function SortableItem({
         method: "DELETE",
       }
     )
+
+    console.log("DELETE RESPONSE", res.status)
 
     if (res.ok) {
       setItems((prev: any[]) =>
