@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import PlaylistPlayer from "@/app/components/PlaylistPlayer"
+import SharePlaylistButton from "@/app/components/SharePlaylistButton"
 
 
 export default async function Page({ params }: any) {
@@ -33,19 +34,20 @@ export default async function Page({ params }: any) {
   <button className="text-sm text-green-400">
     Save
   </button>
+  <SharePlaylistButton />
 </form>
 
       {/* ADD ITEM */}
       <form
-        action="/api/listening-playlist/item"
-        method="POST"
-        className="flex gap-2 mb-8"
-      >
+  action={`/api/listening-playlist/${playlist.id}/rename`}
+  method="POST"
+  className="flex items-center gap-3 mb-6"
+>
         <input type="hidden" name="playlistId" value={playlist.id} />
 
         <input
           name="url"
-          placeholder="YouTube ili Spotify link..."
+          placeholder="YouTube link"
           required
           className="flex-1 p-2 rounded bg-black border border-gray-700"
         />
