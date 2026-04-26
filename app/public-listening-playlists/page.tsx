@@ -3,20 +3,31 @@ import Link from "next/link"
 
 export const dynamic = "force-dynamic"
 
-export default async function PublicListeningPlaylistsPage() {
+export default async function PublicListeningPlaylistsPage({
+  searchParams,
+}: any) {
+  const selectedCategory = searchParams.category || null
   const playlists = await prisma.listeningPlaylist.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-  user: true,
-  items: {
-    orderBy: {
-      order: "asc",
+  where: {
+    isPublic: true,
+    ...(selectedCategory
+      ? {
+          category: selectedCategory,
+        }
+      : {}),
+  },
+  orderBy: {
+    views: "desc",
+  },
+  include: {
+    user: true,
+    items: {
+      orderBy: {
+        order: "asc",
+      },
     },
   },
-},
-  })
+})
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10 text-white">
@@ -28,10 +39,25 @@ export default async function PublicListeningPlaylistsPage() {
         Javne playliste svih korisnika
       </p>
       <div className="flex flex-wrap gap-3 justify-center mb-8">
-  <button className="px-4 py-2 rounded bg-white/10">Domaće</button>
-  <button className="px-4 py-2 rounded bg-white/10">Strane</button>
-  <button className="px-4 py-2 rounded bg-white/10">Narodne</button>
-  <button className="px-4 py-2 rounded bg-white/10">Mix</button>
+  <Link href="/public-listening-playlists" className="px-4 py-2 rounded bg-white/10">
+    Sve
+  </Link>
+
+  <Link href="/public-listening-playlists?category=Domace" className="px-4 py-2 rounded bg-white/10">
+    Domaće
+  </Link>
+
+  <Link href="/public-listening-playlists?category=Strane" className="px-4 py-2 rounded bg-white/10">
+    Strane
+  </Link>
+
+  <Link href="/public-listening-playlists?category=Narodne" className="px-4 py-2 rounded bg-white/10">
+    Narodne
+  </Link>
+
+  <Link href="/public-listening-playlists?category=Mix" className="px-4 py-2 rounded bg-white/10">
+    Mix
+  </Link>
 </div>
 
       <div className="grid gap-4">
