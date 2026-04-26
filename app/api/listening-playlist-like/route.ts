@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
   const { playlistId } = await req.json()
 
-  const userId = (session.user as any).id
+  const userId = (session?.user as any)?.id
 
   const existing = await prisma.listeningPlaylistLike.findUnique({
     where: {
