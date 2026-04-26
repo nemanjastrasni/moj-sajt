@@ -35,41 +35,40 @@ export default async function PublicListeningPlaylistsPage() {
 </div>
 
       <div className="grid gap-4">
-        {playlists.map((pl) => (
-          <Link
-            key={pl.id}
-            href={`/listening-playlist/${pl.id}`}
-            className="p-4 rounded-lg border border-gray-800 hover:bg-white/5 transition"
-          >
-            <div className="text-lg font-semibold">
-              🎧 {pl.name}
-            </div>
-            {pl.items[0]?.url && (
-  <img
-    src={`https://img.youtube.com/vi/${pl.items[0].url.match(/v=([^&]+)/)?.[1] || ""}/0.jpg`}
-    alt=""
-    className="w-full max-w-[220px] h-[120px] object-cover rounded-lg mt-3 mb-3"
-  />
-)}
-
-            <div className="text-sm text-gray-400">
-  {pl.user?.image ? (
-    <img
-      src={pl.user.image}
-      alt=""
-      className="w-5 h-5 rounded-full inline-block mr-2"
-    />
-  ) : (
-    <span className="mr-2">👤</span>
-  )}
-
-  {pl.user?.name
-    ? pl.user.name
-    : pl.user?.email?.split("@")[0] || "Korisnik"} • {pl.items.length} pesama
-</div>
-          </Link>
-        ))}
+  {playlists.map((pl) => (
+    <Link
+      key={pl.id}
+      href={`/listening-playlist/${pl.id}`}
+      className="p-4 rounded-lg border border-gray-800 hover:bg-white/5 transition"
+    >
+      <div className="text-lg font-semibold">
+        🎧 {pl.name}
       </div>
+
+      {pl.items[0]?.url && (
+        <img
+          src={`https://img.youtube.com/vi/${pl.items[0].url.match(/v=([^&]+)/)?.[1] || ""}/0.jpg`}
+          alt=""
+          className="w-full max-w-[220px] h-[120px] object-cover rounded-lg mt-3 mb-3"
+        />
+      )}
+
+      <div className="text-sm text-gray-400">
+        {pl.user?.image ? (
+          <img
+            src={pl.user.image}
+            alt=""
+            className="w-5 h-5 rounded-full inline-block mr-2"
+          />
+        ) : (
+          <span className="mr-2">👤</span>
+        )}
+
+        {pl.user?.name || "Korisnik"} • {pl.items.length} pesama • {pl.views || 0} pregleda
+      </div>
+    </Link>
+  ))}
+</div>
     </div>
   )
 }

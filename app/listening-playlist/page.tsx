@@ -75,8 +75,8 @@ export default async function ListeningPlaylistsPage() {
                 </div>
 
                 <div className="text-sm text-gray-400">
-                  {pl.items.length} pesama
-                </div>
+  {pl.items.length} pesama • {pl.category || "Mix"}
+</div>
               </div>
             </Link>
 

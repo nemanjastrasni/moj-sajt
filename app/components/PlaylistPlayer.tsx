@@ -405,7 +405,11 @@ function SortableItem({
     }`}
   >
     
-  <div className="flex justify-between items-center gap-2">
+  <div
+  {...attributes}
+  {...listeners}
+  className="flex justify-between items-center gap-2 touch-none cursor-grab"
+>
   {/* CLICK TO PLAY */}
   <span
     onClick={() => setActiveIndex(currentIndex)}

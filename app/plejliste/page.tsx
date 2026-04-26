@@ -142,16 +142,20 @@ Moje plejliste za slušanje
   Javne plejliste korisnika
 </Link>
 
-<Link href="/plejliste/slusanje-domace">
+<Link href="/top-listening-playlists/domace">
 20 najslušanijih domaćih
 </Link>
 
-<Link href="/plejliste/slusanje-strane">
+<Link href="/top-listening-playlists/strane">
 20 najslušanijih stranih
 </Link>
 
-<Link href="/plejliste/slusanje-narodne">
+<Link href="/top-listening-playlists/narodne">
 20 najslušanijih narodnih
+</Link>
+
+<Link href="/top-listening-playlists/mix">
+20 najslušanijih Mix plejlisti
 </Link>
 
 </div>
