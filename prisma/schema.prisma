@@ -37,6 +37,7 @@ model User {
   favorites     Favorite[]
   playlists     Playlist[]
   sessions      Session[]
+  playlistLikes ListeningPlaylistLike[]
   listeningPlaylists ListeningPlaylist[] @relation("UserListeningPlaylists")
 }
 
@@ -150,6 +151,7 @@ model ListeningPlaylist {
   category String?
   isPublic Boolean @default(true)
   views Int @default(0)
+  likes ListeningPlaylistLike[]
 
   user User? @relation("UserListeningPlaylists", fields: [userId], references: [id])
   items     ListeningItem[]
@@ -165,4 +167,15 @@ model ListeningItem {
   order Int @default(0)
 
   playlist    ListeningPlaylist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+}
+model ListeningPlaylistLike {
+  id         String   @id @default(cuid())
+  userId     String
+  playlistId String
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  playlist ListeningPlaylist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, playlistId])
 }

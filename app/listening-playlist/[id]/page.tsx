@@ -2,29 +2,30 @@ import { prisma } from "@/lib/prisma"
 import PlaylistPlayer from "@/app/components/PlaylistPlayer"
 import SharePlaylistButton from "@/app/components/SharePlaylistButton"
 
-await prisma.listeningPlaylist.update({
-  where: { id: params.id },
-  data: {
-    views: {
-      increment: 1,
-    },
-  },
-})
 export default async function Page({ params }: any) {
-  const playlist = await prisma.listeningPlaylist.findUnique({
-  where: { id: params.id },
-  select: {
-    id: true,
-    name: true,
-    category: true,
-    user: true,
-    items: {
-      orderBy: {
-        order: "asc",
+  await prisma.listeningPlaylist.update({
+    where: { id: params.id },
+    data: {
+      views: {
+        increment: 1,
       },
     },
-  }
-})
+  })
+
+  const playlist = await prisma.listeningPlaylist.findUnique({
+    where: { id: params.id },
+    select: {
+      id: true,
+      name: true,
+      category: true,
+      user: true,
+      items: {
+        orderBy: {
+          order: "asc",
+        },
+      },
+    },
+  })
 
   if (!playlist) {
     return <div className="p-10 text-white">Ne postoji</div>

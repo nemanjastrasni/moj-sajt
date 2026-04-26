@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import LikePlaylistButton from "@/app/components/LikePlaylistButton"
 
 export const dynamic = "force-dynamic"
 
@@ -20,8 +21,9 @@ export default async function PublicListeningPlaylistsPage({
     views: "desc",
   },
   include: {
-    user: true,
-    items: {
+  user: true,
+  likes: true,
+  items: {
       orderBy: {
         order: "asc",
       },
@@ -90,8 +92,9 @@ export default async function PublicListeningPlaylistsPage({
           <span className="mr-2">👤</span>
         )}
 
-        {pl.user?.name || "Korisnik"} • {pl.items.length} pesama • {pl.views || 0} pregleda
+        {pl.user?.name || "Korisnik"} • {pl.items.length} pesama • {pl.views || 0} pregleda • ❤️ {pl.likes.length}
       </div>
+      <LikePlaylistButton playlistId={pl.id} />
     </Link>
   ))}
 </div>
