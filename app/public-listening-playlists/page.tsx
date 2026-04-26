@@ -8,22 +8,32 @@ export default async function PublicListeningPlaylistsPage({
   searchParams,
 }: any) {
   const selectedCategory = searchParams.category || null
+  const isAdminFilter = selectedCategory === "admin"
   const playlists = await prisma.listeningPlaylist.findMany({
   where: {
     isPublic: true,
-    ...(selectedCategory
+
+    ...(isAdminFilter
+      ? {
+          user: {
+            role: "admin",
+          },
+        }
+      : selectedCategory
       ? {
           category: selectedCategory,
         }
       : {}),
   },
+
   orderBy: {
     views: "desc",
   },
+
   include: {
-  user: true,
-  likes: true,
-  items: {
+    user: true,
+    likes: true,
+    items: {
       orderBy: {
         order: "asc",
       },
@@ -44,6 +54,12 @@ export default async function PublicListeningPlaylistsPage({
   <Link href="/public-listening-playlists" className="px-4 py-2 rounded bg-white/10">
     Sve
   </Link>
+  <Link
+  href="/public-listening-playlists?category=admin"
+  className="px-4 py-2 rounded bg-white/10"
+>
+  Admin
+</Link>
 
   <Link href="/public-listening-playlists?category=Domace" className="px-4 py-2 rounded bg-white/10">
     Domaće
