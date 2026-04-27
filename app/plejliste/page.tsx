@@ -111,7 +111,17 @@ whiteSpace:"nowrap"
 
 <div style={{ display: "grid", gap: "10px" }}>
 <Link href="/profile/plejliste">Moje plejliste</Link>
-<Link href="/plejliste/top-user">Top 20 user playlisti</Link>
+<Link href="/top-50/domace">
+  Top 50 domaćih
+</Link>
+
+<Link href="/top-50/strane">
+  Top 50 stranih
+</Link>
+
+<Link href="/top-50/narodne">
+  Top 50 narodnih
+</Link>
 <Link href="/plejliste/pesme-koje-znam">Pesme koje mogu da sviram</Link>
 </div>
 
