@@ -63,42 +63,6 @@ export async function POST(req: Request) {
   })
 }
 
-  const { songId } = await req.json()
-
-  const userId = (session.user as any).id
-
-  const existing = await prisma.favorite.findUnique({
-    where: {
-      userId_songId: {
-        userId,
-        songId,
-      },
-    },
-  })
-
-  if (existing) {
-  await prisma.favorite.delete({
-    where: {
-      userId_songId: {
-        userId,
-        songId,
-      },
-    },
-  })
-
-  return NextResponse.json({ removed: true })
-}
-
-  const favorite = await prisma.favorite.create({
-    data: {
-      userId,
-      songId,
-    },
-  })
-
-  return NextResponse.json({ added: true })
-}
-
 export async function DELETE(req: Request) {
   const session = await getServerSession(authOptions)
 
