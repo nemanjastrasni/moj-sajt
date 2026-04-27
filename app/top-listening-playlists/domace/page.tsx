@@ -36,7 +36,7 @@ export default async function TopDomaceListeningPage() {
             </div>
 
             <div className="text-sm text-gray-400">
-              {pl.items.length} pesama
+              {pl.items.length} pesama • {pl.views || 0} pregleda
             </div>
           </Link>
         ))}
