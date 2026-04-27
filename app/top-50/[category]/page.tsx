@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma"
 export default async function Top50Page({
   params,
 }: {
-  params: { category: string }
+  params: Promise<{ category: string }>
 }) {
-  const category = params.category
+  const { category } = await params
 
   const titleMap: Record<string, string> = {
     domace: "Top 50 Domaćih",
