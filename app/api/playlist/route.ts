@@ -51,11 +51,22 @@ export async function PUT(req: Request) {
 
   try {
     const item = await prisma.playlistSong.create({
-      data: {
-        playlistId,
-        songId,
-      },
-    })
+  data: {
+    playlistId,
+    songId,
+  },
+})
+
+await prisma.song.update({
+  where: {
+    id: songId,
+  },
+  data: {
+    popularity: {
+      increment: 1,
+    },
+  },
+})
 
     return NextResponse.json(item)
   } catch (e) {

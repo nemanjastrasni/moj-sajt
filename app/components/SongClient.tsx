@@ -171,12 +171,22 @@ parts.push(
 }, [])
 
   useEffect(() => {
+  let mounted = true
+
   async function checkFav() {
     const res = await fetch(`/api/favorite/check?songId=${song.id}`)
     const data = await res.json()
-    setIsFav(data.isFav)
+
+    if (mounted) {
+      setIsFav(data.isFav)
+    }
   }
+
   checkFav()
+
+  return () => {
+    mounted = false
+  }
 }, [song.id])
 
   return (
@@ -299,22 +309,29 @@ parts.push(
   {/* FAVORITE START */}
 <button
   onClick={async () => {
+    const method = isFav ? "DELETE" : "POST"
+
     const res = await fetch("/api/favorite", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ songId: song.id }),
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        songId: song.id,
+      }),
     })
 
-    const data = await res.json()
+    if (!res.ok) return
 
-    if (data.added) setIsFav(true)
-    if (data.removed) setIsFav(false)
+    setIsFav(!isFav)
   }}
-  className={`text-xl transition ${
-    isFav ? "text-yellow-400" : "text-gray-400"
+  className={`text-2xl transition ${
+    isFav
+      ? "text-yellow-400"
+      : "text-gray-500 hover:text-yellow-300"
   }`}
 >
-  ⭐
+  ★
 </button>
 
 </div>

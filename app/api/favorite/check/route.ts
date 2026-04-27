@@ -1,20 +1,40 @@
-import { prisma } from "@/lib/prisma"
+import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions)
-  if (!session) return Response.json({ isFav: false })
+
+  if (!session) {
+    return NextResponse.json({ isFav: false })
+  }
 
   const { searchParams } = new URL(req.url)
   const songId = searchParams.get("songId")
 
-  const fav = await prisma.favorite.findFirst({
+  if (!songId) {
+    return NextResponse.json({ isFav: false })
+  }
+
+  const userId = (session.user as any).id
+
+  const fav = await prisma.favorite.findUnique({
     where: {
-      userId: (session.user as any).id,
-      songId: songId!
-    }
+      userId_songId: {
+        userId,
+        songId,
+      },
+    },
   })
 
-  return Response.json({ isFav: !!fav })
+  console.log("CHECK FAVORITE:", {
+    userId,
+    songId,
+    isFav: !!fav,
+  })
+
+  return NextResponse.json({
+    isFav: !!fav,
+  })
 }
