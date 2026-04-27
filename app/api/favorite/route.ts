@@ -24,8 +24,17 @@ export async function POST(req: Request) {
   })
 
   if (existing) {
-    return NextResponse.json(existing)
-  }
+  await prisma.favorite.delete({
+    where: {
+      userId_songId: {
+        userId,
+        songId,
+      },
+    },
+  })
+
+  return NextResponse.json({ removed: true })
+}
 
   const favorite = await prisma.favorite.create({
     data: {
@@ -34,7 +43,7 @@ export async function POST(req: Request) {
     },
   })
 
-  return NextResponse.json(favorite)
+  return NextResponse.json({ added: true })
 }
 
 export async function DELETE(req: Request) {

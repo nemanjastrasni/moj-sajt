@@ -28,6 +28,8 @@ export default function SongClient({ song, media }: Props) {
   const [showVideo, setShowVideo] = useState(true)
   const [miniPlayer, setMiniPlayer] = useState(false)
   const [isFav, setIsFav] = useState(false)
+
+console.log("isFav:", isFav, "songId:", song.id)
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
   const [scrollSpeed, setScrollSpeed] = useState(1)
   const scrollRef = useRef<NodeJS.Timeout | null>(null)
