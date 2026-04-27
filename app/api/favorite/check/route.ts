@@ -11,7 +11,7 @@ export async function GET(req: Request) {
 
   const fav = await prisma.favorite.findFirst({
     where: {
-      user: { email: session.user.email! },
+      userId: (session.user as any).id,
       songId: songId!
     }
   })

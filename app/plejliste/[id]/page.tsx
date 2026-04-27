@@ -190,14 +190,26 @@ revalidatePath(`/plejliste/${id}`)
             }}
           >
             <button
-              type="submit"
-              className="text-red-400 hover:text-red-600"
-            >
-              Obriši
-            </button>
-          </form>
-        </div>
-      )
-    })}
-  </div>
+  type="submit"
+  formAction={async () => {
+    "use server"
+
+    await prisma.playlistSong.deleteMany({
+      where: {
+        playlistId: id,
+        songId: s.songId
+      }
+    })
+
+    revalidatePath(`/plejliste/${id}`)
+  }}
+  className="text-red-400 hover:text-red-600"
+>
+  Obriši
+</button>
+</form>
+</div>
+)
+})}
+</div>
 )}
