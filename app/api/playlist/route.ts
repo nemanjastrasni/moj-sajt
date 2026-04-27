@@ -43,34 +43,65 @@ export async function POST(req: Request) {
 // ADD SONG TO PLAYLIST
 export async function PUT(req: Request) {
   const session = await getServerSession(authOptions)
+
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    )
   }
 
   const { playlistId, songId } = await req.json()
 
-  try {
-    const item = await prisma.playlistSong.create({
-  data: {
-    playlistId,
-    songId,
-  },
-})
-
-await prisma.song.update({
-  where: {
-    id: songId,
-  },
-  data: {
-    popularity: {
-      increment: 1,
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session.user?.email!,
     },
-  },
-})
+  })
+
+  if (!user) {
+    return NextResponse.json(
+      { error: "User not found" },
+      { status: 404 }
+    )
+  }
+
+  try {
+    const alreadyInAnyPlaylist = await prisma.playlistSong.findFirst({
+      where: {
+        songId,
+        playlist: {
+          userId: user.id,
+        },
+      },
+    })
+
+    const item = await prisma.playlistSong.create({
+      data: {
+        playlistId,
+        songId,
+      },
+    })
+
+    if (!alreadyInAnyPlaylist) {
+      await prisma.song.update({
+        where: {
+          id: songId,
+        },
+        data: {
+          popularity: {
+            increment: 1,
+          },
+        },
+      })
+    }
 
     return NextResponse.json(item)
   } catch (e) {
-    return NextResponse.json({ error: "Already exists" }, { status: 400 })
+    return NextResponse.json(
+      { error: "Already exists" },
+      { status: 400 }
+    )
   }
 }
 
