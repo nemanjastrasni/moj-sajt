@@ -14,7 +14,7 @@ if (!session || !session.user || !session.user.email) {
   )
 }
 
-const level = "beginner"
+const level: string = "beginner"
 
 
 
