@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import Link from "next/link"
 import Chord from "./Chord"
-
 
 type Props = {
   song: {
@@ -23,13 +23,10 @@ type Props = {
 }
 
 export default function SongClient({ song, media }: Props) {
-
   const [transpose, setTranspose] = useState(0)
   const [showVideo, setShowVideo] = useState(true)
   const [miniPlayer, setMiniPlayer] = useState(false)
   const [isFav, setIsFav] = useState(false)
-
-console.log("isFav:", isFav, "songId:", song.id)
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
   const [scrollSpeed, setScrollSpeed] = useState(1)
   const scrollRef = useRef<NodeJS.Timeout | null>(null)
@@ -38,12 +35,6 @@ console.log("isFav:", isFav, "songId:", song.id)
   const [playlistName, setPlaylistName] = useState("")
   const [playlists, setPlaylists] = useState<any[]>([])
   const [showSelect, setShowSelect] = useState(false)
-
-useEffect(() => {
-  fetch("/api/playlist")
-    .then(res => res.json())
-    .then(data => setPlaylists(data))
-}, [])
 
   const [textSize, setTextSize] = useState(18)
   const [chordSize, setChordSize] = useState(18)
@@ -301,105 +292,45 @@ parts.push(
           </div>
 
        {/* TITLE */}
-<div className="flex items-center gap-4 mb-2 relative z-10">
+<div className="flex flex-wrap items-center gap-4 mb-2 relative z-10">
   <h1 className="text-3xl font-bold">
     {title}
   </h1>
 
-  {/* FAVORITE START */}
-<button
-  onClick={async () => {
-    const method = isFav ? "DELETE" : "POST"
-
-    const res = await fetch("/api/favorite", {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        songId: song.id,
-      }),
-    })
-
-    if (!res.ok) return
-
-    setIsFav(!isFav)
-  }}
-  className={`text-2xl transition ${
-    isFav
-      ? "text-yellow-400"
-      : "text-gray-500 hover:text-yellow-300"
-  }`}
->
-  ★
-</button>
-
-</div>
-
-<h2 className="text-lg text-gray-500 mb-6">
-  {artist}
-</h2>
-       {/* PLAYLIST*/}
-          <div className="relative inline-block">
-
+  {/* FAVORITE STAR */}
   <button
     onClick={async () => {
-      // 👉 nema playlisti → napravi odmah
-      if (playlists.length === 0) {
-        const name = prompt("Naziv playliste")
-        if (!name) return
+      const method = isFav ? "DELETE" : "POST"
 
-        await fetch("/api/playlist", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name,
-            category: song.category,
-            songId: song.id,
-          }),
-        })
+      const res = await fetch("/api/favorite", {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          songId: song.id,
+        }),
+      })
 
-        return
-      }
+      if (!res.ok) return
 
-      // 👉 ima playlisti → samo otvori dropdown
-      setShowSelect(!showSelect)
+      setIsFav(!isFav)
     }}
-    className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 rounded text-white"
+    className={`text-2xl transition ${
+      isFav
+        ? "text-yellow-400"
+        : "text-gray-500 hover:text-yellow-300"
+    }`}
   >
-    + Playlist
+    ★
   </button>
 
-  {showSelect && (
-    <div className="absolute mt-2 bg-neutral-900 border border-gray-700 rounded p-2 z-50 w-64">
-
-      {playlists.map((p) => (
-        <div
-          key={p.id}
-          onClick={async () => {
-            await fetch("/api/playlist", {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                playlistId: p.id,
-                songId: song.id,
-              }),
-            })
-
-            setShowSelect(false)
-          }}
-          className="px-2 py-2 hover:bg-white/10 cursor-pointer flex justify-between items-center"
-        >
-          <span className="truncate max-w-[180px]">
-            {p.name}
-          </span>
-          <span className="text-green-400">+</span>
-        </div>
-      ))}
-
-      {/* NOVA PLAYLISTA */}
-      <div
-        onClick={async () => {
+  {/* PLAYLIST */}
+  <div className="relative inline-block">
+    <button
+      onClick={async () => {
+        // 👉 nema playlisti → napravi odmah
+        if (playlists.length === 0) {
           const name = prompt("Naziv playliste")
           if (!name) return
 
@@ -413,17 +344,75 @@ parts.push(
             }),
           })
 
-          location.reload()
-        }}
-        className="px-2 py-2 hover:bg-white/10 cursor-pointer border-t border-gray-700 mt-1 text-blue-400"
-      >
-        + Nova playlista
-      </div>
+          return
+        }
 
-    </div>
-  )}
-         
+        // 👉 ima playlisti → samo otvori dropdown
+        setShowSelect(!showSelect)
+      }}
+      className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 rounded text-white"
+    >
+      + Playlist
+    </button>
+
+    {showSelect && (
+      <div className="absolute mt-2 bg-neutral-900 border border-gray-700 rounded p-2 z-50 w-64">
+
+        {playlists.map((p) => (
+          <div
+            key={p.id}
+            onClick={async () => {
+              await fetch("/api/playlist", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  playlistId: p.id,
+                  songId: song.id,
+                }),
+              })
+
+              setShowSelect(false)
+            }}
+            className="px-2 py-2 hover:bg-white/10 cursor-pointer flex justify-between items-center"
+          >
+            <span className="truncate max-w-[180px]">
+              {p.name}
+            </span>
+            <span className="text-green-400">+</span>
+          </div>
+        ))}
+
+        {/* NOVA PLAYLISTA */}
+        <div
+          onClick={async () => {
+            const name = prompt("Naziv playliste")
+            if (!name) return
+
+            await fetch("/api/playlist", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name,
+                category: song.category,
+                songId: song.id,
+              }),
+            })
+
+            location.reload()
+          }}
+          className="px-2 py-2 hover:bg-white/10 cursor-pointer border-t border-gray-700 mt-1 text-blue-400"
+        >
+          + Nova playlista
+        </div>
+
+      </div>
+    )}
+  </div>
 </div>
+
+<h2 className="text-lg text-gray-500 mb-6">
+  {artist}
+</h2>
           {/* CONTENT */}
           <div
             className="font-mono leading-relaxed whitespace-pre-wrap"
@@ -508,11 +497,9 @@ parts.push(
   </div>
 )}
         </div>
-
-      </div>
-
+              </div>
     </div>
-   
   )
 }
 
+   
