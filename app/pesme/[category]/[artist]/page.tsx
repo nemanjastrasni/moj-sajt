@@ -33,15 +33,16 @@ export default async function ArtistPage({ params }: any) {
     },
     include: {
   songs: {
-    select: {
-  id: true,
-  slug: true,
-  title: true,
-  chords: true,
-  lyrics: true
-},
-    orderBy: { title: "asc" },
+  select: {
+    id: true,
+    slug: true,
+    title: true,
+    chords: true,
+    lyrics: true,
+    difficulty: true,
   },
+  orderBy: { title: "asc" },
+},
 },
   })
 
@@ -100,6 +101,9 @@ const images = allImages
   ? "🎸 "
   : "🎵 "}
 {song.title}
+<span style={{ opacity: 0.7, marginLeft: "8px", fontSize: "14px" }}>
+  • {song.difficulty}
+</span>
 </Link>
 ))
 }
