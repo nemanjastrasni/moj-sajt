@@ -20,6 +20,7 @@ export async function POST(req: Request) {
   if (body.country) data.country = body.country
   if (body.birthYear) data.birthYear = Number(body.birthYear)
   if (body.image) data.image = body.image
+  if (body.skillLevel) data.skillLevel = body.skillLevel
 
   // ✅ HASH PASSWORD
   if (body.password) {

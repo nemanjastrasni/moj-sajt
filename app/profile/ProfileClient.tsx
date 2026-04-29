@@ -20,7 +20,9 @@ export default function ProfileClient({ user, favorites }: any) {
   const [country, setCountry] = useState(user?.country || "")
   const [birthYear, setBirthYear] = useState(user?.birthYear || "")
   const [showPassword, setShowPassword] = useState(false)
-  
+  const [skillLevel, setSkillLevel] = useState(
+  user?.skillLevel || "beginner"
+)
   async function updateProfile() {
     if (password && password !== confirmPassword) {
     alert("Lozinke se ne poklapaju")
@@ -37,6 +39,7 @@ export default function ProfileClient({ user, favorites }: any) {
     country,
     birthYear,
     image,
+    skillLevel,
   }),
 })
 
@@ -125,6 +128,15 @@ window.location.reload()
     className="w-20 h-20 rounded-full mx-auto border mb-2"
   />
 )}
+<select
+  value={skillLevel}
+  onChange={(e) => setSkillLevel(e.target.value)}
+  className="border px-3 py-2 rounded text-black bg-white"
+>
+  <option value="beginner">Beginner</option>
+  <option value="intermediate">Intermediate</option>
+  <option value="advanced">Advanced</option>
+</select>
         <div className="grid grid-cols-5 gap-2">
           {avatars.map((a) => (
             <img
