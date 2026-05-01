@@ -18,15 +18,19 @@ export default async function BioCategory({ params }: any) {
 
     const first = a.name[0].toUpperCase()
 
-    if (/[0-9]/.test(first)) {
-      lettersSet.add("#")
-    } else {
-      lettersSet.add(first)
-    }
+if (!/^[A-ZČĆŠĐŽ]/.test(first)) {
+  lettersSet.add("#")
+} else {
+  lettersSet.add(first)
+}
 
   })
 
-  const letters = Array.from(lettersSet).sort()
+  const letters = Array.from(lettersSet).sort((a, b) => {
+  if (a === "#") return -1
+  if (b === "#") return 1
+  return a.localeCompare(b, "sr")
+})
 
   const title =
     category === "domace"
@@ -59,7 +63,7 @@ export default async function BioCategory({ params }: any) {
         {letters.map((letter) => (
           <Link
             key={letter}
-            href={`/biografija/${category}/slovo/${letter.toLowerCase()}`}
+            href={`/biografija/${category}/slovo/${letter === "#" ? "num" : letter.toLowerCase()}`}
             style={{
               border: "1px solid #555",
               padding: "8px 12px",

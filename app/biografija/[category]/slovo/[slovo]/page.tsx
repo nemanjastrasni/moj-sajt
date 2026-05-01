@@ -3,22 +3,33 @@ import { prisma } from "@/lib/prisma"
 
 export default async function ArtistsByLetter({ params }: { params: Promise<{ category: string; slovo: string }> }){
 
+    function normalizeLetter(letter: string) {
+  return decodeURIComponent(letter).toUpperCase()
+}
+
+function getFirstLetter(name?: string) {
+  if (!name) return ""
+  return name.trim().toUpperCase()[0]
+}
+
 const { category, slovo } = await params
-const letter = (slovo || "").toUpperCase()
+const letter = normalizeLetter(slovo)
+const isSpecial = letter === "#" || letter === "NUM"
 
 let artists = []
 
-if(letter === "#"){
-artists = await prisma.artist.findMany({
-where:{ category },
-orderBy:{ name:"asc" }
-})
+if (isSpecial) {
+  const all = await prisma.artist.findMany({
+    where: { category },
+    orderBy: { name: "asc" }
+  })
 
-artists = artists.filter(a =>
-a.name?.toUpperCase().startsWith(letter)
-)
+  artists = all.filter(a => {
+    const first = a.name?.[0]?.toUpperCase()
+    return first && !/^[A-ZČĆŠĐŽ]/.test(first)
+  })
 
-}else{
+} else {
 
 artists = await prisma.artist.findMany({
 where:{
