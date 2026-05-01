@@ -12,17 +12,18 @@ type Props = {
   }>
 }
 
-export async function generateMetadata(
-  { params }: Props
-): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { artist, slug } = await params
 
+  const title = slug.replace(/-/g, " ")
+  const artistName = artist.replace(/-/g, " ")
+
   return {
-    title: `${slug.replace(/-/g, " ")} - ${artist} akordi`,
-    description: `Akordi i tekst pesme ${slug.replace(/-/g, " ")}.`,
+    title: `${title} - ${artistName} akordi`,
+    description: `Akordi i tekst pesme ${title} od ${artistName}.`,
     openGraph: {
-      title: `${slug.replace(/-/g, " ")} - ${artist}`,
-      description: `Akordi i tekst pesme`,
+      title: `${title} - ${artistName}`,
+      description: `Akordi i tekst pesme ${title}`,
       images: ["https://gitarakordi.com/og.jpg"],
     },
   }
