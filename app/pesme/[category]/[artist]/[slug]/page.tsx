@@ -5,15 +5,15 @@ import { resolveMusic } from "@/lib/music/resolver"
 import type { Metadata } from "next"
 
 type Props = {
-  params: Promise<{
-    category: string
-    artist: string
-    slug: string
-  }>
+  params: {
+  category: string
+  artist: string
+  slug: string
+}
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { artist, slug } = await params
+  const { artist, slug } = params
 
   const title = slug.replace(/-/g, " ")
   const artistName = artist.replace(/-/g, " ")
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SongPage({ params }: Props) {
-  const { artist, slug, category } = await params
+  const { artist, slug, category } = params
 
   const song = await prisma.song.findFirst({
     where: {
