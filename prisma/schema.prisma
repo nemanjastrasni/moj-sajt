@@ -20,26 +20,26 @@ model playing_with_neon {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  name          String?
-  email         String?    @unique
-  password      String?
-  createdAt     DateTime   @default(now())
-  emailVerified DateTime?
-  image         String?
-  role          String     @default("user")
-  banned        Boolean    @default(false)
-  bio           String?
-  birthYear     Int?
-  city          String?
-  country       String?
-  skillLevel String @default("beginner")
-  accounts      Account[]
-  favorites     Favorite[]
-  playlists     Playlist[]
-  sessions      Session[]
-  playlistLikes ListeningPlaylistLike[]
-  listeningPlaylists ListeningPlaylist[] @relation("UserListeningPlaylists")
+  id                 String                  @id @default(cuid())
+  name               String?
+  email              String?                 @unique
+  password           String?
+  createdAt          DateTime                @default(now())
+  emailVerified      DateTime?
+  image              String?
+  role               String                  @default("user")
+  bio                String?
+  birthYear          Int?
+  city               String?
+  country            String?
+  banned             Boolean                 @default(false)
+  skillLevel         String                  @default("beginner")
+  accounts           Account[]
+  favorites          Favorite[]
+  listeningPlaylists ListeningPlaylist[]     @relation("UserListeningPlaylists")
+  playlistLikes      ListeningPlaylistLike[]
+  playlists          Playlist[]
+  sessions           Session[]
 }
 
 model Artist {
@@ -57,20 +57,20 @@ model Artist {
 }
 
 model Song {
-  id        String     @id @default(cuid())
-  slug      String
-  title     String
-  category  String
-  lyrics    String
-  chords    String?
-  artistId  String
-  createdAt DateTime?  @default(now()) @db.Timestamptz(6)
-  favorites Favorite[]
-  artist    Artist     @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "song_artist_fk")
-  
-  popularity Int @default(0)
-  difficulty String @default("beginner")
+  id            String         @id @default(cuid())
+  slug          String
+  title         String
+  category      String
+  lyrics        String
+  chords        String?
+  artistId      String
+  createdAt     DateTime?      @default(now()) @db.Timestamptz(6)
+  popularity    Int            @default(0)
+  difficulty    String         @default("beginner")
+  favorites     Favorite[]
   playlistSongs PlaylistSong[]
+  artist        Artist         @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "song_artist_fk")
+
   @@unique([artistId, slug])
 }
 
@@ -123,9 +123,9 @@ model Playlist {
   id        String         @id @default(cuid())
   name      String
   userId    String
-  category String?
-  isAdmin   Boolean        @default(false) 
   createdAt DateTime       @default(now())
+  isAdmin   Boolean        @default(false)
+  category  String?
   user      User           @relation(fields: [userId], references: [id])
   songs     PlaylistSong[]
 }
@@ -134,51 +134,49 @@ model PlaylistSong {
   id         String   @id @default(cuid())
   playlistId String
   songId     String
-
+  order      Int?     @default(0)
   playlist   Playlist @relation(fields: [playlistId], references: [id])
   song       Song     @relation(fields: [songId], references: [id])
 
   @@unique([playlistId, songId])
 }
 
-
 model analytics {
   day    DateTime @id @db.Date
   visits Int?     @default(0)
 }
+
 model ListeningPlaylist {
-  id        String   @id @default(cuid())
+  id        String                  @id @default(cuid())
   name      String
   userId    String?
-  createdAt DateTime @default(now())
-  category String?
-  isPublic Boolean @default(true)
-  views Int @default(0)
-  likes ListeningPlaylistLike[]
-
-  user User? @relation("UserListeningPlaylists", fields: [userId], references: [id])
+  createdAt DateTime                @default(now())
+  category  String?
+  isPublic  Boolean                 @default(true)
+  views     Int                     @default(0)
   items     ListeningItem[]
+  user      User?                   @relation("UserListeningPlaylists", fields: [userId], references: [id])
+  likes     ListeningPlaylistLike[]
 }
 
 model ListeningItem {
-  id          String   @id @default(cuid())
-  playlistId  String
-  title       String?
-  url         String
-  type        String   // "youtube" | "spotify"
-  createdAt   DateTime @default(now())
-  order Int @default(0)
-
-  playlist    ListeningPlaylist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  id         String            @id @default(cuid())
+  playlistId String
+  title      String?
+  url        String
+  type       String
+  createdAt  DateTime          @default(now())
+  order      Int               @default(0)
+  playlist   ListeningPlaylist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
 }
+
 model ListeningPlaylistLike {
-  id         String   @id @default(cuid())
+  id         String            @id @default(cuid())
   userId     String
   playlistId String
-  createdAt  DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  playlist ListeningPlaylist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  createdAt  DateTime          @default(now())
+  playlist   ListeningPlaylist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, playlistId])
 }

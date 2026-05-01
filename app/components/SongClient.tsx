@@ -421,22 +421,10 @@ useEffect(() => {
 
         {/* NOVA PLAYLISTA */}
         <div
-          onClick={async () => {
-            const name = prompt("Naziv playliste")
-            if (!name) return
-
-            await fetch("/api/playlist", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                name,
-                category: song.category,
-                songId: song.id,
-              }),
-            })
-
-            location.reload()
-          }}
+  onClick={() => {
+    setShowModal(true)
+    setShowSelect(false)
+  }}
           className="px-2 py-2 hover:bg-white/10 cursor-pointer border-t border-gray-700 mt-1 text-blue-400"
         >
           + Nova playlista
@@ -513,14 +501,6 @@ useEffect(() => {
 
           const data = await res.json()
 
-          await fetch("/api/playlist", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              playlistId: data.id,
-              songId: song.id,
-            }),
-          })
           
           setShowModal(false)
           setPlaylistName("")

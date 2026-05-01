@@ -32,20 +32,21 @@ export async function POST(req: Request) {
 
   const playlist = await prisma.playlist.create({
     data: {
-  name,
-  category: normalizeCategory(category),
-  userId: user.id,
+    name,
+    category: normalizeCategory(category),
+    userId: user.id,
 },
   })
 
   if (songId) {
-    await prisma.playlistSong.create({
-      data: {
-        playlistId: playlist.id,
-        songId,
-      },
-    })
-  }
+  await prisma.playlistSong.create({
+    data: {
+      playlistId: playlist.id,
+      songId,
+      order: 0,
+    },
+  })
+}
 
   return NextResponse.json(playlist)
 }
@@ -86,12 +87,21 @@ export async function PUT(req: Request) {
       },
     })
 
-    const item = await prisma.playlistSong.create({
-      data: {
-        playlistId,
-        songId,
-      },
-    })
+    // 👉 nađi poslednji order u toj playlisti
+const last = await prisma.playlistSong.findFirst({
+  where: { playlistId },
+  orderBy: { order: "desc" },
+})
+
+const newOrder = (last?.order ?? -1) + 1
+
+const item = await prisma.playlistSong.create({
+  data: {
+    playlistId,
+    songId,
+    order: newOrder,
+  },
+})
 
     if (!alreadyInAnyPlaylist) {
       await prisma.song.update({
@@ -189,8 +199,12 @@ export async function GET() {
   const playlists = await prisma.playlist.findMany({
     where: { userId: user.id },
     include: {
-      songs: true,
+    songs: {
+    orderBy: {
+      order: "asc",
     },
+  },
+},
   })
 
   return NextResponse.json(playlists)

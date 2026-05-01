@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { revalidatePath } from "next/cache"
+import PlaylistClient from "@/app/components/PlaylistClient"
+
 
 export default async function Page({ params }: any) {
 
@@ -153,63 +155,9 @@ export default async function Page({ params }: any) {
       {playlist.name}
     </h1>
 
-    {playlist.songs.map((s: any) => {
-      console.log(JSON.stringify(s, null, 2))
-
-      return (
-        <div
-          key={s.id}
-          style={{
-            padding: "10px 0",
-            borderBottom: "1px solid #222",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}
-        >
-          <Link href={`/pesme/${s.song.category}/${s.song.artist.slug}/${s.song.slug}`}>
-            <span className="text-gray-400">
-              {s.song.artist?.name}
-            </span>{" "}
-            <span className="text-white">
-              - {s.song.title}
-            </span>
-          </Link>
-
-          <form
-            action={async () => {
-              "use server"
-
-              await prisma.playlistSong.deleteMany({
-  where: {
-    playlistId: id,
-    songId: s.songId
-  }
-})
-revalidatePath(`/plejliste/${id}`)
-            }}
-          >
-            <button
-  type="submit"
-  formAction={async () => {
-    "use server"
-
-    await prisma.playlistSong.deleteMany({
-      where: {
-        playlistId: id,
-        songId: s.songId
-      }
-    })
-
-    revalidatePath(`/plejliste/${id}`)
-  }}
-  className="text-red-400 hover:text-red-600"
->
-  Obriši
-</button>
-</form>
-</div>
-)
-})}
+    <PlaylistClient
+  playlistId={playlist.id}
+  initialSongs={playlist.songs}
+/>
 </div>
 )}
