@@ -3,6 +3,16 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "../../../lib/auth"
 import { prisma } from "../../../lib/prisma"
 
+const normalizeCategory = (cat?: string) => {
+  const c = (cat || "").toLowerCase()
+
+  if (c.includes("dom")) return "domace"
+  if (c.includes("str")) return "strane"
+  if (c.includes("nar")) return "narodne"
+
+  return "mix"
+}
+
 // CREATE PLAYLIST
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions)
@@ -23,7 +33,7 @@ export async function POST(req: Request) {
   const playlist = await prisma.playlist.create({
     data: {
   name,
-  category: category || "mix", 
+  category: normalizeCategory(category),
   userId: user.id,
 },
   })
@@ -156,12 +166,32 @@ export async function GET() {
 
   if (!user) return NextResponse.json([])
 
+  // ✅ PROVERI DA LI POSTOJI MIX
+  let mix = await prisma.playlist.findFirst({
+    where: {
+      userId: user.id,
+      category: "mix",
+    },
+  })
+
+  // ✅ AKO NE POSTOJI → NAPRAVI GA
+  if (!mix) {
+    mix = await prisma.playlist.create({
+      data: {
+        name: "Mix",
+        category: "mix",
+        userId: user.id,
+      },
+    })
+  }
+
+  // ✅ VRATI SVE PLAYLISTE
   const playlists = await prisma.playlist.findMany({
-  where: { userId: user.id },
-  include: {
-    songs: true,
-  },
-})
+    where: { userId: user.id },
+    include: {
+      songs: true,
+    },
+  })
 
   return NextResponse.json(playlists)
 }

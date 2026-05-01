@@ -38,6 +38,15 @@ export default function SongClient({ song, media }: Props) {
 
   const [textSize, setTextSize] = useState(18)
   const [chordSize, setChordSize] = useState(18)
+  const normalize = (str?: string) =>
+  (str || "")
+    .toLowerCase()
+    .replace("ć", "c")
+    .replace("č", "c")
+    .replace("š", "s")
+    .replace("ž", "z")
+    .trim()
+
   if (!song) return null
   const { title, artist, content, lyrics } = song
   const displayContent = lyrics || content || ""
@@ -350,55 +359,65 @@ useEffect(() => {
     {showSelect && (
       <div className="absolute mt-2 bg-neutral-900 border border-gray-700 rounded p-2 z-50 w-64">
 
-        {[
-  ...playlists.filter(p => p.category === song.category),
-  ...playlists.filter(p => p.category === "Mix"),
-].map((p) => {
-  const isAdded = p.songs?.some((s: any) => s.songId === song.id)
+  {(() => {
+  const sc = (song.category || "").toLowerCase()
 
-  return (
-    <div
-      key={p.id}
-      onClick={async () => {
-  if (isAdded) return
-
-  await fetch("/api/playlist", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      playlistId: p.id,
-      songId: song.id,
-    }),
+  const filtered = playlists.filter(p => {
+    const pc = (p.category || "").toLowerCase()
+    return pc === sc || pc === "mix"
   })
 
-  // ✅ ODMAH UPDATE UI (NAJBITNIJE)
-  setPlaylists(prev =>
-    prev.map(pl =>
-      pl.id === p.id
-        ? {
-            ...pl,
-            songs: [...(pl.songs || []), { songId: song.id }]
-          }
-        : pl
+  const sorted = [
+    ...filtered.filter(p => p.category !== "mix"),
+    ...filtered.filter(p => p.category === "mix"),
+  ]
+
+  return sorted.map((p) => {
+    const isAdded = p.songs?.some(
+      (s: any) => s.songId === song.id
     )
-  )
 
-  setShowSelect(false)
-}}
-      className="px-2 py-2 hover:bg-white/10 cursor-pointer flex justify-between items-center"
-    >
-      <span className="truncate max-w-[180px]">
-        {p.name}
-      </span>
+    return (
+      <div
+        key={p.id}
+        onClick={async () => {
+          if (isAdded) return
 
-      {isAdded ? (
-        <span className="text-green-400">✓</span>
-      ) : (
-        <span className="text-green-400">+</span>
-      )}
-    </div>
-  )
-})}
+          await fetch("/api/playlist", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              playlistId: p.id,
+              songId: song.id,
+            }),
+          })
+
+          setPlaylists(prev =>
+            prev.map(pl =>
+              pl.id === p.id
+                ? {
+                    ...pl,
+                    songs: [...(pl.songs || []), { songId: song.id }]
+                  }
+                : pl
+            )
+          )
+
+          setShowSelect(false)
+        }}
+        className="px-2 py-2 hover:bg-white/10 cursor-pointer flex justify-between items-center"
+      >
+        <span className="truncate max-w-[180px]">
+          {p.name}
+        </span>
+
+        <span className="text-green-400">
+          {isAdded ? "✓" : "+"}
+        </span>
+      </div>
+    )
+  })
+})()}
 
         {/* NOVA PLAYLISTA */}
         <div
