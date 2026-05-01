@@ -69,14 +69,12 @@ export default function PlaylistPlayer({ playlist }: any) {
   }
 
   useEffect(() => {
-    const tag = document.createElement("script")
-    tag.src = "https://www.youtube.com/iframe_api"
-    document.body.appendChild(tag)
+  if ((window as any).YT) return
 
-    ;(window as any).onYouTubeIframeAPIReady = () => {
-      console.log("YT API READY")
-    }
-  }, [])
+  const tag = document.createElement("script")
+  tag.src = "https://www.youtube.com/iframe_api"
+  document.body.appendChild(tag)
+}, [])
 
   useEffect(() => {
     if (!(window as any).YT) return
@@ -88,8 +86,9 @@ export default function PlaylistPlayer({ playlist }: any) {
     const id = extractYoutubeId(activeItem.url)
 
     if ((window as any).player) {
-      ;(window as any).player.destroy()
-    }
+  ;(window as any).player.loadVideoById(id)
+  return
+}
 
     ;(window as any).player = new YT.Player("yt-player", {
       videoId: id,

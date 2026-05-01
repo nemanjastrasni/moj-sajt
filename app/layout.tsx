@@ -28,7 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${poppins.className} m-0 p-0`}>
+      <body className={`${poppins.className} m-0 p-0 overflow-x-hidden`}>
         <Providers>
 
           {/* HEADER */}
@@ -42,7 +42,7 @@ export default function RootLayout({
           </header>
 
           {/* CONTENT */}
-          <main className="w-full">
+          <main className="w-full max-w-6xl mx-auto px-4 pb-24">
             {children}
           </main>
 

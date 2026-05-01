@@ -24,7 +24,7 @@ export default function HomePage() {
 
       {/* SEARCH CENTER */}
       <div className="w-full flex justify-center mt-6 mb-4 z-[9999]">
-        <div className="relative w-[340px]">
+        <div className="relative w-full max-w-md">
 
           <input
             value={query}

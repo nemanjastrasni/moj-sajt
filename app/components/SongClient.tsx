@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import Chord from "./Chord"
+import { useMemo } from "react"
 
 type Props = {
   song: {
@@ -50,6 +51,9 @@ export default function SongClient({ song, media }: Props) {
   if (!song) return null
   const { title, artist, content, lyrics } = song
   const displayContent = lyrics || content || ""
+  const rendered = useMemo(() => {
+  return renderContent(displayContent.trim(), chordSize)
+}, [displayContent, chordSize, transpose])
 
   const NOTES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
 
@@ -70,6 +74,7 @@ export default function SongClient({ song, media }: Props) {
   if (!chord) return chord
   return chord[0].toUpperCase() + chord.slice(1)
 }
+
   function renderContent(text: string, chordSize: number) {
     
    const chordRegex =
@@ -376,6 +381,7 @@ useEffect(() => {
     const isAdded = p.songs?.some(
       (s: any) => s.songId === song.id
     )
+  
 
     return (
       <div
@@ -439,14 +445,14 @@ useEffect(() => {
   {artist}
 </h2>
           {/* CONTENT */}
-          <div
-            className="font-mono leading-relaxed whitespace-pre-wrap"
-            style={{ fontSize: `${textSize}px` }}
-          >
-            {renderContent(displayContent.trim(), chordSize)}
-          </div>
+<div
+  className="font-mono leading-relaxed whitespace-pre-wrap"
+  style={{ fontSize: `${textSize}px` }}
+>
+  {rendered}
+</div>
+</div>
 
-        </div>
 
         {/* DESNA STRANA - YOUTUBE */}
         <div>
@@ -463,6 +469,7 @@ useEffect(() => {
 
     <div className="relative w-full" style={{ paddingBottom: "56.25%", height: 0 }}>
   <iframe
+    loading="lazy"
     src={media?.embedUrl}
     title="YouTube player"
     className="absolute top-0 left-0 w-full h-full"
