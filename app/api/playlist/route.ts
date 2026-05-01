@@ -157,8 +157,11 @@ export async function GET() {
   if (!user) return NextResponse.json([])
 
   const playlists = await prisma.playlist.findMany({
-    where: { userId: user.id },
-  })
+  where: { userId: user.id },
+  include: {
+    songs: true,
+  },
+})
 
   return NextResponse.json(playlists)
 }
