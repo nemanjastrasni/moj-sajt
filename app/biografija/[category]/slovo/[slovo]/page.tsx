@@ -20,9 +20,15 @@ let artists = []
 
 if (isSpecial) {
   const all = await prisma.artist.findMany({
-    where: { category },
-    orderBy: { name: "asc" }
-  })
+  where: { category },
+  orderBy: { name: "asc" },
+  select: {
+    id: true,
+    name: true,
+    slug: true,
+    image: true
+  }
+})
 
   artists = all.filter(a => {
     const first = a.name?.[0]?.toUpperCase()
@@ -32,14 +38,20 @@ if (isSpecial) {
 } else {
 
 artists = await prisma.artist.findMany({
-where:{
-category,
-name:{
-startsWith: letter,
-mode: "insensitive"
-}
-},
-orderBy:{ name:"asc" }
+  where: {
+    category,
+    name: {
+      startsWith: letter,
+      mode: "insensitive"
+    }
+  },
+  orderBy: { name: "asc" },
+  select: {
+    id: true,
+    name: true,
+    slug: true,
+    image: true
+  }
 })
 
 }
@@ -56,11 +68,26 @@ Izvođači - {letter?.toUpperCase()}
 
 {artists?.map(a=>(
 <Link
-key={a.id}
-href={`/biografija/${category}/${a.slug}`}
+  key={a.id}
+  href={`/biografija/${category}/${a.slug}`}
+  style={{ display: "flex", alignItems: "center", gap: "8px" }}
 >
 
-{a.name}
+  {a.image && (
+    <img
+      src={a.image}
+      alt={a.name}
+      style={{
+        width: "28px",
+        height: "28px",
+        borderRadius: "50%",
+        objectFit: "cover",
+        flexShrink: 0
+      }}
+    />
+  )}
+
+  <span>{a.name}</span>
 
 </Link>
 ))}

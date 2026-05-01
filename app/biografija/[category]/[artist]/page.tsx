@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
+import BioText from "@/app/biografija/components/BioText"
 
 function cirToLat(text:string){
 
@@ -54,9 +55,11 @@ export default async function BiographyPage({ params }: any) {
 </a>
 
       {/* BIOGRAFIJA */}
-      <div style={{ marginBottom: "40px", whiteSpace: "pre-line" }}>
-        {cirToLat(artistData.bio || "Biografija nije dostupna.")}
-      </div>
+      import BioText from "@/app/biografija/components/BioText"
+
+<div style={{ marginBottom: "40px" }}>
+  <BioText text={cirToLat(artistData.bio || "Biografija nije dostupna.")} />
+</div>
 
       {/* DISKOGRAFIJA */}
       {artistData.discography && (
