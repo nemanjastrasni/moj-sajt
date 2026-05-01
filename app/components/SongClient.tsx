@@ -350,26 +350,42 @@ useEffect(() => {
     {showSelect && (
       <div className="absolute mt-2 bg-neutral-900 border border-gray-700 rounded p-2 z-50 w-64">
 
-        {playlists.map((p) => {
+        {playlists
+  .filter(p =>
+    p.category === song.category || p.category === "mix"
+  )
+  .map((p) => {
   const isAdded = p.songs?.some((s: any) => s.songId === song.id)
 
   return (
     <div
       key={p.id}
       onClick={async () => {
-        if (isAdded) return
+  if (isAdded) return
 
-        await fetch("/api/playlist", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            playlistId: p.id,
-            songId: song.id,
-          }),
-        })
+  await fetch("/api/playlist", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      playlistId: p.id,
+      songId: song.id,
+    }),
+  })
 
-        setShowSelect(false)
-      }}
+  // ✅ ODMAH UPDATE UI (NAJBITNIJE)
+  setPlaylists(prev =>
+    prev.map(pl =>
+      pl.id === p.id
+        ? {
+            ...pl,
+            songs: [...(pl.songs || []), { songId: song.id }]
+          }
+        : pl
+    )
+  )
+
+  setShowSelect(false)
+}}
       className="px-2 py-2 hover:bg-white/10 cursor-pointer flex justify-between items-center"
     >
       <span className="truncate max-w-[180px]">
