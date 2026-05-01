@@ -5,17 +5,17 @@ import { resolveMusic } from "@/lib/music/resolver"
 import type { Metadata } from "next"
 
 type Props = {
-  params: {
+  params: Promise<{
     category: string
     artist: string
     slug: string
-  }
+  }>
 }
 
 export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
-  const { artist, slug } = params
+  const { artist, slug } = await params
 
   const song = await prisma.song.findFirst({
     where: {
@@ -33,28 +33,28 @@ export async function generateMetadata(
 
   return {
     title: `${song.title} - ${song.artist.name} akordi`,
-description: `Akordi za pesmu ${song.title} od ${song.artist.name}. Sviraj gitaru uz tekst i akorde.`,
+    description: `Akordi za pesmu ${song.title} od ${song.artist.name}. Sviraj gitaru uz tekst i akorde.`,
     openGraph: {
-  title: `${song.title} - ${song.artist.name}`,
-  description: `Akordi i tekst pesme ${song.title}`,
-  images: [
-  "https://gitarakordi.com/og.jpg",
-],
-},
+      title: `${song.title} - ${song.artist.name}`,
+      description: `Akordi i tekst pesme ${song.title}`,
+      images: [
+        "https://gitarakordi.com/og.jpg",
+      ],
+    },
   }
 }
 
 export default async function SongPage({ params }: Props) {
-  const { artist, slug } = params
+  const { artist, slug, category } = await params
 
   const song = await prisma.song.findFirst({
     where: {
-  slug,
-  artist: {
-    slug: artist,
-    category: params.category,
-  },
-},
+      slug,
+      artist: {
+        slug: artist,
+        category: category,
+      },
+    },
     include: {
       artist: true,
     },
@@ -74,17 +74,17 @@ export default async function SongPage({ params }: Props) {
 
   return (
     <SongClient
-  song={{
-    id: song.id,
-    title: song.title,
-    artist: song.artist.name,
-    lyrics: song.lyrics ?? undefined,
-    chords: song.chords ?? undefined,
-    category: song.artist.category ?? undefined,
-    artistSlug: song.artist.slug,
-    artistName: song.artist.name,
-  }}
-  media={media}
-/>
+      song={{
+        id: song.id,
+        title: song.title,
+        artist: song.artist.name,
+        lyrics: song.lyrics ?? undefined,
+        chords: song.chords ?? undefined,
+        category: song.artist.category ?? undefined,
+        artistSlug: song.artist.slug,
+        artistName: song.artist.name,
+      }}
+      media={media}
+    />
   )
 }
