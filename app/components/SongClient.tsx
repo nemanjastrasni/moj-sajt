@@ -352,7 +352,7 @@ useEffect(() => {
 
         {[
   ...playlists.filter(p => p.category === song.category),
-  ...playlists.filter(p => p.category === "mix"),
+  ...playlists.filter(p => p.category === "Mix"),
 ].map((p) => {
   const isAdded = p.songs?.some((s: any) => s.songId === song.id)
 
