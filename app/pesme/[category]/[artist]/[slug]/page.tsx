@@ -5,17 +5,17 @@ import { resolveMusic } from "@/lib/music/resolver"
 import type { Metadata } from "next"
 
 type Props = {
-  params: Promise<{
+  params: {
     category: string
     artist: string
     slug: string
-  }>
+  }
 }
 
 export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
-  const { artist, slug } = await params
+  const { artist, slug } = params
 
   const song = await prisma.song.findFirst({
     where: {
@@ -32,25 +32,27 @@ export async function generateMetadata(
   }
 
   return {
-    title: `${song.title} – ${song.artist.name}`,
-    description: `Akordi i tekst pesme ${song.title} od izvođača ${song.artist.name}.`,
+    title: `${song.title} - ${song.artist.name} akordi`,
+description: `Akordi za pesmu ${song.title} od ${song.artist.name}. Sviraj gitaru uz tekst i akorde.`,
     openGraph: {
-      title: `${song.title} – ${song.artist.name}`,
-      description: `Akordi i tekst pesme ${song.title}.`,
-      type: "article",
-    },
+  title: `${song.title} - ${song.artist.name}`,
+  description: `Akordi i tekst pesme ${song.title}`,
+  images: [
+  "https://gitarakordi.com/og.jpg",
+],
+},
   }
 }
 
 export default async function SongPage({ params }: Props) {
-  const { artist, slug } = await params
+  const { artist, slug } = params
 
   const song = await prisma.song.findFirst({
     where: {
   slug,
   artist: {
     slug: artist,
-    category: (await params).category,
+    category: params.category,
   },
 },
     include: {

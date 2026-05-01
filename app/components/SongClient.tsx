@@ -51,12 +51,11 @@ export default function SongClient({ song, media }: Props) {
   if (!song) return null
   const { title, artist, content, lyrics } = song
   const displayContent = lyrics || content || ""
+ 
+  const NOTES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
   const rendered = useMemo(() => {
   return renderContent(displayContent.trim(), chordSize)
 }, [displayContent, chordSize, transpose])
-
-  const NOTES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
-
   function transposeChord(chord: string) {
     const match = chord.match(/^([A-GH])(#|b)?(.*)$/)
     if (!match) return chord
@@ -92,7 +91,7 @@ export default function SongClient({ song, media }: Props) {
         if (match.index > lastIndex) {
           parts.push(line.slice(lastIndex, match.index))
         }
-
+        
         const rawChord = match[0]
         const chord = normalizeChord(rawChord)
         const isSingleLetter = chord.length === 1
