@@ -350,11 +350,10 @@ useEffect(() => {
     {showSelect && (
       <div className="absolute mt-2 bg-neutral-900 border border-gray-700 rounded p-2 z-50 w-64">
 
-        {playlists
-  .filter(p =>
-    p.category === song.category || p.category === "mix"
-  )
-  .map((p) => {
+        {[
+  ...playlists.filter(p => p.category === song.category),
+  ...playlists.filter(p => p.category === "mix"),
+].map((p) => {
   const isAdded = p.songs?.some((s: any) => s.songId === song.id)
 
   return (
