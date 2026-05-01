@@ -17,29 +17,13 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { artist, slug } = await params
 
-  const song = await prisma.song.findFirst({
-    where: {
-      slug,
-      artist: { slug: artist },
-    },
-    include: { artist: true },
-  })
-
-  if (!song) {
-    return {
-      title: "Pesma nije pronađena",
-    }
-  }
-
   return {
-    title: `${song.title} - ${song.artist.name} akordi`,
-    description: `Akordi za pesmu ${song.title} od ${song.artist.name}. Sviraj gitaru uz tekst i akorde.`,
+    title: `${slug.replace(/-/g, " ")} - ${artist} akordi`,
+    description: `Akordi i tekst pesme ${slug.replace(/-/g, " ")}.`,
     openGraph: {
-      title: `${song.title} - ${song.artist.name}`,
-      description: `Akordi i tekst pesme ${song.title}`,
-      images: [
-        "https://gitarakordi.com/og.jpg",
-      ],
+      title: `${slug.replace(/-/g, " ")} - ${artist}`,
+      description: `Akordi i tekst pesme`,
+      images: ["https://gitarakordi.com/og.jpg"],
     },
   }
 }
