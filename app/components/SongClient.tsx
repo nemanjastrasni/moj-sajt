@@ -172,13 +172,24 @@ parts.push(
       setIsFav(data.isFav)
     }
   }
-
+  
   checkFav()
 
   return () => {
     mounted = false
   }
 }, [song.id])
+
+useEffect(() => {
+  async function fetchPlaylists() {
+    const res = await fetch("/api/playlist")
+    const data = await res.json()
+
+    setPlaylists(data)
+  }
+
+  fetchPlaylists()
+}, [])
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -328,28 +339,9 @@ parts.push(
   {/* PLAYLIST */}
   <div className="relative inline-block">
     <button
-      onClick={async () => {
-        // 👉 nema playlisti → napravi odmah
-        if (playlists.length === 0) {
-          const name = prompt("Naziv playliste")
-          if (!name) return
-
-          await fetch("/api/playlist", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name,
-              category: song.category,
-              songId: song.id,
-            }),
-          })
-
-          return
-        }
-
-        // 👉 ima playlisti → samo otvori dropdown
-        setShowSelect(!showSelect)
-      }}
+      onClick={() => {
+  setShowSelect(!showSelect)
+}}
       className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 rounded text-white"
     >
       + Playlist
