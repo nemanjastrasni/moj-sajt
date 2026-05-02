@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import Chord from "./Chord"
 import { useMemo } from "react"
+import ChordDiagram from "./ChordDiagram"
 
 type Props = {
   song: {
@@ -316,6 +317,7 @@ useEffect(() => {
           </div>
 
        {/* TITLE */}
+      
 <div className="flex flex-wrap items-center gap-4 mb-2 relative z-10">
   <h1 className="text-3xl font-bold">
     {title}
