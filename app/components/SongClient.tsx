@@ -27,7 +27,8 @@ type Props = {
 
 export default function SongClient({ song, media }: Props) {
   const [transpose, setTranspose] = useState(0)
-  const [showVideo, setShowVideo] = useState(true)
+  const [showVideo, setShowVideo] = useState(false)
+const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [miniPlayer, setMiniPlayer] = useState(false)
   const [isFav, setIsFav] = useState(false)
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
@@ -131,13 +132,6 @@ if (isSingleLetter && hasTextAround) {
   continue
 }
 
-// ako NIJE chord linija → ostavi tekst
-/*if (!isChordLine) {
-  parts.push(rawChord)
-  lastIndex = chordRegex.lastIndex
-  continue
-}*/
-
 parts.push(
   <Chord
     key={match.index}
@@ -228,6 +222,26 @@ useEffect(() => {
 
   fetchPlaylists()
 }, [])
+
+useEffect(() => {
+  if (!showVideo || videoUrl) return
+
+  async function fetchVideo() {
+    try {
+      const query = `${song.artist} ${song.title}`
+      const res = await fetch(`/api/youtube?q=${encodeURIComponent(query)}`)
+      const data = await res.json()
+
+      if (data?.embedUrl) {
+        setVideoUrl(data.embedUrl)
+      }
+    } catch (e) {
+      console.log("YT error", e)
+    }
+  }
+
+  fetchVideo()
+}, [showVideo])
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -482,7 +496,7 @@ useEffect(() => {
         {/* DESNA STRANA - YOUTUBE */}
         <div>
 
-           {showVideo && media?.embedUrl && (
+           {showVideo && videoUrl && (
 
   <div
     className={
@@ -495,7 +509,7 @@ useEffect(() => {
     <div className="relative w-full" style={{ paddingBottom: "56.25%", height: 0 }}>
   <iframe
     loading="lazy"
-    src={media?.embedUrl}
+    src={videoUrl}
     title="YouTube player"
     className="absolute top-0 left-0 w-full h-full"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
