@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react"
 
-const BASE = "https://nemanjastrasni.github.io/Chords/dark"
+const BASE = "/chords_final"
 
 function normalizeChord(chord: string) {
   return chord.replace(/^H/, "B")
@@ -18,6 +18,19 @@ export default function Chord({ chord, size }: Props) {
   const spanRef = useRef<HTMLSpanElement>(null)
 
   const normalized = normalizeChord(chord)
+  let safeChord = normalized
+  .replace(/\s+/g, "")
+  .replace("/", "_")
+  .replace(/^Ab/, "G#")
+  .replace(/^Db/, "C#")
+  .replace(/^Eb/, "D#")
+  .replace(/^Gb/, "F#")
+  .replace(/^Bb/, "A#")
+
+// 👉 ako je samo slovo (F, G, C...) → dodaj "maj"
+if (/^[A-G](#)?$/.test(safeChord)) {
+  safeChord = safeChord + "maj"
+}
   const rootMatch = normalized.match(/^[A-G](#|b)?/)
   const root = rootMatch ? rootMatch[0] : null
 
@@ -26,8 +39,14 @@ export default function Chord({ chord, size }: Props) {
   }
 
   const encodedRoot = encodeURIComponent(root)
-  const encodedChord = encodeURIComponent(normalized)
-  const src = `${BASE}/${encodedRoot}/${encodedChord}.png`
+  const fileName = normalized
+  .replace("b", "_b")
+   .replace(/\s+/g, "")
+  .replace("maj", "maj")
+
+  const encodedChord = encodeURIComponent(fileName + "_v1")
+  const src = `/chords_final/${encodeURIComponent(safeChord)}_v1.png`
+   console.log("CHORD:", chord, "->", safeChord)
 
   return (
     <span
@@ -73,11 +92,14 @@ export default function Chord({ chord, size }: Props) {
             }}
           >
             <img
-              src={src}
-              width={120}
-              alt={chord}
-              draggable={false}
-            />
+  src={src}
+  width={120}
+  alt={chord}
+  draggable={false}
+  onError={(e) => {
+    (e.currentTarget as HTMLImageElement).style.display = "none"
+  }}
+/>
           </div>
         )
       })()}
