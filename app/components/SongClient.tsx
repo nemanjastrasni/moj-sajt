@@ -79,23 +79,46 @@ export default function SongClient({ song, media }: Props) {
   function renderContent(text: string, chordSize: number) {
     
    const chordRegex =
-  /(?<!\S)[A-GHa-gh](#|b)?(m|maj|min|maj7|7|sus|sus4|dim|aug|add\d*)?(\d*)?(\/[A-GHa-gh](#|b)?)?(?!\S)/g
-
+  /(\[)?(?<!\S)[A-GH](#|b)?(m|maj|min|maj7|7|sus|sus2|sus4|dim|aug|add\d*)?(\d+|\+)?(\/[A-GH](#|b)?)?(\])?/g
     return text.split("\n").map((line, i) => {
-
+      let normalizedLine = line
+  .replace(/,/g, " ")
+  .replace(/\s+/g, " ")
+  .replace(/\b([a-g])\b/g, (m: string) => m.toUpperCase())
+  .replace(/\b([a-g])(#|b)?(\d+)?/g, (m: string) => m[0].toUpperCase() + m.slice(1))
       const parts = []
       let lastIndex = 0
       let match
     const isChordLine = /^[\sA-GHa-gh#mb0-9\/]+$/.test(line.trim())
 
-      while ((match = chordRegex.exec(line)) !== null) {
+      while ((match = chordRegex.exec(normalizedLine)) !== null) {
 
         if (match.index > lastIndex) {
           parts.push(line.slice(lastIndex, match.index))
-        }
+        }parts.push(normalizedLine.slice(lastIndex, match.index))
         
-        const rawChord = match[0]
-        const chord = normalizeChord(rawChord)
+        let rawChord = match[0]
+
+// skini [ ]
+rawChord = rawChord[0].toUpperCase() + rawChord.slice(1)
+
+// ako je jedno slovo → proveri kontekst
+if (/^[A-GH]$/.test(rawChord)) {
+  const before = line[match.index - 1] || ""
+  const after = line[chordRegex.lastIndex] || ""
+
+  const isWord =
+    /[a-zA-ZčćžšđČĆŽŠĐ]/.test(before) ||
+    /[a-zA-ZčćžšđČĆŽŠĐ]/.test(after)
+
+  if (isWord) {
+    parts.push(rawChord)
+    lastIndex = chordRegex.lastIndex
+    continue
+  }
+}
+
+const chord = normalizeChord(rawChord.replace("+", "maj7"))
         const isSingleLetter = chord.length === 1
         const hasTextAround =
   /[a-zA-ZčćžšđČĆŽŠĐ]/.test(line[match.index - 1] || "") ||
@@ -109,11 +132,11 @@ if (isSingleLetter && hasTextAround) {
 }
 
 // ako NIJE chord linija → ostavi tekst
-if (!isChordLine) {
+/*if (!isChordLine) {
   parts.push(rawChord)
   lastIndex = chordRegex.lastIndex
   continue
-}
+}*/
 
 parts.push(
   <Chord
@@ -126,8 +149,8 @@ parts.push(
         lastIndex = chordRegex.lastIndex
       }
 
-      if (lastIndex < line.length) {
-        parts.push(line.slice(lastIndex))
+      if (lastIndex < normalizedLine.length) {
+        parts.push(normalizedLine.slice(lastIndex))
       }
 
       return <div key={i}>{parts}</div>
