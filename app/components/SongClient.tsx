@@ -5,6 +5,7 @@ import Link from "next/link"
 import Chord from "./Chord"
 import { useMemo } from "react"
 import ChordDiagram from "./ChordDiagram"
+import { cleanLyrics } from "@/lib/cleanLyrics"
 
 type Props = {
   song: {
@@ -51,7 +52,7 @@ export default function SongClient({ song, media }: Props) {
 
   if (!song) return null
   const { title, artist, content, lyrics } = song
-  const displayContent = lyrics || content || ""
+  const displayContent = cleanLyrics(lyrics || content || "")
  
   const NOTES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
   const rendered = useMemo(() => {
