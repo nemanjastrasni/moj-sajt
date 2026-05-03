@@ -27,8 +27,7 @@ type Props = {
 
 export default function SongClient({ song, media }: Props) {
   const [transpose, setTranspose] = useState(0)
-  const [showVideo, setShowVideo] = useState(false)
-const [videoUrl, setVideoUrl] = useState<string | null>(null)
+  const [showVideo, setShowVideo] = useState(true)
   const [miniPlayer, setMiniPlayer] = useState(false)
   const [isFav, setIsFav] = useState(false)
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
@@ -223,25 +222,6 @@ useEffect(() => {
   fetchPlaylists()
 }, [])
 
-useEffect(() => {
-  if (!showVideo || videoUrl) return
-
-  async function fetchVideo() {
-    try {
-      const query = `${song.artist} ${song.title}`
-      const res = await fetch(`/api/youtube?q=${encodeURIComponent(query)}`)
-      const data = await res.json()
-
-      if (data?.embedUrl) {
-        setVideoUrl(data.embedUrl)
-      }
-    } catch (e) {
-      console.log("YT error", e)
-    }
-  }
-
-  fetchVideo()
-}, [showVideo])
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -343,7 +323,7 @@ useEffect(() => {
             </div>
 
             {/* VIDEO */}
-            {media && (
+            {media?.embedUrl && (
               <button
                 onClick={() => setShowVideo(!showVideo)}
                 className="px-2 text-xs border border-gray-700 rounded hover:text-white"
@@ -496,7 +476,7 @@ useEffect(() => {
         {/* DESNA STRANA - YOUTUBE */}
         <div>
 
-           {showVideo && videoUrl && (
+           {showVideo && media?.embedUrl && (
 
   <div
     className={
@@ -509,7 +489,7 @@ useEffect(() => {
     <div className="relative w-full" style={{ paddingBottom: "56.25%", height: 0 }}>
   <iframe
     loading="lazy"
-    src={videoUrl}
+    src={media?.embedUrl}
     title="YouTube player"
     className="absolute top-0 left-0 w-full h-full"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

@@ -3,9 +3,9 @@
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useState } from "react"
+import Hero from "./components/Hero"
 
 export default function HomePage() {
-
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<any[]>([])
 
@@ -18,12 +18,12 @@ export default function HomePage() {
           onClick={() => signIn("github")}
           className="px-4 py-2 bg-black text-white rounded-lg hover:opacity-80"
         >
-        Login
+          Login
         </button>
       </div>
 
-      {/* SEARCH CENTER */}
-      <div className="w-full flex justify-center mt-6 mb-4 z-[9999]">
+      {/* SEARCH */}
+      <div className="w-full flex justify-center mt-6 mb-4 z-[9999] relative">
         <div className="relative w-full max-w-md">
 
           <input
@@ -63,43 +63,14 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* HERO */}
-      <section className="relative h-[520px] flex items-center">
-
-  {/* SLIKA */}
-  <img
-    src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=2000"
-    className="absolute inset-0 w-full h-full object-cover"
-  />
-
-  {/* OVERLAY */}
-  <div className="absolute inset-0 bg-black/70" />
-
-  {/* TEKST */}
-  <div className="relative z-10 px-6 max-w-6xl mx-auto">
-    <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-      Najveća baza akorda i tekstova pesama
-    </h1>
-
-    <p className="text-gray-200 mb-6">
-      Pretraži hiljade pesama za gitaru
-    </p>
-
-    <Link
-      href="/pesme"
-      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold"
-    >
-      Pogledaj pesme
-    </Link>
-  </div>
-
-</section>
+      {/* HERO (NOVI) */}
+      <Hero />
 
       {/* KATEGORIJE */}
       <section className="max-w-6xl mx-auto px-6 py-14">
 
         <h2 className="text-2xl font-bold mb-8 text-white">
-          Kategorije
+          Pesme
         </h2>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -109,7 +80,7 @@ export default function HomePage() {
             className="relative h-44 rounded-xl overflow-hidden group"
           >
             <img
-              src="https://images.unsplash.com/photo-1501612780327-45045538702b?q=80&w=1600"
+              src="/hero/narodne.jpg"
               className="absolute w-full h-full object-cover group-hover:scale-110 transition"
             />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -124,7 +95,7 @@ export default function HomePage() {
             className="relative h-44 rounded-xl overflow-hidden group"
           >
             <img
-              src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=1600"
+              src="/hero/domace.jpg"
               className="absolute w-full h-full object-cover group-hover:scale-110 transition"
             />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -139,7 +110,7 @@ export default function HomePage() {
             className="relative h-44 rounded-xl overflow-hidden group"
           >
             <img
-              src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=1600"
+              src="/hero/strane.jpg"
               className="absolute w-full h-full object-cover group-hover:scale-110 transition"
             />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
