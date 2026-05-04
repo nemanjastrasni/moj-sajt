@@ -27,7 +27,7 @@ type Props = {
 
 export default function SongClient({ song, media }: Props) {
   const [transpose, setTranspose] = useState(0)
-  const [showVideo, setShowVideo] = useState(true)
+  const [showVideo, setShowVideo] = useState(false)
   const [miniPlayer, setMiniPlayer] = useState(false)
   const [isFav, setIsFav] = useState(false)
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
@@ -38,6 +38,9 @@ export default function SongClient({ song, media }: Props) {
   const [playlistName, setPlaylistName] = useState("")
   const [playlists, setPlaylists] = useState<any[]>([])
   const [showSelect, setShowSelect] = useState(false)
+
+  const [videoUrl, setVideoUrl] = useState<string | null>(null)
+  const [loadingVideo, setLoadingVideo] = useState(false)
 
   const [textSize, setTextSize] = useState(18)
   const [chordSize, setChordSize] = useState(18)
@@ -323,15 +326,38 @@ useEffect(() => {
             </div>
 
             {/* VIDEO */}
-            {media?.embedUrl && (
+            {/*{media?.embedUrl && (
               <button
                 onClick={() => setShowVideo(!showVideo)}
                 className="px-2 text-xs border border-gray-700 rounded hover:text-white"
               >
                 VIDEO {showVideo ? "ON" : "OFF"}
               </button>
-            )}
+            )}*/}
+            <button
+  onClick={async () => {
+    if (videoUrl) {
+      setShowVideo(!showVideo)
+      return
+    }
 
+    setLoadingVideo(true)
+    console.log("CLICK VIDEO:", song.title, song.artist)
+    const res = await fetch(
+  `/api/youtube?song=${encodeURIComponent(song.title)}&artist=${encodeURIComponent(song.artist)}`
+)
+
+    const data = await res.json()
+    console.log("YT RESPONSE:", data)
+
+    setVideoUrl(data?.embedUrl || null)
+    setShowVideo(true)
+    setLoadingVideo(false)
+  }}
+  className="px-2 text-xs border border-gray-700 rounded hover:text-white"
+>
+  {loadingVideo ? "LOADING..." : `VIDEO ${showVideo ? "ON" : "OFF"}`}
+</button>
           </div>
 
        {/* TITLE */}
@@ -476,7 +502,7 @@ useEffect(() => {
         {/* DESNA STRANA - YOUTUBE */}
         <div>
 
-           {showVideo && media?.embedUrl && (
+           {showVideo && videoUrl && (
 
   <div
     className={
@@ -489,7 +515,7 @@ useEffect(() => {
     <div className="relative w-full" style={{ paddingBottom: "56.25%", height: 0 }}>
   <iframe
     loading="lazy"
-    src={media?.embedUrl}
+    src={videoUrl}
     title="YouTube player"
     className="absolute top-0 left-0 w-full h-full"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

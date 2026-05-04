@@ -46,13 +46,13 @@ export default async function SongPage({ params }: Props) {
     notFound()
   }
 
-  let media = null
+ /* let media = null
 
   try {
     media = await resolveMusic(song.artist.name, song.title)
   } catch (e) {
     console.error("Music resolver failed:", e)
-  }
+  }*/
 
   return (
     <SongClient
@@ -66,7 +66,7 @@ export default async function SongPage({ params }: Props) {
         artistSlug: song.artist.slug,
         artistName: song.artist.name,
       }}
-      media={media}
+      /*media={media}*/
     />
   )
 }
