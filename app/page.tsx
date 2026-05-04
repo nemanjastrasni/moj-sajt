@@ -4,6 +4,8 @@ import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useState } from "react"
 import Hero from "./components/Hero"
+import PopularSongs from "./components/PopularSongs"
+import LatestSongs from "./components/LatestSongs"
 
 export default function HomePage() {
   const [query, setQuery] = useState("")
@@ -123,6 +125,8 @@ export default function HomePage() {
         </div>
 
       </section>
+      <PopularSongs />
+      <LatestSongs />
 
     </main>
   )

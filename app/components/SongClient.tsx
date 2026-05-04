@@ -324,16 +324,7 @@ useEffect(() => {
               />
 
             </div>
-
-            {/* VIDEO */}
-            {/*{media?.embedUrl && (
-              <button
-                onClick={() => setShowVideo(!showVideo)}
-                className="px-2 text-xs border border-gray-700 rounded hover:text-white"
-              >
-                VIDEO {showVideo ? "ON" : "OFF"}
-              </button>
-            )}*/}
+            {/* YOUTUBE VIDEO */}
             <button
   onClick={async () => {
     if (videoUrl) {

@@ -60,11 +60,21 @@ export default async function AdminSongsPage({
   })
 
   async function deleteSong(id: string) {
-    "use server"
-    await prisma.song.delete({
-      where: { id },
-    })
+  "use server"
+
+  const song = await prisma.song.findUnique({
+    where: { id },
+  })
+
+  if (!song) {
+    console.log("Pesma ne postoji")
+    return
   }
+
+  await prisma.song.delete({
+    where: { id },
+  })
+}
 
   return (
     <div className="max-w-6xl mx-auto">
