@@ -82,7 +82,7 @@ export default function HomePage() {
             className="relative h-44 rounded-xl overflow-hidden group"
           >
             <img
-              src="/hero/narodne.jpg"
+              src="/images/narodne.jpg"
               className="absolute w-full h-full object-cover group-hover:scale-110 transition"
             />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -97,7 +97,7 @@ export default function HomePage() {
             className="relative h-44 rounded-xl overflow-hidden group"
           >
             <img
-              src="/hero/domace.jpg"
+              src="/images/domace.jpg"
               className="absolute w-full h-full object-cover group-hover:scale-110 transition"
             />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -112,7 +112,7 @@ export default function HomePage() {
             className="relative h-44 rounded-xl overflow-hidden group"
           >
             <img
-              src="/hero/strane.jpg"
+              src="/images/strane.jpg"
               className="absolute w-full h-full object-cover group-hover:scale-110 transition"
             />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">

@@ -34,8 +34,10 @@ export default async function AdminSongsPage({
     ],
   }),
   ...(letter && {
-    title: { startsWith: letter, mode: "insensitive" },
-  }),
+  artist: {
+    name: { startsWith: letter, mode: "insensitive" }
+  }
+}),
    ...(artist && {
     artist: {
       name: { contains: artist, mode: "insensitive" }
@@ -96,35 +98,32 @@ export default async function AdminSongsPage({
           name="q"
           defaultValue={q}
           placeholder="Pretraga (naslov / izvođač)"
-          className="border p-2 w-64 rounded"
+          className="border p-2 w-48 rounded placeholder:text-gray-500"
         />
         <input
 name="artist"
 defaultValue={artist}
 placeholder="Izvođač"
-className="border p-2 w-48 rounded"
+className="border p-2 w-48 rounded placeholder:text-gray-500"
 />
-        <select name="letter" defaultValue={letter} className="border p-2 rounded">
+        <select name="letter" defaultValue={letter} className="border p-2 rounded text-gray-900 placeholder:text-gray-200">
             <option value="">Sva slova</option>
              {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((l) => (
 <option key={l} value={l}>{l}</option>
     ))}
              </select>
 
-        <select name="category" defaultValue={category} className="border p-2 rounded">
-           <option value="">Sve kategorije</option>
-           <option value="domace">Domaće</option>
-           <option value="strane">Strane</option>
-           <option value="narodne">Narodne</option>
-           <option value="createdAt">Najnovije</option>
-           <option value="title">Naslov A–Z</option>
-        </select>
-
-        <select name="sort" defaultValue={params.sort} className="border p-2 rounded">
-  <option value="">Sort</option>
-  <option value="createdAt">Najnovije</option>
-  <option value="title">A–Z</option>
+        <select
+  name="category"
+  defaultValue={category}
+  className="border p-2 rounded text-gray-900 placeholder:text-gray-200"
+>
+  <option value="">Sve kategorije</option>
+  <option value="domace">Domaće</option>
+  <option value="strane">Strane</option>
+  <option value="narodne">Narodne</option>
 </select>
+
 
         <button className="bg-gray-800 text-white px-4 rounded">
           Primeni
