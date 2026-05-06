@@ -77,56 +77,74 @@ export default function PlaylistPlayer({ playlist }: any) {
 }, [])
 
   useEffect(() => {
-    if (!(window as any).YT) return
+  if (!(window as any).YT) return
 
-    const YT = (window as any).YT
-    if (!YT.Player) return
-    if (!activeItem) return
+  const YT = (window as any).YT
 
-    const id = extractYoutubeId(activeItem.url)
+  if (!YT.Player) return
+  if (!activeItem) return
 
-    if ((window as any).player) {
-  ;(window as any).player.loadVideoById(id)
-  return
-}
+  const id = extractYoutubeId(activeItem.url)
 
-    ;(window as any).player = new YT.Player("yt-player", {
-      videoId: id,
-      playerVars: {
-        autoplay: 1,
-      },
-      events: {
-        onReady: (e: any) => {
-          e.target.playVideo()
-        },
-        onStateChange: (event: any) => {
-          if (event.data === 0) {
-            if (mode === "shuffle") {
-              const randomIndex = Math.floor(
-                Math.random() * items.length
-              )
-              setActiveIndex(randomIndex)
-            }
+  const existingPlayer = (window as any).player
 
-            if (mode === "play") {
-              setActiveIndex((prev) =>
-                (prev + 1) % items.length
-              )
-            }
+  // AKO PLAYER POSTOJI
+  if (
+    existingPlayer &&
+    typeof existingPlayer.loadVideoById === "function"
+  ) {
+    existingPlayer.loadVideoById(id)
+    return
+  }
+
+  // PRAVI NOV PLAYER
+  ;(window as any).player = new YT.Player("yt-player", {
+    videoId: id,
+
+    playerVars: {
+      autoplay: 1,
+    },
+
+    events: {
+      onReady: (e: any) => {
+  setTimeout(() => {
+    e.target.playVideo()
+  }, 300)
+},
+
+      onStateChange: (event: any) => {
+        // VIDEO ZAVRSIO
+        if (event.data === 0) {
+          if (mode === "shuffle") {
+            const randomIndex = Math.floor(
+              Math.random() * items.length
+            )
+
+            setActiveIndex(randomIndex)
           }
-        },
+
+          if (mode === "play") {
+            setActiveIndex((prev) =>
+              (prev + 1) % items.length
+            )
+          }
+        }
       },
-    })
-  }, [activeIndex, mode])
+    },
+  })
+}, [activeIndex, mode])
 
   useEffect(() => {
     items.forEach(async (item: any) => {
+
+      if (meta[item.id]) return
       if (item.type !== "youtube") return
 
       const id = extractYoutubeId(item.url)
 
       try {
-        const res = await fetch(`/api/youtube?id=${id}`)
+        const res = await fetch(`/api/youtube-title?id=${id}`)
+        
         const data = await res.json()
 
         setMeta((prev: any) => ({
@@ -410,12 +428,18 @@ function SortableItem({
   className="flex justify-between items-center gap-2 touch-none cursor-grab"
 >
   {/* CLICK TO PLAY */}
-  <span
-    onClick={() => setActiveIndex(currentIndex)}
-    className="cursor-pointer flex-1 text-left"
-  >
+  <div
+  onClick={() => setActiveIndex(currentIndex)}
+  className="cursor-pointer flex-1 text-left"
+>
+  <div className="text-sm text-white">
     🎵 {meta[item.id]?.title || "Loading..."}
-  </span>
+  </div>
+
+  <div className="text-xs text-gray-400">
+    {meta[item.id]?.channel}
+  </div>
+</div>
 
   {/* DELETE */}
   <button
@@ -442,9 +466,10 @@ function extractYoutubeId(url: string) {
   return match?.[1] || ""
 }
 
-function parseDuration(duration: string) {
-  const match =
-    duration.match(/PT(\d+M)?(\d+S)?/)
+function parseDuration(duration?: string) {
+  if (!duration) return "0:00"
+
+  const match = duration.match(/PT(\d+M)?(\d+S)?/)
 
   const minutes = match?.[1]
     ? parseInt(match[1])
@@ -454,6 +479,6 @@ function parseDuration(duration: string) {
     ? parseInt(match[2])
     : 0
 
-  return minutes * 60 + seconds
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`
 }
 

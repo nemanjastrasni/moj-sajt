@@ -24,9 +24,14 @@ export default function ListeningPlaylistClient({ playlist }: any) {
 
   function getEmbed(item: any) {
     if (item.type === "youtube") {
-      const id = item.url.match(/(?:v=|youtu\.be\/)([^&]+)/)?.[1]
-      return `https://www.youtube.com/embed/${id}`
-    }
+  const match = item.url.match(/(?:v=|youtu\.be\/)([^&]+)/)
+
+  if (!match || !match[1]) {
+    return null
+  }
+
+  return `https://www.youtube.com/embed/${match[1]}`
+}
 
     if (item.type === "spotify") {
       const match = item.url.match(/(track|album|playlist)\/([a-zA-Z0-9]+)/)
@@ -63,7 +68,11 @@ export default function ListeningPlaylistClient({ playlist }: any) {
 
       {/* PLAYER */}
       {current && (
-        <iframe src={current} className="w-full h-64 mb-6" />
+        <iframe
+    src={current}
+    className="w-full h-64 mb-6 rounded-xl"
+    allowFullScreen
+  />
       )}
 
       {/* LISTA */}
@@ -72,7 +81,13 @@ export default function ListeningPlaylistClient({ playlist }: any) {
           <button
             key={item.id}
             onClick={() => setCurrent(getEmbed(item))}
-          >
+          >onClick={() => {
+  const embed = getEmbed(item)
+
+  if (!embed) return
+
+  setCurrent(embed)
+}}
             ▶ {item.title || item.url}
           </button>
         ))}
