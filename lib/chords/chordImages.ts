@@ -827,5 +827,9 @@ export const chordImages = {
   "G_eb": "/chords_final/G_eb_v1.png",
   "G_e": "/chords_final/G_e_v1.png",
   "G_f#": "/chords_final/G_f#_v1.png",
-  "G_f": "/chords_final/G_f_v1.png"
+  "G_f": "/chords_final/G_f_v1.png",
+  "G": "/chords_final/Gmaj_v1.png",
+  "C": "/chords_final/C_e_v1.png",
+  "D": "/chords_final/D_e_v1.png",
+  "F": "/chords_final/Fmaj_v1.png",
 }

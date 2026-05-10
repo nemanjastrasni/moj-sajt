@@ -7,6 +7,7 @@ import { useMemo } from "react"
 import ChordDiagram from "./ChordDiagram"
 import { cleanLyrics } from "@/lib/cleanLyrics"
 import { chordImages } from "@/lib/chords/chordImages"
+import { chordPositions } from "@/lib/chords/chordPositions"
 
 type Props = {
   song: {
@@ -500,29 +501,42 @@ useEffect(() => {
 
 {/* USED CHORDS */}
 {showChordsPanel && (
-<div className="flex flex-wrap gap-3 mb-6">
-  {usedChords.map((chord) => (
-    <div
-      key={chord}
-      className="bg-neutral-900 border border-gray-700 rounded-lg p-2 text-center"
-    >
-      <div className="font-bold mb-2">
-        {chord}
-      </div>
+  <div className="flex flex-wrap gap-3 mb-6">
+    {usedChords.map((chord) => {
+      const imagePath =
+        chordImages[chord as keyof typeof chordImages]
 
-      {chordImages[chord as keyof typeof chordImages] && (
-        <img
-          src={chordImages[chord as keyof typeof chordImages]}
-          alt={chord}
-          className="w-24"
-        />
-      )}
+      return (
+        <div
+          key={chord}
+          className="bg-neutral-900 border border-gray-700 rounded-lg p-2 text-center min-w-[110px]"
+        >
+          <div className="font-bold mb-2">
+            {chord}
+          </div>
 
-    </div>
-  ))}
-</div>
+          {imagePath ? (
+            <img
+              src={imagePath}
+              alt={chord}
+              className="w-32 h-auto object-contain mx-auto"
+            />
+          ) : (
+            <div className="text-blue-500 text-4xl font-bold py-8">
+              {chord}
+            </div>
+          )}
+
+          {chordPositions[chord] && (
+            <div className="text-[11px] text-gray-400 mt-2 font-mono tracking-widest">
+              {chordPositions[chord]}
+            </div>
+          )}
+        </div>
+      )
+    })}
+  </div>
 )}
-
           {/* CONTENT */}
 <div
   className="font-mono leading-relaxed whitespace-pre-wrap"
