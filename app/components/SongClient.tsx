@@ -6,6 +6,7 @@ import Chord from "./Chord"
 import { useMemo } from "react"
 import ChordDiagram from "./ChordDiagram"
 import { cleanLyrics } from "@/lib/cleanLyrics"
+import { chordImages } from "@/lib/chords/chordImages"
 
 type Props = {
   song: {
@@ -41,7 +42,8 @@ export default function SongClient({ song, media }: Props) {
 
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [loadingVideo, setLoadingVideo] = useState(false)
-
+  
+  const [showChordsPanel, setShowChordsPanel] = useState(false)
   const [textSize, setTextSize] = useState(18)
   const [chordSize, setChordSize] = useState(18)
   const normalize = (str?: string) =>
@@ -61,6 +63,15 @@ export default function SongClient({ song, media }: Props) {
   const rendered = useMemo(() => {
   return renderContent(displayContent.trim(), chordSize)
 }, [displayContent, chordSize, transpose])
+   const usedChords = Array.from(
+  new Set(
+    (displayContent.match(
+      /\b[A-GH](#|b)?(maj7|maj|min|sus2|sus4|sus|dim|aug|add\d*|m|7)?(\d+)?\b/g
+    ) || [])
+      .map((c) => transposeChord(c))
+  )
+)
+
   function transposeChord(chord: string) {
     const match = chord.match(/^([A-GH])(#|b)?(.*)$/)
     if (!match) return chord
@@ -323,6 +334,13 @@ useEffect(() => {
               />
 
             </div>
+            {/* akordi */}
+            <button
+  onClick={() => setShowChordsPanel(!showChordsPanel)}
+  className="px-2 text-xs border border-gray-700 rounded hover:text-white"
+>
+  AKORDI {showChordsPanel ? "ON" : "OFF"}
+</button>
             {/* YOUTUBE VIDEO */}
             <button
   onClick={async () => {
@@ -479,6 +497,32 @@ useEffect(() => {
 <h2 className="text-lg text-gray-500 mb-6">
   {artist}
 </h2>
+
+{/* USED CHORDS */}
+{showChordsPanel && (
+<div className="flex flex-wrap gap-3 mb-6">
+  {usedChords.map((chord) => (
+    <div
+      key={chord}
+      className="bg-neutral-900 border border-gray-700 rounded-lg p-2 text-center"
+    >
+      <div className="font-bold mb-2">
+        {chord}
+      </div>
+
+      {chordImages[chord as keyof typeof chordImages] && (
+        <img
+          src={chordImages[chord as keyof typeof chordImages]}
+          alt={chord}
+          className="w-24"
+        />
+      )}
+
+    </div>
+  ))}
+</div>
+)}
+
           {/* CONTENT */}
 <div
   className="font-mono leading-relaxed whitespace-pre-wrap"
