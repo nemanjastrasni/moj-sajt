@@ -82,11 +82,10 @@ export default function SongClient({ song, media }: Props) {
   function renderContent(text: string, chordSize: number) {
     
    const chordRegex =
-  /(\[)?(?<!\S)[A-GH](#|b)?(m|maj|min|maj7|7|sus|sus2|sus4|dim|aug|add\d*)?(\d+|\+)?(\/[A-GH](#|b)?)?(\])?/g
+/(\[)?(?<!\S)[A-GH](#|b)?(maj7|maj|min|sus2|sus4|sus|dim|aug|add\d*|m|7)?(\d+|\+)?(\/[A-GH](#|b)?)?(\])?/g
     return text.split("\n").map((line, i) => {
       let normalizedLine = line
   .replace(/,/g, " ")
-  .replace(/\s+/g, " ")
   .replace(/\b([a-g])\b/g, (m: string) => m.toUpperCase())
   .replace(/\b([a-g])(#|b)?(\d+)?/g, (m: string) => m[0].toUpperCase() + m.slice(1))
       const parts = []

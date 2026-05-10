@@ -48,7 +48,7 @@ export default async function EditSongPage({ params }: Props) {
           <input
             name="title"
             defaultValue={song.title}
-            className="border p-2 w-full rounded"
+            className="border p-2 w-full rounded font-mono"
           />
         </div>
 
@@ -57,8 +57,7 @@ export default async function EditSongPage({ params }: Props) {
           <input
             name="category"
             defaultValue={song.category ?? ""}
-            className="border p-2 w-full rounded"
-          />
+            className="border p-2 w-full rounded font-mono"
         </div>
 
         <div>
@@ -67,7 +66,7 @@ export default async function EditSongPage({ params }: Props) {
             name="lyrics"
             defaultValue={song.lyrics ?? ""}
             rows={8}
-            className="border p-2 w-full rounded"
+            className="border p-2 w-full rounded font-mono whitespace-pre"
           />
         </div>
 
