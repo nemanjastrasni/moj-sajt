@@ -8,6 +8,7 @@ import ChordDiagram from "./ChordDiagram"
 import { cleanLyrics } from "@/lib/cleanLyrics"
 import { chordImages } from "@/lib/chords/chordImages"
 import { chordPositions } from "@/lib/chords/chordPositions"
+import { chordVariants } from "@/lib/chords/chordVariants"
 
 type Props = {
   song: {
@@ -44,6 +45,7 @@ export default function SongClient({ song, media }: Props) {
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [loadingVideo, setLoadingVideo] = useState(false)
   
+  const [selectedChord, setSelectedChord] = useState<string | null>(null)
   const [showChordsPanel, setShowChordsPanel] = useState(false)
   const [textSize, setTextSize] = useState(18)
   const [chordSize, setChordSize] = useState(18)
@@ -146,11 +148,17 @@ if (isSingleLetter && hasTextAround) {
 }
 
 parts.push(
-  <Chord
+  <span
     key={match.index}
-    chord={transposeChord(chord)}
-    size={chordSize}
-  />
+    onClick={() => setSelectedChord(transposeChord(chord))}
+    className="cursor-pointer"
+  >
+    <Chord
+      key={match.index}
+      chord={transposeChord(chord)}
+      size={chordSize}
+    />
+  </span>
 )
 
         lastIndex = chordRegex.lastIndex
@@ -610,6 +618,61 @@ useEffect(() => {
         Sačuvaj
       </button>
 
+    </div>
+  </div>
+)}
+{selectedChord && (
+  <div
+    className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center"
+    onClick={() => setSelectedChord(null)}
+  >
+    <div
+      className="bg-neutral-900 border border-gray-700 rounded-xl p-6 max-w-md w-full mx-4"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="text-3xl font-bold mb-4 text-center">
+        {selectedChord}
+      </div>
+
+      {chordImages[selectedChord as keyof typeof chordImages] ? (
+        <img
+          src={
+            chordImages[
+              selectedChord as keyof typeof chordImages
+            ]
+          }
+          alt={selectedChord}
+          className="w-64 mx-auto"
+        />
+      ) : (
+        <div className="text-center text-6xl font-bold text-blue-500 py-10">
+          {selectedChord}
+        </div>
+      )}
+      {chordVariants[selectedChord]?.length > 1 && (
+  <div className="flex gap-3 mt-6 overflow-x-auto">
+    {chordVariants[selectedChord].map((variant, i) => (
+      <img
+        key={i}
+        src={variant}
+        className="w-28 rounded-lg border border-gray-700"
+      />
+    ))}
+  </div>
+)}
+
+      {chordPositions[selectedChord] && (
+        <div className="text-center mt-4 text-gray-400 font-mono text-lg tracking-widest">
+          {chordPositions[selectedChord]}
+        </div>
+      )}
+
+      <button
+        onClick={() => setSelectedChord(null)}
+        className="mt-6 w-full bg-white text-black rounded-lg py-3 font-semibold hover:bg-gray-200"
+      >
+        Zatvori
+      </button>
     </div>
   </div>
 )}
