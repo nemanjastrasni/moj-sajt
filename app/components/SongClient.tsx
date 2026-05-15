@@ -152,6 +152,8 @@ parts.push(
     key={match.index}
     className="cursor-pointer"
 
+    style={{ touchAction: "manipulation" }}
+
     onMouseEnter={() =>
       setSelectedChord(transposeChord(chord))
     }
@@ -160,7 +162,11 @@ parts.push(
       setSelectedChord(null)
     }
 
-    onTouchStart={() => {
+    onTouchStart={(e) => {
+
+  e.preventDefault()
+  e.stopPropagation()
+
   setSelectedChord(transposeChord(chord))
 
   const timer = setTimeout(() => {
@@ -170,7 +176,11 @@ parts.push(
   ;(window as any).__chordTimer = timer
 }}
 
-onTouchEnd={() => {
+onTouchEnd={(e) => {
+
+  e.preventDefault()
+  e.stopPropagation()
+
   clearTimeout((window as any).__chordTimer)
 }}
   >
