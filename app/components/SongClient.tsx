@@ -150,11 +150,29 @@ if (isSingleLetter && hasTextAround) {
 parts.push(
   <span
     key={match.index}
-    onClick={() => setSelectedChord(transposeChord(chord))}
     className="cursor-pointer"
+
+    onMouseEnter={() =>
+      setSelectedChord(transposeChord(chord))
+    }
+
+    onMouseLeave={() =>
+      setSelectedChord(null)
+    }
+
+    onTouchStart={() => {
+      const timer = setTimeout(() => {
+        setSelectedChord(transposeChord(chord))
+      }, 500)
+
+      ;(window as any).__chordTimer = timer
+    }}
+
+    onTouchEnd={() => {
+      clearTimeout((window as any).__chordTimer)
+    }}
   >
     <Chord
-      key={match.index}
       chord={transposeChord(chord)}
       size={chordSize}
     />
