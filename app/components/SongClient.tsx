@@ -161,16 +161,18 @@ parts.push(
     }
 
     onTouchStart={() => {
-      const timer = setTimeout(() => {
-        setSelectedChord(transposeChord(chord))
-      }, 500)
+  setSelectedChord(transposeChord(chord))
 
-      ;(window as any).__chordTimer = timer
-    }}
+  const timer = setTimeout(() => {
+    setShowModal(true)
+  }, 500)
 
-    onTouchEnd={() => {
-      clearTimeout((window as any).__chordTimer)
-    }}
+  ;(window as any).__chordTimer = timer
+}}
+
+onTouchEnd={() => {
+  clearTimeout((window as any).__chordTimer)
+}}
   >
     <Chord
       chord={transposeChord(chord)}
@@ -640,6 +642,40 @@ useEffect(() => {
   </div>
 )}
 {selectedChord && (
+  <div className="fixed bottom-4 right-4 z-40">
+    <div className="bg-neutral-900 border border-gray-700 rounded-xl p-3 shadow-2xl w-[140px]">
+
+      <div className="text-center font-bold mb-2 text-sm">
+        {selectedChord}
+      </div>
+
+      {chordImages[selectedChord as keyof typeof chordImages] ? (
+        <img
+          src={
+            chordImages[
+              selectedChord as keyof typeof chordImages
+            ]
+          }
+          alt={selectedChord || ""}
+          className="w-full"
+        />
+      ) : (
+        <div className="text-center text-3xl text-blue-500 py-4">
+          {selectedChord}
+        </div>
+      )}
+
+      {chordPositions[selectedChord] && (
+        <div className="text-center mt-2 text-[10px] text-gray-400 font-mono tracking-widest">
+          {chordPositions[selectedChord]}
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
+
+{false && selectedChord && (
   <div
     className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center"
     onClick={() => setSelectedChord(null)}
@@ -659,7 +695,7 @@ useEffect(() => {
               selectedChord as keyof typeof chordImages
             ]
           }
-          alt={selectedChord}
+          alt={selectedChord || ""}
           className="w-64 mx-auto"
         />
       ) : (
@@ -667,9 +703,9 @@ useEffect(() => {
           {selectedChord}
         </div>
       )}
-      {chordVariants[selectedChord]?.length > 1 && (
+      {chordVariants[selectedChord || ""]?.length > 1 && (
   <div className="flex gap-3 mt-6 overflow-x-auto">
-    {chordVariants[selectedChord].map((variant, i) => (
+    {chordVariants[selectedChord || ""].map((variant: string, i: number) => (
       <img
         key={i}
         src={variant}
@@ -679,9 +715,9 @@ useEffect(() => {
   </div>
 )}
 
-      {chordPositions[selectedChord] && (
+      {chordPositions[selectedChord || ""] && (
         <div className="text-center mt-4 text-gray-400 font-mono text-lg tracking-widest">
-          {chordPositions[selectedChord]}
+          {chordPositions[selectedChord || ""]}
         </div>
       )}
 
