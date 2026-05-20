@@ -28,8 +28,7 @@ export async function GET(req: Request) {
     const artists = await prisma.artist.findMany({
   where: {
     name: {
-      contains: search,
-      mode: "insensitive"
+      contains: search
     }
   },
   orderBy: { name: "asc" },
