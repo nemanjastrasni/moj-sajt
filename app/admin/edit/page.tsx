@@ -17,14 +17,12 @@ export default async function AdminEdit({ searchParams }: any) {
               {
                 title: {
                   contains: q,
-                  mode: "insensitive",
                 },
               },
               {
                 artist: {
                   name: {
                     contains: q,
-                    mode: "insensitive",
                   },
                 },
               },
@@ -76,7 +74,6 @@ export default async function AdminEdit({ searchParams }: any) {
             artist: {
               name: {
                 startsWith: artistLetter,
-                mode: "insensitive",
               },
             },
           }
