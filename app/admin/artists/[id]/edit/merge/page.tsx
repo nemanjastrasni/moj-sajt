@@ -23,7 +23,6 @@ const artists = await prisma.artist.findMany({
     ? {
         name: {
           contains: search,
-          mode: "insensitive" as const,
         },
       }
     : {},
