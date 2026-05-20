@@ -38,7 +38,6 @@ export default async function AdminArtistsPage({
       {
         name: {
           startsWith: letter,
-          mode: "insensitive" as const,
         },
       },
     ]
