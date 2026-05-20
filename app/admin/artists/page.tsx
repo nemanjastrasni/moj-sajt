@@ -28,7 +28,6 @@ export default async function AdminArtistsPage({
             {
               name: {
                 contains: search,
-                mode: "insensitive" as const,
               },
             },
           ]
