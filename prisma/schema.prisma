@@ -3,20 +3,21 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = "postgresql://neondb_owner:npg_s5w2VvETlnmX@ep-wispy-dawn-alnxam1d.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require"
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
+
 
 /// =========koliko ljudi posecuje=================
 model Visit {
   id        String    @id @default(cuid())
-  createdAt DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt DateTime? @default(now())
 }
 
 model playing_with_neon {
   id    Int    @id @default(autoincrement())
   name  String
-  value Float? @db.Real
+  value Float?
 }
 
 model User {
@@ -50,7 +51,7 @@ model Artist {
   bio         String?
   discography Json?
   category    String?
-  createdAt   DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt   DateTime? @default(now()) 
   members     Json?
   bioShort    String?
   songs       Song[]
@@ -64,12 +65,12 @@ model Song {
   lyrics        String
   chords        String?
   artistId      String
-  createdAt     DateTime?      @default(now()) @db.Timestamptz(6)
+  createdAt     DateTime?      @default(now()) 
   popularity    Int            @default(0)
   difficulty    String         @default("beginner")
   favorites     Favorite[]
   playlistSongs PlaylistSong[]
-  artist        Artist         @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "song_artist_fk")
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([artistId, slug])
 }
@@ -143,7 +144,7 @@ model PlaylistSong {
 }
 
 model analytics {
-  day    DateTime @id @db.Date
+  day    DateTime @id 
   visits Int?     @default(0)
 }
 
@@ -181,3 +182,4 @@ model ListeningPlaylistLike {
 
   @@unique([userId, playlistId])
 }
+

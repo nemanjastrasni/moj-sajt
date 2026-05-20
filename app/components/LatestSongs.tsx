@@ -8,7 +8,9 @@ export default function LatestSongs() {
   const [songs, setSongs] = useState<any[]>([])
 
   useEffect(() => {
-  fetch("/api/latest")
+  fetch("/api/latest", {
+  next: { revalidate: 3600 }
+})
     .then(async (res) => {
       if (!res.ok) throw new Error("API error")
       const text = await res.text()
