@@ -29,18 +29,18 @@ export default async function AdminSongsPage({
   const where: Prisma.SongWhereInput = {
   ...(q && {
     OR: [
-      { title: { contains: q, mode: "insensitive" } },
-      { artist: { name: { contains: q, mode: "insensitive" } } },
+      { title: { contains: q} },
+      { artist: { name: { contains: q} } },
     ],
   }),
   ...(letter && {
   artist: {
-    name: { startsWith: letter, mode: "insensitive" }
+    name: { startsWith: letter}
   }
 }),
    ...(artist && {
     artist: {
-      name: { contains: artist, mode: "insensitive" }
+      name: { contains: artist}
     }
   }),
   ...(category && {

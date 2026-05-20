@@ -91,6 +91,7 @@ export default async function AdminEdit({ searchParams }: any) {
   })
 
   return (
+    
     <div className="p-6">
 
       <h1 className="text-2xl font-bold mb-6">Edit tabela</h1>
