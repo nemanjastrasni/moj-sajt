@@ -3,7 +3,18 @@ import fs from "fs"
 import path from "path"
 import csv from "csv-parser"
 
-const prisma = new PrismaClient()
+import { PrismaLibSql } from "@prisma/adapter-libsql"
+
+console.log(process.env.DATABASE_URL)
+
+const adapter = new PrismaLibSql({
+  url: process.env.DATABASE_URL!,
+  authToken: process.env.AUTH_TOKEN!,
+})
+
+const prisma = new PrismaClient({
+  adapter,
+})
 
 function readCsv(filePath: string): Promise<any[]> {
   return new Promise((resolve, reject) => {
@@ -36,8 +47,8 @@ async function importArtists() {
         },
       })
     } catch (e) {
-      console.log("Artist skip:", artist.name)
-    }
+  console.log(e)
+}
   }
 
   console.log("Artists imported")

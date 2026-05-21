@@ -26,9 +26,19 @@ export async function GET(req: Request) {
         }
       ]
     },
-    include: {
-      artist: true
-    },
+    
+    select: {
+  id: true,
+  title: true,
+  slug: true,
+  category: true,
+  artist: {
+    select: {
+      name: true,
+      slug: true
+    }
+  }
+},
     take: 10
   })
 
