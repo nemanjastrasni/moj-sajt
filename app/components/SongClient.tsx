@@ -10,6 +10,11 @@ import { chordImages } from "@/lib/chords/chordImages"
 import { chordPositions } from "@/lib/chords/chordPositions"
 import { chordVariants } from "@/lib/chords/chordVariants"
 
+type ChordVariant = {
+  name: string
+  image: string
+}
+
 type Props = {
   song: {
     id: string
@@ -46,6 +51,7 @@ export default function SongClient({ song, media }: Props) {
   const [loadingVideo, setLoadingVideo] = useState(false)
   
   const [selectedChord, setSelectedChord] = useState<string | null>(null)
+  const [variantIndex, setVariantIndex] = useState(1)
   const [showChordsPanel, setShowChordsPanel] = useState(false)
   const [textSize, setTextSize] = useState(18)
   const [chordSize, setChordSize] = useState(18)
@@ -153,14 +159,10 @@ parts.push(
     className="cursor-pointer"
 
     style={{ touchAction: "manipulation" }}
-
-    onMouseEnter={() =>
-      setSelectedChord(transposeChord(chord))
-    }
-
-    onMouseLeave={() =>
-      setSelectedChord(null)
-    }
+    onClick={() => {
+  setVariantIndex(1)
+  setSelectedChord(transposeChord(chord))
+}}
 
     onTouchStart={(e) => {
 
@@ -652,45 +654,43 @@ useEffect(() => {
   </div>
 )}
 
-{false && selectedChord && (
-  <div
-    className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center"
-    onClick={() => setSelectedChord(null)}
-  >
+{selectedChord && (
+  <div className="fixed bottom-6 right-6 z-50">
     <div
-      className="bg-neutral-900 border border-gray-700 rounded-xl p-6 max-w-md w-full mx-4"
+      className="bg-neutral-900 border border-gray-700 rounded-xl p-6 w-[260px]"
       onClick={(e) => e.stopPropagation()}
     >
       <div className="text-3xl font-bold mb-4 text-center">
         {selectedChord}
       </div>
 
-      {chordImages[selectedChord as keyof typeof chordImages] ? (
-        <img
-          src={
-            chordImages[
-              selectedChord as keyof typeof chordImages
-            ]
-          }
-          alt={selectedChord || ""}
-          className="w-64 mx-auto"
-        />
-      ) : (
-        <div className="text-center text-6xl font-bold text-blue-500 py-10">
-          {selectedChord}
-        </div>
-      )}
-      {chordVariants[selectedChord || ""]?.length > 1 && (
-  <div className="flex gap-3 mt-6 overflow-x-auto">
-    {chordVariants[selectedChord || ""].map((variant: string, i: number) => (
       <img
-        key={i}
-        src={variant}
-        className="w-28 rounded-lg border border-gray-700"
+        src={`/chord_variants_final/${selectedChord?.toLowerCase()}-v${variantIndex}.png`}
+        alt={selectedChord || ""}
+        className="w-64 mx-auto"
       />
-    ))}
-  </div>
-)}
+
+      <div className="flex items-center justify-center gap-4 mt-3">
+        <button
+          onClick={() =>
+            setVariantIndex((prev) => Math.max(1, prev - 1))
+          }
+          className="text-white text-xl"
+        >
+          ◀
+        </button>
+
+        <span className="text-sm text-gray-300">
+          v{variantIndex}
+        </span>
+
+        <button
+          onClick={() => setVariantIndex((prev) => prev + 1)}
+          className="text-white text-xl"
+        >
+          ▶
+        </button>
+      </div>
 
       {chordPositions[selectedChord || ""] && (
         <div className="text-center mt-4 text-gray-400 font-mono text-lg tracking-widest">
@@ -712,5 +712,3 @@ useEffect(() => {
     </div>
   )
 }
-
-   
