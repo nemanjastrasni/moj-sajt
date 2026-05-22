@@ -5,8 +5,6 @@ import csv from "csv-parser"
 
 const prisma = new PrismaClient()
 
-console.log(process.env.DATABASE_URL)
-
 function readCsv(filePath: string): Promise<any[]> {
   return new Promise((resolve, reject) => {
     const results: any[] = []
@@ -38,7 +36,6 @@ async function importArtists() {
         },
       })
     } catch (e) {
-  console.log(e)
 }
   }
 

@@ -79,17 +79,20 @@ if (/^[A-G](#)?$/.test(safeChord)) {
 
         return (
           <div
-            style={{
-              position: "fixed",
-              top: rect.top - 150,
-              left: rect.left + 30,
-              background: "#111",
-              padding: "8px",
-              borderRadius: "8px",
-              zIndex: 99999,
-              boxShadow: "0 10px 25px rgba(0,0,0,0.6)",
-              pointerEvents: "none",
-            }}
+           style={{
+  position: "fixed",
+  top: rect.top - 150,
+  left: Math.max(20, rect.left - 30),
+  transform: "none",
+  right: "auto",
+  bottom: "auto",
+  background: "#111",
+  padding: "8px",
+  borderRadius: "8px",
+  zIndex: 99999,
+  boxShadow: "0 10px 25px rgba(0,0,0,0.6)",
+  pointerEvents: "none",
+}}
           >
             <img
   src={src}
