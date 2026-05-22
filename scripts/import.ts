@@ -3,18 +3,9 @@ import fs from "fs"
 import path from "path"
 import csv from "csv-parser"
 
-import { PrismaLibSql } from "@prisma/adapter-libsql"
+const prisma = new PrismaClient()
 
 console.log(process.env.DATABASE_URL)
-
-const adapter = new PrismaLibSql({
-  url: process.env.DATABASE_URL!,
-  authToken: process.env.AUTH_TOKEN!,
-})
-
-const prisma = new PrismaClient({
-  adapter,
-})
 
 function readCsv(filePath: string): Promise<any[]> {
   return new Promise((resolve, reject) => {
