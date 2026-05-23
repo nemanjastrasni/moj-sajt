@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 
 const BASE = "/chords_final"
 
@@ -15,7 +15,29 @@ type Props = {
 
 export default function Chord({ chord, size }: Props) {
   const [show, setShow] = useState(false)
+  const [variantIndex, setVariantIndex] = useState(1)
+  const maxVariants = 4
   const spanRef = useRef<HTMLSpanElement>(null)
+
+  useEffect(() => {
+  function handleClickOutside(event: MouseEvent) {
+    if (
+      spanRef.current &&
+      !spanRef.current.contains(event.target as Node)
+    ) {
+      setShow(false)
+    }
+  }
+
+  document.addEventListener("mousedown", handleClickOutside)
+
+  return () => {
+    document.removeEventListener(
+      "mousedown",
+      handleClickOutside
+    )
+  }
+}, [])
 
   const normalized = normalizeChord(chord)
   let safeChord = normalized
@@ -45,9 +67,11 @@ if (/^[A-G](#)?$/.test(safeChord)) {
   .replace("maj", "maj")
 
   const encodedChord = encodeURIComponent(fileName + "_v1")
-  const src = `/chords_final/${encodeURIComponent(safeChord)}_v1.png`
-   console.log("CHORD:", chord, "->", safeChord)
-
+  const variantChord = safeChord.replace("maj", "")
+  const src =
+  variantIndex === 1
+    ? `/chords_final/${encodeURIComponent(safeChord)}_v1.png`
+    : `/chord_variants_final/${encodeURIComponent(variantChord)}_v${variantIndex}.png`
   return (
     <span
       ref={spanRef}
@@ -63,14 +87,9 @@ if (/^[A-G](#)?$/.test(safeChord)) {
       onMouseEnter={() => {
         if (window.innerWidth > 768) setShow(true)
       }}
-      onMouseLeave={() => {
-        if (window.innerWidth > 768) setShow(false)
-      }}
       onClick={() => {
-        if (window.innerWidth <= 768) {
-          setShow(prev => !prev)
-        }
-      }}
+  setShow(true)
+}}
     >
       {chord}
 
@@ -91,18 +110,68 @@ if (/^[A-G](#)?$/.test(safeChord)) {
   borderRadius: "8px",
   zIndex: 99999,
   boxShadow: "0 10px 25px rgba(0,0,0,0.6)",
-  pointerEvents: "none",
+  pointerEvents: "auto",
 }}
           >
-            <img
+<img
+  key={src}
   src={src}
   width={120}
   alt={chord}
   draggable={false}
-  onError={(e) => {
-    (e.currentTarget as HTMLImageElement).style.display = "none"
-  }}
 />
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    marginTop: "8px",
+    color: "white",
+    fontSize: "12px",
+    pointerEvents: "auto",
+  }}
+>
+  <button
+    onClick={(e) => {
+      e.stopPropagation()
+
+      setVariantIndex((prev) =>
+        Math.max(1, prev - 1)
+      )
+    }}
+    style={{
+      background: "none",
+      border: "none",
+      color: "white",
+      cursor: "pointer",
+    }}
+  >
+    ◀
+  </button>
+
+  <span>
+    v{variantIndex} / {maxVariants}
+  </span>
+
+  <button
+    onClick={(e) => {
+      e.stopPropagation()
+
+      setVariantIndex((prev) =>
+        Math.min(maxVariants, prev + 1)
+      )
+    }}
+    style={{
+      background: "none",
+      border: "none",
+      color: "white",
+      cursor: "pointer",
+    }}
+  >
+    ▶
+  </button>
+</div>
           </div>
         )
       })()}

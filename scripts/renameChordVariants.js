@@ -18,6 +18,8 @@ if (!fs.existsSync(outputDir)) {
 function formatName(name) {
   return name
     .toLowerCase()
+
+    // unicode symbols
     .replace(/♭/g, "b")
     .replace(/♯/g, "#")
 
@@ -55,8 +57,10 @@ function formatName(name) {
     // slash chords
     .replace(/over-/g, "_")
 
+    // SAČUVAJ variant broj
+    .replace(/-v(\d+)/i, "_v$1")
+
     // cleanup
-    .replace(/-v(\d+)/, "_v$1")
     .replace(/-/g, "")
 
     // uppercase sharp roots

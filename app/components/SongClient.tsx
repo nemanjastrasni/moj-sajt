@@ -654,59 +654,7 @@ useEffect(() => {
   </div>
 )}
 
-{selectedChord && (
-  <div className="fixed bottom-6 right-6 z-50">
-    <div
-      className="bg-neutral-900 border border-gray-700 rounded-xl p-6 w-[260px]"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className="text-3xl font-bold mb-4 text-center">
-        {selectedChord}
-      </div>
 
-      <img
-        src={`/chord_variants_final/${selectedChord?.toLowerCase()}-v${variantIndex}.png`}
-        alt={selectedChord || ""}
-        className="w-64 mx-auto"
-      />
-
-      <div className="flex items-center justify-center gap-4 mt-3">
-        <button
-          onClick={() =>
-            setVariantIndex((prev) => Math.max(1, prev - 1))
-          }
-          className="text-white text-xl"
-        >
-          ◀
-        </button>
-
-        <span className="text-sm text-gray-300">
-          v{variantIndex}
-        </span>
-
-        <button
-          onClick={() => setVariantIndex((prev) => prev + 1)}
-          className="text-white text-xl"
-        >
-          ▶
-        </button>
-      </div>
-
-      {chordPositions[selectedChord || ""] && (
-        <div className="text-center mt-4 text-gray-400 font-mono text-lg tracking-widest">
-          {chordPositions[selectedChord || ""]}
-        </div>
-      )}
-
-      <button
-        onClick={() => setSelectedChord(null)}
-        className="mt-6 w-full bg-white text-black rounded-lg py-3 font-semibold hover:bg-gray-200"
-      >
-        Zatvori
-      </button>
-    </div>
-  </div>
-)}
         </div>
               </div>
     </div>
