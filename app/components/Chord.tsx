@@ -87,8 +87,17 @@ if (/^[A-G](#)?$/.test(safeChord)) {
       onMouseEnter={() => {
         if (window.innerWidth > 768) setShow(true)
       }}
+    onMouseLeave={() => {
+  if (window.innerWidth > 768) {
+    setShow(false)
+  }
+}}
       onClick={() => {
-  setShow(true)
+  setShow((prev) => !prev)
+
+  if (!show) {
+    setVariantIndex(1)
+  }
 }}
     >
       {chord}
