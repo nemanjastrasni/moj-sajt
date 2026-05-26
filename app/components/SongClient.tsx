@@ -5,9 +5,8 @@ import Link from "next/link"
 import Chord from "./Chord"
 import { useMemo } from "react"
 import ChordDiagram from "./ChordDiagram"
+import UsedChordCard from "./UsedChordCard"
 import { cleanLyrics } from "@/lib/cleanLyrics"
-import { chordImages } from "@/lib/chords/chordImages"
-import { chordPositions } from "@/lib/chords/chordPositions"
 import { chordVariants } from "@/lib/chords/chordVariants"
 
 type ChordVariant = {
@@ -50,8 +49,6 @@ export default function SongClient({ song, media }: Props) {
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [loadingVideo, setLoadingVideo] = useState(false)
   
-  const [selectedChord, setSelectedChord] = useState<string | null>(null)
-  const [variantIndex, setVariantIndex] = useState(1)
   const [showChordsPanel, setShowChordsPanel] = useState(false)
   const [textSize, setTextSize] = useState(18)
   const [chordSize, setChordSize] = useState(18)
@@ -154,43 +151,11 @@ if (isSingleLetter && hasTextAround) {
 }
 
 parts.push(
-  <span
+  <Chord
     key={match.index}
-    className="cursor-pointer"
-
-    style={{ touchAction: "manipulation" }}
-    onClick={() => {
-  setVariantIndex(1)
-  setSelectedChord(transposeChord(chord))
-}}
-
-    onTouchStart={(e) => {
-
-  e.preventDefault()
-  e.stopPropagation()
-
-  setSelectedChord(transposeChord(chord))
-
-  const timer = setTimeout(() => {
-    setShowModal(true)
-  }, 500)
-
-  ;(window as any).__chordTimer = timer
-}}
-
-onTouchEnd={(e) => {
-
-  e.preventDefault()
-  e.stopPropagation()
-
-  clearTimeout((window as any).__chordTimer)
-}}
-  >
-    <Chord
-      chord={transposeChord(chord)}
-      size={chordSize}
-    />
-  </span>
+    chord={transposeChord(chord)}
+    size={chordSize}
+  />
 )
 
         lastIndex = chordRegex.lastIndex
@@ -542,39 +507,9 @@ useEffect(() => {
 {/* USED CHORDS */}
 {showChordsPanel && (
   <div className="flex flex-wrap gap-3 mb-6">
-    {usedChords.map((chord) => {
-      const imagePath =
-        chordImages[chord as keyof typeof chordImages]
-
-      return (
-        <div
-          key={chord}
-          className="bg-neutral-900 border border-gray-700 rounded-lg p-2 text-center min-w-[110px]"
-        >
-          <div className="font-bold mb-2">
-            {chord}
-          </div>
-
-          {imagePath ? (
-            <img
-              src={imagePath}
-              alt={chord}
-              className="w-32 h-auto object-contain mx-auto"
-            />
-          ) : (
-            <div className="text-blue-500 text-4xl font-bold py-8">
-              {chord}
-            </div>
-          )}
-
-          {chordPositions[chord] && (
-            <div className="text-[11px] text-gray-400 mt-2 font-mono tracking-widest">
-              {chordPositions[chord]}
-            </div>
-          )}
-        </div>
-      )
-    })}
+    {usedChords.map((chord) => (
+      <UsedChordCard key={chord} chord={chord} />
+    ))}
   </div>
 )}
           {/* CONTENT */}

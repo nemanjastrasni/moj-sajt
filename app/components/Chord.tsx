@@ -1,189 +1,282 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-
-const BASE = "/chords_final"
-
-function normalizeChord(chord: string) {
-  return chord.replace(/^H/, "B")
-}
+import { useEffect, useMemo, useRef, useState } from "react"
+import { getChordVariantFileIndex } from "@/lib/chords/chordVariantRules"
 
 type Props = {
   chord: string
   size: number
 }
 
+function normalizeChord(chord: string) {
+  return chord.replace(/^H/, "B")
+}
+
+function toImageChord(chord: string) {
+  let safeChord = normalizeChord(chord)
+    .replace(/\s+/g, "")
+    .replace("/", "_")
+    .replace(/^Ab/, "G#")
+    .replace(/^Db/, "C#")
+    .replace(/^Eb/, "D#")
+    .replace(/^Gb/, "F#")
+    .replace(/^Bb/, "A#")
+
+  if (/^[A-G](#)?$/.test(safeChord)) {
+    safeChord = safeChord + "maj"
+  }
+
+  return safeChord
+}
+
 export default function Chord({ chord, size }: Props) {
   const [show, setShow] = useState(false)
-  const [variantIndex, setVariantIndex] = useState(1)
+  const [variantState, setVariantState] = useState({ chord, index: 1 })
+  const [isDesktop, setIsDesktop] = useState(false)
+  const [position, setPosition] = useState({ top: 0, left: 0 })
   const maxVariants = 4
-  const spanRef = useRef<HTMLSpanElement>(null)
 
-  useEffect(() => {
-  function handleClickOutside(event: MouseEvent) {
-    if (
-      spanRef.current &&
-      !spanRef.current.contains(event.target as Node)
-    ) {
-      setShow(false)
-    }
-  }
+  const wrapperRef = useRef<HTMLSpanElement>(null)
+  const closeTimerRef = useRef<number | null>(null)
 
-  document.addEventListener("mousedown", handleClickOutside)
-
-  return () => {
-    document.removeEventListener(
-      "mousedown",
-      handleClickOutside
-    )
-  }
-}, [])
-
-  const normalized = normalizeChord(chord)
-  let safeChord = normalized
-  .replace(/\s+/g, "")
-  .replace("/", "_")
-  .replace(/^Ab/, "G#")
-  .replace(/^Db/, "C#")
-  .replace(/^Eb/, "D#")
-  .replace(/^Gb/, "F#")
-  .replace(/^Bb/, "A#")
-
-// 👉 ako je samo slovo (F, G, C...) → dodaj "maj"
-if (/^[A-G](#)?$/.test(safeChord)) {
-  safeChord = safeChord + "maj"
-}
+  const normalized = useMemo(() => normalizeChord(chord), [chord])
+  const safeChord = useMemo(() => toImageChord(chord), [chord])
+  const variantIndex = variantState.chord === chord ? variantState.index : 1
+  const variantChord = safeChord.replace("maj", "")
+  const variantFileIndex = getChordVariantFileIndex(variantChord, variantIndex)
   const rootMatch = normalized.match(/^[A-G](#|b)?/)
   const root = rootMatch ? rootMatch[0] : null
+
+  const src =
+    variantIndex === 1
+      ? `/chords_final/${encodeURIComponent(safeChord)}_v1.png`
+      : `/chord_variants_final/${encodeURIComponent(
+          variantChord
+        )}_v${variantFileIndex}.png`
+
+  useEffect(() => {
+    const updateMode = () => {
+      setIsDesktop(window.matchMedia("(hover: hover) and (pointer: fine)").matches)
+    }
+
+    updateMode()
+    window.addEventListener("resize", updateMode)
+
+    return () => window.removeEventListener("resize", updateMode)
+  }, [])
+
+  useEffect(() => {
+    if (!show) return
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (wrapperRef.current?.contains(event.target as Node)) return
+      setShow(false)
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown)
+
+    return () => document.removeEventListener("pointerdown", handlePointerDown)
+  }, [show])
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) {
+        window.clearTimeout(closeTimerRef.current)
+      }
+    }
+  }, [])
 
   if (!root) {
     return <span style={{ fontSize: `${size}px` }}>{chord}</span>
   }
 
-  const encodedRoot = encodeURIComponent(root)
-  const fileName = normalized
-  .replace("b", "_b")
-   .replace(/\s+/g, "")
-  .replace("maj", "maj")
+  function updatePosition() {
+    const rect = wrapperRef.current?.getBoundingClientRect()
+    if (!rect) return
 
-  const encodedChord = encodeURIComponent(fileName + "_v1")
-  const variantChord = safeChord.replace("maj", "")
-  const src =
-  variantIndex === 1
-    ? `/chords_final/${encodeURIComponent(safeChord)}_v1.png`
-    : `/chord_variants_final/${encodeURIComponent(variantChord)}_v${variantIndex}.png`
+    const popupWidth = 144
+    const nextLeft = Math.min(
+      window.innerWidth - popupWidth - 12,
+      Math.max(12, rect.left + rect.width / 2 - popupWidth / 2)
+    )
+
+    setPosition({
+      top: Math.max(12, rect.top - 166),
+      left: nextLeft,
+    })
+  }
+
+  function openPreview(resetVariant = false) {
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+
+    if (resetVariant) {
+      setVariantState({ chord, index: 1 })
+    }
+
+    updatePosition()
+    setShow(true)
+  }
+
+  function closePreviewSoon() {
+    if (!isDesktop) return
+
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current)
+    }
+
+    closeTimerRef.current = window.setTimeout(() => {
+      setShow(false)
+    }, 120)
+  }
+
+  function keepPreviewOpen() {
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+  }
+
+  function changeVariant(direction: -1 | 1) {
+    keepPreviewOpen()
+    setShow(true)
+    setVariantState((prev) => {
+      const currentIndex = prev.chord === chord ? prev.index : 1
+
+      return {
+        chord,
+        index: Math.min(maxVariants, Math.max(1, currentIndex + direction)),
+      }
+    })
+  }
+
   return (
     <span
-      ref={spanRef}
+      ref={wrapperRef}
       style={{
         fontWeight: "bold",
         color: "#1a73e8",
         cursor: "pointer",
         position: "relative",
         display: "inline-block",
-        zIndex: 10,
-        fontSize: `${size}px`,   // ✅ OVDE JE BITNO
+        zIndex: show ? 99999 : 10,
+        fontSize: `${size}px`,
+        touchAction: "manipulation",
       }}
       onMouseEnter={() => {
-        if (window.innerWidth > 768) setShow(true)
+        if (isDesktop) openPreview()
       }}
-    onMouseLeave={() => {
-  if (window.innerWidth > 768) {
-    setShow(false)
-  }
-}}
-      onClick={() => {
-  setShow((prev) => !prev)
+      onMouseLeave={closePreviewSoon}
+      onClick={(event) => {
+        event.stopPropagation()
+        if (isDesktop) {
+          openPreview()
+          return
+        }
 
-  if (!show) {
-    setVariantIndex(1)
-  }
-}}
+        if (show) {
+          setShow(false)
+        } else {
+          openPreview(true)
+        }
+      }}
     >
       {chord}
 
-      {show && spanRef.current && (() => {
-        const rect = spanRef.current.getBoundingClientRect()
+      {show && (
+        <div
+          onMouseEnter={keepPreviewOpen}
+          onMouseLeave={closePreviewSoon}
+          onClick={(event) => event.stopPropagation()}
+          onPointerDown={(event) => event.stopPropagation()}
+          style={{
+            position: "fixed",
+            top: isDesktop ? position.top : "auto",
+            left: isDesktop ? position.left : "50%",
+            bottom: isDesktop ? "auto" : 18,
+            transform: isDesktop ? "none" : "translateX(-50%)",
+            width: 144,
+            background: "#111",
+            padding: "8px",
+            borderRadius: "8px",
+            zIndex: 99999,
+            boxShadow: "0 10px 25px rgba(0,0,0,0.6)",
+            pointerEvents: "auto",
+          }}
+        >
+          <img
+            key={src}
+            src={src}
+            width={120}
+            alt={chord}
+            draggable={false}
+            style={{
+              display: "block",
+              width: "120px",
+              height: "auto",
+              margin: "0 auto",
+            }}
+          />
 
-        return (
           <div
-           style={{
-  position: "fixed",
-  top: rect.top - 150,
-  left: Math.max(20, rect.left - 30),
-  transform: "none",
-  right: "auto",
-  bottom: "auto",
-  background: "#111",
-  padding: "8px",
-  borderRadius: "8px",
-  zIndex: 99999,
-  boxShadow: "0 10px 25px rgba(0,0,0,0.6)",
-  pointerEvents: "auto",
-}}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "10px",
+              marginTop: "8px",
+              color: "white",
+              fontSize: "12px",
+            }}
           >
-<img
-  key={src}
-  src={src}
-  width={120}
-  alt={chord}
-  draggable={false}
-/>
-<div
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: "10px",
-    marginTop: "8px",
-    color: "white",
-    fontSize: "12px",
-    pointerEvents: "auto",
-  }}
->
-  <button
-    onClick={(e) => {
-      e.stopPropagation()
+            <button
+              type="button"
+              aria-label="Prethodna varijanta akorda"
+              onClick={(event) => {
+                event.preventDefault()
+                event.stopPropagation()
+                changeVariant(-1)
+              }}
+              disabled={variantIndex === 1}
+              style={{
+                background: "none",
+                border: "none",
+                color: "white",
+                cursor: variantIndex === 1 ? "default" : "pointer",
+                opacity: variantIndex === 1 ? 0.35 : 1,
+                padding: "6px",
+              }}
+            >
+              {"<"}
+            </button>
 
-      setVariantIndex((prev) =>
-        Math.max(1, prev - 1)
-      )
-    }}
-    style={{
-      background: "none",
-      border: "none",
-      color: "white",
-      cursor: "pointer",
-    }}
-  >
-    ◀
-  </button>
+            <span>v{variantIndex} / {maxVariants}</span>
 
-  <span>
-    v{variantIndex} / {maxVariants}
-  </span>
-
-  <button
-    onClick={(e) => {
-      e.stopPropagation()
-
-      setVariantIndex((prev) =>
-        Math.min(maxVariants, prev + 1)
-      )
-    }}
-    style={{
-      background: "none",
-      border: "none",
-      color: "white",
-      cursor: "pointer",
-    }}
-  >
-    ▶
-  </button>
-</div>
+            <button
+              type="button"
+              aria-label="Sledeca varijanta akorda"
+              onClick={(event) => {
+                event.preventDefault()
+                event.stopPropagation()
+                changeVariant(1)
+              }}
+              disabled={variantIndex === maxVariants}
+              style={{
+                background: "none",
+                border: "none",
+                color: "white",
+                cursor: variantIndex === maxVariants ? "default" : "pointer",
+                opacity: variantIndex === maxVariants ? 0.35 : 1,
+                padding: "6px",
+              }}
+            >
+              {">"}
+            </button>
           </div>
-        )
-      })()}
+        </div>
+      )}
     </span>
   )
 }
