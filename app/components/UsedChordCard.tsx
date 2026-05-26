@@ -135,7 +135,7 @@ export default function UsedChordCard({ chord }: Props) {
             aria-label="Prethodna varijanta akorda"
             onClick={() => changeVariant(-1)}
             disabled={variantPosition === 0}
-            className="px-2 py-1 disabled:opacity-30"
+            className="min-w-8 min-h-8 px-2 py-1 touch-manipulation disabled:opacity-30"
           >
             {"<"}
           </button>
@@ -149,7 +149,7 @@ export default function UsedChordCard({ chord }: Props) {
             aria-label="Sledeca varijanta akorda"
             onClick={() => changeVariant(1)}
             disabled={variantPosition === variants.length - 1}
-            className="px-2 py-1 disabled:opacity-30"
+            className="min-w-8 min-h-8 px-2 py-1 touch-manipulation disabled:opacity-30"
           >
             {">"}
           </button>

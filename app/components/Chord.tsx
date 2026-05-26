@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 import { getChordVariantFileIndex } from "@/lib/chords/chordVariantRules"
 
 type Props = {
@@ -30,6 +30,7 @@ function toImageChord(chord: string) {
 }
 
 export default function Chord({ chord, size }: Props) {
+  const previewId = useId()
   const [show, setShow] = useState(false)
   const [variantState, setVariantState] = useState({ chord, index: 1 })
   const [isDesktop, setIsDesktop] = useState(false)
@@ -38,6 +39,7 @@ export default function Chord({ chord, size }: Props) {
 
   const wrapperRef = useRef<HTMLSpanElement>(null)
   const closeTimerRef = useRef<number | null>(null)
+  const handledTouchRef = useRef(false)
 
   const normalized = useMemo(() => normalizeChord(chord), [chord])
   const safeChord = useMemo(() => toImageChord(chord), [chord])
@@ -53,6 +55,22 @@ export default function Chord({ chord, size }: Props) {
       : `/chord_variants_final/${encodeURIComponent(
           variantChord
         )}_v${variantFileIndex}.png`
+
+  const updatePosition = useCallback(() => {
+    const rect = wrapperRef.current?.getBoundingClientRect()
+    if (!rect) return
+
+    const popupWidth = 144
+    const nextLeft = Math.min(
+      window.innerWidth - popupWidth - 12,
+      Math.max(12, rect.left + rect.width / 2 - popupWidth / 2)
+    )
+
+    setPosition({
+      top: Math.max(12, rect.top - 166),
+      left: nextLeft,
+    })
+  }, [])
 
   useEffect(() => {
     const updateMode = () => {
@@ -79,6 +97,35 @@ export default function Chord({ chord, size }: Props) {
   }, [show])
 
   useEffect(() => {
+    const handleOtherPreview = (event: Event) => {
+      const customEvent = event as CustomEvent<string>
+      if (customEvent.detail !== previewId) {
+        setShow(false)
+      }
+    }
+
+    window.addEventListener("chord-preview-open", handleOtherPreview)
+
+    return () => {
+      window.removeEventListener("chord-preview-open", handleOtherPreview)
+    }
+  }, [previewId])
+
+  useEffect(() => {
+    if (!show || !isDesktop) return
+
+    const updateOpenPosition = () => updatePosition()
+
+    window.addEventListener("scroll", updateOpenPosition, true)
+    window.addEventListener("resize", updateOpenPosition)
+
+    return () => {
+      window.removeEventListener("scroll", updateOpenPosition, true)
+      window.removeEventListener("resize", updateOpenPosition)
+    }
+  }, [show, isDesktop, updatePosition])
+
+  useEffect(() => {
     return () => {
       if (closeTimerRef.current) {
         window.clearTimeout(closeTimerRef.current)
@@ -88,22 +135,6 @@ export default function Chord({ chord, size }: Props) {
 
   if (!root) {
     return <span style={{ fontSize: `${size}px` }}>{chord}</span>
-  }
-
-  function updatePosition() {
-    const rect = wrapperRef.current?.getBoundingClientRect()
-    if (!rect) return
-
-    const popupWidth = 144
-    const nextLeft = Math.min(
-      window.innerWidth - popupWidth - 12,
-      Math.max(12, rect.left + rect.width / 2 - popupWidth / 2)
-    )
-
-    setPosition({
-      top: Math.max(12, rect.top - 166),
-      left: nextLeft,
-    })
   }
 
   function openPreview(resetVariant = false) {
@@ -118,6 +149,9 @@ export default function Chord({ chord, size }: Props) {
 
     updatePosition()
     setShow(true)
+    window.dispatchEvent(
+      new CustomEvent("chord-preview-open", { detail: previewId })
+    )
   }
 
   function closePreviewSoon() {
@@ -142,6 +176,9 @@ export default function Chord({ chord, size }: Props) {
   function changeVariant(direction: -1 | 1) {
     keepPreviewOpen()
     setShow(true)
+    window.dispatchEvent(
+      new CustomEvent("chord-preview-open", { detail: previewId })
+    )
     setVariantState((prev) => {
       const currentIndex = prev.chord === chord ? prev.index : 1
 
@@ -169,8 +206,29 @@ export default function Chord({ chord, size }: Props) {
         if (isDesktop) openPreview()
       }}
       onMouseLeave={closePreviewSoon}
+      onPointerDown={(event) => {
+        if (event.pointerType === "mouse" || isDesktop) return
+
+        event.preventDefault()
+        event.stopPropagation()
+
+        handledTouchRef.current = true
+
+        if (show) {
+          setShow(false)
+        } else {
+          openPreview(true)
+        }
+
+        window.setTimeout(() => {
+          handledTouchRef.current = false
+        }, 350)
+      }}
       onClick={(event) => {
         event.stopPropagation()
+
+        if (handledTouchRef.current) return
+
         if (isDesktop) {
           openPreview()
           return
@@ -195,9 +253,10 @@ export default function Chord({ chord, size }: Props) {
             position: "fixed",
             top: isDesktop ? position.top : "auto",
             left: isDesktop ? position.left : "50%",
-            bottom: isDesktop ? "auto" : 18,
+            bottom: isDesktop ? "auto" : "calc(18px + env(safe-area-inset-bottom))",
             transform: isDesktop ? "none" : "translateX(-50%)",
             width: 144,
+            maxWidth: "calc(100vw - 24px)",
             background: "#111",
             padding: "8px",
             borderRadius: "8px",
@@ -247,6 +306,9 @@ export default function Chord({ chord, size }: Props) {
                 cursor: variantIndex === 1 ? "default" : "pointer",
                 opacity: variantIndex === 1 ? 0.35 : 1,
                 padding: "6px",
+                minWidth: "32px",
+                minHeight: "32px",
+                touchAction: "manipulation",
               }}
             >
               {"<"}
@@ -270,6 +332,9 @@ export default function Chord({ chord, size }: Props) {
                 cursor: variantIndex === maxVariants ? "default" : "pointer",
                 opacity: variantIndex === maxVariants ? 0.35 : 1,
                 padding: "6px",
+                minWidth: "32px",
+                minHeight: "32px",
+                touchAction: "manipulation",
               }}
             >
               {">"}
