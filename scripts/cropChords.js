@@ -2,8 +2,15 @@ const fs = require("fs")
 const path = require("path")
 const sharp = require("sharp")
 
-const inputDir = path.join(__dirname, "../public/chord_variants")
-const outputDir = path.join(__dirname, "../public/chord_variants_final")
+const inputDir = path.join(
+  __dirname,
+  "../public/chord_variants_new_rename"
+)
+
+const outputDir = path.join(
+  __dirname,
+  "../public/chord_variants_final"
+)
 
 // napravi output folder ako ne postoji
 if (!fs.existsSync(outputDir)) {
