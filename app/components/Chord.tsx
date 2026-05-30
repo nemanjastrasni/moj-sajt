@@ -117,7 +117,7 @@ export default function Chord({ chord, size }: Props) {
   }, [previewId])
 
   useEffect(() => {
-    if (!show || !isDesktop) return
+    if (!show) return
 
     const updateOpenPosition = () => updatePosition()
 
@@ -128,7 +128,7 @@ export default function Chord({ chord, size }: Props) {
       window.removeEventListener("scroll", updateOpenPosition, true)
       window.removeEventListener("resize", updateOpenPosition)
     }
-  }, [show, isDesktop, updatePosition])
+  }, [show, updatePosition])
 
   useEffect(() => {
     return () => {
@@ -277,10 +277,10 @@ export default function Chord({ chord, size }: Props) {
           onTouchEnd={(event) => event.stopPropagation()}
           style={{
             position: "fixed",
-            top: isDesktop ? position.top : "auto",
-            left: isDesktop ? position.left : "50%",
-            bottom: isDesktop ? "auto" : "calc(18px + env(safe-area-inset-bottom))",
-            transform: isDesktop ? "none" : "translateX(-50%)",
+            top: position.top,
+            left: position.left,
+            bottom: "auto",
+            transform: "none",
             width: 144,
             maxWidth: "calc(100vw - 24px)",
             background: "#111",
