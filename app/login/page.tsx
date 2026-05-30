@@ -2,13 +2,11 @@
 
 import { signIn } from "next-auth/react"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function LoginPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get("callbackUrl") || "/"
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -19,6 +17,8 @@ export default function LoginPage() {
   async function handleLogin() {
     setError("")
     setLoading(true)
+    const callbackUrl =
+      new URLSearchParams(window.location.search).get("callbackUrl") || "/"
 
     const result = await signIn("credentials", {
       email,
