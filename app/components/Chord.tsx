@@ -40,6 +40,7 @@ export default function Chord({ chord, size }: Props) {
   const wrapperRef = useRef<HTMLSpanElement>(null)
   const closeTimerRef = useRef<number | null>(null)
   const handledTouchRef = useRef(false)
+  const lastTouchToggleRef = useRef(0)
 
   const normalized = useMemo(() => normalizeChord(chord), [chord])
   const safeChord = useMemo(() => toImageChord(chord), [chord])
@@ -86,14 +87,18 @@ export default function Chord({ chord, size }: Props) {
   useEffect(() => {
     if (!show) return
 
-    const handlePointerDown = (event: PointerEvent) => {
+    const handleOutsidePress = (event: Event) => {
       if (wrapperRef.current?.contains(event.target as Node)) return
       setShow(false)
     }
 
-    document.addEventListener("pointerdown", handlePointerDown)
+    document.addEventListener("pointerdown", handleOutsidePress)
+    document.addEventListener("touchstart", handleOutsidePress)
 
-    return () => document.removeEventListener("pointerdown", handlePointerDown)
+    return () => {
+      document.removeEventListener("pointerdown", handleOutsidePress)
+      document.removeEventListener("touchstart", handleOutsidePress)
+    }
   }, [show])
 
   useEffect(() => {
@@ -189,6 +194,25 @@ export default function Chord({ chord, size }: Props) {
     })
   }
 
+  function toggleTouchPreview() {
+    const now = Date.now()
+
+    if (now - lastTouchToggleRef.current < 350) return
+
+    lastTouchToggleRef.current = now
+    handledTouchRef.current = true
+
+    if (show) {
+      setShow(false)
+    } else {
+      openPreview(true)
+    }
+
+    window.setTimeout(() => {
+      handledTouchRef.current = false
+    }, 450)
+  }
+
   return (
     <span
       ref={wrapperRef}
@@ -209,25 +233,25 @@ export default function Chord({ chord, size }: Props) {
       onPointerDown={(event) => {
         if (event.pointerType === "mouse" || isDesktop) return
 
+        event.stopPropagation()
+        toggleTouchPreview()
+      }}
+      onTouchEnd={(event) => {
+        if (isDesktop) return
+
         event.preventDefault()
         event.stopPropagation()
-
-        handledTouchRef.current = true
-
-        if (show) {
-          setShow(false)
-        } else {
-          openPreview(true)
-        }
-
-        window.setTimeout(() => {
-          handledTouchRef.current = false
-        }, 350)
+        toggleTouchPreview()
       }}
       onClick={(event) => {
         event.stopPropagation()
 
-        if (handledTouchRef.current) return
+        if (
+          handledTouchRef.current ||
+          Date.now() - lastTouchToggleRef.current < 450
+        ) {
+          return
+        }
 
         if (isDesktop) {
           openPreview()
@@ -249,6 +273,8 @@ export default function Chord({ chord, size }: Props) {
           onMouseLeave={closePreviewSoon}
           onClick={(event) => event.stopPropagation()}
           onPointerDown={(event) => event.stopPropagation()}
+          onTouchStart={(event) => event.stopPropagation()}
+          onTouchEnd={(event) => event.stopPropagation()}
           style={{
             position: "fixed",
             top: isDesktop ? position.top : "auto",
