@@ -4,13 +4,25 @@ import bcrypt from "bcrypt"
 
 export async function POST(req: Request) {
   const { name, email, password, image } = await req.json()
+  const normalizedEmail = String(email || "").trim().toLowerCase()
 
-  if (!email || !password) {
+  if (!name || !normalizedEmail || !password) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 })
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    return NextResponse.json({ error: "Invalid email" }, { status: 400 })
+  }
+
+  if (password.length < 8) {
+    return NextResponse.json(
+      { error: "Password must have at least 8 characters" },
+      { status: 400 }
+    )
   }
   
   const existingUser = await prisma.user.findUnique({
-    where: { email }
+    where: { email: normalizedEmail }
   })
 
   if (existingUser) {
@@ -22,7 +34,7 @@ export async function POST(req: Request) {
   const user = await prisma.user.create({
     data: {
     name,
-  email,
+  email: normalizedEmail,
   password: hashedPassword,
   image
 }
