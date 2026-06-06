@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import { getChordVariantFileIndex } from "@/lib/chords/chordVariantRules"
 
 type Props = {
@@ -38,6 +39,7 @@ export default function Chord({ chord, size }: Props) {
   const maxVariants = 4
 
   const wrapperRef = useRef<HTMLSpanElement>(null)
+  const popupRef = useRef<HTMLDivElement>(null)
   const closeTimerRef = useRef<number | null>(null)
   const handledTouchRef = useRef(false)
   const lastTouchToggleRef = useRef(0)
@@ -88,7 +90,11 @@ export default function Chord({ chord, size }: Props) {
     if (!show) return
 
     const handleOutsidePress = (event: Event) => {
-      if (wrapperRef.current?.contains(event.target as Node)) return
+      const target = event.target as Node
+
+      if (wrapperRef.current?.contains(target)) return
+      if (popupRef.current?.contains(target)) return
+
       setShow(false)
     }
 
@@ -267,8 +273,11 @@ export default function Chord({ chord, size }: Props) {
     >
       {chord}
 
-      {show && (
+      {show &&
+        typeof document !== "undefined" &&
+        createPortal(
         <div
+          ref={popupRef}
           onMouseEnter={keepPreviewOpen}
           onMouseLeave={closePreviewSoon}
           onClick={(event) => event.stopPropagation()}
@@ -366,8 +375,9 @@ export default function Chord({ chord, size }: Props) {
               {">"}
             </button>
           </div>
-        </div>
-      )}
+        </div>,
+          document.body
+        )}
     </span>
   )
 }

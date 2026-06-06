@@ -8,6 +8,8 @@ import ChordDiagram from "./ChordDiagram"
 import UsedChordCard from "./UsedChordCard"
 import { cleanLyrics } from "@/lib/cleanLyrics"
 import { chordVariants } from "@/lib/chords/chordVariants"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 type ChordVariant = {
   name: string
@@ -33,6 +35,8 @@ type Props = {
 }
 
 export default function SongClient({ song, media }: Props) {
+  const { data: session } = useSession()
+  const router = useRouter()
   const [transpose, setTranspose] = useState(0)
   const [showVideo, setShowVideo] = useState(false)
   const [miniPlayer, setMiniPlayer] = useState(false)
@@ -232,6 +236,8 @@ parts.push(
 
 useEffect(() => {
   async function fetchPlaylists() {
+    if (!session) return
+
     const res = await fetch("/api/playlist")
     const data = await res.json()
 
@@ -239,7 +245,7 @@ useEffect(() => {
   }
 
   fetchPlaylists()
-}, [])
+}, [session])
 
 
   return (
@@ -413,6 +419,11 @@ useEffect(() => {
   <div className="relative inline-block">
     <button
       onClick={() => {
+  if (!session) {
+    router.push(`/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`)
+    return
+  }
+
   setShowSelect(!showSelect)
 }}
       className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 rounded text-white"
@@ -421,7 +432,7 @@ useEffect(() => {
     </button>
 
     {showSelect && (
-      <div className="absolute mt-2 bg-neutral-900 border border-gray-700 rounded p-2 z-50 w-64">
+      <div className="fixed left-4 right-4 top-24 max-h-[70vh] overflow-auto bg-neutral-900 border border-gray-700 rounded p-2 z-[999999] sm:absolute sm:left-0 sm:right-auto sm:top-auto sm:mt-2 sm:w-64">
 
   {(() => {
   const sc = (song.category || "").toLowerCase()
@@ -550,8 +561,8 @@ useEffect(() => {
 
 )}
 {showModal && (
-  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-    <div className="bg-gray-900 p-6 rounded w-[300px]">
+  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[999999] px-4">
+    <div className="bg-gray-900 p-6 rounded w-full max-w-[320px]">
       
       <h2 className="mb-4 text-lg">Nova playlista</h2>
 
