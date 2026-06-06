@@ -4,12 +4,15 @@ import type { NextAuthOptions } from "next-auth"
 import bcrypt from "bcrypt"
 import { prisma } from "@/lib/prisma"
 
+const googleClientSecret =
+  process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_SECRET
+
 const googleProvider =
-  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+  process.env.GOOGLE_CLIENT_ID && googleClientSecret
     ? [
         GoogleProvider({
           clientId: process.env.GOOGLE_CLIENT_ID,
-          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          clientSecret: googleClientSecret,
         }),
       ]
     : []

@@ -16,26 +16,42 @@ export default function LoginPage() {
 
   async function handleLogin() {
     setError("")
-    setLoading(true)
-    const callbackUrl =
-      new URLSearchParams(window.location.search).get("callbackUrl") || "/"
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-      callbackUrl,
-    })
-
-    setLoading(false)
-
-    if (result?.error) {
-      setError("Email ili lozinka nisu ispravni.")
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Unesi ispravan email.")
       return
     }
 
-    router.push(result?.url || callbackUrl)
-    router.refresh()
+    if (!password) {
+      setError("Unesi lozinku.")
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      const callbackUrl =
+        new URLSearchParams(window.location.search).get("callbackUrl") || "/"
+
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl,
+      })
+
+      if (!result || result.error) {
+        setError("Email ili lozinka nisu ispravni.")
+        return
+      }
+
+      router.push(result.url || callbackUrl)
+      router.refresh()
+    } catch {
+      setError("Login trenutno nije uspeo. Probaj ponovo.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   function handleGoogleLogin() {
