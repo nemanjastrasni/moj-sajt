@@ -1,7 +1,18 @@
 import CredentialsProvider from "next-auth/providers/credentials"
+import GoogleProvider from "next-auth/providers/google"
 import type { NextAuthOptions } from "next-auth"
 import bcrypt from "bcrypt"
 import { prisma } from "@/lib/prisma"
+
+const googleProvider =
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ? [
+        GoogleProvider({
+          clientId: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        }),
+      ]
+    : []
 
 export const authOptions: NextAuthOptions = {
   debug: true,
@@ -12,6 +23,7 @@ export const authOptions: NextAuthOptions = {
   
 
   providers: [
+    ...googleProvider,
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -65,20 +77,50 @@ export const authOptions: NextAuthOptions = {
   id: String(user.id),
   email: user.email,
   name: user.name ?? null,
-  role: (user as any).role,
 }
       },
     }),
   ],
 
   callbacks: {
+  async signIn({ user }) {
+    if (!user.email) return false
+
+    await prisma.user.upsert({
+      where: { email: user.email },
+      update: {
+        name: user.name ?? undefined,
+        image: user.image ?? undefined,
+      },
+      create: {
+        email: user.email,
+        name: user.name ?? null,
+        image: user.image ?? null,
+      },
+    })
+
+    return true
+  },
+
   async jwt({ token, user }) {
     if (user) {
-      token.id = String(user.id)
       token.email = user.email
-      token.role = user.role
       token.image = user.image
     }
+
+    if (token.email) {
+      const dbUser = await prisma.user.findUnique({
+        where: { email: token.email },
+      })
+
+      if (dbUser) {
+        token.id = dbUser.id
+        token.role = dbUser.role === "admin" ? "admin" : "user"
+        token.image = dbUser.image
+        token.name = dbUser.name
+      }
+    }
+
     return token
   },
 

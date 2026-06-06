@@ -48,7 +48,7 @@ export default function Menu() {
   }, [])
 
   return (
-    <nav className="relative z-[9999] flex justify-between items-start pt-2 pb-28 pl-2 pr-6 bg-red-700 text-black shadow-md">
+    <nav className="relative z-[9999] flex justify-between items-start pt-2 pb-28 pl-2 pr-6 bg-red-700 text-black shadow-md overflow-hidden">
       <div className="relative z-10 space-y-2 flex flex-col items-start">
         <Link href="/" className="string w-64 block">
           <span>Home</span>
@@ -105,9 +105,9 @@ export default function Menu() {
         )}
       </div>
 
-      <div className="relative z-10 flex items-center gap-4 ml-auto">
+      <div className="absolute top-2 right-3 sm:right-6 z-20 flex items-center gap-2 sm:gap-4">
         <div
-          className="text-xs text-white mr-4 whitespace-nowrap"
+          className="hidden sm:block text-xs text-white mr-2 whitespace-nowrap"
           title="Korisnici trenutno na sajtu / ulogovani korisnici"
         >
           online {online.total} | login {online.loggedIn}
@@ -116,7 +116,7 @@ export default function Menu() {
         {!session ? (
           <button
             onClick={() => router.push("/login")}
-            className="px-5 py-2 bg-black text-white rounded-lg hover:opacity-80 transition"
+            className="px-4 sm:px-5 py-2 bg-black text-white rounded-lg hover:opacity-80 transition"
           >
             Login
           </button>
@@ -124,7 +124,7 @@ export default function Menu() {
           <div className="relative">
             <div className="flex items-center gap-2">
               {session?.user?.name && (
-                <span className="text-sm text-gray-300">
+                <span className="hidden sm:inline text-sm text-gray-300">
                   {session.user.name}
                 </span>
               )}
@@ -140,7 +140,7 @@ export default function Menu() {
             {open &&
               typeof window !== "undefined" &&
               createPortal(
-                <div className="fixed top-[70px] right-6 w-44 bg-neutral-900 border border-gray-700 shadow-xl rounded-xl p-2 text-sm z-[999999]">
+                <div className="fixed top-[70px] right-3 sm:right-6 w-44 max-w-[calc(100vw-24px)] bg-neutral-900 border border-gray-700 shadow-xl rounded-xl p-2 text-sm z-[999999]">
                   <p className="px-2 py-1 text-gray-400 truncate">
                     {session.user?.email}
                   </p>

@@ -38,6 +38,15 @@ export default function LoginPage() {
     router.refresh()
   }
 
+  function handleGoogleLogin() {
+    const callbackUrl =
+      new URLSearchParams(window.location.search).get("callbackUrl") || "/"
+
+    signIn("google", {
+      callbackUrl,
+    })
+  }
+
   return (
     <div
       className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
@@ -54,6 +63,20 @@ export default function LoginPage() {
               {error}
             </div>
           )}
+
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="border border-gray-300 py-2 rounded text-black bg-white hover:bg-gray-50 transition"
+          >
+            Nastavi preko Google naloga
+          </button>
+
+          <div className="flex items-center gap-3 text-xs text-gray-400">
+            <div className="h-px flex-1 bg-gray-200" />
+            <span>ili</span>
+            <div className="h-px flex-1 bg-gray-200" />
+          </div>
 
           <input
             type="email"
