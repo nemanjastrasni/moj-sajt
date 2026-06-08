@@ -22,6 +22,7 @@ export default function ProfileClient({ user, favorites }: any) {
   const [country, setCountry] = useState(user?.country || "")
   const [birthYear, setBirthYear] = useState(user?.birthYear || "")
   const [showPassword, setShowPassword] = useState(false)
+  const [success, setSuccess] = useState(false)
   const [skillLevel, setSkillLevel] = useState(
   user?.skillLevel || "beginner"
 )
@@ -52,8 +53,11 @@ if (!res.ok) {
   return
 }
 
-alert("Sačuvano")
-window.location.reload()
+setSuccess(true)
+
+setTimeout(() => {
+  window.location.reload()
+}, 1000)
   }
 
   return (
@@ -221,6 +225,12 @@ window.location.reload()
     className="hidden"
   />
 </label>
+        {success && (
+  <p className="text-green-500 text-center">
+    ✓ Profil uspešno sačuvan
+  </p>
+)}
+
         <button
           onClick={updateProfile}
           className="bg-blue-600 text-white py-2 rounded"
