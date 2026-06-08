@@ -31,11 +31,16 @@ model User {
   image              String?
   role               String                  @default("user")
   bio                String?
+
+  birthDay           Int?
+  birthMonth         Int?
   birthYear          Int?
+
   city               String?
   country            String?
   banned             Boolean                 @default(false)
   skillLevel         String                  @default("beginner")
+
   accounts           Account[]
   favorites          Favorite[]
   listeningPlaylists ListeningPlaylist[]     @relation("UserListeningPlaylists")
