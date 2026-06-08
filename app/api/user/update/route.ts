@@ -18,6 +18,8 @@ export async function POST(req: Request) {
   if (body.bio) data.bio = body.bio
   if (body.city) data.city = body.city
   if (body.country) data.country = body.country
+  if (body.birthDay) data.birthDay = Number(body.birthDay)
+  if (body.birthMonth) data.birthMonth = Number(body.birthMonth)
   if (body.birthYear) data.birthYear = Number(body.birthYear)
   if (body.image) data.image = body.image
   if (body.skillLevel) data.skillLevel = body.skillLevel

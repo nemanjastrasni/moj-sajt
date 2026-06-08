@@ -15,6 +15,8 @@ export default function ProfileClient({ user, favorites }: any) {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [bio, setBio] = useState(user?.bio || "")
+  const [birthDay, setBirthDay] = useState(user?.birthDay || "")
+  const [birthMonth, setBirthMonth] = useState(user?.birthMonth || "")
   const [image, setImage] = useState(user?.image || "")
   const [city, setCity] = useState(user?.city || "")
   const [country, setCountry] = useState(user?.country || "")
@@ -37,6 +39,8 @@ export default function ProfileClient({ user, favorites }: any) {
     bio,
     city,
     country,
+    birthDay,
+    birthMonth,
     birthYear,
     image,
     skillLevel,
@@ -115,13 +119,57 @@ window.location.reload()
   placeholder="Država"
   className="border px-3 py-2 rounded text-black bg-white"
 />
+<div className="grid grid-cols-3 gap-2">
 
-<input
-  value={birthYear}
-  onChange={(e) => setBirthYear(e.target.value)}
-  placeholder="Godina rođenja"
-  className="border px-3 py-2 rounded text-black bg-white"
-/>
+  <select
+    value={birthDay}
+    onChange={(e) => setBirthDay(Number(e.target.value))}
+    className="border px-3 py-2 rounded text-black bg-white"
+  >
+    <option value="">Dan</option>
+    {Array.from({ length: 31 }, (_, i) => (
+      <option key={i + 1} value={i + 1}>
+        {i + 1}
+      </option>
+    ))}
+  </select>
+
+  <select
+    value={birthMonth}
+    onChange={(e) => setBirthMonth(Number(e.target.value))}
+    className="border px-3 py-2 rounded text-black bg-white"
+  >
+    <option value="">Mesec</option>
+    {Array.from({ length: 12 }, (_, i) => (
+      <option key={i + 1} value={i + 1}>
+        {i + 1}
+      </option>
+    ))}
+  </select>
+
+  <select
+    value={birthYear}
+    onChange={(e) => setBirthYear(Number(e.target.value))}
+    className="border px-3 py-2 rounded text-black bg-white"
+  >
+    <option value="">Godina</option>
+
+    {Array.from(
+      { length: new Date().getFullYear() - 1899 },
+      (_, i) => {
+        const year = new Date().getFullYear() - i
+
+        return (
+          <option key={year} value={year}>
+            {year}
+          </option>
+        )
+      }
+    )}
+  </select>
+
+</div>
+
 {image && (
   <img
     src={image}
