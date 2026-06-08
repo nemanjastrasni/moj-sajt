@@ -117,11 +117,10 @@ export const authOptions: NextAuthOptions = {
       })
 
       if (dbUser) {
-        token.id = dbUser.id
-        token.role = dbUser.role === "admin" ? "admin" : "user"
-        token.image = dbUser.image
-        token.name = dbUser.name
-      }
+  token.id = dbUser.id
+  token.role = dbUser.role === "admin" ? "admin" : "user"
+  token.name = dbUser.name
+}
     }
 
     return token
@@ -137,7 +136,6 @@ export const authOptions: NextAuthOptions = {
         where: { email: session.user.email },
       })
 
-      session.user.image = dbUser?.image || null
       session.user.name = dbUser?.name || null
     }
     return session
