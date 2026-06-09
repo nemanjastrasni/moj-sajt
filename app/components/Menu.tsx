@@ -124,8 +124,8 @@ export default function Menu() {
           <div className="relative">
             <div className="flex items-center gap-2">
               {session?.user?.name && (
-                <span className="hidden sm:inline text-sm text-gray-300">
-                  {session.user.name}
+                <span className="hidden sm:inline text-sm text-gray-300 max-w-[160px] truncate">
+                 {session.user.name}
                 </span>
               )}
 

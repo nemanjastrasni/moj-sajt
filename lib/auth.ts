@@ -107,9 +107,8 @@ export const authOptions: NextAuthOptions = {
 
   async jwt({ token, user }) {
     if (user) {
-      token.email = user.email
-      token.image = user.image
-    }
+  token.email = user.email
+}
 
     if (token.email) {
       const dbUser = await prisma.user.findUnique({
@@ -120,6 +119,7 @@ export const authOptions: NextAuthOptions = {
   token.id = dbUser.id
   token.role = dbUser.role === "admin" ? "admin" : "user"
   token.name = dbUser.name
+  token.image = dbUser.image
 }
     }
 
@@ -137,13 +137,14 @@ export const authOptions: NextAuthOptions = {
       })
 
       session.user.name = dbUser?.name || null
+      session.user.image = dbUser?.image || null
     }
     return session
   },
 
-  async redirect() {
-    return "/"
-  },
+  //async redirect() {
+    //return "/"
+  //},
 },
 
   pages: {

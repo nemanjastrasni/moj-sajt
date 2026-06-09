@@ -34,11 +34,12 @@ export default function LoginPage() {
         new URLSearchParams(window.location.search).get("callbackUrl") || "/"
 
       const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-        callbackUrl,
-      })
+  email,
+  password,
+  redirect: false,
+  callbackUrl,
+})
+
 
       if (!result || result.error) {
         setError("Email ili lozinka nisu ispravni.")

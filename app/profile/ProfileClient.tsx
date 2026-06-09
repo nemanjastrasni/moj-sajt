@@ -54,10 +54,6 @@ if (!res.ok) {
 }
 
 setSuccess(true)
-
-setTimeout(() => {
-  window.location.reload()
-}, 1000)
   }
 
   return (
@@ -213,15 +209,38 @@ setTimeout(() => {
     type="file"
     accept="image/*"
     onChange={(e) => {
-      const file = e.target.files?.[0]
-      if (!file) return
+  const file = e.target.files?.[0]
+  if (!file) return
 
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setImage(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    }}
+  const img = new Image()
+  const reader = new FileReader()
+
+  reader.onload = (event) => {
+    img.src = event.target?.result as string
+  }
+
+  img.onload = () => {
+    const canvas = document.createElement("canvas")
+
+    const SIZE = 200
+
+    canvas.width = SIZE
+    canvas.height = SIZE
+
+    const ctx = canvas.getContext("2d")
+
+    ctx?.drawImage(img, 0, 0, SIZE, SIZE)
+
+    const compressed = canvas.toDataURL(
+      "image/jpeg",
+      0.7
+    )
+
+    setImage(compressed)
+  }
+
+  reader.readAsDataURL(file)
+}}
     className="hidden"
   />
 </label>
