@@ -64,7 +64,6 @@ export async function POST(req: Request) {
   try {
     await ensurePresenceTable()
 
-    const session = await getServerSession(authOptions)
     const city = req.headers.get("x-vercel-ip-city")
 const country = req.headers.get("x-vercel-ip-country")
 
