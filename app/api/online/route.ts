@@ -65,6 +65,12 @@ export async function POST(req: Request) {
     await ensurePresenceTable()
 
     const session = await getServerSession(authOptions)
+    const city = req.headers.get("x-vercel-ip-city")
+const country = req.headers.get("x-vercel-ip-country")
+
+console.log("CITY:", city)
+console.log("COUNTRY:", country)
+    const session = await getServerSession(authOptions)
     const cookieHeader = req.headers.get("cookie") ?? ""
     const visitorMatch = cookieHeader.match(/(?:^|;\s*)ga_visitor=([^;]+)/)
     const visitorId = visitorMatch?.[1] ?? crypto.randomUUID()
