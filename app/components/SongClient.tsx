@@ -511,9 +511,18 @@ useEffect(() => {
   </div>
 </div>
 
-<h2 className="text-lg text-gray-500 mb-6">
-  {artist}
-</h2>
+{song.artistSlug ? (
+  <Link
+  href={`/pesme/${song.category}/${song.artistSlug}`}
+  className="text-lg text-gray-500 mb-6 block hover:text-blue-400 transition"
+>
+  🎤 {artist}
+</Link>
+) : (
+  <h2 className="text-lg text-gray-500 mb-6">
+    {artist}
+  </h2>
+)}
 
 {/* USED CHORDS */}
 {showChordsPanel && (
