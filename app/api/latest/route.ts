@@ -11,6 +11,7 @@ export async function GET() {
   id: true,
   title: true,
   slug: true,
+  category: true,
   artist: {
     select: {
       name: true,
