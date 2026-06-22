@@ -105,6 +105,17 @@ export default function SongClient({ song, media }: Props) {
    const chordRegex =
 /(\[)?(?<!\S)[A-GH](#|b)?(maj7|maj|min|sus2|sus4|sus|dim|aug|add\d*|m|7)?(\d+|\+)?(\/[A-GH](#|b)?)?(\])?/g
     return text.split("\n").map((line, i) => {
+      const isTabLine =
+  /^[eBGDAE]\|/i.test(line.trim()) ||
+  /^[eBGDAE]-/i.test(line.trim())
+
+if (isTabLine) {
+  return (
+    <pre key={i} className="font-mono whitespace-pre">
+      {line}
+    </pre>
+  )
+}
       let normalizedLine = line
   .replace(/,/g, " ")
   .replace(/\b([a-g])\b/g, (m: string) => m.toUpperCase())
