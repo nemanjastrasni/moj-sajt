@@ -67,7 +67,8 @@ export default function SongClient({ song, media }: Props) {
 
   if (!song) return null
   const { title, artist, content, lyrics } = song
-  const displayContent = cleanLyrics(lyrics || content || "")
+  const displayContent = lyrics || content || ""
+
  
   const NOTES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
   const rendered = useMemo(() => {
@@ -105,6 +106,30 @@ export default function SongClient({ song, media }: Props) {
    const chordRegex =
 /(\[)?(?<!\S)[A-GH](#|b)?(maj7|maj|min|sus2|sus4|sus|dim|aug|add\d*|m|7)?(\d+|\+)?(\/[A-GH](#|b)?)?(\])?/g
     return text.split("\n").map((line, i) => {
+      if (
+  line.includes("e|") ||
+  line.includes("B|") ||
+  line.includes("G|") ||
+  line.includes("D|") ||
+  line.includes("A|") ||
+  line.includes("E|")
+) {
+  return (
+    <pre key={i} className="font-mono whitespace-pre">
+      {line}
+    </pre>
+  )
+}
+      const tabChars =
+  (line.match(/\|/g) || []).length >= 2
+
+if (tabChars) {
+  return (
+    <pre key={i} className="font-mono whitespace-pre">
+      {line}
+    </pre>
+  )
+}
       const isTabLine =
   /^[eBGDAE]\|/i.test(line.trim()) ||
   /^[eBGDAE]-/i.test(line.trim())

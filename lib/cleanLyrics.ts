@@ -12,7 +12,7 @@ export function cleanLyrics(text: string) {
     .replace(/\(([^)]+)\)/g, "[$1]")
     .replace(/\.+/g, " ")
     .replace(/[.\-]{2,}/g, " ")
-.replace(/([A-G][#b]?)([A-G][#b]?)/g, "$1 $2")
+    .replace(/([A-G][#b]?)([A-G][#b]?)/g, "$1 $2")
    
 
     // (F#m) → F#m
