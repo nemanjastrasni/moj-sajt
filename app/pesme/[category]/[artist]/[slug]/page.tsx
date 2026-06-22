@@ -45,7 +45,16 @@ export default async function SongPage({ params }: Props) {
   if (!song) {
     notFound()
   }
-
+ await prisma.song.update({
+  where: {
+    id: song.id,
+  },
+  data: {
+    popularity: {
+      increment: 1,
+    },
+  },
+})
 
   return (
     <SongClient
