@@ -15,18 +15,25 @@ type Props = {
 }
 
 function normalizeChord(chord: string) {
-  return chord.replace(/^H/, "B")
+  return chord
+    .replace(/^H/i, "B")
+    .replace(/^([A-G])is/i, "$1#")
+    .replace(/^([A-G])es/i, "$1b")
 }
 
 function toImageChord(chord: string) {
   let safeChord = normalizeChord(chord)
     .replace(/\s+/g, "")
     .replace("/", "_")
+    .replace(/^Cb/, "B")
     .replace(/^Ab/, "G#")
     .replace(/^Db/, "C#")
     .replace(/^Eb/, "D#")
+    .replace(/^Fb/, "E")
     .replace(/^Gb/, "F#")
     .replace(/^Bb/, "A#")
+    .replace(/^E#/, "F")
+    .replace(/^B#/, "C")
 
   if (/^[A-G](#)?$/.test(safeChord)) {
     safeChord = safeChord + "maj"
