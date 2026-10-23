@@ -1,32 +1,13 @@
-"use client"
+import { redirect } from "next/navigation"
 
-import { signIn } from "next-auth/react"
-import { useState } from "react"
-
-export default function SignIn() {
-  const [email,setEmail] = useState("")
-  const [password,setPassword] = useState("")
-
-  const handleSubmit = async (e:any)=>{
-    e.preventDefault()
-
-    await signIn("credentials",{
-      email,
-      password,
-      redirect: false
-    })
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-sm mx-auto mt-20">
-      <input placeholder="email" onChange={e=>setEmail(e.target.value)} />
-      <input type="password" placeholder="password" onChange={e=>setPassword(e.target.value)} />
-
-      <button type="submit">Sign in</button>
-
-      <button type="button" onClick={()=>signIn("github")}>
-        Sign in with GitHub
-      </button>
-    </form>
-  )
+export default async function SignIn({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string; error?: string }>
+}) {
+  const params = await searchParams
+  const query = new URLSearchParams()
+  if (typeof params.callbackUrl === "string") query.set("callbackUrl", params.callbackUrl)
+  if (typeof params.error === "string") query.set("error", params.error)
+  redirect(query.size ? "/login?" + query.toString() : "/login")
 }

@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test:chords": "node --test scripts/test-song-sheet.cjs",
+    "test:auth": "node --test scripts/test-auth.cjs",
+    "test:search": "node --test scripts/test-search.cjs",
     "postinstall": "prisma generate"
   },
   "dependencies": {

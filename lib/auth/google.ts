@@ -1,0 +1,5 @@
+export function getGoogleCredentials() {
+  const clientId = process.env.GOOGLE_CLIENT_ID?.trim()
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim() || process.env.GOOGLE_SECRET?.trim()
+  return clientId && clientSecret ? { clientId, clientSecret } : null
+}
