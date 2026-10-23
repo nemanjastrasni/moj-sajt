@@ -1,40 +1,12 @@
 "use client"
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useId, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { getChordVariantFileIndex } from "@/lib/chords/chordVariantRules"
+import { useChordVariants } from "./useChordVariants"
 
 type Props = {
   chord: string
   size: number
-}
-
-function normalizeChord(chord: string) {
-  return chord
-    .replace(/^H/i, "B")
-    .replace(/^([A-G])is/i, "$1#")
-    .replace(/^([A-G])es/i, "$1b")
-}
-
-function toImageChord(chord: string) {
-  let safeChord = normalizeChord(chord)
-    .replace(/\s+/g, "")
-    .replace("/", "_")
-    .replace(/^Cb/, "B")
-    .replace(/^Ab/, "G#")
-    .replace(/^Db/, "C#")
-    .replace(/^Eb/, "D#")
-    .replace(/^Fb/, "E")
-    .replace(/^Gb/, "F#")
-    .replace(/^Bb/, "A#")
-    .replace(/^E#/, "F")
-    .replace(/^B#/, "C")
-
-  if (/^[A-G](#)?$/.test(safeChord)) {
-    safeChord = safeChord + "maj"
-  }
-
-  return safeChord
 }
 
 export default function Chord({ chord, size }: Props) {
@@ -43,28 +15,17 @@ export default function Chord({ chord, size }: Props) {
   const [variantState, setVariantState] = useState({ chord, index: 1 })
   const [isDesktop, setIsDesktop] = useState(false)
   const [position, setPosition] = useState({ top: 0, left: 0 })
-  const maxVariants = 4
+  const variants = useChordVariants(chord, show)
+  const maxVariants = Math.max(1, variants.length)
+  const [failedImage, setFailedImage] = useState<string | null>(null)
 
   const wrapperRef = useRef<HTMLSpanElement>(null)
   const popupRef = useRef<HTMLDivElement>(null)
   const closeTimerRef = useRef<number | null>(null)
-  const handledTouchRef = useRef(false)
-  const lastTouchToggleRef = useRef(0)
+  const pinnedRef = useRef(false)
 
-  const normalized = useMemo(() => normalizeChord(chord), [chord])
-  const safeChord = useMemo(() => toImageChord(chord), [chord])
-  const variantIndex = variantState.chord === chord ? variantState.index : 1
-  const variantChord = safeChord.replace("maj", "")
-  const variantFileIndex = getChordVariantFileIndex(variantChord, variantIndex)
-  const rootMatch = normalized.match(/^[A-G](#|b)?/)
-  const root = rootMatch ? rootMatch[0] : null
-
-  const src =
-    variantIndex === 1
-      ? `/chords_final/${encodeURIComponent(safeChord)}_v1.png`
-      : `/chord_variants_final/${encodeURIComponent(
-          variantChord
-        )}_v${variantFileIndex}.png`
+  const variantIndex = Math.min(variantState.chord === chord ? variantState.index : 1, maxVariants)
+  const src = variants[variantIndex - 1]?.image
 
   const updatePosition = useCallback(() => {
     const rect = wrapperRef.current?.getBoundingClientRect()
@@ -76,8 +37,10 @@ export default function Chord({ chord, size }: Props) {
       Math.max(12, rect.left + rect.width / 2 - popupWidth / 2)
     )
 
+    const popupHeight = popupRef.current?.getBoundingClientRect().height || 224
+    const top = rect.top >= popupHeight + 8 ? rect.top - popupHeight - 8 : rect.bottom + 8
     setPosition({
-      top: Math.max(12, rect.top - 166),
+      top: Math.max(8, Math.min(top, window.innerHeight - popupHeight - 8)),
       left: nextLeft,
     })
   }, [])
@@ -102,6 +65,7 @@ export default function Chord({ chord, size }: Props) {
       if (wrapperRef.current?.contains(target)) return
       if (popupRef.current?.contains(target)) return
 
+      pinnedRef.current = false
       setShow(false)
     }
 
@@ -118,6 +82,7 @@ export default function Chord({ chord, size }: Props) {
     const handleOtherPreview = (event: Event) => {
       const customEvent = event as CustomEvent<string>
       if (customEvent.detail !== previewId) {
+        pinnedRef.current = false
         setShow(false)
       }
     }
@@ -151,10 +116,6 @@ export default function Chord({ chord, size }: Props) {
     }
   }, [])
 
-  if (!root) {
-    return <span style={{ fontSize: `${size}px` }}>{chord}</span>
-  }
-
   function openPreview(resetVariant = false) {
     if (closeTimerRef.current) {
       window.clearTimeout(closeTimerRef.current)
@@ -173,7 +134,7 @@ export default function Chord({ chord, size }: Props) {
   }
 
   function closePreviewSoon() {
-    if (!isDesktop) return
+    if (!isDesktop || pinnedRef.current) return
 
     if (closeTimerRef.current) {
       window.clearTimeout(closeTimerRef.current)
@@ -192,6 +153,7 @@ export default function Chord({ chord, size }: Props) {
   }
 
   function changeVariant(direction: -1 | 1) {
+    pinnedRef.current = true
     keepPreviewOpen()
     setShow(true)
     window.dispatchEvent(
@@ -207,28 +169,22 @@ export default function Chord({ chord, size }: Props) {
     })
   }
 
-  function toggleTouchPreview() {
-    const now = Date.now()
-
-    if (now - lastTouchToggleRef.current < 350) return
-
-    lastTouchToggleRef.current = now
-    handledTouchRef.current = true
-
-    if (show) {
-      setShow(false)
-    } else {
-      openPreview(true)
-    }
-
-    window.setTimeout(() => {
-      handledTouchRef.current = false
-    }, 450)
-  }
-
   return (
     <span
       ref={wrapperRef}
+      role="button"
+      tabIndex={0}
+      aria-label={`Akord ${chord}`}
+      aria-expanded={show}
+      aria-controls={show ? previewId : undefined}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") setShow(false)
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault()
+          if (show) setShow(false)
+          else openPreview()
+        }
+      }}
       style={{
         fontWeight: "bold",
         color: "#1a73e8",
@@ -243,30 +199,11 @@ export default function Chord({ chord, size }: Props) {
         if (isDesktop) openPreview()
       }}
       onMouseLeave={closePreviewSoon}
-      onPointerDown={(event) => {
-        if (event.pointerType === "mouse" || isDesktop) return
-
-        event.stopPropagation()
-        toggleTouchPreview()
-      }}
-      onTouchEnd={(event) => {
-        if (isDesktop) return
-
-        event.preventDefault()
-        event.stopPropagation()
-        toggleTouchPreview()
-      }}
       onClick={(event) => {
         event.stopPropagation()
 
-        if (
-          handledTouchRef.current ||
-          Date.now() - lastTouchToggleRef.current < 450
-        ) {
-          return
-        }
-
         if (isDesktop) {
+          pinnedRef.current = true
           openPreview()
           return
         }
@@ -285,6 +222,7 @@ export default function Chord({ chord, size }: Props) {
         createPortal(
         <div
           ref={popupRef}
+          id={previewId}
           onMouseEnter={keepPreviewOpen}
           onMouseLeave={closePreviewSoon}
           onClick={(event) => event.stopPropagation()}
@@ -298,6 +236,7 @@ export default function Chord({ chord, size }: Props) {
             bottom: "auto",
             transform: "none",
             width: 144,
+            minHeight: 224,
             maxWidth: "calc(100vw - 24px)",
             background: "#111",
             padding: "8px",
@@ -307,21 +246,23 @@ export default function Chord({ chord, size }: Props) {
             pointerEvents: "auto",
           }}
         >
-          <img
+          {src && failedImage !== src ? <img
             key={src}
             src={src}
             width={120}
             alt={chord}
             draggable={false}
+            onError={() => setFailedImage(src)}
             style={{
               display: "block",
               width: "120px",
-              height: "auto",
+              height: "160px",
+              objectFit: "contain",
               margin: "0 auto",
             }}
-          />
+          /> : <div className="py-4 text-center text-sm text-gray-300">{chord}<br />Dijagram nije dostupan</div>}
 
-          <div
+          {maxVariants > 1 && <div
             style={{
               display: "flex",
               justifyContent: "center",
@@ -381,7 +322,7 @@ export default function Chord({ chord, size }: Props) {
             >
               {">"}
             </button>
-          </div>
+          </div>}
         </div>,
           document.body
         )}

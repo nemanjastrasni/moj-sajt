@@ -2,12 +2,11 @@
 
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import Chord from "./Chord"
 import { useMemo } from "react"
-import ChordDiagram from "./ChordDiagram"
 import UsedChordCard from "./UsedChordCard"
-import { cleanLyrics } from "@/lib/cleanLyrics"
-import { chordVariants } from "@/lib/chords/chordVariants"
+import SongSheet from "./SongSheet"
+import { getUsedChords, parseSongSheet } from "@/lib/chords/songSheet"
+import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
@@ -70,199 +69,10 @@ export default function SongClient({ song, media }: Props) {
   const displayContent = lyrics || content || ""
 
  
-  const NOTES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
-  const FLAT_TO_SHARP: Record<string, string> = {
-    Cb: "B",
-    Db: "C#",
-    Eb: "D#",
-    Fb: "E",
-    Gb: "F#",
-    Ab: "G#",
-    Bb: "A#",
-    "E#": "F",
-    "B#": "C",
-  }
-  const rendered = useMemo(() => {
-  return renderContent(displayContent.trim(), chordSize)
-}, [displayContent, chordSize, transpose])
-   const usedChords = useMemo(() => {
-  const chordTokenRegex =
-    /^[A-GH](#|b)?(maj7|maj|min|sus2|sus4|sus|dim|aug|add\d*|m|7)?(\d+|\+)?(\/[A-GH](#|b)?)?$/i
-
-  const isChordToken = (token: string) =>
-    chordTokenRegex.test(normalizeChordToken(token))
-
-  return Array.from(
-    new Set(
-      displayContent
-        .split("\n")
-        .flatMap((line) => {
-          const candidate = line.trim().replace(/[-–—]+/g, " ")
-          const tokens = candidate.split(/\s+/).filter(Boolean)
-          const isChordLine =
-            tokens.some(isChordToken) &&
-            tokens.every((token) => isChordToken(token) || /^\d+x$/i.test(token))
-
-          if (!isChordLine) return []
-
-          return tokens
-            .filter(isChordToken)
-            .map((token) => transposeChord(token))
-        })
-    )
-  )
-}, [displayContent, transpose])
-
-  function normalizeChordToken(chord: string) {
-    const clean = chord
-      .trim()
-      .replace(/^\[/, "")
-      .replace(/\]$/, "")
-      .replace(/[.,;:]$/g, "")
-      .replace("+", "maj7")
-
-    const european = clean
-      .replace(/^([a-gA-GHh])is/i, "$1#")
-      .replace(/^([a-gA-GHh])es/i, "$1b")
-
-    const match = european.match(/^([a-gA-GHh])(#|b)?(.*)$/)
-    if (!match) return clean
-
-    const [, rawRoot, accidental = "", rawRest = ""] = match
-    const root = rawRoot.toUpperCase() === "H" ? "B" : rawRoot.toUpperCase()
-    const note = FLAT_TO_SHARP[root + accidental] || root + accidental
-    const rest = rawRest.replace(/^M/, "m")
-
-    return note + rest
-  }
-
-  function transposeChord(chord: string) {
-    const normalizedChord = normalizeChordToken(chord)
-    const match = normalizedChord.match(/^([A-G])(#|b)?(.*)$/)
-    if (!match) return chord
-
-    const [, root, accidental, rest] = match
-    const note = root + (accidental || "")
-    const index = NOTES.indexOf(note)
-
-    if (index === -1) return chord
-
-    const newIndex = (index + transpose + 12) % 12
-    return NOTES[newIndex] + rest
-  }
-  function normalizeChord(chord: string) {
-  return normalizeChordToken(chord)
-}
-
-  function renderContent(text: string, chordSize: number) {
-    const chordTokenRegex =
-      /^[A-GH](#|b)?(maj7|maj|min|sus2|sus4|sus|dim|aug|add\d*|m|7)?(\d+|\+)?(\/[A-GH](#|b)?)?$/i
-    const bracketChordRegex =
-      /\[[A-GH](#|b)?(maj7|maj|min|sus2|sus4|sus|dim|aug|add\d*|m|7)?(\d+|\+)?(\/[A-GH](#|b)?)?\]/gi
-
-    const isChordToken = (token: string) =>
-      chordTokenRegex.test(normalizeChordToken(token))
-
-    const isRepeatToken = (token: string) => /^\d+x$/i.test(token)
-
-    const isTabLine = (line: string) =>
-      (line.match(/\|/g) || []).length >= 2 ||
-      /^[eBGDAE][|-]/i.test(line.trim())
-
-    const splitChordPrefix = (line: string) => {
-      const commentIndex = line.search(/\s+\(/)
-      const chordPart = commentIndex >= 0 ? line.slice(0, commentIndex) : line
-      const commentPart = commentIndex >= 0 ? line.slice(commentIndex) : ""
-      const normalizedChordPart = chordPart.replace(/[-–—.]+/g, " ")
-      const tokens = normalizedChordPart.trim().split(/\s+/).filter(Boolean)
-      const isChordPrefix =
-        tokens.some(isChordToken) &&
-        tokens.every((token) => isChordToken(token) || isRepeatToken(token))
-
-      return {
-        commentPart,
-        isChordPrefix,
-        normalizedChordPart,
-        tokens,
-      }
-    }
-
-    const renderChord = (rawChord: string, key: string) => {
-      const chord = normalizeChord(rawChord)
-
-      return (
-        <Chord
-          key={key}
-          chord={transposeChord(chord)}
-          size={chordSize}
-        />
-      )
-    }
-
-    return text.split("\n").map((line, i) => {
-      const trimmed = line.trim()
-
-      if (!trimmed) {
-        return <div key={i}>&nbsp;</div>
-      }
-
-      if (isTabLine(line)) {
-        return (
-          <pre key={i} className="font-mono whitespace-pre">
-            {line}
-          </pre>
-        )
-      }
-
-      const {
-        commentPart,
-        isChordPrefix,
-        normalizedChordPart,
-        tokens,
-      } = splitChordPrefix(line)
-
-      if (isChordPrefix) {
-        return (
-          <div key={i} className="font-mono whitespace-pre">
-            {normalizedChordPart.split(/(\s+)/).map((part, index) => {
-              if (!part) return null
-              if (/^\s+$/.test(part)) return part
-
-              if (isChordToken(part)) {
-                return renderChord(part, `${i}-${index}`)
-              }
-
-              return <span key={`${i}-${index}`}>{part}</span>
-            })}
-            {commentPart}
-          </div>
-        )
-      }
-
-      const parts = []
-      let lastIndex = 0
-      let match
-
-      while ((match = bracketChordRegex.exec(line)) !== null) {
-        if (match.index > lastIndex) {
-          parts.push(line.slice(lastIndex, match.index))
-        }
-
-        parts.push(renderChord(match[0], `${i}-${match.index}`))
-        lastIndex = bracketChordRegex.lastIndex
-      }
-
-      if (lastIndex < line.length) {
-        parts.push(line.slice(lastIndex))
-      }
-
-      return (
-        <div key={i} className="font-mono whitespace-pre-wrap">
-          {parts.length ? parts : line}
-        </div>
-      )
-    })
-  }
+  const sheetLines = useMemo(() => parseSongSheet(displayContent), [displayContent])
+  const usedChords = useMemo(() =>
+    getUsedChords(sheetLines).map((chord) => transposeChordSymbol(chord, transpose)),
+    [sheetLines, transpose])
   function startAutoScroll() {
 
     if (scrollRef.current) return
@@ -341,13 +151,13 @@ useEffect(() => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
 
-      <div className="grid lg:grid-cols-[1fr_380px] gap-10">
+      <div className="grid min-w-0 lg:grid-cols-[minmax(0,1fr)_380px] gap-10">
 
         {/* LEVA STRANA */}
-        <div>
+        <div className="min-w-0">
 
           {/* TOOLBAR */}
-          <div className="mb-6 flex items-center gap-6 text-sm text-gray-400 border-b border-gray-800 pb-3">
+          <div className="mb-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-gray-400 border-b border-gray-800 pb-3">
 
             {/* TON */}
             <div className="flex items-center gap-2">
@@ -623,12 +433,7 @@ useEffect(() => {
   </div>
 )}
           {/* CONTENT */}
-<div
-  className="font-mono leading-relaxed whitespace-pre-wrap"
-  style={{ fontSize: `${textSize}px` }}
->
-  {rendered}
-</div>
+<SongSheet lines={sheetLines} transpose={transpose} textSize={textSize} chordSize={chordSize} />
 </div>
 
 
