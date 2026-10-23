@@ -86,7 +86,7 @@ whiteSpace:"nowrap"
 </h3>
 
 <div style={{ display: "grid", gap: "10px" }}>
-<Link href="/plejliste/domace">Domaće</Link>
+<Link href="/plejliste/domace">Zabavne</Link>
 <Link href="/plejliste/strane">Strane</Link>
 <Link href="/plejliste/narodne">Narodne</Link>
 </div>
@@ -112,7 +112,7 @@ whiteSpace:"nowrap"
 <div style={{ display: "grid", gap: "10px" }}>
 <Link href="/profile/plejliste">Moje plejliste</Link>
 <Link href="/top-50/domace">
-  Top 50 domaćih
+  Top 50 zabavnih
 </Link>
 
 <Link href="/top-50/strane">
@@ -153,7 +153,7 @@ Moje plejliste za slušanje
 </Link>
 
 <Link href="/top-listening-playlists/domace">
-20 najslušanijih domaćih
+20 najslušanijih zabavnih
 </Link>
 
 <Link href="/top-listening-playlists/strane">

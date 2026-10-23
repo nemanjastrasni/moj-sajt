@@ -14,9 +14,10 @@ export function getChordAssetName(symbol: string) {
     .replace(/^min/i, "m")
     .replace(/^\+/, "aug")
     .replace(/\(([^()]*)\)/g, "$1")
-  const bass = chord.input.bassNote ? "_" + chord.normalized.bassNote.toLowerCase() : ""
+  const bassNote = sharpNotes[chord.normalized.bassNote] ?? chord.normalized.bassNote
+  const bass = chord.input.bassNote ? "_" + bassNote.toLowerCase() : ""
   const name = root + (suffix || (!bass ? "maj" : "")) + bass
-  const alternateBass = flatNotes[chord.normalized.bassNote]
+  const alternateBass = flatNotes[bassNote]
   const assetName = imageNames.get(name.toLowerCase()) ??
     (alternateBass ? imageNames.get((root + suffix + "_" + alternateBass).toLowerCase()) : undefined)
   if (!assetName) return null

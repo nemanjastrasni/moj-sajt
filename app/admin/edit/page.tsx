@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import { getCategoryLabel } from "@/lib/categories"
 
 export default async function AdminEdit({ searchParams }: any) {
   
@@ -111,7 +112,7 @@ export default async function AdminEdit({ searchParams }: any) {
           className="p-2 border"
         >
           <option value="">All</option>
-          <option value="domace">Domace</option>
+          <option value="domace">Zabavne</option>
           <option value="narodne">Narodne</option>
           <option value="strane">Strane</option>
         </select>
@@ -155,7 +156,7 @@ export default async function AdminEdit({ searchParams }: any) {
 
               <td>{s.artist ? s.artist.name : "NO ARTIST"}</td>
 
-              <td>{s.category}</td>
+              <td>{getCategoryLabel(s.category)}</td>
 
               <td className="max-w-[200px] truncate">
                 {s.artist ? s.artist.bio || "-" : "-"}

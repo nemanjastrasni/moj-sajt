@@ -71,7 +71,7 @@ export default async function Page({ params }: any) {
 
           {/* DOMACE */}
           <div>
-            <h2 className="text-blue-400 text-xl font-bold mb-3">🎵 Domaće</h2>
+            <h2 className="text-blue-400 text-xl font-bold mb-3">🎵 Zabavne</h2>
             {domace.map((song) => (
               <Link
                 key={song.id}

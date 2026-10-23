@@ -9,7 +9,7 @@ export default async function Top50Page({
   const { category } = await params
 
   const titleMap: Record<string, string> = {
-    domace: "Top 50 Domaćih",
+    domace: "Top 50 Zabavnih",
     strane: "Top 50 Stranih",
     narodne: "Top 50 Narodnih",
   }

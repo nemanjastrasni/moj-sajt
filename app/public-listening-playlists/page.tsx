@@ -62,7 +62,7 @@ export default async function PublicListeningPlaylistsPage({
 </Link>
 
   <Link href="/public-listening-playlists?category=Domace" className="px-4 py-2 rounded bg-white/10">
-    Domaće
+    Zabavne
   </Link>
 
   <Link href="/public-listening-playlists?category=Strane" className="px-4 py-2 rounded bg-white/10">

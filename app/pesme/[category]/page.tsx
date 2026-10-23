@@ -1,29 +1,25 @@
 import Link from "next/link"
 import type { Metadata } from "next"
 import { prisma } from "@/lib/prisma"
+import { getCategoryLabel } from "@/lib/categories"
 
 export const dynamic = "force-dynamic"
 
 function formatCategory(category: string) {
-  if (category === "domace") return "Domaće"
+  if (category === "domace") return "Zabavne"
   if (category === "strane") return "Strane"
   if (category === "narodne") return "Narodne"
   return category.charAt(0).toUpperCase() + category.slice(1)
 }
 
-export async function generateMetadata({ params }: any) {
-
-  const { category, letter } = params
-
-  const pretty =
-    category === "domace"
-      ? "Domaće"
-      : category === "strane"
-      ? "Strane"
-      : "Narodne"
+export async function generateMetadata(
+  { params }: { params: Promise<{ category: string }> }
+): Promise<Metadata> {
+  const { category } = await params
+  const pretty = getCategoryLabel(category)
 
   return {
-    ttitle: `${pretty} pesme – Akordi i tekstovi`,
+    title: `${pretty} pesme – Akordi i tekstovi`,
     description: `Lista izvođača i pesama u kategoriji ${pretty}.`,
   }
 }

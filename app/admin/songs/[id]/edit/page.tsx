@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { notFound, redirect } from "next/navigation"
+import { getCategoryLabel } from "@/lib/categories"
 
 type Props = {
   params: Promise<{ id: string }>
@@ -54,11 +55,19 @@ export default async function EditSongPage({ params }: Props) {
 
         <div>
           <label className="block text-sm mb-1">Kategorija</label>
-          <input
+          <select
             name="category"
             defaultValue={song.category ?? ""}
             className="border p-2 w-full rounded font-mono"
-            />
+          >
+            <option value="">Bez kategorije</option>
+            <option value="domace">Zabavne</option>
+            <option value="narodne">Narodne</option>
+            <option value="strane">Strane</option>
+            {song.category && !["domace", "narodne", "strane"].includes(song.category) && (
+              <option value={song.category}>{getCategoryLabel(song.category)}</option>
+            )}
+          </select>
         </div>
 
         <div>

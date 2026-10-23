@@ -4,7 +4,7 @@ import Link from "next/link"
 export const dynamic = "force-dynamic"
 
 function formatCategory(category: string) {
-  if (category === "domace") return "Domaće"
+  if (category === "domace") return "Zabavne"
   if (category === "strane") return "Strane"
   if (category === "narodne") return "Narodne"
   return category

@@ -192,7 +192,7 @@ className="w-full border p-2 rounded text-gray-800 mb-3"
             className="w-full border p-2 rounded text-gray-800"
           >
             <option value="narodne">Narodne</option>
-            <option value="domace">Domaće</option>
+            <option value="domace">Zabavne</option>
             <option value="strane">Strane</option>
           </select>
         </div>

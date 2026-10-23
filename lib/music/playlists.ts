@@ -36,7 +36,7 @@ export async function getPlaylist(slug: string) {
 
     "acoustic-balkan": {
       title: "Acoustic Balkan Songs",
-      description: "Akustične domaće pesme za gitaru.",
+      description: "Akustične zabavne pesme za gitaru.",
       query: {
         where: { category: "domace" },
         take: 50
@@ -53,8 +53,8 @@ export async function getPlaylist(slug: string) {
     },
 
     "lake-domace-pesme": {
-      title: "Lake Domaće Pesme za Gitaru",
-      description: "Domaće pesme koje su lake za sviranje na gitari.",
+      title: "Lake Zabavne Pesme za Gitaru",
+      description: "Zabavne pesme koje su lake za sviranje na gitari.",
       query: {
         where: { category: "domace" },
         take: 50

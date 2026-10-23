@@ -21,7 +21,7 @@ export default async function TopDomaceListeningPage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-10 text-white">
       <h1 className="text-3xl font-bold text-center mb-8">
-        🎧 Top 20 domaćih playlista
+        🎧 Top 20 mix playlista
       </h1>
 
       <div className="grid gap-4">

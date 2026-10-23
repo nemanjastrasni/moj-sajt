@@ -18,7 +18,7 @@ export default async function Page() {
   return (
     <div style={{ padding: "40px" }}>
       <h1 style={{ fontSize: "28px", marginBottom: "30px" }}>
-        Top 50 Domaćih
+        Top 50 Zabavnih
       </h1>
 
       {songs.map((song) => (

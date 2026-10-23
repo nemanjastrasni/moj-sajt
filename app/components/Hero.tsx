@@ -12,7 +12,7 @@ const slides = [
   },
   {
     src: "/images/hero/domace.jpg",
-    title: "DOMAĆE",
+    title: "ZABAVNE",
     subtitle: "Akustika i emocija",
     align: "left",
     overlay: "bg-gradient-to-r from-black/60 via-black/30 to-transparent",

@@ -97,7 +97,7 @@ async function mergeArtist(formData: FormData) {
   className="border p-2 w-full rounded"
 >
   <option value="">-- izaberi --</option>
-  <option value="domace">Domaće</option>
+  <option value="domace">Zabavne</option>
   <option value="strane">Strane</option>
   <option value="narodne">Narodne</option>
 </select>

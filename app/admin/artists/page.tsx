@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
+import { getCategoryLabel } from "@/lib/categories"
 
 async function deleteArtist(id: string) {
 "use server"
@@ -139,7 +140,7 @@ function getRowColor(count: number) {
 
           <select name="category" defaultValue={category} className="border p-2 rounded">
             <option value="">Sve kategorije</option>
-            <option value="domace">Domaće</option>
+            <option value="domace">Zabavne</option>
             <option value="strane">Strane</option>
             <option value="narodne">Narodne</option>
           </select>
@@ -196,7 +197,7 @@ function getRowColor(count: number) {
                 </td>
 
                 <td className="p-3 text-gray-500">{artist.slug}</td>
-                <td className="p-3">{artist.category ?? "-"}</td>
+                <td className="p-3">{getCategoryLabel(artist.category) || "-"}</td>
                 <td className="p-3 text-center whitespace-nowrap">
                   {artist.image ? (
                     <img

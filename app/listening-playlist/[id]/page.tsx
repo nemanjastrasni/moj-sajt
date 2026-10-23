@@ -49,7 +49,7 @@ export default async function Page({ params }: any) {
   defaultValue={playlist.category ?? "Mix"}
   className="p-2 rounded bg-black border border-gray-700"
 >
-  <option value="Domace">Domaće</option>
+  <option value="Domace">Zabavne</option>
   <option value="Strane">Strane</option>
   <option value="Narodne">Narodne</option>
   <option value="Mix">Mix</option>

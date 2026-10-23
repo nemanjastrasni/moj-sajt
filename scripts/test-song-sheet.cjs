@@ -112,3 +112,44 @@ test("image lookup handles enharmonics and encodes sharps without substituting c
   assert.equal(getChordAssetName("F#9"), "F#9")
   assert.equal(getChordAssetName("E7(b9)"), "E7b9")
 })
+
+test("six added slash chords resolve to their own images including enharmonic bass names", () => {
+  for (const [symbol, asset] of [
+    ["E7/B", "E7_b"], ["D7/F#", "D7_f#"], ["Em7/B", "Em7_b"],
+    ["D7/A", "D7_a"], ["B7/F#", "B7_f#"], ["G7/B", "G7_b"],
+    ["D7/Gb", "D7_f#"], ["H7/Gb", "B7_f#"],
+  ]) {
+    assert.equal(getChordAssetName(symbol), asset, symbol)
+  }
+  assert.equal(getChordAssetUrl("D7_f#"), "/chords_final/D7_f%23_v1.png")
+})
+
+test("added PNGs are intact transparent 300px images and contain the required bass and chord tones", async () => {
+  const fs = require("node:fs")
+  const path = require("node:path")
+  const crypto = require("node:crypto")
+  const sharp = require("sharp")
+  const { images } = require("./slash-chord-image-sources.json")
+  const expected = {
+    "E7/B": { tones: [2, 4, 8, 11], bass: 11 },
+    "D7/F#": { tones: [0, 2, 6, 9], bass: 6 },
+    "Em7/B": { tones: [2, 4, 7, 11], bass: 11 },
+    "D7/A": { tones: [0, 2, 6, 9], bass: 9 },
+    "B7/F#": { tones: [3, 6, 9, 11], bass: 6 },
+    "G7/B": { tones: [2, 5, 7, 11], bass: 11 },
+  }
+  assert.equal(images.length, 6)
+  assert.equal(new Set(images.map(image => image.symbol)).size, 6)
+  for (const image of images) {
+    const png = fs.readFileSync(path.join(__dirname, "../public/chords_final", image.file))
+    assert.equal(crypto.createHash("sha256").update(png).digest("hex"), image.pngSha256)
+    const { data, info } = await sharp(png).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+    assert.equal(info.width, 300)
+    assert.equal(info.height, 300)
+    assert.equal(data[3], 0)
+    assert.ok(data.some((value, index) => index % 4 === 3 && value === 255))
+    const pitches = image.frets.flatMap((fret, index) => fret < 0 ? [] : [[40, 45, 50, 55, 59, 64][index] + fret])
+    assert.deepEqual([...new Set(pitches.map(pitch => pitch % 12))].sort((a, b) => a - b), expected[image.symbol].tones)
+    assert.equal(Math.min(...pitches) % 12, expected[image.symbol].bass)
+  }
+})

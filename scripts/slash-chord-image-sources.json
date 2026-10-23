@@ -1,0 +1,156 @@
+{
+  "tuning": "E2 A2 D3 G3 B3 E4",
+  "note": "Four voicings are taken directly from Chorducate. D7/F# and G7/B adapt source diagrams to the required bass. All six are checked against their full pitch-class set and actual lowest MIDI pitch before rasterization. T denotes the thumb.",
+  "images": [
+    {
+      "symbol": "E7/B",
+      "file": "E7_b_v1.png",
+      "frets": [
+        7,
+        7,
+        9,
+        7,
+        9,
+        7
+      ],
+      "bass": "B",
+      "notes": [
+        "D",
+        "E",
+        "G#",
+        "B"
+      ],
+      "source": "https://www.chorducate.com/discover/guitar/chords/e/7",
+      "sourceVoicingIndex": 2,
+      "sourceSvgSha256": "f117d430754b1223b0699dc06497f1eda545a3b80cc934eb0d1c5b20b8da96c2",
+      "adjustment": null,
+      "cropViewBox": "-9.6375 28.510625 140 119.989375",
+      "pngSha256": "0be6fda4df135a283a3f42b4a2a861a7874538347ddfd14403228379d42b55b6"
+    },
+    {
+      "symbol": "D7/F#",
+      "file": "D7_f#_v1.png",
+      "frets": [
+        2,
+        -1,
+        0,
+        2,
+        1,
+        2
+      ],
+      "bass": "F#",
+      "notes": [
+        "C",
+        "D",
+        "F#",
+        "A"
+      ],
+      "source": "https://www.chorducate.com/discover/guitar/chords/d/7",
+      "sourceVoicingIndex": 0,
+      "sourceSvgSha256": "67088a1a38959de8d6fce0281fc10b6518b3e35f12bdc77cd0104d9d358fc615",
+      "adjustment": "add-low-f-sharp",
+      "cropViewBox": "-9.6375 28.510625 140 119.989375",
+      "pngSha256": "43df9e3145f6bb07bc40109619b3a12d90311495a57ae83a66a8fb83bbff0c2d"
+    },
+    {
+      "symbol": "Em7/B",
+      "file": "Em7_b_v1.png",
+      "frets": [
+        7,
+        7,
+        9,
+        7,
+        8,
+        7
+      ],
+      "bass": "B",
+      "notes": [
+        "D",
+        "E",
+        "G",
+        "B"
+      ],
+      "source": "https://www.chorducate.com/discover/guitar/chords/e/m7",
+      "sourceVoicingIndex": 5,
+      "sourceSvgSha256": "11e34f5b31648f9bfce59ed7033b8879f3978001a47f1bc2fc4d886a58fd30e8",
+      "adjustment": null,
+      "cropViewBox": "-9.6375 28.510625 140 119.989375",
+      "pngSha256": "4a42f02f93dff12d238ff704253fa920fc8f91d47089ad22ceaaf6148fc4910f"
+    },
+    {
+      "symbol": "D7/A",
+      "file": "D7_a_v1.png",
+      "frets": [
+        5,
+        5,
+        7,
+        5,
+        7,
+        5
+      ],
+      "bass": "A",
+      "notes": [
+        "C",
+        "D",
+        "F#",
+        "A"
+      ],
+      "source": "https://www.chorducate.com/discover/guitar/chords/d/7",
+      "sourceVoicingIndex": 2,
+      "sourceSvgSha256": "f89c87be4198efbe5261a55c9c6cac0a98b65c8025a1a91e797db794aa24086e",
+      "adjustment": null,
+      "cropViewBox": "-9.6375 28.510625 140 119.989375",
+      "pngSha256": "60b9902dd3489d343d82d376d01c1f1f090dd2340a7076a05007e81f7acc5655"
+    },
+    {
+      "symbol": "B7/F#",
+      "file": "B7_f#_v1.png",
+      "frets": [
+        2,
+        2,
+        4,
+        2,
+        4,
+        2
+      ],
+      "bass": "F#",
+      "notes": [
+        "D#",
+        "F#",
+        "A",
+        "B"
+      ],
+      "source": "https://www.chorducate.com/discover/guitar/chords/b/7",
+      "sourceVoicingIndex": 1,
+      "sourceSvgSha256": "37bdfd5bb6fe7113a769cdfb0f6688ba5e64a7bbcd759bf991d30103b52898ce",
+      "adjustment": null,
+      "cropViewBox": "-9.6375 28.510625 140 119.989375",
+      "pngSha256": "260121c860ad19c818a683eb1799b79dafad16c15035e6960fdf83d8888244b6"
+    },
+    {
+      "symbol": "G7/B",
+      "file": "G7_b_v1.png",
+      "frets": [
+        -1,
+        2,
+        0,
+        0,
+        0,
+        1
+      ],
+      "bass": "B",
+      "notes": [
+        "D",
+        "F",
+        "G",
+        "B"
+      ],
+      "source": "https://www.chorducate.com/discover/guitar/chords/g/7",
+      "sourceVoicingIndex": 0,
+      "sourceSvgSha256": "40b76356bd2ad967b3397fd44150b9d2cb587c7476e3869b51a5569babdd754d",
+      "adjustment": "mute-low-e-string",
+      "cropViewBox": "-9.6375 28.510625 140 119.989375",
+      "pngSha256": "b0a4ef5d26649bfa5ba1d3d6099793344fa7ce79d75a3067f96d307d87471886"
+    }
+  ]
+}

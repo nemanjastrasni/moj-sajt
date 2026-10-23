@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import DeletePlaylistButton from "../components/DeletePlaylistButton"
+import { getCategoryLabel } from "@/lib/categories"
 
 export const dynamic = "force-dynamic"
 export default async function ListeningPlaylistsPage() {
@@ -39,7 +40,7 @@ export default async function ListeningPlaylistsPage() {
   defaultValue="Mix"
   className="p-2 rounded bg-black border border-gray-700"
 >
-  <option value="Domace">Domaće</option>
+  <option value="Domace">Zabavne</option>
   <option value="Strane">Strane</option>
   <option value="Narodne">Narodne</option>
   <option value="Mix">Mix</option>
@@ -75,7 +76,7 @@ export default async function ListeningPlaylistsPage() {
                 </div>
 
                 <div className="text-sm text-gray-400">
-  {pl.items.length} pesama • {pl.category || "Mix"}
+  {pl.items.length} pesama • {getCategoryLabel(pl.category) || "Mix"}
 </div>
               </div>
             </Link>

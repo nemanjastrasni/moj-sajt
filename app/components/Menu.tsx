@@ -73,7 +73,7 @@ export default function Menu() {
                 Narodne
               </Link>
               <Link href="/pesme/domace" className="string w-40">
-                Domace
+                Zabavne
               </Link>
               <Link href="/pesme/strane" className="string w-40">
                 Strane

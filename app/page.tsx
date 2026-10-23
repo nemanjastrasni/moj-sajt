@@ -102,7 +102,7 @@ export default function HomePage() {
             />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <span className="text-white text-xl font-semibold">
-                Domaće
+                Zabavne
               </span>
             </div>
           </Link>

@@ -874,4 +874,10 @@ export const chordImages = {
 "H": "/chords_final/Bmaj_v1.png",
 "H7": "/chords_final/B7_v1.png",
 "Hm7": "/chords_final/Bm7_v1.png",
+"E7_b": "/chords_final/E7_b_v1.png",
+"D7_f#": "/chords_final/D7_f%23_v1.png",
+"Em7_b": "/chords_final/Em7_b_v1.png",
+"D7_a": "/chords_final/D7_a_v1.png",
+"B7_f#": "/chords_final/B7_f%23_v1.png",
+"G7_b": "/chords_final/G7_b_v1.png",
 }

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma"
 
 export default async function BioCategory({ params }: any) {
 
-  const { category } = params
+  const { category } = await params
 
   const artists = await prisma.artist.findMany({
     where: { category },
@@ -34,7 +34,7 @@ if (!/^[A-ZČĆŠĐŽ]/.test(first)) {
 
   const title =
     category === "domace"
-      ? "Domaće"
+      ? "Zabavne"
       : category === "strane"
       ? "Strane"
       : "Narodne"

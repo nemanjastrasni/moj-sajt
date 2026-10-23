@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { getCategoryLabel } from "@/lib/categories"
 
 export default function PlaylistCategoryPage({ params }: any) {
 
@@ -9,7 +10,7 @@ return (
 <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
 
 <h1 style={{ fontSize: "28px", marginBottom: "30px" }}>
-{slug}
+{getCategoryLabel(slug)}
 </h1>
 
 <div style={{

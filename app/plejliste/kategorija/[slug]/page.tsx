@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import { getCategoryLabel } from "@/lib/categories"
 
 export default async function PlaylistSongsPage({ params }: any) {
 
@@ -59,7 +60,7 @@ export default async function PlaylistSongsPage({ params }: any) {
         color:"#38bdf8",
         textTransform:"capitalize"
       }}>
-        {slug.replace("-", " ")}
+        {slug.split("-").map(getCategoryLabel).join(" ")}
       </h1>
 
       <div style={{ display: "grid", gap: "12px", fontSize:"18px" }}>

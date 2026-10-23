@@ -47,4 +47,10 @@ export const chordPositions: Record<string, string> = {
   F7: "131211",
 
   Gmaj7: "320002",
+  "E7/B": "779797",
+  "D7/F#": "2x0212",
+  "Em7/B": "779787",
+  "D7/A": "557575",
+  "B7/F#": "224242",
+  "G7/B": "x20001",
 }

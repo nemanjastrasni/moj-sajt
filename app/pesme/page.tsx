@@ -13,7 +13,7 @@ export default function PesmePage() {
 
       <ul>
         <li>
-          <Link href="/pesme/domace">Domaće</Link>
+          <Link href="/pesme/domace">Zabavne</Link>
         </li>
 
         <li>

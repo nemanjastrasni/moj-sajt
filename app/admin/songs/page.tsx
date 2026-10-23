@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { Prisma } from "@prisma/client"
+import { getCategoryLabel } from "@/lib/categories"
 
 const PAGE_SIZE = 10
 
@@ -119,7 +120,7 @@ className="border p-2 w-48 rounded placeholder:text-gray-500"
   className="border p-2 rounded text-gray-900 placeholder:text-gray-200"
 >
   <option value="">Sve kategorije</option>
-  <option value="domace">Domaće</option>
+  <option value="domace">Zabavne</option>
   <option value="strane">Strane</option>
   <option value="narodne">Narodne</option>
 </select>
@@ -154,7 +155,7 @@ className="border p-2 w-48 rounded placeholder:text-gray-500"
               >
                 <td className="p-3">{song.title}</td>
                 <td className="p-3">{song.artist.name}</td>
-                <td className="p-3 text-center">{song.category || "-"}</td>
+                <td className="p-3 text-center">{getCategoryLabel(song.category) || "-"}</td>
 
                 <td className="p-3 text-center space-x-3">
                   <Link

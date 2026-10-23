@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 const categories = [
-  { key: "domace", label: "Domaće" },
+  { key: "domace", label: "Zabavne" },
   { key: "strane", label: "Strane" },
   { key: "narodne", label: "Narodne" },
 ]

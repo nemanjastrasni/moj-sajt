@@ -64,7 +64,7 @@ export default async function SongEdit({ params }: any) {
           defaultValue={song.category}
           className="border p-2"
         >
-          <option value="domace">Domace</option>
+          <option value="domace">Zabavne</option>
           <option value="narodne">Narodne</option>
           <option value="strane">Strane</option>
         </select>
