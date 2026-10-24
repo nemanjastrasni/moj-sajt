@@ -2,6 +2,8 @@ import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
+import ArtistWikiCredit from "@/app/components/ArtistWikiCredit"
+import { normalizeDiscography } from "@/lib/discography"
 
 type Props = {
   params: Promise<{
@@ -22,16 +24,7 @@ export default async function ArtistInfoPage({ params }: Props) {
   if (!artistData) notFound()
 
   // Normalizacija diskografije (radi i za string i za array)
-  let discography: string[] = []
-
-  if (Array.isArray(artistData.discography)) {
-    discography = artistData.discography as string[]
-  } else if (typeof artistData.discography === "string") {
-    discography = artistData.discography
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean)
-  }
+  const discography = normalizeDiscography(artistData.discography)
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
@@ -55,20 +48,22 @@ export default async function ArtistInfoPage({ params }: Props) {
       {artistData.bio && (
         <div className="mb-8 whitespace-pre-line text-lg leading-relaxed">
           {artistData.bio}
+          <ArtistWikiCredit artistId={artistData.id} field="bio" value={artistData.bio} />
         </div>
       )}
 
       {discography.length > 0 && (
         <div className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">
-            Diskografija
+            {discography.every(album => album.kind === "studio") ? "Studijski albumi / Studio albums" : "Diskografija"}
           </h2>
 
           <ul className="space-y-2">
             {discography.map((album, i) => (
-              <li key={i}>{album}</li>
+              <li key={i} className="break-words">{album.title}{album.year ? ` (${album.year})` : ""}</li>
             ))}
           </ul>
+          <ArtistWikiCredit artistId={artistData.id} field="discography" value={artistData.discography} />
         </div>
       )}
 

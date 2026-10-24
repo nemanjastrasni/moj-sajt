@@ -1,0 +1,13 @@
+[
+  { "name": "Crvena Jabuka", "beforeHash": "d9cb25b018b9dd7c296a75c402eb6d89df605946fe9ff74a5e537e1dccf1014d", "reason": "Album article instead of the band" },
+  { "name": "Dejan Matic", "beforeHash": "00ebd0bf4cfd05a84e4cbb9ad097de03e91dc96ff1bbf4d66d6bdd6a3cb74a07", "reason": "Dejan Aleksic biography instead of Dejan Matic" },
+  { "name": "Film", "beforeHash": "e0c792e7c59a1bb3e2bb4d2279cb9ca83644078cfcd72f330c89534a49615b7a", "reason": "Film score article instead of the Croatian band" },
+  { "name": "Magazin", "beforeHash": "7f2aa9868fb47f7920ec71b789e679fbbf20bbc1b5006043b45504443f25cb2a", "reason": "General music history instead of the band" },
+  { "name": "Nikos Vertis", "beforeHash": "ddf62761378ada8a3987667314d18dae1d94f67b1476202af755e9cb175905ed", "reason": "Aco Pejovic album instead of Nikos Vertis" },
+  { "name": "Osmi putnik", "beforeHash": "d36d5d797371b529b08871f3e17e4c6ff089e0371d47f7fbf58273b33214abf4", "reason": "Aliens film instead of the band" },
+  { "name": "Regata", "beforeHash": "f2b4ce05698552acfdc176f2468389018960d13ef39b7632750c4fa4c7d711f8", "reason": "Regatta event instead of the band" },
+  { "name": "Sinan Saki\u0107", "beforeHash": "9fb9dde7da99ef26fa5c37986b6becfdb98e4236fa0e99fef6784e9508abf8bd", "reason": "Nikola Idzan biography instead of Sinan Sakic" },
+  { "name": "Styx", "beforeHash": "25c2c747eb140219e46f6d7e1b5a184c80f4ea6c06f0035b64afcf99599c3a70", "reason": "Mythological river instead of the band" },
+  { "name": "Suncokreti", "beforeHash": "cbe7f3da5b7a61b7941510587ddfef88d8d57f0a4304235e0a2ddeec456d3db4", "reason": "1988 film instead of the band" },
+  { "name": "Time", "beforeHash": "7f2aa9868fb47f7920ec71b789e679fbbf20bbc1b5006043b45504443f25cb2a", "reason": "General music history instead of the band" }
+]

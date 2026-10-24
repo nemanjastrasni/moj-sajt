@@ -129,9 +129,8 @@ async function mergeArtist(formData: FormData) {
           <textarea
             name="discography"
             defaultValue={
-              Array.isArray(artist.discography)
-                ? artist.discography.join("\n")
-                : ""
+              typeof artist.discography === "string" ? artist.discography
+                : artist.discography == null ? "" : JSON.stringify(artist.discography, null, 2)
             }
             rows={6}
             className="border p-2 w-full rounded"

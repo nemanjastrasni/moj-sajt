@@ -10,9 +10,9 @@ const USER_AGENT = "GitaraAkordiImageAudit/1.0 (https://gitarakordi.com; artist 
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
 const digest = text => crypto.createHash("sha256").update(text).digest("hex")
 
-function safeWikiUrl(value) {
+function safeWikiUrl(value, extraHosts = []) {
   const url = new URL(value)
-  if (url.protocol !== "https:" || url.username || url.password || url.port || !WIKI_HOSTS.has(url.hostname)) throw new Error("Unapproved image/source host")
+  if (url.protocol !== "https:" || url.username || url.password || url.port || !(WIKI_HOSTS.has(url.hostname) || extraHosts.includes(url.hostname))) throw new Error("Unapproved image/source host")
   return url
 }
 
@@ -27,17 +27,18 @@ function localImage(publicRoot, image) {
 }
 
 class WikiClient {
-  constructor({ cacheDir, interval = 350, request = fetch } = {}) {
+  constructor({ cacheDir, interval = 350, request = fetch, extraHosts = [] } = {}) {
     this.cacheDir = cacheDir; this.interval = interval; this.request = request; this.last = 0; this.entities = new Map()
+    this.safeUrl = value => safeWikiUrl(value, extraHosts)
   }
   async bytes(value, maxBytes = 12000000) {
-    let url = safeWikiUrl(value)
+    let url = this.safeUrl(value)
     for (let hop = 0; hop < 4; hop++) {
       await pause(Math.max(0, this.last + this.interval - Date.now())); this.last = Date.now()
       const response = await this.request(url, { headers: { "User-Agent": USER_AGENT }, redirect: "manual", signal: AbortSignal.timeout(15000) })
       if ([301, 302, 303, 307, 308].includes(response.status)) {
         await response.body?.cancel()
-        url = safeWikiUrl(new URL(response.headers.get("location"), url).href); continue
+        url = this.safeUrl(new URL(response.headers.get("location"), url).href); continue
       }
       if (!response.ok) { await response.body?.cancel(); const error = new Error(`Wikimedia HTTP ${response.status}`); error.status = response.status; throw error }
       if (Number(response.headers.get("content-length")) > maxBytes) { await response.body?.cancel(); throw new Error("Remote file exceeds size limit") }
@@ -56,7 +57,7 @@ class WikiClient {
     throw new Error("Too many redirects")
   }
   async json(url) {
-    safeWikiUrl(url)
+    this.safeUrl(url)
     const file = this.cacheDir && path.join(this.cacheDir, digest(url) + ".json")
     if (file) {
       try { const cached = JSON.parse(await fs.readFile(file, "utf8")); if (Date.now() - cached.at < 7 * 86400000) return cached.data } catch {}
@@ -153,7 +154,7 @@ function photoMetadata(info) {
   return { allowed, license, licenseUrl, author, credit: field("Credit"), restrictions: field("Restrictions"), description: field("ImageDescription"), filePage: info.descriptionurl, downloadUrl: info.thumburl || info.url, width: info.width, height: info.height }
 }
 
-async function discoverPhoto(artist, client) {
+async function resolveMusicIdentity(artist, client) {
   const ids = new Set()
   for (const language of ["en", "sr"]) {
     const data = await client.json("https://www.wikidata.org/w/api.php?" + new URLSearchParams({ action: "wbsearchentities", search: artist.name, language, uselang: "en", type: "item", limit: "8", format: "json" }))
@@ -172,7 +173,13 @@ async function discoverPhoto(artist, client) {
     if (evidence) matches.push({ entity, evidence })
   }
   if (matches.length !== 1) return { state: matches.length ? "ambiguous" : "not-found", matches: matches.map(({ entity }) => ({ id: entity.id, description: entity.descriptions?.en?.value ?? "" })) }
-  const { entity, evidence } = matches[0]
+  return { state: "identified", ...matches[0] }
+}
+
+async function discoverPhoto(artist, client) {
+  const resolved = await resolveMusicIdentity(artist, client)
+  if (resolved.state !== "identified") return resolved
+  const { entity, evidence } = resolved
   const filename = claims(entity, "P18").find(value => typeof value === "string" && !/logo|signature|coat.of.arms|flag|\.svg$/i.test(value))
   const identity = { wikidataId: entity.id, entityUrl: `https://www.wikidata.org/wiki/${entity.id}`, evidence, label: entity.labels?.en?.value ?? artist.name, description: entity.descriptions?.en?.value ?? "" }
   if (!filename) return { state: "no-photo", ...identity }
@@ -196,4 +203,4 @@ async function stagePhoto(candidate, directory, client) {
   return filename
 }
 
-module.exports = { WikiClient, localImage, auditArtist, normalizeName, nameMatches, claims, musicEvidence, photoMetadata, discoverPhoto, stagePhoto, safeWikiUrl, digest, isArtistPhoto }
+module.exports = { WikiClient, localImage, auditArtist, normalizeName, nameMatches, claims, musicEvidence, photoMetadata, discoverPhoto, stagePhoto, safeWikiUrl, digest, isArtistPhoto, resolveMusicIdentity }

@@ -167,4 +167,4 @@ if (require.main === module) main().catch(error => {
   console.error("Photo publication stopped:", safeMessages.has(error.message) ? error.message : error.code || error.name, "/ check deployment, CA and input. Credentials are not logged.")
   process.exitCode = 1
 })
-module.exports = { eligible, deploymentOrigin, verifyDeployment, checkedUpdate, prepare, publish }
+module.exports = { eligible, deploymentOrigin, deploymentBytes, verifyDeployment, checkedUpdate, prepare, publish }

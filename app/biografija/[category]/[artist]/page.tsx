@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import BioText from "@/app/biografija/components/BioText"
 import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
+import ArtistWikiCredit from "@/app/components/ArtistWikiCredit"
+import { normalizeDiscography } from "@/lib/discography"
 
 function cirToLat(text: string) {
   const map: any = {
@@ -15,13 +17,14 @@ function cirToLat(text: string) {
 export const dynamic = "force-dynamic"
 
 export default async function BiographyPage({ params }: any) {
-  const artistSlug = params.artist
+  const artistSlug = (await params).artist
 
   const artistData = await prisma.artist.findUnique({
     where: { slug: artistSlug }
   })
 
   if (!artistData) notFound()
+  const albums = normalizeDiscography(artistData.discography)
 
   return (
     <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
@@ -56,35 +59,29 @@ export default async function BiographyPage({ params }: any) {
       {/* BIOGRAFIJA */}
       <div style={{ marginBottom: "40px" }}>
         <BioText text={cirToLat(artistData.bio || "Biografija nije dostupna.")} />
+        <ArtistWikiCredit artistId={artistData.id} field="bio" value={artistData.bio} />
       </div>
 
       {/* DISKOGRAFIJA */}
-      {artistData.discography && (
+      {albums.length > 0 && (
         <div>
           <h2 style={{ fontSize: "22px", marginBottom: "10px" }}>
-            Diskografija
+            {albums.every(album => album.kind === "studio") ? "Studijski albumi / Studio albums" : "Diskografija"}
           </h2>
 
           <div style={{ whiteSpace: "pre-line" }}>
-            {Array.isArray(artistData.discography) && (
               <div className="space-y-1">
-                {artistData.discography.map((item: any, i: number) => {
-                  const text = String(item)
-
-                  const match = text.match(/(\d{4})/)
-                  const year = match ? match[0] : ""
-                  const album = text.replace(/\(\d{4}\)/, "").trim()
-
+                {albums.map((album, i) => {
                   return (
                     <div key={i} className="flex gap-4">
-                      <div className="w-16 text-gray-400">{year}</div>
-                      <div>{album}</div>
+                      <div className="w-16 shrink-0 text-gray-400">{album.year}</div>
+                      <div className="min-w-0 break-words">{album.title}</div>
                     </div>
                   )
                 })}
               </div>
-            )}
           </div>
+          <ArtistWikiCredit artistId={artistData.id} field="discography" value={artistData.discography} />
         </div>
       )}
 

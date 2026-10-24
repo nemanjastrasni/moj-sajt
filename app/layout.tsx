@@ -55,6 +55,7 @@ export default function RootLayout({
 
           <footer className="mx-auto max-w-6xl px-4 pb-8 text-xs text-gray-400">
             <a href="/foto-izvori" className="underline underline-offset-2">Fotografije / Photo Credits</a>
+            {" · "}<a href="/wiki-izvori" className="underline underline-offset-2">Wikipedia / Sources</a>
           </footer>
 
         </Providers>
