@@ -6,7 +6,7 @@ type Props = {
 
 export default function ChordDiagram({ frets }: Props) {
   return (
-    <div className="w-[80px] h-[110px] bg-gradient-to-b from-amber-700 to-amber-900 rounded-md p-1 relative">
+    <div className="theme-dark-surface w-[80px] h-[110px] bg-gradient-to-b from-amber-700 to-amber-900 rounded-md p-1 relative">
       
       {/* strings */}
       <div className="absolute inset-0 flex justify-between px-1">

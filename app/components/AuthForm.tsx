@@ -195,7 +195,7 @@ export default function AuthForm({ mode, googleEnabled }: Props) {
               </div>
             </details>
           </>}
-          <button type="submit" className={`${buttonClass} bg-black text-white hover:bg-gray-800`}>
+          <button type="submit" className={`${buttonClass} theme-solid-action bg-black text-white hover:bg-gray-800`}>
             {pending === "credentials" ? (signup ? "Registrujem..." : "Ulazim...") : (signup ? "Registruj se" : "Prijavi se")}
           </button>
         </fieldset>

@@ -47,10 +47,10 @@ export default async function FavoritePage() {
               key={fav.id}
               href={`/pesme/${fav.song.category}/${fav.song.artist.slug}/${fav.song.slug}`}
             >
-              <span style={{ color: "#9ca3af" }}>
+              <span className="text-gray-400">
                 {fav.song.artist?.name}
               </span>{" "}
-              <span style={{ color: "white" }}>
+              <span className="text-white">
                 — {fav.song.title}
               </span>
             </Link>

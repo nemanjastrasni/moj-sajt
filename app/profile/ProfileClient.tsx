@@ -104,7 +104,7 @@ setSuccess(true)
   placeholder="Kratko o tebi (bio)"
   value={bio}
   onChange={(e) => setBio(e.target.value)}
-  className="border px-3 py-2 rounded text-black"
+  className="border px-3 py-2 rounded text-black bg-white"
 />
 <input
   value={city}

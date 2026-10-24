@@ -36,7 +36,7 @@ export default function HomePage() {
               alt=""
               className="absolute w-full h-full object-cover group-hover:scale-110 transition"
             />
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            <div className="theme-dark-surface absolute inset-0 bg-black/50 flex items-center justify-center">
               <span className="text-white text-xl font-semibold">
                 Narodne
               </span>
@@ -52,7 +52,7 @@ export default function HomePage() {
               alt=""
               className="absolute w-full h-full object-cover group-hover:scale-110 transition"
             />
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            <div className="theme-dark-surface absolute inset-0 bg-black/50 flex items-center justify-center">
               <span className="text-white text-xl font-semibold">
                 Zabavne
               </span>
@@ -68,7 +68,7 @@ export default function HomePage() {
               alt=""
               className="absolute w-full h-full object-cover group-hover:scale-110 transition"
             />
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            <div className="theme-dark-surface absolute inset-0 bg-black/50 flex items-center justify-center">
               <span className="text-white text-xl font-semibold">
                 Strane
               </span>

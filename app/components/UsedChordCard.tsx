@@ -29,7 +29,7 @@ export default function UsedChordCard({ chord }: Props) {
           key={activeVariant.image}
           src={activeVariant.image}
           alt={chord}
-          className="w-32 h-auto object-contain mx-auto"
+          className="chord-art w-32 h-auto object-contain mx-auto"
           draggable={false}
           onError={() => setFailedImage(activeVariant.image)}
         />

@@ -62,14 +62,14 @@ const images = allImages
   <div className="relative min-h-screen"
    
   >
-    <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-black/95" />
+    <div className="theme-page-scrim absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-black/95" />
 
     <div
       style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}
       className="relative z-10"
     >
       {artistData.image && (
-  <div className="relative h-[180px] overflow-hidden rounded-2xl mb-10 bg-neutral-900 flex items-center justify-center">
+  <div className="theme-dark-surface relative h-[180px] overflow-hidden rounded-2xl mb-10 bg-neutral-900 flex items-center justify-center">
     <img
       src={artistData.image}
       alt={artistData.name}

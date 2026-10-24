@@ -75,7 +75,7 @@ const letters = Array.from(lettersSet).sort()
     </div>
 
     {/* OVERLAY */}
-    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+    <div className="theme-page-scrim absolute inset-0 bg-black/80 backdrop-blur-sm" />
 
     {/* CONTENT */}
     <div

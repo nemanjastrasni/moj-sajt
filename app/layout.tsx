@@ -1,9 +1,12 @@
 import "./globals.css"
+import "./theme.css"
 import Menu from "@/app/components/Menu"
 import BackButton from "@/app/components/BackButton"
 import { Poppins } from "next/font/google"
 import type { Metadata } from "next"
 import Providers from "./providers"
+import ThemeToggle from "@/app/components/ThemeToggle"
+import { THEME_INIT_SCRIPT } from "@/lib/theme"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -27,7 +30,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} /></head>
       <body className={`${poppins.className} m-0 p-0 overflow-x-hidden`}>
         <Providers>
 
@@ -36,8 +40,9 @@ export default function RootLayout({
             <Menu />
 
             {/* Back dugme dole levo */}
-            <div className="flex justify-start px-6 pb-1">
+            <div className="flex min-h-12 items-center justify-between gap-3 px-3 pb-1 sm:px-6">
               <BackButton />
+              <div className="ml-auto"><ThemeToggle /></div>
             </div>
           </header>
 

@@ -58,7 +58,7 @@ playlists.forEach((p: any) => {
       <Link href={`/plejliste/${p.id}`} style={{ fontWeight: "bold" }}>
         {p.name}
       </Link>
-      <div style={{ fontSize: "12px", color: "#888" }}>
+      <div style={{ fontSize: "12px", color: "var(--theme-muted, #888)" }}>
         {p.songs.length} pesama
       </div>
     </div>

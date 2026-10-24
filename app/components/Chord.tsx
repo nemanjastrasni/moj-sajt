@@ -238,7 +238,8 @@ export default function Chord({ chord, size }: Props) {
             width: 144,
             minHeight: 224,
             maxWidth: "calc(100vw - 24px)",
-            background: "#111",
+            background: "var(--theme-panel, #111)",
+            color: "var(--theme-ink, #e5e5e5)",
             padding: "8px",
             borderRadius: "8px",
             zIndex: 99999,
@@ -255,6 +256,8 @@ export default function Chord({ chord, size }: Props) {
             onError={() => setFailedImage(src)}
             style={{
               display: "block",
+              background: "#171717",
+              borderRadius: "4px",
               width: "120px",
               height: "160px",
               objectFit: "contain",
@@ -269,7 +272,7 @@ export default function Chord({ chord, size }: Props) {
               alignItems: "center",
               gap: "10px",
               marginTop: "8px",
-              color: "white",
+              color: "inherit",
               fontSize: "12px",
             }}
           >
@@ -285,7 +288,7 @@ export default function Chord({ chord, size }: Props) {
               style={{
                 background: "none",
                 border: "none",
-                color: "white",
+                color: "inherit",
                 cursor: variantIndex === 1 ? "default" : "pointer",
                 opacity: variantIndex === 1 ? 0.35 : 1,
                 padding: "6px",
@@ -311,7 +314,7 @@ export default function Chord({ chord, size }: Props) {
               style={{
                 background: "none",
                 border: "none",
-                color: "white",
+                color: "inherit",
                 cursor: variantIndex === maxVariants ? "default" : "pointer",
                 opacity: variantIndex === maxVariants ? 0.35 : 1,
                 padding: "6px",

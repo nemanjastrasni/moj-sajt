@@ -24,7 +24,7 @@ export default function LatestSongs() {
 }, [])
 
   return (
-    <section className="relative w-full py-10">
+    <section className="theme-dark-surface theme-photo-band relative isolate w-full py-10">
 
       {/* BACKGROUND */}
       <div className="absolute inset-0 -z-10">

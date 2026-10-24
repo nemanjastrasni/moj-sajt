@@ -26,7 +26,7 @@ gap: "40px"
 
 <h3 style={{
 fontSize:"22px",
-color:"#facc15",
+color:"var(--theme-yellow, #facc15)",
 marginBottom:"10px",
 display:"flex",
 alignItems:"center",
@@ -50,7 +50,7 @@ whiteSpace:"nowrap"
 
 <h3 style={{
 fontSize:"22px",
-color:"#2cfa15",
+color:"var(--theme-green, #2cfa15)",
 marginBottom:"10px",
 display:"flex",
 alignItems:"center",
@@ -75,7 +75,7 @@ whiteSpace:"nowrap"
 
 <h3 style={{
 fontSize:"22px",
-color:"#fa1515",
+color:"var(--theme-red, #fa1515)",
 marginBottom:"10px",
 display:"flex",
 alignItems:"center",
@@ -99,7 +99,7 @@ whiteSpace:"nowrap"
 
 <h3 style={{
 fontSize:"22px",
-color:"#1534fa",
+color:"var(--theme-blue, #1534fa)",
 marginBottom:"10px",
 display:"flex",
 alignItems:"center",
@@ -133,7 +133,7 @@ whiteSpace:"nowrap"
 
 <h3 style={{
 fontSize:"22px",
-color:"#38bdf8",
+color:"var(--theme-link, #38bdf8)",
 marginBottom:"10px",
 display:"flex",
 alignItems:"center",
