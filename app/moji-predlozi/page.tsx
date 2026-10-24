@@ -1,3 +1,4 @@
+import UiText from "@/app/components/UiText"
 import Link from "next/link"
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
@@ -17,10 +18,10 @@ export default async function MySubmissionsPage({ searchParams }: { searchParams
       select: { id: true, title: true, artistName: true, category: true, status: true, createdAt: true, reviewNote: true,
         publishedSong: { select: { slug: true, artist: { select: { slug: true, category: true } } } } },
     })
-  } catch { return <main className="mx-auto max-w-4xl px-4 py-8 text-white"><h1 className="mb-4 text-2xl font-bold">Moji predlozi</h1><p role="alert">Predlozi trenutno nisu dostupni. Pokusaj ponovo kasnije.</p></main> }
+  } catch { return <main className="mx-auto max-w-4xl px-4 py-8 text-white"><h1 className="mb-4 text-2xl font-bold"><UiText text="Moji predlozi" /></h1><p role="alert"><UiText text="Predlozi trenutno nisu dostupni. Pokusaj ponovo kasnije." /></p></main> }
   return <main className="mx-auto w-full max-w-4xl px-4 py-8 text-white sm:px-6">
-    <div className="mb-6 flex flex-wrap justify-between gap-4"><h1 className="text-2xl font-bold">Moji predlozi</h1><Link href="/predlozi-pesmu" className="text-sky-400 underline">Predlozi pesmu</Link></div>
+    <div className="mb-6 flex flex-wrap justify-between gap-4"><h1 className="text-2xl font-bold"><UiText text="Moji predlozi" /></h1><Link href="/predlozi-pesmu" className="text-sky-400 underline"><UiText text="Predlozi pesmu" /></Link></div>
     <SongSubmissionList items={items.slice(0, 20)} />
-    <nav aria-label="Stranice predloga" className="mt-6 flex gap-6">{page > 1 && <Link href={`?page=${page - 1}`} className="py-3 text-sky-400">Prethodna</Link>}{items.length > 20 && <Link href={`?page=${page + 1}`} className="py-3 text-sky-400">Sledeca</Link>}</nav>
+    <nav aria-label="Stranice predloga" className="mt-6 flex gap-6">{page > 1 && <Link href={`?page=${page - 1}`} className="py-3 text-sky-400"><UiText text="Prethodna" /></Link>}{items.length > 20 && <Link href={`?page=${page + 1}`} className="py-3 text-sky-400"><UiText text="Sledeca" /></Link>}</nav>
   </main>
 }

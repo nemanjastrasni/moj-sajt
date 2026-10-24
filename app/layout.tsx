@@ -7,6 +7,8 @@ import type { Metadata } from "next"
 import Providers from "./providers"
 import ThemeToggle from "@/app/components/ThemeToggle"
 import { THEME_INIT_SCRIPT } from "@/lib/theme"
+import LanguageSelect from "@/app/components/LanguageSelect"
+import { LOCALE_INIT_SCRIPT } from "@/lib/i18n"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -30,8 +32,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" data-theme="dark" suppressHydrationWarning>
-      <head><script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} /></head>
+    <html lang="sr-Latn" data-theme="dark" data-language="sr" suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT + ";" + LOCALE_INIT_SCRIPT }} /></head>
       <body className={`${poppins.className} m-0 p-0 overflow-x-hidden`}>
         <Providers>
 
@@ -40,9 +42,9 @@ export default function RootLayout({
             <Menu />
 
             {/* Back dugme dole levo */}
-            <div className="flex min-h-12 items-center justify-between gap-3 px-3 pb-1 sm:px-6">
+            <div className="flex min-h-12 flex-wrap items-center justify-between gap-x-3 px-3 pb-1 sm:px-6">
               <BackButton />
-              <div className="ml-auto"><ThemeToggle /></div>
+              <div className="ml-auto flex items-center gap-1"><ThemeToggle /><LanguageSelect /></div>
             </div>
           </header>
 

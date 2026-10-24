@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/app/components/UiText"
 import { useState } from "react"
 
 const avatars = [
@@ -11,6 +12,8 @@ const avatars = [
 ]
 
 export default function ProfileClient({ user, favorites }: any) {
+  const { t } = useI18n()
+
   const [name, setName] = useState(user?.name || "")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -28,7 +31,7 @@ export default function ProfileClient({ user, favorites }: any) {
 )
   async function updateProfile() {
     if (password && password !== confirmPassword) {
-    alert("Lozinke se ne poklapaju")
+    alert(t("Lozinke se ne poklapaju"))
     return
   }
     const res = await fetch("/api/user/update", {
@@ -49,7 +52,7 @@ export default function ProfileClient({ user, favorites }: any) {
 })
 
 if (!res.ok) {
-  alert("Greška pri čuvanju")
+  alert(t("Greška pri čuvanju"))
   return
 }
 
@@ -57,26 +60,26 @@ setSuccess(true)
   }
 
   return (
-    <div className="p-10 max-w-xl mx-auto">
+    <div className="min-w-0 p-4 sm:p-10 max-w-xl mx-auto">
       
-      <h1 className="text-3xl font-bold mb-4">Profil</h1>
+      <h1 className="text-3xl font-bold mb-4">{t("Profil")}</h1>
 
-      <p><b>Ime:</b> {user?.name}</p>
+      <p><b>{t("Ime")}:</b> {user?.name}</p>
       <p><b>Email:</b> {user?.email}</p>
-      <p><b>Bio:</b> {user?.bio || "Nema"}</p>
+      <p><b>Bio:</b> {user?.bio || t("Nema")}</p>
 
       <div className="mt-6 flex flex-col gap-3 max-w-sm">
 
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Novo ime"
+          placeholder={t("Novo ime")}
           className="border px-3 py-2 rounded text-black bg-white"
         />
 
         <input
           type={showPassword ? "text" : "password"}
-          placeholder="Nova lozinka"
+          placeholder={t("Nova lozinka")}
           onChange={(e) => setPassword(e.target.value)}
           className="border px-3 py-2 rounded text-black bg-white"
         />
@@ -85,11 +88,11 @@ setSuccess(true)
   onClick={() => setShowPassword(v => !v)}
   className="text-sm text-blue-600"
 >
-  {showPassword ? "Sakrij" : "Prikaži"} lozinku
+  {t(showPassword ? "Sakrij lozinku" : "Prikazi lozinku")}
 </button>
          <input
   type={showPassword ? "text" : "password"}
-  placeholder="Potvrdi lozinku"
+  placeholder={t("Potvrdi lozinku")}
   onChange={(e) => setConfirmPassword(e.target.value)}
   className="border px-3 py-2 rounded text-black bg-white"
 />
@@ -98,10 +101,10 @@ setSuccess(true)
   onClick={() => setShowPassword(v => !v)}
   className="text-sm text-blue-600"
 >
-  {showPassword ? "Sakrij" : "Prikaži"} lozinku
+  {t(showPassword ? "Sakrij lozinku" : "Prikazi lozinku")}
 </button>
     <textarea
-  placeholder="Kratko o tebi (bio)"
+  placeholder={t("Kratko o tebi (bio)")}
   value={bio}
   onChange={(e) => setBio(e.target.value)}
   className="border px-3 py-2 rounded text-black bg-white"
@@ -109,14 +112,14 @@ setSuccess(true)
 <input
   value={city}
   onChange={(e) => setCity(e.target.value)}
-  placeholder="Grad"
+  placeholder={t("Grad")}
   className="border px-3 py-2 rounded text-black bg-white"
 />
 
 <input
   value={country}
   onChange={(e) => setCountry(e.target.value)}
-  placeholder="Država"
+  placeholder={t("Država")}
   className="border px-3 py-2 rounded text-black bg-white"
 />
 <div className="grid grid-cols-3 gap-2">
@@ -126,7 +129,7 @@ setSuccess(true)
     onChange={(e) => setBirthDay(Number(e.target.value))}
     className="border px-3 py-2 rounded text-black bg-white"
   >
-    <option value="">Dan</option>
+    <option value="">{t("Dan")}</option>
     {Array.from({ length: 31 }, (_, i) => (
       <option key={i + 1} value={i + 1}>
         {i + 1}
@@ -139,7 +142,7 @@ setSuccess(true)
     onChange={(e) => setBirthMonth(Number(e.target.value))}
     className="border px-3 py-2 rounded text-black bg-white"
   >
-    <option value="">Mesec</option>
+    <option value="">{t("Mesec")}</option>
     {Array.from({ length: 12 }, (_, i) => (
       <option key={i + 1} value={i + 1}>
         {i + 1}
@@ -152,7 +155,7 @@ setSuccess(true)
     onChange={(e) => setBirthYear(Number(e.target.value))}
     className="border px-3 py-2 rounded text-black bg-white"
   >
-    <option value="">Godina</option>
+    <option value="">{t("Godina")}</option>
 
     {Array.from(
       { length: new Date().getFullYear() - 1899 },
@@ -204,7 +207,7 @@ setSuccess(true)
   />
 )}
 <label className="bg-blue-600 text-white py-2 rounded text-center cursor-pointer block mt-2">
-  Promeni profilnu sliku
+  {t("Promeni profilnu sliku")}
   <input
     type="file"
     accept="image/*"
@@ -246,7 +249,7 @@ setSuccess(true)
 </label>
         {success && (
   <p className="text-green-500 text-center">
-    ✓ Profil uspešno sačuvan
+    ✓ {t("Profil uspešno sačuvan")}
   </p>
 )}
 
@@ -254,15 +257,15 @@ setSuccess(true)
           onClick={updateProfile}
           className="bg-blue-600 text-white py-2 rounded"
         >
-          Sačuvaj izmene
+          {t("Sačuvaj izmene")}
         </button>
 
         {/* FAVORITES */}
         <div className="mt-10">
-          <h2 className="text-xl font-bold mb-3">⭐ Favorites</h2>
+          <h2 className="text-xl font-bold mb-3">⭐ {t("Favoriti")}</h2>
 
           {favorites?.length === 0 && (
-            <p className="text-gray-500">Nema favorita</p>
+            <p className="text-gray-500">{t("Nema favorita")}</p>
           )}
 
           {favorites?.map((f: any) => (

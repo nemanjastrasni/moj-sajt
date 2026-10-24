@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/app/components/UiText"
 import { useCallback, useEffect, useId, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { useChordVariants } from "./useChordVariants"
@@ -10,6 +11,8 @@ type Props = {
 }
 
 export default function Chord({ chord, size }: Props) {
+  const { t } = useI18n()
+
   const previewId = useId()
   const [show, setShow] = useState(false)
   const [variantState, setVariantState] = useState({ chord, index: 1 })
@@ -174,7 +177,7 @@ export default function Chord({ chord, size }: Props) {
       ref={wrapperRef}
       role="button"
       tabIndex={0}
-      aria-label={`Akord ${chord}`}
+      aria-label={t("Akord {chord}", { chord })}
       aria-expanded={show}
       aria-controls={show ? previewId : undefined}
       onKeyDown={(event) => {
@@ -263,7 +266,7 @@ export default function Chord({ chord, size }: Props) {
               objectFit: "contain",
               margin: "0 auto",
             }}
-          /> : <div className="py-4 text-center text-sm text-gray-300">{chord}<br />Dijagram nije dostupan</div>}
+          /> : <div className="py-4 text-center text-sm text-gray-300">{chord}<br />{t("Dijagram nije dostupan")}</div>}
 
           {maxVariants > 1 && <div
             style={{
@@ -278,7 +281,7 @@ export default function Chord({ chord, size }: Props) {
           >
             <button
               type="button"
-              aria-label="Prethodna varijanta akorda"
+              aria-label={t("Prethodna varijanta akorda")}
               onClick={(event) => {
                 event.preventDefault()
                 event.stopPropagation()
@@ -304,7 +307,7 @@ export default function Chord({ chord, size }: Props) {
 
             <button
               type="button"
-              aria-label="Sledeca varijanta akorda"
+              aria-label={t("Sledeca varijanta akorda")}
               onClick={(event) => {
                 event.preventDefault()
                 event.stopPropagation()

@@ -1,3 +1,4 @@
+import UiText from "@/app/components/UiText"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
@@ -9,7 +10,7 @@ export default async function FavoritePage() {
   if (!session) {
     return (
       <div style={{ padding: "40px" }}>
-        Morate biti ulogovani.
+        <UiText text="Morate biti ulogovani." />
       </div>
     )
   }
@@ -35,11 +36,11 @@ export default async function FavoritePage() {
   return (
     <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
       <h1 style={{ fontSize: "28px", marginBottom: "30px" }}>
-        Favoriti
+        <UiText text="Favoriti" />
       </h1>
 
       {favorites.length === 0 ? (
-        <p>Nema omiljenih pesama.</p>
+        <p><UiText text="Nema omiljenih pesama." /></p>
       ) : (
         <div style={{ display: "grid", gap: "14px" }}>
           {favorites.map((fav: any) => (

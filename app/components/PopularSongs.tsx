@@ -2,8 +2,10 @@
 
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { useI18n } from "./UiText"
 
 export default function PopularSongs() {
+  const { t } = useI18n()
 
   const [songs, setSongs] = useState<any[]>([])
 
@@ -28,7 +30,7 @@ export default function PopularSongs() {
       <div className="max-w-6xl mx-auto px-6">
 
         <h2 className="text-2xl font-bold mb-6 text-white">
-          Popularne pesme
+          {t("Popularne pesme")}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

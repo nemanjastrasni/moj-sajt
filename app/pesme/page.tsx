@@ -1,3 +1,4 @@
+import UiText from "@/app/components/UiText"
 import Link from "next/link"
 
 
@@ -9,19 +10,19 @@ const letters = [
 export default function PesmePage() {
   return (
     <div style={{ padding: "40px" }}>
-      <h1>Izaberi kategoriju</h1>
+      <h1><UiText text="Izaberi kategoriju" /></h1>
 
       <ul>
         <li>
-          <Link href="/pesme/domace">Zabavne</Link>
+          <Link href="/pesme/domace"><UiText text="Zabavne" /></Link>
         </li>
 
         <li>
-          <Link href="/pesme/strane">Strane</Link>
+          <Link href="/pesme/strane"><UiText text="Strane" /></Link>
         </li>
 
         <li>
-          <Link href="/pesme/narodne">Narodne</Link>
+          <Link href="/pesme/narodne"><UiText text="Narodne" /></Link>
         </li>
       </ul>
     </div>

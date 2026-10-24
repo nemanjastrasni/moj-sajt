@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/app/components/UiText"
 import { useState } from "react"
 
 export default function PlaylistModal({
@@ -15,6 +16,8 @@ export default function PlaylistModal({
   title?: string
   defaultValue?: string
 }) {
+  const { t } = useI18n()
+
   const [value, setValue] = useState(defaultValue)
 
   if (!open) return null
@@ -23,13 +26,13 @@ export default function PlaylistModal({
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
       <div className="bg-neutral-900 p-6 rounded-xl w-[320px] border border-gray-700">
         
-        <h2 className="text-white mb-3">{title}</h2>
+        <h2 className="text-white mb-3">{t(title)}</h2>
 
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
           className="w-full p-2 rounded bg-black border border-gray-700 text-white mb-4"
-          placeholder="Unesi ime..."
+          placeholder={t("Unesi ime...")}
         />
 
         <div className="flex justify-end gap-2">
@@ -37,7 +40,7 @@ export default function PlaylistModal({
             onClick={onClose}
             className="px-3 py-1 text-sm bg-gray-700 rounded hover:bg-gray-600"
           >
-            Cancel
+            {t("Cancel")}
           </button>
 
           <button

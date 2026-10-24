@@ -1,3 +1,4 @@
+import UiText from "@/app/components/UiText"
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
@@ -92,11 +93,11 @@ const images = allImages
           href={`/biografija/${category}/${artistData.slug}`}
           style={{ color: "#2563eb", fontWeight: 600 }}
         >
-          Pogledaj biografiju
+          <UiText text="Pogledaj biografiju" />
         </Link>
       </div>
 
-      {artistData.songs.length === 0 && <p>Nema pesama.</p>}
+      {artistData.songs.length === 0 && <p><UiText text="Nema pesama." /></p>}
 
       <div style={{ display: "grid", gap: "8px" }}>
         {artistData.songs.map((song) => (

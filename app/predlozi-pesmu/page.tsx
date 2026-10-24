@@ -1,3 +1,4 @@
+import UiText from "@/app/components/UiText"
 import Link from "next/link"
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
@@ -10,8 +11,8 @@ export default async function ProposeSongPage() {
   if (!session?.user?.id) redirect("/login?callbackUrl=%2Fpredlozi-pesmu")
   return <main className="mx-auto w-full max-w-4xl px-4 py-8 text-white sm:px-6">
     <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-      <h1 className="text-2xl font-bold">Predlozi pesmu</h1>
-      <Link href="/moji-predlozi" className="text-sky-400 underline">Moji predlozi</Link>
+      <h1 className="text-2xl font-bold"><UiText text="Predlozi pesmu" /></h1>
+      <Link href="/moji-predlozi" className="text-sky-400 underline"><UiText text="Moji predlozi" /></Link>
     </div>
     <SongSubmissionForm />
   </main>

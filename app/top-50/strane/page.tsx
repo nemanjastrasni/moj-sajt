@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import UiText from "@/app/components/UiText"
 
 export default async function Page() {
   const songs = await prisma.song.findMany({
@@ -18,7 +19,7 @@ export default async function Page() {
   return (
     <div style={{ padding: "40px" }}>
       <h1 style={{ fontSize: "28px", marginBottom: "30px" }}>
-        Top 50 Stranih
+        <UiText text="Top 50 stranih" />
       </h1>
 
       {songs.map((song) => (

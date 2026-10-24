@@ -1,3 +1,4 @@
+import UiText from "@/app/components/UiText"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
@@ -10,7 +11,7 @@ export default async function ProfilePage() {
   const session = await getServerSession(authOptions)
 
   if (!session?.user?.email) {
-    return <div>Nisi ulogovan</div>
+    return <div><UiText text="Nisi ulogovan" /></div>
   }
 
   const user = await prisma.user.findUnique({
@@ -36,7 +37,7 @@ export default async function ProfilePage() {
   },
 })
 if (!user) {
-  return <div>Korisnik nije pronađen</div>
+  return <div><UiText text="Korisnik nije pronađen" /></div>
 }
   const { accounts, favorites, ...profile } = user
   return <>

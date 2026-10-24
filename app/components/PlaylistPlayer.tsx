@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/app/components/UiText"
 import {
   DndContext,
   closestCenter,
@@ -20,6 +21,8 @@ import { CSS } from "@dnd-kit/utilities"
 import { useEffect, useState, useRef } from "react"
 
 export default function PlaylistPlayer({ playlist }: any) {
+  const { t } = useI18n()
+
   const [items, setItems] = useState(playlist.items)
   const sensors = useSensors(
   useSensor(PointerSensor, {
@@ -337,11 +340,11 @@ export default function PlaylistPlayer({ playlist }: any) {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999]">
           <div className="bg-[#111] border border-gray-700 rounded-xl p-6 w-[380px]">
             <h3 className="text-lg font-semibold mb-3 text-white">
-              Obriši pesmu?
+              {t("Obriši pesmu?")}
             </h3>
 
             <p className="text-sm text-gray-400 mb-6">
-              Da li si siguran da želiš da obrišeš ovu pesmu?
+              {t("Da li si siguran da želiš da obrišeš ovu pesmu?")}
             </p>
 
             <div className="flex justify-end gap-3">
@@ -349,7 +352,7 @@ export default function PlaylistPlayer({ playlist }: any) {
                 onClick={() => setDeleteTarget(null)}
                 className="px-4 py-2 rounded bg-white/10"
               >
-                Otkaži
+                {t("Otkaži")}
               </button>
 
               <button
@@ -374,7 +377,7 @@ export default function PlaylistPlayer({ playlist }: any) {
                 }}
                 className="px-4 py-2 rounded bg-red-500 text-white"
               >
-                Obriši
+                {t("Obriši")}
               </button>
             </div>
           </div>

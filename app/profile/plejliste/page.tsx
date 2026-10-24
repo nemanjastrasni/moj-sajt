@@ -1,3 +1,4 @@
+import UiText from "@/app/components/UiText"
 
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
@@ -7,13 +8,13 @@ import PlaylistActions from "@/app/components/PlaylistActions"
 
 export default async function Page() {
   const session = await getServerSession(authOptions)
-  if (!session) return <div>Nisi ulogovan</div>
+  if (!session) return <div><UiText text="Nisi ulogovan" /></div>
 
   const user = await prisma.user.findUnique({
     where: { email: session.user?.email! },
   })
 
-  if (!user) return <div>User ne postoji</div>
+  if (!user) return <div><UiText text="User ne postoji" /></div>
 
   const playlists = await prisma.playlist.findMany({
     where: { userId: user.id },
@@ -59,7 +60,7 @@ playlists.forEach((p: any) => {
         {p.name}
       </Link>
       <div style={{ fontSize: "12px", color: "var(--theme-muted, #888)" }}>
-        {p.songs.length} pesama
+        {p.songs.length} <UiText text="pesama" />
       </div>
     </div>
 
@@ -72,14 +73,14 @@ playlists.forEach((p: any) => {
   return (
   <div className="max-w-3xl mx-auto px-6 py-10">
   <h1 className="text-3xl font-bold text-center mb-10 text-white tracking-wide">
-    🎧 Moje playliste
+    🎧 <UiText text="Moje plejliste" />
   </h1>
 
 
     {domace.length > 0 && (
   <>
     <h2 className="text-xl font-semibold mt-6 mb-2 text-blue-400">
-  🎶 Zabavne
+  🎶 <UiText text="Zabavne" />
 </h2>
     {domace.map((p: any) => (
       <PlaylistRow key={p.id} p={p} />
@@ -90,7 +91,7 @@ playlists.forEach((p: any) => {
 {strane.length > 0 && (
   <>
     <h2 className="text-xl font-semibold mt-6 mb-2 text-purple-400">
-  🌍 Strane
+  🌍 <UiText text="Strane" />
 </h2>
     {strane.map((p: any) => (
       <PlaylistRow key={p.id} p={p} />
@@ -101,7 +102,7 @@ playlists.forEach((p: any) => {
 {narodne.length > 0 && (
   <>
     <h2 className="text-xl font-semibold mt-6 mb-2 text-yellow-400">
-  🎻 Narodne
+  🎻 <UiText text="Narodne" />
 </h2>
     {narodne.map((p: any) => (
       <PlaylistRow key={p.id} p={p} />
@@ -112,7 +113,7 @@ playlists.forEach((p: any) => {
 {mix.length > 0 && (
   <>
     <h2 className="text-xl font-semibold mt-6 mb-2 text-green-400">
-  🔀 Mix
+  🔀 <UiText text="Mix" />
 </h2>
     {mix.map((p: any) => (
       <PlaylistRow key={p.id} p={p} />

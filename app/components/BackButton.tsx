@@ -1,8 +1,10 @@
 "use client"
 
 import { useRouter, usePathname } from "next/navigation"
+import { useI18n } from "./UiText"
 
 export default function BackButton() {
+  const { t } = useI18n()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -29,7 +31,7 @@ export default function BackButton() {
         ←
       </span>
       <span className="text-sm tracking-wide">
-        Nazad
+        {t("Nazad")}
       </span>
     </button>
   )

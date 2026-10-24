@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/app/components/UiText"
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { useMemo } from "react"
@@ -34,6 +35,8 @@ type Props = {
 }
 
 export default function SongClient({ song, media }: Props) {
+  const { t } = useI18n()
+
   const { data: session } = useSession()
   const router = useRouter()
   const [transpose, setTranspose] = useState(0)
@@ -162,10 +165,10 @@ useEffect(() => {
             {/* TON */}
             <div className="flex items-center gap-2">
 
-              <span className="uppercase tracking-wide text-xs">Ton</span>
+              <span className="uppercase tracking-wide text-xs">{t("Ton")}</span>
 
               <button
-                onClick={() => setTranspose(t => t - 1)}
+                aria-label={t("Smanji tonalitet")} onClick={() => setTranspose(t => t - 1)}
                 className="px-2 hover:text-white"
               >
                 −
@@ -176,7 +179,7 @@ useEffect(() => {
               </span>
 
               <button
-                onClick={() => setTranspose(t => t + 1)}
+                aria-label={t("Povecaj tonalitet")} onClick={() => setTranspose(t => t + 1)}
                 className="px-2 hover:text-white"
               >
                 +
@@ -186,7 +189,7 @@ useEffect(() => {
                 onClick={() => setTranspose(0)}
                 className="ml-1 text-xs text-red-400 hover:text-red-300"
               >
-                reset
+                {t("reset")}
               </button>
 
             </div>
@@ -194,10 +197,10 @@ useEffect(() => {
             {/* SCROLL */}
             <div className="flex items-center gap-2">
 
-              <span className="uppercase tracking-wide text-xs">Scroll</span>
+              <span className="uppercase tracking-wide text-xs">{t("Scroll")}</span>
 
               <button
-                onClick={isAutoScrolling ? stopAutoScroll : startAutoScroll}
+                aria-label={t(isAutoScrolling ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} onClick={isAutoScrolling ? stopAutoScroll : startAutoScroll}
                 className="px-2 hover:text-white"
               >
                 {isAutoScrolling ? "⏸" : "▶"}
@@ -209,6 +212,7 @@ useEffect(() => {
                 max="10"
                 step="1"
                 value={scrollSpeed}
+                aria-label={t("Brzina skrolovanja")}
                 onChange={(e) => setScrollSpeed(Number(e.target.value))}
                 className="w-20"
               />
@@ -218,13 +222,14 @@ useEffect(() => {
             {/* TEKST */}
             <div className="flex items-center gap-2">
 
-              <span className="uppercase tracking-wide text-xs">Tekst</span>
+              <span className="uppercase tracking-wide text-xs">{t("Tekst")}</span>
 
               <input
                 type="range"
                 min="14"
                 max="32"
                 value={textSize}
+                aria-label={t("Velicina teksta")}
                 onChange={(e) => setTextSize(Number(e.target.value))}
                 className="w-20"
               />
@@ -234,13 +239,14 @@ useEffect(() => {
             {/* AKORDI */}
             <div className="flex items-center gap-2">
 
-              <span className="uppercase tracking-wide text-xs">Akordi</span>
+              <span className="uppercase tracking-wide text-xs">{t("Akordi")}</span>
 
               <input
                 type="range"
                 min="14"
                 max="32"
                 value={chordSize}
+                aria-label={t("Velicina akorda")}
                 onChange={(e) => setChordSize(Number(e.target.value))}
                 className="w-20"
               />
@@ -251,7 +257,7 @@ useEffect(() => {
   onClick={() => setShowChordsPanel(!showChordsPanel)}
   className="px-2 text-xs border border-gray-700 rounded hover:text-white"
 >
-  AKORDI {showChordsPanel ? "ON" : "OFF"}
+  {t("AKORDI")} {showChordsPanel ? "ON" : "OFF"}
 </button>
             {/* YOUTUBE VIDEO */}
             <button
@@ -276,19 +282,20 @@ useEffect(() => {
   }}
   className="px-2 text-xs border border-gray-700 rounded hover:text-white"
 >
-  {loadingVideo ? "LOADING..." : `VIDEO ${showVideo ? "ON" : "OFF"}`}
+  {loadingVideo ? t("LOADING...") : `VIDEO ${showVideo ? "ON" : "OFF"}`}
 </button>
           </div>
 
        {/* TITLE */}
       
 <div className="flex flex-wrap items-center gap-4 mb-2 relative z-10">
-  <h1 className="text-3xl font-bold">
+  <h1 className="text-3xl font-bold" translate="no">
     {title}
   </h1>
 
   {/* FAVORITE STAR */}
   <button
+    aria-label={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")}
     onClick={async () => {
       const method = isFav ? "DELETE" : "POST"
 
@@ -328,7 +335,7 @@ useEffect(() => {
 }}
       className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 rounded text-white"
     >
-      + Playlist
+      {t("+ Playlist")}
     </button>
 
     {showSelect && (
@@ -403,7 +410,7 @@ useEffect(() => {
   }}
           className="px-2 py-2 hover:bg-white/10 cursor-pointer border-t border-gray-700 mt-1 text-blue-400"
         >
-          + Nova playlista
+          {t("+ Nova playlista")}
         </div>
 
       </div>
@@ -468,12 +475,12 @@ useEffect(() => {
   <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[999999] px-4">
     <div className="bg-gray-900 p-6 rounded w-full max-w-[320px]">
       
-      <h2 className="mb-4 text-lg">Nova playlista</h2>
+      <h2 className="mb-4 text-lg">{t("Nova playlista")}</h2>
 
       <input
         value={playlistName}
         onChange={(e) => setPlaylistName(e.target.value)}
-        placeholder="Naziv..."
+        placeholder={t("Naziv...")}
         className="w-full p-2 mb-4 bg-gray-800 text-white rounded"
       />
 
@@ -497,7 +504,7 @@ useEffect(() => {
         }}
         className="w-full bg-blue-500 py-2 rounded"
       >
-        Sačuvaj
+        {t("Sačuvaj")}
       </button>
 
     </div>

@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/app/components/UiText"
 import { useMemo, useState, type FormEvent } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -12,6 +13,8 @@ const empty: SubmissionInput = { category: "", artistName: "", title: "", lyrics
 const field = "block w-full min-w-0 rounded border border-gray-600 bg-black/30 px-3 py-3 text-base text-white focus:border-sky-400 focus:outline-none"
 
 export default function SongSubmissionForm({ reviewId, initial }: Props) {
+  const { t, locale } = useI18n()
+
   const router = useRouter()
   const [values, setValues] = useState(initial ?? empty)
   const [note, setNote] = useState("")
@@ -52,60 +55,60 @@ export default function SongSubmissionForm({ reviewId, initial }: Props) {
   function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); void send(reviewId ? "approve" : "submit") }
 
   if (success) return <div role="status" className="space-y-4 border-l-2 border-green-500 py-4 pl-4">
-    <p>{reviewId ? "Odluka je sacuvana." : "Predlog je poslat. Pesma ce biti objavljena tek nakon odobrenja administratora."}</p>
-    {success.href && <Link href={success.href} className="inline-block text-sky-400 underline">Otvori objavljenu pesmu</Link>}
-    <Link href={reviewId ? "/admin/predlozi" : "/moji-predlozi"} className="block text-sky-400 underline">{reviewId ? "Svi predlozi" : "Moji predlozi"}</Link>
+    <p>{reviewId ? t("Odluka je sacuvana.") : t("Predlog je poslat. Pesma ce biti objavljena tek nakon odobrenja administratora.")}</p>
+    {success.href && <Link href={success.href} className="inline-block text-sky-400 underline">{t("Otvori objavljenu pesmu")}</Link>}
+    <Link href={reviewId ? "/admin/predlozi" : "/moji-predlozi"} className="block text-sky-400 underline">{reviewId ? t("Svi predlozi") : t("Moji predlozi")}</Link>
   </div>
 
   return <form onSubmit={submit} className="min-w-0 space-y-6">
     <fieldset disabled={busy} className="min-w-0 space-y-5 disabled:opacity-60">
       <div className="grid min-w-0 gap-5 sm:grid-cols-2">
-        <label className="block space-y-2"><span>Kategorija</span>
+        <label className="block space-y-2"><span>{t("Kategorija")}</span>
           <select required value={values.category} onChange={event => change("category", event.target.value)} className={field}>
-            <option value="">Izaberi kategoriju</option>
-            {submissionCategories.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
+            <option value="">{t("Izaberi kategoriju")}</option>
+            {submissionCategories.map(item => <option key={item.value} value={item.value}>{t(item.label)}</option>)}
           </select>
         </label>
-        <label className="block space-y-2"><span>Izvodjac / grupa</span><input required maxLength={200} value={values.artistName} onChange={event => change("artistName", event.target.value)} className={field} autoComplete="off" /></label>
+        <label className="block space-y-2"><span>{t("Izvodjac / grupa")}</span><input required maxLength={200} value={values.artistName} onChange={event => change("artistName", event.target.value)} className={field} autoComplete="off" /></label>
       </div>
-      <label className="block space-y-2"><span>Naziv pesme</span><input required maxLength={200} value={values.title} onChange={event => change("title", event.target.value)} className={field} autoComplete="off" /></label>
+      <label className="block space-y-2"><span>{t("Naziv pesme")}</span><input required maxLength={200} value={values.title} onChange={event => change("title", event.target.value)} className={field} autoComplete="off" /></label>
 
       <details className="border-y border-gray-700 py-4" open={!reviewId}>
-        <summary className="cursor-pointer font-semibold">Pravila i primer unosa</summary>
+        <summary className="cursor-pointer font-semibold">{t("Pravila i primer unosa")}</summary>
         <ul id="submission-rules" className="my-4 list-disc space-y-2 pl-5 text-sm leading-6 text-gray-300">
-          <li>Izaberi kategoriju, upisi tacan naziv izvodjaca ili grupe i naziv pesme.</li>
-          <li>Akorde pisi u posebnom redu iznad odgovarajuceg stiha. Razmacima ih postavi iznad reci na kojoj se menjaju; ne koristi crtice i tackice za poravnanje.</li>
-          <li>Strofe i refren odvoji praznim redom. Oznake poput [Strofa 1] i [Refren] stavi u zaseban red.</li>
-          <li>Koristi oznake poput C, Am, F#, Bb, E7/B ili E(#9). Ne ubacuj reklame, linkove, HTML ili dupliran tekst.</li>
-          <li>Salji samo sadrzaj za koji imas pravo da ga podelis. Proveri da pesma vec nije na sajtu.</li>
-          <li>Najvise 5 predloga za 24 sata. Administrator pregleda i po potrebi ispravlja svaki predlog pre objave.</li>
+          <li>{t("Izaberi kategoriju, upisi tacan naziv izvodjaca ili grupe i naziv pesme.")}</li>
+          <li>{t("Akorde pisi u posebnom redu iznad odgovarajuceg stiha. Razmacima ih postavi iznad reci na kojoj se menjaju; ne koristi crtice i tackice za poravnanje.")}</li>
+          <li>{t("Strofe i refren odvoji praznim redom. Oznake poput [Strofa 1] i [Refren] stavi u zaseban red.")}</li>
+          <li>{t("Koristi oznake poput C, Am, F#, Bb, E7/B ili E(#9). Ne ubacuj reklame, linkove, HTML ili dupliran tekst.")}</li>
+          <li>{t("Salji samo sadrzaj za koji imas pravo da ga podelis. Proveri da pesma vec nije na sajtu.")}</li>
+          <li>{t("Najvise 5 predloga za 24 sata. Administrator pregleda i po potrebi ispravlja svaki predlog pre objave.")}</li>
         </ul>
-        <pre className="max-w-full overflow-x-auto bg-black/30 p-3 font-mono text-sm text-gray-200">{submissionExample}</pre>
+        <pre className="max-w-full overflow-x-auto bg-black/30 p-3 font-mono text-sm text-gray-200">{locale === "en" ? "[Verse 1]\nG               D\nYour first line of lyrics\nEm              C\nYour second line of lyrics\n\n[Chorus]\nC       D       G\nYour chorus lyrics" : submissionExample}</pre>
       </details>
 
-      <label className="block min-w-0 space-y-2"><span>Tekst sa akordima</span>
+      <label className="block min-w-0 space-y-2"><span>{t("Tekst sa akordima")}</span>
         <textarea required maxLength={40000} rows={18} wrap="off" spellCheck={false} autoCapitalize="off" autoCorrect="off"
           aria-describedby="submission-rules submission-length" value={values.lyrics} onChange={event => change("lyrics", event.target.value)}
           className={field + " resize-y overflow-x-auto font-mono leading-7"} style={{ tabSize: 4, letterSpacing: 0 }} />
       </label>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <span id="submission-length" className="text-sm text-gray-400">{values.lyrics.length.toLocaleString("sr-Latn")} / 40.000 znakova</span>
-        <button type="button" aria-expanded={preview} aria-controls="submission-preview" onClick={() => setPreview(value => !value)} className="min-h-11 rounded border border-gray-600 px-4">{preview ? "Sakrij pregled" : "Pregled rasporeda"}</button>
+        <span id="submission-length" className="text-sm text-gray-400">{t("{count} / 40.000 znakova", { count: values.lyrics.length.toLocaleString(locale === "en" ? "en" : "sr-Latn") })}</span>
+        <button type="button" aria-expanded={preview} aria-controls="submission-preview" onClick={() => setPreview(value => !value)} className="min-h-11 rounded border border-gray-600 px-4">{preview ? t("Sakrij pregled") : t("Pregled rasporeda")}</button>
       </div>
-      {preview && <section id="submission-preview" aria-label="Pregled pesme" className="min-w-0 border-y border-gray-700 py-6">
-        <h2 className="mb-2 break-words text-xl font-semibold">{values.title || "Naziv pesme"}</h2>
-        <p className="mb-6 break-words text-gray-400">{values.artistName || "Izvodjac / grupa"}</p>
+      {preview && <section id="submission-preview" aria-label={t("Pregled pesme")} className="min-w-0 border-y border-gray-700 py-6">
+        <h2 className="mb-2 break-words text-xl font-semibold">{values.title || t("Naziv pesme")}</h2>
+        <p className="mb-6 break-words text-gray-400">{values.artistName || t("Izvodjac / grupa")}</p>
         <SongSheet lines={lines} transpose={0} textSize={16} chordSize={16} />
       </section>}
-      {reviewId ? <label className="block space-y-2"><span>Napomena korisniku (obavezna za odbijanje)</span>
+      {reviewId ? <label className="block space-y-2"><span>{t("Napomena korisniku (obavezna za odbijanje)")}</span>
         <textarea rows={3} maxLength={1000} value={note} onChange={event => setNote(event.target.value)} className={field} />
       </label> : <label className="flex items-start gap-3 text-sm leading-6"><input type="checkbox" required checked={accepted} onChange={event => setAccepted(event.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-sky-500" />
-        <span>Procitao sam pravila, proverio raspored akorda i imam pravo da podelim ovaj sadrzaj.</span>
+        <span>{t("Procitao sam pravila, proverio raspored akorda i imam pravo da podelim ovaj sadrzaj.")}</span>
       </label>}
-      {error && <p role="alert" className="break-words text-red-300">{error}</p>}
+      {error && <p role="alert" className="break-words text-red-300">{t(error)}</p>}
       <div className="flex flex-wrap gap-3">
-        <button type="submit" className="min-h-11 rounded bg-sky-600 px-5 py-3 font-semibold text-white hover:bg-sky-500">{busy ? "Cuvam..." : reviewId ? "Odobri i objavi" : "Posalji na odobrenje"}</button>
-        {reviewId && <button type="button" onClick={() => void send("reject")} className="min-h-11 rounded border border-red-400 px-5 py-3 text-red-300">Odbij predlog</button>}
+        <button type="submit" className="min-h-11 rounded bg-sky-600 px-5 py-3 font-semibold text-white hover:bg-sky-500">{busy ? t("Cuvam...") : reviewId ? t("Odobri i objavi") : t("Posalji na odobrenje")}</button>
+        {reviewId && <button type="button" onClick={() => void send("reject")} className="min-h-11 rounded border border-red-400 px-5 py-3 text-red-300">{t("Odbij predlog")}</button>}
       </div>
     </fieldset>
   </form>

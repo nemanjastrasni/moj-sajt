@@ -38,6 +38,7 @@ export default function SongSheet({ lines, transpose, textSize, chordSize }: Pro
       className="relative min-w-0 max-w-full font-mono"
       style={{ fontSize: textSize, letterSpacing: 0, fontVariantLigatures: "none" }}
       data-song-sheet
+      translate="no"
     >
       <span ref={measureRef} aria-hidden="true" className="pointer-events-none absolute invisible whitespace-pre">0000000000</span>
       {groupSheetLines(lines).map((block, blockIndex) => {

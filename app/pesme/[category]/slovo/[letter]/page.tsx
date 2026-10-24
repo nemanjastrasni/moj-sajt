@@ -1,14 +1,8 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import { CategoryLabel } from "@/app/components/UiText"
 
 export const dynamic = "force-dynamic"
-
-function formatCategory(category: string) {
-  if (category === "domace") return "Zabavne"
-  if (category === "strane") return "Strane"
-  if (category === "narodne") return "Narodne"
-  return category
-}
 
 function normalizeLetter(letter: string) {
   const decoded = decodeURIComponent(letter).toUpperCase()
@@ -60,7 +54,7 @@ export default async function LetterPage({ params }: any) {
   return (
     <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
       <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>
-        {formatCategory(category)} – {letter}
+        <CategoryLabel value={category} /> – {letter}
       </h1>
 
       {filtered.length === 0 ? (

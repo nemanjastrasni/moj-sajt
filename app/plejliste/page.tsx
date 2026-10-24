@@ -1,3 +1,4 @@
+import UiText from "@/app/components/UiText"
 import Link from "next/link"
 
 export default function PlaylistsPage() {
@@ -7,13 +8,13 @@ return (
 <div style={{ padding: "40px" }}>
 
 <h1 style={{ fontSize: "28px", marginBottom: "40px", textAlign: "center" }}>
-Plejliste
+<UiText text="Plejliste" />
 </h1>
 
 <div
 style={{
 display: "grid",
-gridTemplateColumns: "repeat(5, 1fr)",
+gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))",
 maxWidth: "1100px",
 margin: "0 auto",
 gap: "40px"
@@ -31,14 +32,14 @@ marginBottom:"10px",
 display:"flex",
 alignItems:"center",
 gap:"6px",
-whiteSpace:"nowrap"
+overflowWrap:"anywhere"
 }}>
-🎧 Generisane
+🎧 <UiText text="Generisane" />
 </h3>
 
 <div style={{ display: "grid", gap: "10px" }}>
-<Link href="/plejliste/4-akorda">4 akorda</Link>
-<Link href="/plejliste/beginner">Beginner gitara</Link>
+<Link href="/plejliste/4-akorda"><UiText text="4 akorda" /></Link>
+<Link href="/plejliste/beginner"><UiText text="Beginner gitara" /></Link>
 <Link href="/plejliste/acoustic">Acoustic / unplugged</Link>
 </div>
 
@@ -55,15 +56,15 @@ marginBottom:"10px",
 display:"flex",
 alignItems:"center",
 gap:"6px",
-whiteSpace:"nowrap"
+overflowWrap:"anywhere"
 }}>
-🎸 Žanr
+🎸 <UiText text="Žanr" />
 </h3>
 
 <div style={{ display: "grid", gap: "10px" }}>
 <Link href="/plejliste/rock">Rock</Link>
 <Link href="/plejliste/pop">Pop</Link>
-<Link href="/plejliste/narodne">Narodne</Link>
+<Link href="/plejliste/narodne"><UiText text="Narodne" /></Link>
 <Link href="/plejliste/ex-yu">Ex-Yu</Link>
 </div>
 
@@ -80,15 +81,15 @@ marginBottom:"10px",
 display:"flex",
 alignItems:"center",
 gap:"6px",
-whiteSpace:"nowrap"
+overflowWrap:"anywhere"
 }}>
 ⭐ Admin
 </h3>
 
 <div style={{ display: "grid", gap: "10px" }}>
-<Link href="/plejliste/domace">Zabavne</Link>
-<Link href="/plejliste/strane">Strane</Link>
-<Link href="/plejliste/narodne">Narodne</Link>
+<Link href="/plejliste/domace"><UiText text="Zabavne" /></Link>
+<Link href="/plejliste/strane"><UiText text="Strane" /></Link>
+<Link href="/plejliste/narodne"><UiText text="Narodne" /></Link>
 </div>
 
 </div>
@@ -104,25 +105,25 @@ marginBottom:"10px",
 display:"flex",
 alignItems:"center",
 gap:"6px",
-whiteSpace:"nowrap"
+overflowWrap:"anywhere"
 }}>
-👤 User
+👤 <UiText text="User" />
 </h3>
 
 <div style={{ display: "grid", gap: "10px" }}>
-<Link href="/profile/plejliste">Moje plejliste</Link>
+<Link href="/profile/plejliste"><UiText text="Moje plejliste" /></Link>
 <Link href="/top-50/domace">
-  Top 50 zabavnih
+  <UiText text="Top 50 zabavnih" />
 </Link>
 
 <Link href="/top-50/strane">
-  Top 50 stranih
+  <UiText text="Top 50 stranih" />
 </Link>
 
 <Link href="/top-50/narodne">
-  Top 50 narodnih
+  <UiText text="Top 50 narodnih" />
 </Link>
-<Link href="/plejliste/pesme-koje-znam">Pesme koje mogu da sviram</Link>
+<Link href="/plejliste/pesme-koje-znam"><UiText text="Pesme koje mogu da sviram" /></Link>
 </div>
 
 </div>
@@ -138,34 +139,34 @@ marginBottom:"10px",
 display:"flex",
 alignItems:"center",
 gap:"6px",
-whiteSpace:"nowrap"
+overflowWrap:"anywhere"
 }}>
-🎧 Liste za slušanje
+🎧 <UiText text="Liste za slušanje" />
 </h3>
 
 <div style={{ display:"grid", gap:"10px" }}>
 <Link href="/listening-playlist">
-Moje plejliste za slušanje
+<UiText text="Moje plejliste za slušanje" />
 </Link>
 
 <Link href="/public-listening-playlists">
-  Javne plejliste korisnika
+  <UiText text="Javne plejliste korisnika" />
 </Link>
 
 <Link href="/top-listening-playlists/domace">
-20 najslušanijih zabavnih
+<UiText text="20 najslušanijih zabavnih" />
 </Link>
 
 <Link href="/top-listening-playlists/strane">
-20 najslušanijih stranih
+<UiText text="20 najslušanijih stranih" />
 </Link>
 
 <Link href="/top-listening-playlists/narodne">
-20 najslušanijih narodnih
+<UiText text="20 najslušanijih narodnih" />
 </Link>
 
 <Link href="/top-listening-playlists/mix">
-20 najslušanijih Mix plejlisti
+<UiText text="20 najslušanijih Mix plejlisti" />
 </Link>
 
 </div>

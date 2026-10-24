@@ -1,8 +1,10 @@
+import UiText from "@/app/components/UiText"
 import { prisma } from "@/lib/prisma"
 import PlaylistPlayer from "@/app/components/PlaylistPlayer"
 import SharePlaylistButton from "@/app/components/SharePlaylistButton"
 
 export default async function Page({ params }: any) {
+
   await prisma.listeningPlaylist.update({
     where: { id: params.id },
     data: {
@@ -28,7 +30,7 @@ export default async function Page({ params }: any) {
   })
 
   if (!playlist) {
-    return <div className="p-10 text-white">Ne postoji</div>
+    return <div className="p-10 text-white"><UiText text="Ne postoji" /></div>
   }
 
   return (
@@ -49,14 +51,14 @@ export default async function Page({ params }: any) {
   defaultValue={playlist.category ?? "Mix"}
   className="p-2 rounded bg-black border border-gray-700"
 >
-  <option value="Domace">Zabavne</option>
-  <option value="Strane">Strane</option>
-  <option value="Narodne">Narodne</option>
-  <option value="Mix">Mix</option>
+  <option value="Domace"><UiText text="Zabavne" /></option>
+  <option value="Strane"><UiText text="Strane" /></option>
+  <option value="Narodne"><UiText text="Narodne" /></option>
+  <option value="Mix"><UiText text="Mix" /></option>
 </select>
 
   <button className="text-sm text-green-400">
-    Save
+    <UiText text="Sačuvaj" />
   </button>
   <SharePlaylistButton />
 </form>
@@ -77,7 +79,7 @@ export default async function Page({ params }: any) {
         />
 
         <button className="bg-white text-black px-4 py-2 rounded">
-          + Dodaj
+          <UiText text="+ Dodaj" />
         </button>
       </form>
 

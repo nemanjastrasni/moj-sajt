@@ -1,10 +1,11 @@
+import UiText, { CategoryLabel, UiInput } from "@/app/components/UiText"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import DeletePlaylistButton from "../components/DeletePlaylistButton"
-import { getCategoryLabel } from "@/lib/categories"
 
 export const dynamic = "force-dynamic"
 export default async function ListeningPlaylistsPage() {
+
   const playlists = await prisma.listeningPlaylist.findMany({
     orderBy: { createdAt: "desc" },
     include: {
@@ -16,40 +17,40 @@ export default async function ListeningPlaylistsPage() {
     <div className="max-w-3xl mx-auto px-6 py-10 text-white">
 
       <h1 className="text-3xl font-bold text-center mb-10 tracking-wide">
-        🎧 Moje playliste za slušanje
+        🎧 <UiText text="Moje plejliste za slušanje" />
       </h1>
 
       <p className="text-sm text-gray-400 mb-3 text-center">
-        Prvo kreiraj playlistu, pa dodaj pesme unutar nje
+        <UiText text="Prvo kreiraj playlistu, pa dodaj pesme unutar nje" />
       </p>
 
       {/* CREATE PLAYLIST */}
       <form
         action="/api/listening-playlist"
         method="POST"
-        className="flex gap-2 mb-8"
+        className="flex min-w-0 flex-col gap-2 mb-8 sm:flex-row"
        >
-        <input
+        <UiInput
           name="name"
           placeholder="Ime nove playliste..."
           required
-          className="flex-1 p-2 rounded bg-black border border-gray-700"
+          className="min-w-0 flex-1 p-2 rounded bg-black border border-gray-700"
         />
         <select
   name="category"
   defaultValue="Mix"
   className="p-2 rounded bg-black border border-gray-700"
 >
-  <option value="Domace">Zabavne</option>
-  <option value="Strane">Strane</option>
-  <option value="Narodne">Narodne</option>
-  <option value="Mix">Mix</option>
+  <option value="Domace"><UiText text="Zabavne" /></option>
+  <option value="Strane"><UiText text="Strane" /></option>
+  <option value="Narodne"><UiText text="Narodne" /></option>
+  <option value="Mix"><UiText text="Mix" /></option>
 </select>
         <button
           type="submit"
           className="bg-white text-black px-4 py-2 rounded"
         >
-          + Kreiraj
+          <UiText text="+ Kreiraj" />
         </button>
       </form>
 
@@ -58,7 +59,7 @@ export default async function ListeningPlaylistsPage() {
 
         {playlists.length === 0 && (
           <p className="text-gray-400 text-center">
-            Nemaš još playliste
+            <UiText text="Nemaš još playliste" />
           </p>
         )}
 
@@ -76,7 +77,7 @@ export default async function ListeningPlaylistsPage() {
                 </div>
 
                 <div className="text-sm text-gray-400">
-  {pl.items.length} pesama • {getCategoryLabel(pl.category) || "Mix"}
+  {pl.items.length} <UiText text="pesama" /> • <CategoryLabel value={pl.category || "Mix"} />
 </div>
               </div>
             </Link>

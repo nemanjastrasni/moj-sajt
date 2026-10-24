@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/app/components/UiText"
 import { useState } from "react"
 import { chordPositions } from "@/lib/chords/chordPositions"
 import { useChordVariants } from "./useChordVariants"
@@ -9,6 +10,8 @@ type Props = {
 }
 
 export default function UsedChordCard({ chord }: Props) {
+  const { t } = useI18n()
+
   const variants = useChordVariants(chord)
   const [selection, setSelection] = useState({ chord, position: 0 })
   const [failedImage, setFailedImage] = useState<string | null>(null)
@@ -34,14 +37,14 @@ export default function UsedChordCard({ chord }: Props) {
           onError={() => setFailedImage(activeVariant.image)}
         />
       ) : (
-        <div className="w-32 min-h-40 flex items-center justify-center text-xs text-gray-400">Dijagram nije dostupan</div>
+        <div className="w-32 min-h-40 flex items-center justify-center text-xs text-gray-400">{t("Dijagram nije dostupan")}</div>
       )}
 
       {hasVariants && (
         <div className="flex items-center justify-center gap-2 mt-2 text-xs text-white">
           <button
             type="button"
-            aria-label="Prethodna varijanta akorda"
+            aria-label={t("Prethodna varijanta akorda")}
             onClick={() => changeVariant(-1)}
             disabled={variantPosition === 0}
             className="min-w-8 min-h-8 px-2 py-1 touch-manipulation disabled:opacity-30"
@@ -55,7 +58,7 @@ export default function UsedChordCard({ chord }: Props) {
 
           <button
             type="button"
-            aria-label="Sledeca varijanta akorda"
+            aria-label={t("Sledeca varijanta akorda")}
             onClick={() => changeVariant(1)}
             disabled={variantPosition === variants.length - 1}
             className="min-w-8 min-h-8 px-2 py-1 touch-manipulation disabled:opacity-30"

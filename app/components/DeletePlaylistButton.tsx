@@ -1,8 +1,10 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import { useI18n } from "./UiText"
 
 export default function DeletePlaylistButton({ id }: { id: string }) {
+  const { t } = useI18n()
   const router = useRouter()
 
   const handleDelete = async () => {
@@ -11,7 +13,7 @@ export default function DeletePlaylistButton({ id }: { id: string }) {
   })
 
   if (!res.ok) {
-    alert("Greška pri brisanju")
+    alert(t("Greška pri brisanju"))
     return
   }
 
@@ -20,6 +22,7 @@ export default function DeletePlaylistButton({ id }: { id: string }) {
 
   return (
     <button
+  aria-label={t("Obriši")}
   onClick={(e) => {
     e.stopPropagation()
     handleDelete()

@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { signOut, useSession } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
+import { useI18n } from "./UiText"
 
 const categories = [
   { href: "/pesme/narodne", label: "Narodne" },
@@ -21,6 +22,7 @@ const links = [
 ]
 
 export default function Menu() {
+  const { t } = useI18n()
   const { data: session, status } = useSession()
   const router = useRouter()
   const pathname = usePathname()
@@ -74,52 +76,52 @@ export default function Menu() {
   const items = session?.user?.role === "admin" ? [...links, { href: "/admin", label: "admin" }] : links
   const current = (href: string) => href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/")
 
-  return <nav ref={navigation} aria-label="Glavni meni" className="guitar-nav">
+  return <nav ref={navigation} aria-label={t("Glavni meni")} className="guitar-nav">
     <div className="guitar-links">
       {items.map((item, index) => <div key={item.href} className="guitar-item" style={{ "--step": index } as CSSProperties}>
         {item.href === "/pesme" ? <>
           <button ref={songsButton} type="button" className="guitar-link" data-active={current(item.href) || undefined}
             aria-expanded={openPesme} aria-controls={openPesme ? id + "-categories" : undefined}
             onClick={() => { setOpenPesme(value => !value); setOpen(false) }}>
-            Pesme <span aria-hidden="true" className="ml-1 text-xs">{openPesme ? "\u25b4" : "\u25be"}</span>
+            {t("Pesme")} <span aria-hidden="true" className="ml-1 text-xs">{openPesme ? "\u25b4" : "\u25be"}</span>
           </button>
           {openPesme && <div id={id + "-categories"} className="guitar-dropdown left-0 top-full mt-1 w-40">
             {categories.map(category => <Link key={category.href} href={category.href} prefetch={false} onClick={close}
               aria-current={current(category.href) ? "page" : undefined} className="guitar-dropdown-link">
-              {category.label}
+              {t(category.label)}
             </Link>)}
           </div>}
         </> : <Link href={item.href} onClick={close} aria-current={current(item.href) ? "page" : undefined} className="guitar-link">
-          {item.label}
+          {t(item.label)}
         </Link>}
       </div>)}
     </div>
 
     <div className="absolute top-0 right-3 z-30 flex h-[var(--menu-row)] items-center gap-3 sm:right-6">
-      <div className="hidden whitespace-nowrap text-xs text-white sm:block" title="Korisnici trenutno na sajtu / ulogovani korisnici">
-        online {online.total} | login {online.loggedIn}
+      <div className="hidden whitespace-nowrap text-xs text-white sm:block" title={t("Korisnici trenutno na sajtu / ulogovani korisnici")}>
+        online {online.total} | {t("ulogovani")} {online.loggedIn}
       </div>
       {!session ? <button type="button" disabled={status === "loading"}
         onClick={() => router.push("/login?callbackUrl=" + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash))}
         className="h-[var(--menu-row)] rounded px-3 text-sm text-white hover:bg-black/30 disabled:opacity-60">
-        {status === "loading" ? "Proveravam..." : "Prijavi se"}
+        {t(status === "loading" ? "Proveravam..." : "Prijavi se")}
       </button> : <div className="relative flex items-center gap-2">
         {session.user?.name && <span className="hidden max-w-[160px] truncate text-sm text-gray-200 sm:inline">{session.user.name}</span>}
-        <button ref={accountButton} type="button" aria-label="Korisnicki meni" aria-expanded={open}
+        <button ref={accountButton} type="button" aria-label={t("Korisnicki meni")} aria-expanded={open}
           aria-controls={open ? id + "-account" : undefined} onClick={() => { setOpen(value => !value); setOpenPesme(false) }}
           className="flex h-[var(--menu-row)] w-[var(--menu-row)] items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-sky-400">
           <Image src={session.user?.image || "/avatars/gilmour.png"} width={40} height={40} unoptimized alt="" className="h-7 w-7 rounded-full border border-gray-500 object-cover sm:h-8 sm:w-8" />
         </button>
         {open && <div id={id + "-account"} className="guitar-dropdown right-0 top-full mt-2 w-60 max-w-[calc(100vw-24px)]">
           <p className="truncate px-3 py-2 text-xs text-gray-400">{session.user?.email}</p>
-          <Link href="/profile" prefetch={false} onClick={close} className="guitar-dropdown-link">Profil</Link>
-          <Link href="/predlozi-pesmu" prefetch={false} onClick={close} className="guitar-dropdown-link">Predlozi pesmu</Link>
-          <Link href="/moji-predlozi" prefetch={false} onClick={close} className="guitar-dropdown-link">Moji predlozi</Link>
-          <Link href="/profile/plejliste" prefetch={false} onClick={close} className="guitar-dropdown-link">Moje plejliste</Link>
-          <Link href="/listening-playlist" prefetch={false} onClick={close} className="guitar-dropdown-link">Plejliste za slusanje</Link>
-          <Link href="/favorite" prefetch={false} onClick={close} className="guitar-dropdown-link">Favoriti</Link>
+          <Link href="/profile" prefetch={false} onClick={close} className="guitar-dropdown-link">{t("Profil")}</Link>
+          <Link href="/predlozi-pesmu" prefetch={false} onClick={close} className="guitar-dropdown-link">{t("Predlozi pesmu")}</Link>
+          <Link href="/moji-predlozi" prefetch={false} onClick={close} className="guitar-dropdown-link">{t("Moji predlozi")}</Link>
+          <Link href="/profile/plejliste" prefetch={false} onClick={close} className="guitar-dropdown-link">{t("Moje plejliste")}</Link>
+          <Link href="/listening-playlist" prefetch={false} onClick={close} className="guitar-dropdown-link">{t("Plejliste za slusanje")}</Link>
+          <Link href="/favorite" prefetch={false} onClick={close} className="guitar-dropdown-link">{t("Favoriti")}</Link>
           {session.user?.role === "admin" && <Link href="/admin" prefetch={false} onClick={close} className="guitar-dropdown-link">Admin</Link>}
-          <button type="button" onClick={() => signOut({ callbackUrl: "/" })} className="guitar-dropdown-link w-full text-left text-red-300">Odjavi se</button>
+          <button type="button" onClick={() => signOut({ callbackUrl: "/" })} className="guitar-dropdown-link w-full text-left text-red-300">{t("Odjavi se")}</button>
         </div>}
       </div>}
     </div>

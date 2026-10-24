@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
-import { getCategoryLabel } from "@/lib/categories"
+import { CategoryLabel } from "@/app/components/UiText"
 
 export default async function PlaylistSongsPage({ params }: any) {
 
@@ -60,7 +60,7 @@ export default async function PlaylistSongsPage({ params }: any) {
         color:"#38bdf8",
         textTransform:"capitalize"
       }}>
-        {slug.split("-").map(getCategoryLabel).join(" ")}
+        {slug.split("-").map((part: string, index: number) => <span key={index}><CategoryLabel value={part} /> </span>)}
       </h1>
 
       <div style={{ display: "grid", gap: "12px", fontSize:"18px" }}>

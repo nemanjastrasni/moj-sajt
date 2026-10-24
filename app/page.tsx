@@ -4,6 +4,7 @@ import PopularSongs from "./components/PopularSongs"
 import LatestSongs from "./components/LatestSongs"
 
 import SongSearch from "./components/SongSearch"
+import UiText from "./components/UiText"
 
 export default function HomePage() {
 
@@ -22,7 +23,7 @@ export default function HomePage() {
       <section className="max-w-6xl mx-auto px-6 py-14">
 
         <h2 className="text-2xl font-bold mb-8 text-white">
-          Pesme
+          <UiText text="Pesme" />
         </h2>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -38,7 +39,7 @@ export default function HomePage() {
             />
             <div className="theme-dark-surface absolute inset-0 bg-black/50 flex items-center justify-center">
               <span className="text-white text-xl font-semibold">
-                Narodne
+                <UiText text="Narodne" />
               </span>
             </div>
           </Link>
@@ -54,7 +55,7 @@ export default function HomePage() {
             />
             <div className="theme-dark-surface absolute inset-0 bg-black/50 flex items-center justify-center">
               <span className="text-white text-xl font-semibold">
-                Zabavne
+                <UiText text="Zabavne" />
               </span>
             </div>
           </Link>
@@ -70,7 +71,7 @@ export default function HomePage() {
             />
             <div className="theme-dark-surface absolute inset-0 bg-black/50 flex items-center justify-center">
               <span className="text-white text-xl font-semibold">
-                Strane
+                <UiText text="Strane" />
               </span>
             </div>
           </Link>

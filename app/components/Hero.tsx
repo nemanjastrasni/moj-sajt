@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useI18n } from "./UiText"
 
 const slides = [
   {
@@ -27,6 +28,7 @@ const slides = [
 ]
 
 export default function Hero() {
+  const { t } = useI18n()
   const [index, setIndex] = useState(0)
 
   useEffect(() => {
@@ -63,10 +65,10 @@ export default function Hero() {
             }`}
           >
             <h1 className="text-3xl md:text-5xl font-bold text-white">
-              {slide.title}
+              {t(slide.title)}
             </h1>
             <p className="text-white/80 mt-2 text-lg">
-              {slide.subtitle}
+              {t(slide.subtitle)}
             </p>
           </div>
         </div>

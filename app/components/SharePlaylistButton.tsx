@@ -1,8 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import { useI18n } from "./UiText"
 
 export default function SharePlaylistButton() {
+  const { t } = useI18n()
   const [copied, setCopied] = useState(false)
 
   const handleShare = async () => {
@@ -22,12 +24,12 @@ export default function SharePlaylistButton() {
         onClick={handleShare}
         className="text-sm text-blue-400 hover:text-blue-300"
       >
-        🔗 Share
+        🔗 {t("Podeli")}
       </button>
 
       {copied && (
         <div className="absolute top-8 left-0 bg-black border border-gray-700 px-3 py-2 rounded text-xs whitespace-nowrap shadow-lg">
-          Playlist link copied 🎵
+          {t("Link playliste je kopiran")} 🎵
         </div>
       )}
     </div>

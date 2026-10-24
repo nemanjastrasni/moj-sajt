@@ -1,3 +1,4 @@
+import UiText from "@/app/components/UiText"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import LikePlaylistButton from "@/app/components/LikePlaylistButton"
@@ -44,15 +45,15 @@ export default async function PublicListeningPlaylistsPage({
   return (
     <div className="max-w-5xl mx-auto px-6 py-10 text-white">
       <h1 className="text-3xl font-bold text-center mb-8">
-        🌍 Sve playliste za slušanje
+        🌍 <UiText text="Sve playliste za slušanje" />
       </h1>
 
       <p className="text-sm text-gray-400 text-center mb-8">
-        Javne playliste svih korisnika
+        <UiText text="Javne playliste svih korisnika" />
       </p>
       <div className="flex flex-wrap gap-3 justify-center mb-8">
   <Link href="/public-listening-playlists" className="px-4 py-2 rounded bg-white/10">
-    Sve
+    <UiText text="Sve" />
   </Link>
   <Link
   href="/public-listening-playlists?category=admin"
@@ -62,19 +63,19 @@ export default async function PublicListeningPlaylistsPage({
 </Link>
 
   <Link href="/public-listening-playlists?category=Domace" className="px-4 py-2 rounded bg-white/10">
-    Zabavne
+    <UiText text="Zabavne" />
   </Link>
 
   <Link href="/public-listening-playlists?category=Strane" className="px-4 py-2 rounded bg-white/10">
-    Strane
+    <UiText text="Strane" />
   </Link>
 
   <Link href="/public-listening-playlists?category=Narodne" className="px-4 py-2 rounded bg-white/10">
-    Narodne
+    <UiText text="Narodne" />
   </Link>
 
   <Link href="/public-listening-playlists?category=Mix" className="px-4 py-2 rounded bg-white/10">
-    Mix
+    <UiText text="Mix" />
   </Link>
 </div>
 
@@ -108,7 +109,7 @@ export default async function PublicListeningPlaylistsPage({
           <span className="mr-2">👤</span>
         )}
 
-        {pl.user?.name || "Korisnik"} • {pl.items.length} pesama • {pl.views || 0} pregleda • ❤️ {pl.likes.length}
+        {pl.user?.name || <UiText text="Korisnik" />} • {pl.items.length} <UiText text="pesama" /> • {pl.views || 0} <UiText text="pregleda" /> • ❤️ {pl.likes.length}
       </div>
       <LikePlaylistButton playlistId={pl.id} />
     </Link>

@@ -1,8 +1,11 @@
 "use client"
 
+import { useI18n } from "@/app/components/UiText"
 import { useState } from "react"
 
 export default function PlaylistActions({ id, name }: any) {
+  const { t } = useI18n()
+
   const [renameOpen, setRenameOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [value, setValue] = useState(name)
@@ -24,7 +27,7 @@ export default function PlaylistActions({ id, name }: any) {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-neutral-900 p-6 rounded-xl border border-gray-700 w-[320px]">
 
-            <h2 className="text-white mb-3">Novo ime</h2>
+            <h2 className="text-white mb-3">{t("Novo ime")}</h2>
 
             <input
               value={value}
@@ -37,7 +40,7 @@ export default function PlaylistActions({ id, name }: any) {
                 onClick={() => setRenameOpen(false)}
                 className="px-3 py-1 bg-gray-700 rounded"
               >
-                Cancel
+                {t("Cancel")}
               </button>
 
               <button
@@ -58,7 +61,7 @@ export default function PlaylistActions({ id, name }: any) {
                 }}
                 className="px-3 py-1 bg-blue-500 rounded hover:bg-blue-600"
               >
-                Sačuvaj
+                {t("Sačuvaj")}
               </button>
             </div>
 
@@ -72,7 +75,7 @@ export default function PlaylistActions({ id, name }: any) {
           <div className="bg-neutral-900 p-6 rounded-xl border border-gray-700 w-[320px]">
 
             <h2 className="text-white mb-4">
-              Obriši playlistu?
+              {t("Obriši playlistu?")}
             </h2>
 
             <div className="flex justify-end gap-2">
@@ -80,7 +83,7 @@ export default function PlaylistActions({ id, name }: any) {
                 onClick={() => setDeleteOpen(false)}
                 className="px-3 py-1 bg-gray-700 rounded"
               >
-                Cancel
+                {t("Cancel")}
               </button>
 
               <button
@@ -98,7 +101,7 @@ export default function PlaylistActions({ id, name }: any) {
                 }}
                 className="px-3 py-1 bg-red-500 rounded hover:bg-red-600"
               >
-                Obriši
+                {t("Obriši")}
               </button>
             </div>
 

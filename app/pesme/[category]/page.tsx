@@ -2,15 +2,9 @@ import Link from "next/link"
 import type { Metadata } from "next"
 import { prisma } from "@/lib/prisma"
 import { getCategoryLabel } from "@/lib/categories"
+import { CategoryLabel } from "@/app/components/UiText"
 
 export const dynamic = "force-dynamic"
-
-function formatCategory(category: string) {
-  if (category === "domace") return "Zabavne"
-  if (category === "strane") return "Strane"
-  if (category === "narodne") return "Narodne"
-  return category.charAt(0).toUpperCase() + category.slice(1)
-}
 
 export async function generateMetadata(
   { params }: { params: Promise<{ category: string }> }
@@ -84,7 +78,7 @@ const letters = Array.from(lettersSet).sort()
     >
 
       <h1 style={{ fontSize: "32px", marginBottom: "30px" }}>
-        {formatCategory(category)}
+        <CategoryLabel value={category} />
       </h1>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>

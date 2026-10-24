@@ -1,3 +1,5 @@
+import UiText from "@/app/components/UiText"
+
 export default function AkordiPage() {
   const roots = [
     "A","A#","B","C","C#","D","D#","E","F","F#","G","G#"
@@ -5,7 +7,7 @@ export default function AkordiPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Akordi za gitaru</h1>
+      <h1 className="text-3xl font-bold mb-6"><UiText text="Akordi za gitaru" /></h1>
 
       <div className="grid grid-cols-4 gap-4">
         {roots.map((r) => (

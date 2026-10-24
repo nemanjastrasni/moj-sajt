@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/app/components/UiText"
 import {
   DndContext,
   closestCenter,
@@ -33,6 +34,7 @@ type SongItem = {
 }
 
 function SortableItem({ item }: { item: SongItem }) {
+  const { t } = useI18n()
   const {
     attributes,
     listeners,
@@ -78,7 +80,7 @@ function SortableItem({ item }: { item: SongItem }) {
         }}
         className="text-red-400 hover:text-red-600"
       >
-        Obriši
+        {t("Obriši")}
       </button>
     </div>
   )
