@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useMemo } from "react"
 import UsedChordCard from "./UsedChordCard"
 import SongSheet from "./SongSheet"
+import SongPdfButton from "./SongPdfButton"
 import { getUsedChords, parseSongSheet } from "@/lib/chords/songSheet"
 import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
 import { useSession } from "next-auth/react"
@@ -293,6 +294,7 @@ useEffect(() => {
     {title}
   </h1>
 
+  <SongPdfButton song={{ id: song.id, title, artist, lyrics: displayContent }} transpose={transpose} textSize={textSize} chordSize={chordSize} />
   {/* FAVORITE STAR */}
   <button
     aria-label={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")}

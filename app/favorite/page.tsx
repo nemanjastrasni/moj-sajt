@@ -2,7 +2,7 @@ import UiText from "@/app/components/UiText"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import Link from "next/link"
+import FavoriteSongbook from "@/app/components/FavoriteSongbook"
 
 export default async function FavoritePage() {
   const session = await getServerSession(authOptions)
@@ -15,16 +15,17 @@ export default async function FavoritePage() {
     )
   }
 
-  const userId = (session.user as any).id
+  const userId = session.user.id
 
   const favorites = await prisma.favorite.findMany({
     where: {
       userId,
     },
-    include: {
+    select: {
       song: {
-        include: {
-          artist: true,
+        select: {
+          id: true, title: true, slug: true, category: true,
+          artist: { select: { name: true, slug: true } },
         },
       },
     },
@@ -33,31 +34,7 @@ export default async function FavoritePage() {
     },
   })
 
-  return (
-    <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
-      <h1 style={{ fontSize: "28px", marginBottom: "30px" }}>
-        <UiText text="Favoriti" />
-      </h1>
-
-      {favorites.length === 0 ? (
-        <p><UiText text="Nema omiljenih pesama." /></p>
-      ) : (
-        <div style={{ display: "grid", gap: "14px" }}>
-          {favorites.map((fav: any) => (
-            <Link
-              key={fav.id}
-              href={`/pesme/${fav.song.category}/${fav.song.artist.slug}/${fav.song.slug}`}
-            >
-              <span className="text-gray-400">
-                {fav.song.artist?.name}
-              </span>{" "}
-              <span className="text-white">
-                — {fav.song.title}
-              </span>
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
-  )
+  return <FavoriteSongbook key={userId} userId={userId} favorites={favorites.map(({ song }) => ({ id: song.id, title: song.title, artist: song.artist.name,
+    href: "/pesme/" + [song.category, song.artist.slug, song.slug].map(encodeURIComponent).join("/"),
+  }))} />
 }
