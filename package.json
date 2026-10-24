@@ -11,6 +11,7 @@
     "test:auth": "node --test scripts/test-auth.cjs",
     "test:search": "node --test scripts/test-search.cjs",
     "test:submissions": "node --test scripts/test-submissions.cjs",
+    "test:admin-songs": "node --test scripts/test-admin-songs.cjs",
     "test:theme": "node --test scripts/test-theme.cjs",
     "test:i18n": "node --test scripts/test-i18n.cjs",
     "artists:images": "node scripts/artist-images.cjs",

@@ -1,7 +1,7 @@
 // app/admin/layout.tsx
-import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
-import { authOptions } from "@/lib/auth"
+import { requireSongAdmin } from "@/lib/adminSongs/server"
+import { SubmissionError } from "@/lib/submissions/validation"
 import BackButton from "@/app/components/BackButton"
 import Link from "next/link"
 
@@ -10,17 +10,12 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = await getServerSession(authOptions)
-
-  // nije ulogovan
-  if (!session) {
-    redirect("/api/auth/signin")
+  try { await requireSongAdmin() }
+  catch (error) {
+    if (error instanceof SubmissionError && error.status === 401) redirect("/login?callbackUrl=%2Fadmin")
+    if (error instanceof SubmissionError && error.status === 403) redirect("/")
+    throw error
   }
-
-  // ADMIN PROVERA PO EMAIL-U
-  if (session.user.email?.toLowerCase() !== "nemanjaivanovic979@gmail.com") {
-  redirect("/")
-}
 
   return (
     <div className="flex min-h-screen min-w-0 flex-col md:flex-row">
@@ -58,7 +53,7 @@ export default async function AdminLayout({
       {/* CONTENT */}
       <main className="min-w-0 flex-1 p-4 bg-gray-50 sm:p-8">
         <header className="flex flex-wrap justify-between items-center gap-3 mb-6">
-          <h1 className="text-2xl font-bold">Admin Panel</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Admin Panel</h1>
           <BackButton />
         </header>
 

@@ -2,43 +2,25 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { adminSongFailure, requireSongAdmin } from "@/lib/adminSongs/server"
+import { escapeAdminLike } from "@/lib/adminSongs/query"
 
 export async function GET(req: Request) {
-  const session = await getServerSession(authOptions)
-
-  if (!session || session.user.role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-
-  const { searchParams } = new URL(req.url)
-  const search = searchParams.get("search")
-  const name = searchParams.get("name")
-
-  if (name) {
-    const artist = await prisma.artist.findFirst({
-      where: { name },
-    })
-
-    if (!artist) return NextResponse.json(null)
-
-    return NextResponse.json(artist)
-  }
-
-  if (search) {
-    const artists = await prisma.artist.findMany({
-  where: {
-    name: {
-  startsWith: search,
-  mode: "insensitive"
-}
-  },
-  orderBy: { name: "asc" },
-})
-
-    return NextResponse.json(artists)
-  }
-
-  return NextResponse.json([])
+  try {
+    await requireSongAdmin()
+    const { searchParams } = new URL(req.url)
+    const search = searchParams.get("search")?.trim().slice(0, 200)
+    const name = searchParams.get("name")?.trim().slice(0, 200)
+    if (name) {
+      const artist = await prisma.artist.findFirst({ where: { name } })
+      return NextResponse.json(artist, { headers: { "Cache-Control": "no-store" } })
+    }
+    const artists = search && search.length >= 2 ? await prisma.artist.findMany({
+      where: { name: { contains: escapeAdminLike(search), mode: "insensitive" } },
+      orderBy: { name: "asc" }, take: 12, select: { id: true, name: true, category: true },
+    }) : []
+    return NextResponse.json(artists, { headers: { "Cache-Control": "no-store" } })
+  } catch (error) { return adminSongFailure(error) }
 }
 
 export async function POST(req: Request) {

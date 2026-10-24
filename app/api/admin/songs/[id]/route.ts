@@ -1,24 +1,25 @@
-import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
+import { adminSongBody, adminSongFailure, deleteAdminSong, refreshAdminSongs, requireSongAdmin, updateAdminSong } from "@/lib/adminSongs/server"
+import { adminSongId, validateSongDelete, validateSongEdit } from "@/lib/adminSongs/validation"
 
-export async function POST(req: Request, { params }: any) {
-  const formData = await req.formData()
+type Context = { params: Promise<{ id: string }> }
+export async function PATCH(request: Request, { params }: Context) {
+  try {
+    await requireSongAdmin()
+    const id = adminSongId((await params).id)
+    await updateAdminSong(id, validateSongEdit(await adminSongBody(request)))
+    refreshAdminSongs()
+    return NextResponse.json({ success: true })
+  } catch (error) { return adminSongFailure(error) }
+}
+export const POST = PATCH
 
-  const title = formData.get("title") as string
-  const category = formData.get("category") as string
-  const lyrics = formData.get("lyrics") as string
-
-  await prisma.song.update({
-  where: { id: params.id },
-  data: {
-    ...(title ? { title } : {}),
-    ...(category ? { category } : {}),
-    ...(lyrics ? { lyrics } : {}),
-    ...(formData.get("artistId")
-      ? { artistId: Number(formData.get("artistId")) }
-      : {}),
-  } as any,
-})
-
-  return NextResponse.redirect(new URL("/admin/edit", req.url))
+export async function DELETE(request: Request, { params }: Context) {
+  try {
+    await requireSongAdmin()
+    const id = adminSongId((await params).id)
+    await deleteAdminSong(id, validateSongDelete(await adminSongBody(request)))
+    refreshAdminSongs()
+    return NextResponse.json({ success: true })
+  } catch (error) { return adminSongFailure(error) }
 }

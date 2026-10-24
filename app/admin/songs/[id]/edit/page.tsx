@@ -1,92 +1,12 @@
 import { prisma } from "@/lib/prisma"
-import { notFound, redirect } from "next/navigation"
-import { getCategoryLabel } from "@/lib/categories"
+import { notFound } from "next/navigation"
+import { requireSongAdmin } from "@/lib/adminSongs/server"
+import AdminSongForm from "../../AdminSongForm"
 
-type Props = {
-  params: Promise<{ id: string }>
-}
-
-export default async function EditSongPage({ params }: Props) {
+export default async function EditSongPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireSongAdmin()
   const { id } = await params
-
-  const song = await prisma.song.findUnique({
-    where: { id },
-    include: { artist: true },
-  })
-
-  if (!song) {
-    notFound()
-  }
-
-  const songId = song.id
-
-  async function updateSong(formData: FormData) {
-    "use server"
-
-    const title = formData.get("title") as string
-    const lyrics = formData.get("lyrics") as string
-    const category = formData.get("category") as string
-
-    await prisma.song.update({
-      where: { id: songId },
-      data: {
-        title,
-        lyrics,
-        category,
-      },
-    })
-
-    redirect("/admin/songs")
-  }
-
-  return (
-    <div className="max-w-2xl text-gray-900">
-      <h1 className="text-2xl font-bold mb-6">Edit pesma</h1>
-
-      <form action={updateSong} className="space-y-4">
-        <div>
-          <label className="block text-sm mb-1">Naslov</label>
-          <input
-            name="title"
-            defaultValue={song.title}
-            className="border p-2 w-full rounded font-mono whitespace-pre"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm mb-1">Kategorija</label>
-          <select
-            name="category"
-            defaultValue={song.category ?? ""}
-            className="border p-2 w-full rounded font-mono"
-          >
-            <option value="">Bez kategorije</option>
-            <option value="domace">Zabavne</option>
-            <option value="narodne">Narodne</option>
-            <option value="strane">Strane</option>
-            {song.category && !["domace", "narodne", "strane"].includes(song.category) && (
-              <option value={song.category}>{getCategoryLabel(song.category)}</option>
-            )}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm mb-1">Tekst</label>
-          <textarea
-            name="lyrics"
-            defaultValue={song.lyrics ?? ""}
-            rows={8}
-            className="border p-2 w-full rounded font-mono whitespace-pre"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="bg-black text-white px-4 py-2 rounded"
-        >
-          Sačuvaj izmene
-        </button>
-      </form>
-    </div>
-  )
+  const song = await prisma.song.findUnique({ where: { id }, include: { artist: { select: { id: true, name: true, category: true } } } })
+  if (!song) notFound()
+  return <AdminSongForm initial={song} />
 }
