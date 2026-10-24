@@ -45,3 +45,6 @@ next-env.d.ts
 prisma/dev.db
 backup.sql
 tabele/
+
+# Local artist-image audits, API cache and unapproved photo previews
+/reports/artist-images/

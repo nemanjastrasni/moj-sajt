@@ -13,6 +13,8 @@
     "test:submissions": "node --test scripts/test-submissions.cjs",
     "test:theme": "node --test scripts/test-theme.cjs",
     "test:i18n": "node --test scripts/test-i18n.cjs",
+    "artists:images": "node scripts/artist-images.cjs",
+    "test:artist-images": "node --test scripts/test-artist-images.cjs",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -48,6 +50,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "pg": "^8.23.1",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "typescript": "^5"
