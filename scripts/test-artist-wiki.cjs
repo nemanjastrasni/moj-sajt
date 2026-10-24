@@ -160,3 +160,49 @@ test("published content hashes bind exact new values and reject untyped albums",
   await assert.rejects(tool.applyChanges(report, null, options), /Only confirmed studio/)
   await assert.rejects(tool.applyChanges({ artists: [{ id: "a", changes: { bio: { before: null, after: "Changed" } } }] }, null, options), /does not match/)
 })
+
+test("multiple album sections in one layout cell retain the nearest heading", () => {
+  const result = core.extractArticle('<h2>Discography</h2><table><tr><td><h3>Studio albums</h3><ul><li>Studio (2000)</li></ul><h3>Live albums</h3><ul><li>Concert (2001)</li></ul><h3>Compilations</h3><ul><li>Collection (2002)</li></ul></td></tr></table>')
+  assert.deepEqual(result.albums.map(a => a.kind), ["studio", "live", "compilation"])
+})
+
+test("plain multi-column album lists parse each release, not one combined row/year", () => {
+  const result = core.extractArticle('<h2>Discography</h2><h3>Studio albums</h3><table><tr><td><ul><li><i>First</i> (1962.)</li><li><i>Second</i> (1963.)</li></ul></td><td><ul><li><i>Third</i> (1964.)</li></ul></td></tr></table>')
+  assert.deepEqual(result.albums, [{ title: "First", year: "1962", kind: "studio" }, { title: "Second", year: "1963", kind: "studio" }, { title: "Third", year: "1964", kind: "studio" }])
+})
+
+test("a solo musician's former band's albums are not silently imported as solo releases", () => {
+  const result = core.extractArticle('<h2>Discography</h2><h3>Solo albums</h3><ul><li>Solo (2000)</li></ul><h3>Former Band</h3><h4>Studio albums</h4><ul><li>Band (1986)</li></ul>', { subjectKind: "musician" })
+  assert.deepEqual(result.albums.map(a => a.title), ["Solo"])
+})
+
+test("discography-only publication ignores biography changes and preserves backup/guard ordering", async () => {
+  const album = { title: "Album", year: "2000", kind: "studio" }, events = []
+  const client = { query: async (sql, params) => { events.push(sql); if (sql.startsWith("UPDATE")) { assert.match(sql, /SET "discography"/); assert.equal(params[0], JSON.stringify([album])) } return { rowCount: 1, rows: [] } }, end: async () => events.push("closed") }
+  const report = { artists: [{ id: "a", changes: { bio: { before: "keep", after: "never write" }, discography: { before: null, after: [album] } } }] }
+  const result = await tool.applyChanges(report, null, { fields: ["discography"], loadManifest: async () => ({ artists: [{ artistId: "a", discography: { hash: tool.hashValue([album]) } }] }), verify: async () => {}, connect: async () => client, mkdir: async () => {}, save: async file => events.push(file.split(/[\\/]/).at(-1)), log: () => {} })
+  assert.deepEqual(result.updated.map(a => a.field), ["discography"])
+  assert.ok(events.indexOf("before.json") < events.findIndex(e => e.startsWith("UPDATE")))
+  assert.equal(events.at(-1), "closed")
+  await assert.rejects(tool.applyChanges(report, null, { fields: ["image"] }), /Unsupported field selection/)
+})
+
+const { groupDiscography } = require("../lib/discography.ts")
+test("album display groups types, sorts dates, keeps unknown years last and never translates titles", () => {
+  const groups = groupDiscography([{ title: "Late (2005)", year: "2005", kind: "studio" }, { title: "Rano", year: "1999", kind: "studio" }, { title: "U\u017eivo", year: "2002", kind: "live" }, { title: "Best", year: "2007", kind: "compilation" }, { title: "Unknown", kind: "ep" }, "Legacy (1980)"])
+  assert.deepEqual(groups.map(g => g.kind), ["studio", "live", "compilation", "album"])
+  assert.deepEqual(groups[0].albums.map(a => a.title), ["Rano", "Late"])
+  assert.deepEqual(groups.at(-1).albums.map(a => a.year), ["1980", ""])
+  assert.deepEqual(groupDiscography(null), [])
+})
+
+test("discography recheck holds suspicious sources and never overwrites changed live data", async () => {
+  const { recheck } = require("./recheck-discographies.cjs")
+  const album = { title: "Studio", year: "2000", kind: "studio" }
+  const make = (id, name, wikidataId) => ({ id, name, slug: id, category: "strane", discography: null, proposal: { evidence: "musical-group", wikidataId, discographySource: { language: "en", revisionId: 10 } }, changes: { discography: { before: null, after: [album] } } })
+  const good = make("good", "Good Band", "Q123"), held = make("held", "Pink Floyd", "Q2306"), changed = make("changed", "Changed", "Q124")
+  const result = await recheck({ artists: [good, held, changed] }, [good, held, { ...changed, discography: [album] }], async () => '<h2>Studio albums</h2><ul><li>Studio (2000)</li></ul>')
+  assert.equal(result.unchanged.artists.length, 1)
+  assert.equal(result.unchanged.artists[0].id, "good")
+  assert.equal(result.skipped.length, 2)
+})

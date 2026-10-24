@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
 import ArtistWikiCredit from "@/app/components/ArtistWikiCredit"
-import { normalizeDiscography } from "@/lib/discography"
+import ArtistDiscography from "@/app/components/ArtistDiscography"
 import ArtistImage from "@/app/components/ArtistImage"
 import { getArtistImage } from "@/lib/artistPhotos"
 
@@ -25,8 +25,6 @@ export default async function ArtistInfoPage({ params }: Props) {
 
   if (!artistData) notFound()
 
-  // Normalizacija diskografije (radi i za string i za array)
-  const discography = normalizeDiscography(artistData.discography)
   const image = getArtistImage(artistData)
 
   return (
@@ -51,20 +49,7 @@ export default async function ArtistInfoPage({ params }: Props) {
         </div>
       )}
 
-      {discography.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">
-            {discography.every(album => album.kind === "studio") ? "Studijski albumi / Studio albums" : "Diskografija"}
-          </h2>
-
-          <ul className="space-y-2">
-            {discography.map((album, i) => (
-              <li key={i} className="break-words">{album.title}{album.year ? ` (${album.year})` : ""}</li>
-            ))}
-          </ul>
-          <ArtistWikiCredit artistId={artistData.id} field="discography" value={artistData.discography} />
-        </div>
-      )}
+      <ArtistDiscography artistId={artistData.id} value={artistData.discography} />
 
       <Link
         href={`/pesme/${artistData.category}/${artistData.slug}`}

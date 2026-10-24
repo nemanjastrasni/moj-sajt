@@ -22,26 +22,6 @@
       }
     },
     {
-      "artistId": "cmmxt0vf904i7ob3gd5bimoz9",
-      "artistName": "Aca Lukas",
-      "slug": "aca-lukas",
-      "category": "narodne",
-      "wikidataId": "Q337143",
-      "discography": {
-        "hash": "f0558139bc97b9ab082c196c5119a56801c3334ddf69f82cf50ce499e3725fc5",
-        "language": "sr",
-        "title": "Аца Лукас",
-        "pageId": 277075,
-        "revisionId": 31776594,
-        "timestamp": "2026-10-11T16:41:14Z",
-        "url": "https://sr.wikipedia.org/wiki/%D0%90%D1%86%D0%B0_%D0%9B%D1%83%D0%BA%D0%B0%D1%81",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31776594",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%90%D1%86%D0%B0+%D0%9B%D1%83%D0%BA%D0%B0%D1%81&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
       "artistId": "cmmxt167u04s6ob3gv4s4ftbu",
       "artistName": "Al Dino",
       "slug": "al-dino",
@@ -57,26 +37,6 @@
         "url": "https://sr.wikipedia.org/wiki/%D0%90%D0%BB_%D0%94%D0%B8%D0%BD%D0%BE",
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31773391",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%90%D0%BB+%D0%94%D0%B8%D0%BD%D0%BE&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmxssyf8002hobh8vj91jytu",
-      "artistName": "Alen Islamović",
-      "slug": "alen-islamovic",
-      "category": "domace",
-      "wikidataId": "Q1264770",
-      "discography": {
-        "hash": "532e852ad28e0422d28744bae907a87e92e3c954d1ef0feb209570bd99b1ad1e",
-        "language": "en",
-        "title": "Alen Islamović",
-        "pageId": 2449436,
-        "revisionId": 1368608161,
-        "timestamp": "2026-08-10T02:08:12Z",
-        "url": "https://en.wikipedia.org/wiki/Alen_Islamovi%C4%87",
-        "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1368608161",
-        "historyUrl": "https://en.wikipedia.org/w/index.php?title=Alen+Islamovi%C4%87&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -183,26 +143,6 @@
         "url": "https://sr.wikipedia.org/wiki/%D0%90%D1%80%D1%81%D0%B5%D0%BD_%D0%94%D0%B5%D0%B4%D0%B8%D1%9B",
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31775756",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%90%D1%80%D1%81%D0%B5%D0%BD+%D0%94%D0%B5%D0%B4%D0%B8%D1%9B&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmxst0cq005qobh8y67nrpbo",
-      "artistName": "Atheist Rap",
-      "slug": "atheist-rap",
-      "category": "domace",
-      "wikidataId": "Q703217",
-      "discography": {
-        "hash": "bd35eb1af085f100f87f87df4ec84ccda6a7c88daf3e352960b9b0680a3e1619",
-        "language": "sr",
-        "title": "Atheist Rap",
-        "pageId": 160923,
-        "revisionId": 31759216,
-        "timestamp": "2026-10-10T21:31:08Z",
-        "url": "https://sr.wikipedia.org/wiki/Atheist_Rap",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31759216",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Atheist+Rap&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -440,26 +380,6 @@
       }
     },
     {
-      "artistId": "cmmxswt1m00q4ob3gghwu2xws",
-      "artistName": "Damir Urban",
-      "slug": "damir-urban",
-      "category": "domace",
-      "wikidataId": "Q1259210",
-      "discography": {
-        "hash": "f3ab2897cf56b151d3a453def59a466cef9a40c8f1b4efa5ac81a6881efef394",
-        "language": "hr",
-        "title": "Damir Urban",
-        "pageId": 142515,
-        "revisionId": 7126002,
-        "timestamp": "2025-02-11T23:00:08Z",
-        "url": "https://hr.wikipedia.org/wiki/Damir_Urban",
-        "revisionUrl": "https://hr.wikipedia.org/w/index.php?oldid=7126002",
-        "historyUrl": "https://hr.wikipedia.org/w/index.php?title=Damir+Urban&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
       "artistId": "cmmxt1vdt05fmob3gmk07mith",
       "artistName": "Darko Lazic",
       "slug": "darko-lazic",
@@ -475,26 +395,6 @@
         "url": "https://sr.wikipedia.org/wiki/%D0%94%D0%B0%D1%80%D0%BA%D0%BE_%D0%9B%D0%B0%D0%B7%D0%B8%D1%9B_(%D0%BF%D0%B5%D0%B2%D0%B0%D1%87)",
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31786159",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%94%D0%B0%D1%80%D0%BA%D0%BE+%D0%9B%D0%B0%D0%B7%D0%B8%D1%9B+%28%D0%BF%D0%B5%D0%B2%D0%B0%D1%87%29&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmxswuv600rvob3gcq76ss5k",
-      "artistName": "Dejan Cukić",
-      "slug": "dejan-cukic",
-      "category": "domace",
-      "wikidataId": "Q5252652",
-      "discography": {
-        "hash": "9b0673c7fbf8d46eb37231e0377033d4825b44d5a38e15559e362c9736d8c504",
-        "language": "sr",
-        "title": "Дејан Цукић",
-        "pageId": 254518,
-        "revisionId": 31786868,
-        "timestamp": "2026-10-12T00:49:35Z",
-        "url": "https://sr.wikipedia.org/wiki/%D0%94%D0%B5%D1%98%D0%B0%D0%BD_%D0%A6%D1%83%D0%BA%D0%B8%D1%9B",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31786868",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%94%D0%B5%D1%98%D0%B0%D0%BD+%D0%A6%D1%83%D0%BA%D0%B8%D1%9B&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -535,19 +435,6 @@
         "url": "https://sr.wikipedia.org/wiki/%D0%94%D0%B8%D0%BD%D0%BE_%D0%9C%D0%B5%D1%80%D0%BB%D0%B8%D0%BD",
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31684385",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%94%D0%B8%D0%BD%D0%BE+%D0%9C%D0%B5%D1%80%D0%BB%D0%B8%D0%BD&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "3c6808d568f873bcb26a3108ee1a0c087fa3f13c706a51e0617ea7e8a12c1228",
-        "language": "en",
-        "title": "Dino Merlin",
-        "pageId": 4185454,
-        "revisionId": 1366523881,
-        "timestamp": "2026-07-28T14:24:36Z",
-        "url": "https://en.wikipedia.org/wiki/Dino_Merlin",
-        "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1366523881",
-        "historyUrl": "https://en.wikipedia.org/w/index.php?title=Dino+Merlin&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -614,26 +501,6 @@
         "url": "https://en.wikipedia.org/wiki/Direktori",
         "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1372574469",
         "historyUrl": "https://en.wikipedia.org/w/index.php?title=Direktori&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmxsx0zz00xnob3g6haflktj",
-      "artistName": "Divlje Jagode",
-      "slug": "divlje-jagode",
-      "category": "domace",
-      "wikidataId": "Q93292",
-      "discography": {
-        "hash": "2b4905cbf22d6c7378cb512ddf8723cae516f9a04ea3f23107475c5a102a2729",
-        "language": "sh",
-        "title": "Divlje jagode (bend)",
-        "pageId": 122486,
-        "revisionId": 42679947,
-        "timestamp": "2026-08-20T13:00:46Z",
-        "url": "https://sh.wikipedia.org/wiki/Divlje_jagode_(bend)",
-        "revisionUrl": "https://sh.wikipedia.org/w/index.php?oldid=42679947",
-        "historyUrl": "https://sh.wikipedia.org/w/index.php?title=Divlje+jagode+%28bend%29&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -842,19 +709,6 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Erik+Klepton&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "d054ece383dcc75aabe53bb58535b10ef307353d9398ff22ab613022870887c2",
-        "language": "hr",
-        "title": "Eric Clapton",
-        "pageId": 63955,
-        "revisionId": 7415834,
-        "timestamp": "2026-03-30T22:00:47Z",
-        "url": "https://hr.wikipedia.org/wiki/Eric_Clapton",
-        "revisionUrl": "https://hr.wikipedia.org/w/index.php?oldid=7415834",
-        "historyUrl": "https://hr.wikipedia.org/w/index.php?title=Eric+Clapton&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
     },
     {
@@ -864,7 +718,7 @@
       "category": "domace",
       "wikidataId": "Q958872",
       "discography": {
-        "hash": "fa4fa572788a3e3032029c1e873b2d9713722cfacbeecd6e4f220584fded68d5",
+        "hash": "70121964f39ea10a045ea79ab7c586df419cd59d60e0fb785e6fe8d658abc463",
         "language": "sr",
         "title": "Ева Браун (музичка група)",
         "pageId": 166765,
@@ -874,7 +728,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=30829970",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%95%D0%B2%D0%B0+%D0%91%D1%80%D0%B0%D1%83%D0%BD+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Selected explicitly labeled studio albums; corrected layout-table section boundaries; singles, live releases, compilations and other artists omitted; no translation."
       }
     },
     {
@@ -893,19 +747,6 @@
         "url": "https://sr.wikipedia.org/wiki/%D0%A4%D0%B8%D0%BB%D0%BC_(%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0_%D0%B3%D1%80%D1%83%D0%BF%D0%B0)",
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31637490",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A4%D0%B8%D0%BB%D0%BC+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "45173d67944d0680ac6840713816c83277091dce7799a1744e0a764b088f0af7",
-        "language": "en",
-        "title": "Film (band)",
-        "pageId": 2409012,
-        "revisionId": 1366856444,
-        "timestamp": "2026-07-30T16:54:41Z",
-        "url": "https://en.wikipedia.org/wiki/Film_(band)",
-        "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1366856444",
-        "historyUrl": "https://en.wikipedia.org/w/index.php?title=Film+%28band%29&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -1010,7 +851,7 @@
       "category": "domace",
       "wikidataId": "Q432733",
       "discography": {
-        "hash": "15c3cb647faa362d9778e1d3d800a78bf41361a8bfe51d7db4d3dd81ce087a7c",
+        "hash": "1392ef951894496af2f5604538e4fcb3e4116263fc998fd59ed4366289f63f78",
         "language": "sr",
         "title": "Генерација 5",
         "pageId": 437741,
@@ -1020,7 +861,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31260728",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%93%D0%B5%D0%BD%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D1%98%D0%B0+5&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Selected explicitly labeled studio albums; corrected layout-table section boundaries; singles, live releases, compilations and other artists omitted; no translation."
       }
     },
     {
@@ -1117,26 +958,6 @@
       }
     },
     {
-      "artistId": "cmmxt2k28062gob3gmbop9896",
-      "artistName": "Haris Džinović",
-      "slug": "haris-dzinovic",
-      "category": "narodne",
-      "wikidataId": "Q3435157",
-      "discography": {
-        "hash": "bb8c5681c2851bc8483b06614a36756485c3dc506992a01dfec655cbc74ca7ea",
-        "language": "sr",
-        "title": "Харис Џиновић",
-        "pageId": 307098,
-        "revisionId": 31832967,
-        "timestamp": "2026-10-14T00:13:28Z",
-        "url": "https://sr.wikipedia.org/wiki/%D0%A5%D0%B0%D1%80%D0%B8%D1%81_%D0%8F%D0%B8%D0%BD%D0%BE%D0%B2%D0%B8%D1%9B",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31832967",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A5%D0%B0%D1%80%D0%B8%D1%81+%D0%8F%D0%B8%D0%BD%D0%BE%D0%B2%D0%B8%D1%9B&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
       "artistId": "cmmxsxl9g01gmob3gykzcooye",
       "artistName": "Haustor",
       "slug": "haustor",
@@ -1223,7 +1044,7 @@
       "category": "domace",
       "wikidataId": "Q384043",
       "discography": {
-        "hash": "2566b441b75b349f713f4b81c441b6c59a4c734e5a07d6dd7302cc8df0f5520e",
+        "hash": "0c2f1b3b2444d269cbbe62dcc5ee906d42c0c57937ad1385521d3f2848dec20e",
         "language": "en",
         "title": "Josipa Lisac",
         "pageId": 19625688,
@@ -1233,7 +1054,7 @@
         "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1369720833",
         "historyUrl": "https://en.wikipedia.org/w/index.php?title=Josipa+Lisac&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Selected explicitly labeled studio albums; corrected layout-table section boundaries; singles, live releases, compilations and other artists omitted; no translation."
       }
     },
     {
@@ -1252,19 +1073,6 @@
         "url": "https://sr.wikipedia.org/wiki/%D0%88%D1%83%D1%80%D0%B0_%D0%A1%D1%82%D1%83%D0%B1%D0%BB%D0%B8%D1%9B",
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31771324",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%88%D1%83%D1%80%D0%B0+%D0%A1%D1%82%D1%83%D0%B1%D0%BB%D0%B8%D1%9B&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "45173d67944d0680ac6840713816c83277091dce7799a1744e0a764b088f0af7",
-        "language": "en",
-        "title": "Jura Stublić",
-        "pageId": 2586195,
-        "revisionId": 1363255890,
-        "timestamp": "2026-07-09T01:05:38Z",
-        "url": "https://en.wikipedia.org/wiki/Jura_Stubli%C4%87",
-        "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1363255890",
-        "historyUrl": "https://en.wikipedia.org/w/index.php?title=Jura+Stubli%C4%87&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -1296,7 +1104,7 @@
       "category": "domace",
       "wikidataId": "Q432708",
       "discography": {
-        "hash": "de5c23d75fecae351b8f5880f02c9faa06e31e5a9e152b40f618f63b8d22648b",
+        "hash": "5a3ce9bbc95dbc81272a372e55cf3022a8f8076f473f4ce6582d5038a019a1e1",
         "language": "sr",
         "title": "Кербер (музичка група)",
         "pageId": 186117,
@@ -1306,7 +1114,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31796813",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9A%D0%B5%D1%80%D0%B1%D0%B5%D1%80+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Selected explicitly labeled studio albums; corrected layout-table section boundaries; singles, live releases, compilations and other artists omitted; no translation."
       }
     },
     {
@@ -1325,59 +1133,6 @@
         "url": "https://sh.wikipedia.org/wiki/Kings_of_Leon",
         "revisionUrl": "https://sh.wikipedia.org/w/index.php?oldid=42583300",
         "historyUrl": "https://sh.wikipedia.org/w/index.php?title=Kings+of+Leon&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "fac3f8227ffa8fb3ff091761dc7227c60133c009df5e5ce44ed4b8d08aa68673",
-        "language": "sr",
-        "title": "Kings of Leon",
-        "pageId": 319137,
-        "revisionId": 31838217,
-        "timestamp": "2026-10-14T23:35:20Z",
-        "url": "https://sr.wikipedia.org/wiki/Kings_of_Leon",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31838217",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Kings+of+Leon&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmxt61hs096dob3gsm937a7p",
-      "artistName": "Kinks",
-      "slug": "kinks",
-      "category": "strane",
-      "wikidataId": "Q188713",
-      "discography": {
-        "hash": "d7ac271fa1388d325abe12b57a0cc8c4b562c9a8a7625988e3579eba98dafc19",
-        "language": "sh",
-        "title": "The Kinks",
-        "pageId": 98767,
-        "revisionId": 42417959,
-        "timestamp": "2025-01-25T00:26:56Z",
-        "url": "https://sh.wikipedia.org/wiki/The_Kinks",
-        "revisionUrl": "https://sh.wikipedia.org/w/index.php?oldid=42417959",
-        "historyUrl": "https://sh.wikipedia.org/w/index.php?title=The+Kinks&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmxsxy6801shob3ggniwfard",
-      "artistName": "Kraljevski Apartman",
-      "slug": "kraljevski-apartman",
-      "category": "domace",
-      "wikidataId": "Q125657",
-      "discography": {
-        "hash": "14bfb13a39c7cf8ab6aa1bd49356ae5f22403c1c9e49972f4a4bf830e3cdcbc6",
-        "language": "sr",
-        "title": "Краљевски апартман",
-        "pageId": 296352,
-        "revisionId": 31798809,
-        "timestamp": "2026-10-12T13:53:56Z",
-        "url": "https://sr.wikipedia.org/wiki/%D0%9A%D1%80%D0%B0%D1%99%D0%B5%D0%B2%D1%81%D0%BA%D0%B8_%D0%B0%D0%BF%D0%B0%D1%80%D1%82%D0%BC%D0%B0%D0%BD",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31798809",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9A%D1%80%D0%B0%D1%99%D0%B5%D0%B2%D1%81%D0%BA%D0%B8+%D0%B0%D0%BF%D0%B0%D1%80%D1%82%D0%BC%D0%B0%D0%BD&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -1436,26 +1191,6 @@
       }
     },
     {
-      "artistId": "cmmxt2rt1069iob3gcxtyou83",
-      "artistName": "Legende",
-      "slug": "legende",
-      "category": "narodne",
-      "wikidataId": "Q16086046",
-      "discography": {
-        "hash": "7654db7c4281ba60549f52802de3a1a7bd9ca83ac2323d491e1766bf1b4d41c5",
-        "language": "sr",
-        "title": "Легенде (музичка група)",
-        "pageId": 498565,
-        "revisionId": 31800749,
-        "timestamp": "2026-10-12T18:05:47Z",
-        "url": "https://sr.wikipedia.org/wiki/%D0%9B%D0%B5%D0%B3%D0%B5%D0%BD%D0%B4%D0%B5_(%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0_%D0%B3%D1%80%D1%83%D0%BF%D0%B0)",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31800749",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9B%D0%B5%D0%B3%D0%B5%D0%BD%D0%B4%D0%B5+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
       "artistId": "cmmxt2srd06aeob3gqciiou2l",
       "artistName": "Lepa Brena",
       "slug": "lepa-brena",
@@ -1489,26 +1224,6 @@
       }
     },
     {
-      "artistId": "cmmxsy1so01vuob3g6zgegors",
-      "artistName": "Love Hunters",
-      "slug": "love-hunters",
-      "category": "domace",
-      "wikidataId": "Q6690640",
-      "discography": {
-        "hash": "bd820735d0cfecfe02ddfa324b9db9a2dad35a97f72b9e46e8beb8552ff3e76a",
-        "language": "sr",
-        "title": "Love Hunters",
-        "pageId": 3923536,
-        "revisionId": 31763651,
-        "timestamp": "2026-10-11T04:18:28Z",
-        "url": "https://sr.wikipedia.org/wiki/Love_Hunters",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31763651",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Love+Hunters&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
       "artistId": "cmmxsy24h01w5ob3gzbywurfp",
       "artistName": "Magazin",
       "slug": "magazin",
@@ -1524,19 +1239,6 @@
         "url": "https://sr.wikipedia.org/wiki/%D0%9C%D0%B0%D0%B3%D0%B0%D0%B7%D0%B8%D0%BD_(%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0_%D0%B3%D1%80%D1%83%D0%BF%D0%B0)",
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31443760",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9C%D0%B0%D0%B3%D0%B0%D0%B7%D0%B8%D0%BD+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "976469492b3724b8aecd485c7d5f37ee3622d3f6a9ffb9f8292b998d19c40359",
-        "language": "hr",
-        "title": "Magazin (sastav)",
-        "pageId": 175398,
-        "revisionId": 7616220,
-        "timestamp": "2026-10-10T19:51:08Z",
-        "url": "https://hr.wikipedia.org/wiki/Magazin_(sastav)",
-        "revisionUrl": "https://hr.wikipedia.org/w/index.php?oldid=7616220",
-        "historyUrl": "https://hr.wikipedia.org/w/index.php?title=Magazin+%28sastav%29&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -1599,19 +1301,6 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Metallica&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "b5194747a879d910751766c6f2563353a03e3a8146e182d888aee46fcd3f9994",
-        "language": "sr",
-        "title": "Metallica",
-        "pageId": 33996,
-        "revisionId": 31764034,
-        "timestamp": "2026-10-11T04:47:14Z",
-        "url": "https://sr.wikipedia.org/wiki/Metallica",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31764034",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Metallica&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
     },
     {
@@ -1630,46 +1319,6 @@
         "url": "https://sr.wikipedia.org/wiki/%D0%9C%D0%B8%D0%BB%D0%B8%D0%B3%D1%80%D0%B0%D0%BC_(%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0_%D0%B3%D1%80%D1%83%D0%BF%D0%B0)",
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=30520491",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9C%D0%B8%D0%BB%D0%B8%D0%B3%D1%80%D0%B0%D0%BC+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmxsydpp026uob3gfa5xchue",
-      "artistName": "Neno Belan",
-      "slug": "neno-belan",
-      "category": "domace",
-      "wikidataId": "Q3513894",
-      "discography": {
-        "hash": "510412ac5a2411800d8e08fd1f5a6c05c8c06e5f7fd94cf2399bcd263fd80a21",
-        "language": "sr",
-        "title": "Нено Белан",
-        "pageId": 4029280,
-        "revisionId": 31809545,
-        "timestamp": "2026-10-13T01:07:31Z",
-        "url": "https://sr.wikipedia.org/wiki/%D0%9D%D0%B5%D0%BD%D0%BE_%D0%91%D0%B5%D0%BB%D0%B0%D0%BD",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31809545",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9D%D0%B5%D0%BD%D0%BE+%D0%91%D0%B5%D0%BB%D0%B0%D0%BD&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmxsyf6i0287ob3g512todoy",
-      "artistName": "Neverne Bebe",
-      "slug": "neverne-bebe",
-      "category": "domace",
-      "wikidataId": "Q1982209",
-      "discography": {
-        "hash": "d75a50fc733ec5bb86ca66efb95b1e38a28666e388fb958e5c06bbce2f004cf5",
-        "language": "sr",
-        "title": "Neverne bebe",
-        "pageId": 124920,
-        "revisionId": 31764659,
-        "timestamp": "2026-10-11T05:29:48Z",
-        "url": "https://sr.wikipedia.org/wiki/Neverne_bebe",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31764659",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Neverne+bebe&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -1710,59 +1359,6 @@
         "url": "https://sr.wikipedia.org/wiki/Nirvana_(%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0_%D0%B3%D1%80%D1%83%D0%BF%D0%B0)",
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31764713",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Nirvana+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "e0d4e3171b54b29e51b33636d570fe3edde82289ea207d146098eac2ee5df172",
-        "language": "hr",
-        "title": "Nirvana (sastav)",
-        "pageId": 34576,
-        "revisionId": 7366275,
-        "timestamp": "2026-01-08T21:20:57Z",
-        "url": "https://hr.wikipedia.org/wiki/Nirvana_(sastav)",
-        "revisionUrl": "https://hr.wikipedia.org/w/index.php?oldid=7366275",
-        "historyUrl": "https://hr.wikipedia.org/w/index.php?title=Nirvana+%28sastav%29&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmxsyjha02c6ob3gzp15icu7",
-      "artistName": "Oliver Dragojević",
-      "slug": "oliver-dragojevic",
-      "category": "domace",
-      "wikidataId": "Q738151",
-      "discography": {
-        "hash": "aa067aa640cf4e9d0e87404e293248b57656456f8ab3fdf672afbe74a5cd195e",
-        "language": "hr",
-        "title": "Oliver Dragojević",
-        "pageId": 32537,
-        "revisionId": 7570945,
-        "timestamp": "2026-08-06T14:58:24Z",
-        "url": "https://hr.wikipedia.org/wiki/Oliver_Dragojevi%C4%87",
-        "revisionUrl": "https://hr.wikipedia.org/w/index.php?oldid=7570945",
-        "historyUrl": "https://hr.wikipedia.org/w/index.php?title=Oliver+Dragojevi%C4%87&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmxsynsg02g3ob3gyr525xsf",
-      "artistName": "Oliver Mandić",
-      "slug": "oliver-mandic",
-      "category": "domace",
-      "wikidataId": "Q3446583",
-      "discography": {
-        "hash": "c41f5f7755bad27f0c497108b2beaff3cec1b671e14877483e8269d21494bf0d",
-        "language": "en",
-        "title": "Oliver Mandić",
-        "pageId": 7625896,
-        "revisionId": 1363254895,
-        "timestamp": "2026-07-09T00:59:53Z",
-        "url": "https://en.wikipedia.org/wiki/Oliver_Mandi%C4%87",
-        "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1363254895",
-        "historyUrl": "https://en.wikipedia.org/w/index.php?title=Oliver+Mandi%C4%87&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -1841,26 +1437,6 @@
       }
     },
     {
-      "artistId": "cmmxt3ych07bqob3g6xpl4xq5",
-      "artistName": "Pedja Medenica",
-      "slug": "pedja-medenica",
-      "category": "narodne",
-      "wikidataId": "Q61131050",
-      "discography": {
-        "hash": "5c836ec46c09123a045029620a8a0cae90c7e9eb0e317f92c17d6fc004788c9e",
-        "language": "sr",
-        "title": "Пеђа Меденица",
-        "pageId": 3893781,
-        "revisionId": 31512646,
-        "timestamp": "2026-08-22T01:57:22Z",
-        "url": "https://sr.wikipedia.org/wiki/%D0%9F%D0%B5%D1%92%D0%B0_%D0%9C%D0%B5%D0%B4%D0%B5%D0%BD%D0%B8%D1%86%D0%B0",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31512646",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9F%D0%B5%D1%92%D0%B0+%D0%9C%D0%B5%D0%B4%D0%B5%D0%BD%D0%B8%D1%86%D0%B0&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
       "artistId": "cmmxsyu7h02m2ob3gnj27pasl",
       "artistName": "Piloti",
       "slug": "piloti",
@@ -1901,19 +1477,6 @@
       "wikidataId": "Q2306",
       "bio": {
         "hash": "cb333158c3886ca4093f107165fd95ad92bfd1affa9df9646e9e759e66db4fd2",
-        "language": "sr",
-        "title": "Pink Floyd",
-        "pageId": 41475,
-        "revisionId": 31849251,
-        "timestamp": "2026-10-21T15:32:48Z",
-        "url": "https://sr.wikipedia.org/wiki/Pink_Floyd",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31849251",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Pink+Floyd&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "027ba31d35dc863941aa19a1f34a645c6af92a720062f9490fd52b2003c21478",
         "language": "sr",
         "title": "Pink Floyd",
         "pageId": 41475,
@@ -2002,19 +1565,6 @@
         "url": "https://sr.wikipedia.org/wiki/%D0%9F%D1%81%D0%B8%D1%85%D0%BE%D0%BC%D0%BE%D0%B4%D0%BE_%D0%BF%D0%BE%D0%BF",
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31005249",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9F%D1%81%D0%B8%D1%85%D0%BE%D0%BC%D0%BE%D0%B4%D0%BE+%D0%BF%D0%BE%D0%BF&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "38356a7d0483e840dc7cf0c2c0ac1dedae61c57dea78abc59e71068fb767494e",
-        "language": "hr",
-        "title": "Psihomodo pop",
-        "pageId": 17994,
-        "revisionId": 7036803,
-        "timestamp": "2024-10-11T18:44:37Z",
-        "url": "https://hr.wikipedia.org/wiki/Psihomodo_pop",
-        "revisionUrl": "https://hr.wikipedia.org/w/index.php?oldid=7036803",
-        "historyUrl": "https://hr.wikipedia.org/w/index.php?title=Psihomodo+pop&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -2194,26 +1744,6 @@
         "url": "https://sr.wikipedia.org/wiki/S._A._R._S.",
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31766531",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=S.+A.+R.+S.&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmxt43fl07g7ob3g1spozfge",
-      "artistName": "Šaban Šaulić",
-      "slug": "saban-saulic",
-      "category": "narodne",
-      "wikidataId": "Q390888",
-      "discography": {
-        "hash": "2270d207acdb324cecd1f11ed7cd377f4c6706030d3b837cce6cc67a7fcbf6fe",
-        "language": "en",
-        "title": "Šaban Šaulić",
-        "pageId": 2173379,
-        "revisionId": 1378651750,
-        "timestamp": "2026-10-05T13:21:50Z",
-        "url": "https://en.wikipedia.org/wiki/%C5%A0aban_%C5%A0auli%C4%87",
-        "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1378651750",
-        "historyUrl": "https://en.wikipedia.org/w/index.php?title=%C5%A0aban+%C5%A0auli%C4%87&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -2444,7 +1974,7 @@
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       },
       "discography": {
-        "hash": "2adf9f86252dcd1d4661cb2e67299b29d1231bec70d6d805abeaf8603ebbba20",
+        "hash": "1c32e2135d71bd6b165361ec9065f7ecc1ca21855cbf7cccbf6491c06adeac01",
         "language": "sh",
         "title": "The Beach Boys",
         "pageId": 108935,
@@ -2454,7 +1984,7 @@
         "revisionUrl": "https://sh.wikipedia.org/w/index.php?oldid=42462296",
         "historyUrl": "https://sh.wikipedia.org/w/index.php?title=The+Beach+Boys&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Selected explicitly labeled studio albums; corrected layout-table section boundaries; singles, live releases, compilations and other artists omitted; no translation."
       }
     },
     {
@@ -2506,19 +2036,6 @@
         "url": "https://hr.wikipedia.org/wiki/The_Black_Keys",
         "revisionUrl": "https://hr.wikipedia.org/w/index.php?oldid=7065128",
         "historyUrl": "https://hr.wikipedia.org/w/index.php?title=The+Black+Keys&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "6e958a13fe74f89706138c99c26abab862fb85456e0c6912b23f4d5a2ff84b15",
-        "language": "sr",
-        "title": "The Black Keys",
-        "pageId": 397949,
-        "revisionId": 31675583,
-        "timestamp": "2026-08-26T22:50:01Z",
-        "url": "https://sr.wikipedia.org/wiki/The_Black_Keys",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31675583",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=The+Black+Keys&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
@@ -2700,19 +2217,6 @@
         "historyUrl": "https://hr.wikipedia.org/w/index.php?title=Tutti+Frutti+Band&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "e409ef17787ae9198d00bb7fab8e687c9fe9d71c94d248ae771c927d4fc3bc38",
-        "language": "hr",
-        "title": "Tutti Frutti Band",
-        "pageId": 339059,
-        "revisionId": 7562412,
-        "timestamp": "2026-07-23T17:00:43Z",
-        "url": "https://hr.wikipedia.org/wiki/Tutti_Frutti_Band",
-        "revisionUrl": "https://hr.wikipedia.org/w/index.php?oldid=7562412",
-        "historyUrl": "https://hr.wikipedia.org/w/index.php?title=Tutti+Frutti+Band&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
     },
     {
@@ -2722,7 +2226,7 @@
       "category": "domace",
       "wikidataId": "Q1272723",
       "discography": {
-        "hash": "a993c248f7b32f948b5991e40b7f1c728824dd0e6bb6c3b0ef1ac5ebf295e2ac",
+        "hash": "a895393400a4ab003dd2d2eaeac47c486b3c2823c54b3a03730c6f44e7d8704a",
         "language": "sr",
         "title": "Van Gogh (музичка група)",
         "pageId": 59786,
@@ -2732,7 +2236,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31510100",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Van+Gogh+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Selected explicitly labeled studio albums; corrected layout-table section boundaries; singles, live releases, compilations and other artists omitted; no translation."
       }
     },
     {
@@ -2833,39 +2337,6 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Whitesnake&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      },
-      "discography": {
-        "hash": "e9ba380ca3d1429a5e3ae8b7293e9062c4c4ff1b1a1c260ae7444d2e94a3c785",
-        "language": "sh",
-        "title": "Whitesnake",
-        "pageId": 47387,
-        "revisionId": 42418454,
-        "timestamp": "2025-01-25T00:44:22Z",
-        "url": "https://sh.wikipedia.org/wiki/Whitesnake",
-        "revisionUrl": "https://sh.wikipedia.org/w/index.php?oldid=42418454",
-        "historyUrl": "https://sh.wikipedia.org/w/index.php?title=Whitesnake&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmwlgen1008gobakt7kthr57",
-      "artistName": "Yu Grupa",
-      "slug": "yu-grupa",
-      "category": "domace",
-      "wikidataId": "Q432697",
-      "discography": {
-        "hash": "c63c0daf5f981e616ba9ecf8cba47daf4f9f7a06aa14d7475100e39ce4a50824",
-        "language": "sr",
-        "title": "YU grupa",
-        "pageId": 190398,
-        "revisionId": 31768540,
-        "timestamp": "2026-10-11T10:00:02Z",
-        "url": "https://sr.wikipedia.org/wiki/YU_grupa",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31768540",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=YU+grupa&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
     },
     {
@@ -2937,26 +2408,6 @@
         "url": "https://en.wikipedia.org/wiki/Zdravko_%C4%8Coli%C4%87",
         "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1380163476",
         "historyUrl": "https://en.wikipedia.org/w/index.php?title=Zdravko+%C4%8Coli%C4%87&action=history",
-        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
-      }
-    },
-    {
-      "artistId": "cmmwlgnnd00gvobakmbzj68ky",
-      "artistName": "Željko Bebek",
-      "slug": "zeljko-bebek",
-      "category": "domace",
-      "wikidataId": "Q223595",
-      "discography": {
-        "hash": "ecb7fda962e3a1236110803ee76202d4008f7e073c002a598a15df70c870bad6",
-        "language": "en",
-        "title": "Željko Bebek",
-        "pageId": 2310490,
-        "revisionId": 1377683454,
-        "timestamp": "2026-09-30T15:17:41Z",
-        "url": "https://en.wikipedia.org/wiki/%C5%BDeljko_Bebek",
-        "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1377683454",
-        "historyUrl": "https://en.wikipedia.org/w/index.php?title=%C5%BDeljko+Bebek&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }

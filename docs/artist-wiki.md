@@ -50,7 +50,35 @@ Fifteen confirmed incorrect bios were cleared with pre-write backup: four calend
 
 The final combined plan prepares **55 new/expanded/corrected bios and 111 studio-discography lists containing 1,204 albums**, across 125 attributed artists. Sources are revision-pinned and paragraphs retain readable spacing. Unknown/ambiguous identities and untyped release lists are not guessed. Existing long/manual bios are retained. Preview: `reports/artist-wiki/ready/index.html`. The combined JSON report and rollback backups are local/ignored; the attribution manifest and UI belong in Git.
 
-139 tests, TypeScript, targeted new-code lint and desktop/tablet/390/320px checks passed. Both themes, structured album rendering, source links, attribution checksum and biography expand/collapse were checked with a temporary development-only preview route that was removed afterward. No full production build was run. The current public Wikipedia manifest returns HTTP 404, and the publication guard correctly refuses additions before deployment. **Only the 15 removals are live so far. The 55 bios/111 lists still require Git/deploy and the guarded apply command.**
+At the end of that first preparation pass, 139 tests, TypeScript, targeted new-code lint and desktop/tablet/390/320px checks passed. The publication guard refused additions until deployment. That initial 111-list plan has since been superseded by the recheck below; **do not apply the old combined report wholesale**.
+
+## Discography Publication, 2026-10-24
+
+The owner deployed the original source manifest. A fresh audit still found zero populated discographies; the data had never been applied. Rechecking all 111 pinned source lists found extraction defects: several release sections in one layout-table cell inherited the first section's type; plain multi-column lists were treated as one row with an unrelated year; English `Discography` was not recognized as a parent section; former-band albums could be mistaken for a solo artist's releases. These now have regression coverage.
+
+`scripts/wiki-discography-holds.json` records 20 identity-bound source holds. These are review decisions, not an assertion that every album in the held lists is wrong. They include mixed EP/live/compilation lists, titles with publisher/certification annotations, conflicting dates and suspicious entries. Discovery and guarded application refuse these automatic discography imports while retaining biography behavior. The remaining 12 skipped lists became empty under strict section parsing. Do not use counts/heading labels alone as a guarantee of factual correctness or completeness.
+
+Read-only recheck:
+
+```powershell
+npm run artists:discographies:recheck -- --report reports/artist-wiki/ready/report.json --ca "C:\path\to\prod-ca-2021.crt" --out reports/artist-wiki/discography-rechecked
+```
+
+Reports contain `unchanged.json` (same values as deployed credits), `revised.json` (different values requiring updated credits), and `skipped.json` (review reasons or changed live values). Identity/old-value guards preserve manual edits; rechecking itself never writes to the database. Rerunning after publication will classify already changed records as preserved, not rewrite them.
+
+**Applied and freshly verified: 73 discographies, 748 studio albums, zero skipped writes.** Backup: `reports/artist-wiki/apply-2026-10-24T20-48-37-366Z`. A before/after comparison of all 1,198 Artist records found exactly 73 discography changes and zero changes to biography, bioShort, image, members, name, slug or category. The 922 biographies and 149 assigned photos are preserved. HTTP 200 checks of the public Bijelo Dugme and Ekatarina Velika biographies confirmed albums, dates and attribution are visible on the deployed old renderer too.
+
+The shared `ArtistDiscography` renderer now presents release groups, chronological year/title tables, a translated missing-data state and hash-bound source credits on biography and artist-info pages. Studio, live, compilation and untyped/legacy albums have separate groups. Album titles are not translated. Unknown years sort last, long titles wrap, and redundant trailing release-year metadata is removed for display without altering stored data. This does not expand automatic imports beyond studio albums.
+
+**Prepared, not applied: six revised lists, 64 studio albums** (Eva Braun, Generacija 5, Josipa Lisac, Kerber, The Beach Boys, Van Gogh). Their corrected hashes/source credits are in the new manifest. Unapplied held/empty discography credits were removed; pending biography credits remain untouched. The manifest has 106 attributed artists, 79 discography credits and the original 55 pending biography credits. Deploy the current code/manifest before running:
+
+```powershell
+npm run artists:wiki -- apply --report reports/artist-wiki/discography-rechecked/revised.json --field discography --ca "C:\path\to\prod-ca-2021.crt" --base-url https://moj-sajt-rho.vercel.app --apply
+```
+
+`--field discography` restricts application to this field, even if an input report also proposes biography changes. Biography additions were not requested in this pass and were not applied. The deployed-manifest check, pre-write backup, exact old-value guard and TLS verification remain mandatory. The six revised lists are not live yet; the new UI also needs Git/deploy. Further artist/source coverage remains incremental, not a claim to cover the whole catalog.
+
+Verification: 151 focused regression tests, TypeScript and targeted new-code lint passed. Shared production components were browser-tested with fresh read-only live data for Bijelo Dugme (9), EKV (7), The Beatles (13) and Riblja Corba (20), plus mixed-type/empty/long-title fixtures. Both languages/themes and 1366/820/390/320px viewports passed with no overflow and unchanged album titles. The temporary preview route was removed. Full local database-backed routes retain the previously observed Windows Prisma TLS issue; the browser preview did not pretend to test that connection. No full production build or new deployment was performed.
 
 ## Sources
 

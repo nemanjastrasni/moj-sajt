@@ -46,9 +46,9 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
   root.find("p").filter((_, node) => $(node).find(".citation-needed,.cn,.Inline-Template").length > 0).remove()
   root.find("sup,.reference").remove()
   const paragraphs = []; const albums = []; const albumKeys = new Set()
-  let excludedLevel = null, heading = "", discLevel = null, kind = "album", bioLength = 0
-  const terminal = /^(?:diskograf|discograf|filmograf|filmograph|bibliograf|bibliograph|reference|referenc|izvori|sources|literatura|literature|napomene|notes|external links|spoljasnje veze|vanjske|spoljne|see also|vidi jos|nagrade|awards|priznanja|controvers|kontrover|politic|politick|scandal|skandal|optuz|legal issues)/
-  const discHeading = text => /diskograf|discograf|^(?:studio |studijski |live |koncertni |compilation |kompilacijski )?album/.test(text)
+  let excludedLevel = null, heading = "", discLevel = null, blockedDiscLevel = null, kind = "album", bioLength = 0
+  const terminal = /^(?:diskograf|discograf|discograph|filmograf|filmograph|bibliograf|bibliograph|reference|referenc|izvori|sources|literatura|literature|napomene|notes|external links|spoljasnje veze|vanjske|spoljne|see also|vidi jos|nagrade|awards|priznanja|controvers|kontrover|politic|politick|scandal|skandal|optuz|legal issues)/
+  const discHeading = text => /diskograf|discograf|discograph|^(?:kompila|compila)|^(?:solo |studio |studijski |live |koncertni |compilation |kompilacijski )?album/.test(text)
   root.find("h2,h3,h4,h5,h6,p,dt,b,strong,li,tr").each((_, node) => {
     const element = $(node), tag = node.tagName.toLowerCase()
     if (element.parents(".navbox,.reflist,.infobox,.references").length) return
@@ -56,9 +56,11 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
       const level = Number(tag[1]), text = clean(element.text()), normalized = key(text)
       if (excludedLevel !== null && level <= excludedLevel) excludedLevel = null
       if (discLevel !== null && level <= discLevel) discLevel = null
+      if (blockedDiscLevel !== null && level <= blockedDiscLevel) blockedDiscLevel = null
       if (terminal.test(normalized)) excludedLevel = level
       if (discHeading(normalized)) { if (discLevel === null) discLevel = level; kind = albumKind(text) }
-      else if (discLevel !== null) kind = "skip"
+      else if (discLevel !== null) { kind = "skip"; blockedDiscLevel = level }
+      if (blockedDiscLevel !== null) kind = "skip"
       if (subjectKind === "musical-group" && /solo/.test(normalized)) kind = "skip"
       heading = text
       return
@@ -69,21 +71,29 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
       if (heading) { paragraphs.push(toLatin(heading)); bioLength += heading.length; heading = "" }
       paragraphs.push(text); bioLength += text.length + 2
     }
-    if (discLevel !== null && ["p", "dt", "b", "strong"].includes(tag) && !element.parents("li,h2,h3,h4,h5,h6").length) {
+    if (discLevel !== null && blockedDiscLevel === null && ["p", "dt", "b", "strong"].includes(tag) && !element.parents("li,h2,h3,h4,h5,h6").length) {
       const label = key(element.text())
       if (label.length < 80 && /album|singl|single|kompila|compila|spotovi|ucesca/.test(label)) kind = albumKind(label)
     }
     let itemKind = kind
     if (tag === "li" && element.parents("table").length) {
       const table = element.closest("table"), cell = element.closest("td,th")
-      const localHeading = clean(cell.find("h2,h3,h4,h5,h6").first().text())
+      let localHeading = ""
+      // One layout cell can contain studio, live and compilation sections.
+      cell.find("h2,h3,h4,h5,h6,li").each((_, child) => {
+        if (child === node) return false
+        if (/^h[23456]$/.test(child.tagName)) localHeading = clean($(child).text())
+      })
       const column = cell.parent("tr").children("td,th").index(cell)
       const headerHeading = clean(table.find("tr").first().children("td,th").eq(column).find("h2,h3,h4,h5,h6").first().text())
       const context = localHeading || headerHeading
-      if (context && discHeading(key(context))) itemKind = albumKind(context)
+      if (context && discHeading(key(context)) && blockedDiscLevel === null) itemKind = albumKind(context)
     }
     if (discLevel === null || itemKind === "skip" || !["li", "tr"].includes(tag) || albums.length >= 200) return
-    if (tag === "li" && (element.parents("li").length || element.parents("table").length && !element.closest("table").find("h2,h3,h4,h5,h6").length)) return
+    const table = element.closest("table")
+    const layoutTable = table.length && (table.find("h2,h3,h4,h5,h6").length ||
+      !table.find("th").length && table.find("td > ul,td > ol").length)
+    if (tag === "li" && (element.parents("li").length || table.length && !layoutTable)) return
     let text, title
     if (tag === "li") {
       const clone = element.clone(); clone.find("ul,ol").remove()
@@ -91,7 +101,7 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
       const first = clean(clone.find("i,a").first().text())
       title = first && text.replace(/^["„“]/, "").startsWith(first) && !/^\d{4}/.test(first) ? first : ""
     } else {
-      if (element.closest("table").find("h2,h3,h4,h5,h6").length || element.find("table").length) return
+      if (layoutTable || element.find("table").length) return
       const cells = element.children("td,th")
       const trackHeader = element.closest("table").hasClass("tracklist") ? cells.filter("th[colspan].mbox-text") : null
       if (element.closest("table").hasClass("tracklist") && !trackHeader?.length) return
@@ -135,6 +145,7 @@ async function discoverContent(artist, client) {
   const resolved = await resolveMusicIdentity(artist, client)
   if (resolved.state !== "identified") return resolved
   const { entity, evidence } = resolved
+  const discographyHold = require("../wiki-discography-holds.json").find(item => item.wikidataId === entity.id && normalizeName(item.name) === normalizeName(artist.name))
   let biography = null, discography = null
   const errors = []
   for (const lang of LANGUAGES) {
@@ -146,13 +157,13 @@ async function discoverContent(artist, client) {
       if (article.bio.length >= 200 && (!biography || (biography.bio.length < 800 && article.bio.length > biography.bio.length && lang !== "en"))) biography = article
       // Automatic publication starts with explicitly labeled studio albums only.
       // Mixed single/live lists and untyped entries remain available for manual review.
-      const studioAlbums = article.albums.filter(album => album.kind === "studio")
+      const studioAlbums = discographyHold ? [] : article.albums.filter(album => album.kind === "studio")
       if (studioAlbums.length > (discography?.albums.length || 0)) discography = { ...article, albums: studioAlbums }
       if (biography?.bio.length >= 800 && discography?.albums.length >= 3) break
     } catch (error) { errors.push({ language: lang, state: error.status ? `http-${error.status}` : "request-failed" }) }
   }
   return { state: biography || discography ? "identified-content" : "no-content", wikidataId: entity.id, label: entity.labels?.en?.value || artist.name, evidence,
-    bio: biography?.bio || null, bioSource: biography?.source || null, discography: discography?.albums || [], discographySource: discography?.source || null, errors }
+    bio: biography?.bio || null, bioSource: biography?.source || null, discography: discography?.albums || [], discographySource: discography?.source || null, discographyReview: discographyHold?.reason || null, errors }
 }
 
 function comparable(text) { return key(clean(text || "")) }

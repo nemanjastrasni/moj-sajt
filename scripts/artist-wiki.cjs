@@ -85,7 +85,8 @@ async function checkedFieldUpdate(client, artist, field, change) {
   return result.rowCount === 1
 }
 
-async function applyChanges(report, ca, { clearOnly = false, baseUrl, connect = databaseClient, save = async (file, value) => fs.writeFile(file, JSON.stringify(value, null, 2)), mkdir = fs.mkdir, log = console.log, verify = verifySources, loadManifest = async () => JSON.parse(await fs.readFile(MANIFEST, "utf8")) } = {}) {
+async function applyChanges(report, ca, { clearOnly = false, fields = ["bio", "discography"], baseUrl, connect = databaseClient, save = async (file, value) => fs.writeFile(file, JSON.stringify(value, null, 2)), mkdir = fs.mkdir, log = console.log, verify = verifySources, loadManifest = async () => JSON.parse(await fs.readFile(MANIFEST, "utf8")) } = {}) {
+  if (!fields.length || fields.some(field => !["bio", "discography"].includes(field))) throw new Error("Unsupported field selection")
   const corrections = require("./wiki-reviewed-corrections.json")
   let manifest
   if (!clearOnly) {
@@ -97,6 +98,10 @@ async function applyChanges(report, ca, { clearOnly = false, baseUrl, connect = 
     if (clearOnly) {
       if (isCalendarBio(artist.bio) || reviewedWrong(artist, corrections)) changes.push({ artist, field: "bio", before: artist.bio, after: null, reason: "Reviewed wrong subject/calendar" })
     } else for (const [field, change] of Object.entries(artist.changes || {})) {
+      if (!["bio", "discography"].includes(field)) throw new Error("Unsupported field")
+      if (!fields.includes(field)) continue
+      if (field === "discography" && require("./wiki-discography-holds.json").some(item =>
+        item.wikidataId === artist.proposal?.wikidataId && normalizeName(item.name) === normalizeName(artist.name))) throw new Error("Discography requires manual review")
       const credit = manifest.artists.find(a => a.artistId === artist.id)?.[field]
       if (!["bio", "discography"].includes(field) || !credit || credit.hash !== hashValue(change.after)) throw new Error("Plan does not match published attribution")
       if (field === "bio" && !hasBio(change.after) || field === "discography" && (!Array.isArray(change.after) || !change.after.length)) throw new Error("Refusing an empty replacement")
@@ -126,9 +131,10 @@ async function applyChanges(report, ca, { clearOnly = false, baseUrl, connect = 
 }
 
 async function main(args = process.argv.slice(2)) {
-  const { positionals, values } = parseArgs({ args, allowPositionals: true, options: { ca: { type: "string" }, "report-dir": { type: "string" }, report: { type: "string", multiple: true }, limit: { type: "string", default: "100" }, name: { type: "string", multiple: true }, "base-url": { type: "string" }, apply: { type: "boolean", default: false }, balanced: { type: "boolean", default: false }, "min-songs": { type: "string", default: "0" }, "exclude-report": { type: "string", multiple: true } } })
+  const { positionals, values } = parseArgs({ args, allowPositionals: true, options: { ca: { type: "string" }, "report-dir": { type: "string" }, report: { type: "string", multiple: true }, field: { type: "string", multiple: true }, limit: { type: "string", default: "100" }, name: { type: "string", multiple: true }, "base-url": { type: "string" }, apply: { type: "boolean", default: false }, balanced: { type: "boolean", default: false }, "min-songs": { type: "string", default: "0" }, "exclude-report": { type: "string", multiple: true } } })
   const command = positionals[0] || "audit"
   if (positionals.length > 1 || !["audit", "plan", "combine", "apply", "clear-reviewed"].includes(command)) throw new Error("Use audit, plan, combine, apply or clear-reviewed")
+  if (values.field && (command !== "apply" || values.field.some(field => !["bio", "discography"].includes(field)))) throw new Error("Use --field bio or --field discography with apply")
   for (const file of [".env.local", ".env"]) require("dotenv").config({ path: path.join(ROOT, file), quiet: true })
   if (command === "combine") {
     if (!values.report?.length) throw new Error("--report is required")
@@ -149,7 +155,7 @@ async function main(args = process.argv.slice(2)) {
     const report = JSON.parse(await fs.readFile(path.resolve(values.report[0]), "utf8"))
     if (report.source !== "live-database") throw new Error("A live audit/plan is required")
     if (!values.apply) { console.log("No writes: --apply is required."); return }
-    return applyChanges(report, values.ca, { clearOnly: command === "clear-reviewed", baseUrl: values["base-url"] })
+    return applyChanges(report, values.ca, { clearOnly: command === "clear-reviewed", fields: values.field, baseUrl: values["base-url"] })
   }
   const artists = await readArtists(values.ca)
   const report = { version: 1, createdAt: new Date().toISOString(), source: "live-database", summary: summarize(artists), artists }

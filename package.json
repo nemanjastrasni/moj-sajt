@@ -16,6 +16,7 @@
     "artists:images": "node scripts/artist-images.cjs",
     "artists:photos": "node scripts/artist-image-publish.cjs",
     "artists:wiki": "node scripts/artist-wiki.cjs",
+    "artists:discographies:recheck": "node scripts/recheck-discographies.cjs",
     "test:artist-wiki": "node --test scripts/test-artist-wiki.cjs",
     "test:artist-images": "node --test scripts/test-artist-images.cjs",
     "test:artist-media": "node --test scripts/test-artist-media.cjs",

@@ -1,0 +1,12 @@
+.section { margin-top: 32px; min-width: 0; }
+.section h2 { font-size: 24px; font-weight: 600; margin-bottom: 20px; }
+.group { margin-bottom: 28px; }
+.group h3 { font-size: 18px; font-weight: 500; margin-bottom: 12px; }
+.table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.table thead th { font-size: 13px; color: var(--theme-muted, #a1a1aa); font-weight: 500; }
+.table th, .table td { padding: 10px 0; text-align: left; vertical-align: top; border-bottom: 1px solid var(--theme-line, #30343a); }
+.table th:first-child, .year { width: 72px; }
+.table tbody th { font-weight: 400; overflow-wrap: anywhere; }
+.year { font-variant-numeric: tabular-nums; color: var(--theme-muted, #a1a1aa); }
+.empty { color: var(--theme-muted, #a1a1aa); font-size: 14px; }
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

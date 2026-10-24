@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import BioText from "@/app/biografija/components/BioText"
 import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
 import ArtistWikiCredit from "@/app/components/ArtistWikiCredit"
-import { normalizeDiscography } from "@/lib/discography"
+import ArtistDiscography from "@/app/components/ArtistDiscography"
 import ArtistImage from "@/app/components/ArtistImage"
 import { getArtistImage } from "@/lib/artistPhotos"
 import styles from "@/app/components/ArtistMedia.module.css"
@@ -27,7 +27,6 @@ export default async function BiographyPage({ params }: any) {
   })
 
   if (!artistData) notFound()
-  const albums = normalizeDiscography(artistData.discography)
   const image = getArtistImage(artistData)
 
   return (
@@ -56,27 +55,7 @@ export default async function BiographyPage({ params }: any) {
       </div>
 
       {/* DISKOGRAFIJA */}
-      {albums.length > 0 && (
-        <div>
-          <h2 style={{ fontSize: "22px", marginBottom: "10px" }}>
-            {albums.every(album => album.kind === "studio") ? "Studijski albumi / Studio albums" : "Diskografija"}
-          </h2>
-
-          <div style={{ whiteSpace: "pre-line" }}>
-              <div className="space-y-1">
-                {albums.map((album, i) => {
-                  return (
-                    <div key={i} className="flex gap-4">
-                      <div className="w-16 shrink-0 text-gray-400">{album.year}</div>
-                      <div className="min-w-0 break-words">{album.title}</div>
-                    </div>
-                  )
-                })}
-              </div>
-          </div>
-          <ArtistWikiCredit artistId={artistData.id} field="discography" value={artistData.discography} />
-        </div>
-      )}
+      <ArtistDiscography artistId={artistData.id} value={artistData.discography} />
 
     </div>
   )

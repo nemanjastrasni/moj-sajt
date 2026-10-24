@@ -1,0 +1,22 @@
+[
+  { "name": "Aca Lukas", "wikidataId": "Q337143", "reason": "Prepared studio list contains kafana/live releases; verify release types individually." },
+  { "name": "Atheist Rap", "wikidataId": "Q703217", "reason": "Prepared studio list includes Predsednici predsednistva predsednika; verify compilation classification." },
+  { "name": "Divlje Jagode", "wikidataId": "Q93292", "reason": "Prepared first-album year conflicts with the band's official historical material; review dates and newer releases." },
+  { "name": "Kings of Leon", "wikidataId": "Q192486", "reason": "O My Beloved requires confirmation as an album rather than a single." },
+  { "name": "Kinks", "wikidataId": "Q188713", "reason": "Prepared list mixes regional compilation/soundtrack releases with studio albums." },
+  { "name": "Legende", "wikidataId": "Q16086046", "reason": "Prepared studio list includes live and anthology releases." },
+  { "name": "Love Hunters", "wikidataId": "Q6690640", "reason": "Prepared list needs album-by-album release-type review." },
+  { "name": "Magazin", "wikidataId": "Q251590", "reason": "Prepared album titles include sales-certification annotations." },
+  { "name": "Metallica", "wikidataId": "Q15920", "reason": "Prepared studio list mixes EPs and compilation releases." },
+  { "name": "Neverne Bebe", "wikidataId": "Q1982209", "reason": "The Best Of - Dvoje classification needs review before automatic studio import." },
+  { "name": "Nirvana", "wikidataId": "Q11649", "reason": "Prepared studio list includes the Blew and Hormoaning EPs." },
+  { "name": "Oliver Dragojević", "wikidataId": "Q738151", "reason": "Prepared titles include labels and repeated release-year metadata." },
+  { "name": "Pedja Medenica", "wikidataId": "Q61131050", "reason": "Prepared album list appears to include singles; verify release types." },
+  { "name": "Pink Floyd", "wikidataId": "Q2306", "reason": "Prepared source contains Alex's love for Angela, absent from the official discography.", "source": "https://www.pinkfloyd.com/music/" },
+  { "name": "Psihomodo Pop", "wikidataId": "Q6646220", "reason": "Unpljugd needs release-type review before studio import." },
+  { "name": "Šaban Šaulić", "wikidataId": "Q390888", "reason": "Prepared list contains early single/EP and compilation candidates; verify release types." },
+  { "name": "The Black Keys", "wikidataId": "Q606226", "reason": "Prepared list contains a collaboration project and a recent release needing separate review." },
+  { "name": "Tutti Frutti Balkan Band", "wikidataId": "Q3445790", "reason": "Prepared titles contain record-label annotations." },
+  { "name": "Whitesnake", "wikidataId": "Q189965", "reason": "Snakebite is a mixed EP/regional compilation case, not an unambiguous studio release." },
+  { "name": "Yu Grupa", "wikidataId": "Q432697", "reason": "Prepared list contains a suspicious recent title and non-studio candidates." }
+]
