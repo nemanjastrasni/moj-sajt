@@ -155,6 +155,7 @@ model Playlist {
   userId    String
   createdAt DateTime       @default(now())
   isAdmin   Boolean        @default(false)
+  isPublic  Boolean        @default(false)
   category  String?
   user      User           @relation(fields: [userId], references: [id])
   songs     PlaylistSong[]

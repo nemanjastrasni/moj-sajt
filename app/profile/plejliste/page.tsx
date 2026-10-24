@@ -40,9 +40,11 @@ playlists.forEach((p: any) => {
   if (unique.length > 1) {
     mix.push(p)
   } else {
-    if (unique[0] === "domace") domace.push(p)
-    else if (unique[0] === "strane") strane.push(p)
-    else if (unique[0] === "narodne") narodne.push(p)
+    const category = unique[0] || p.category
+    if (category === "domace") domace.push(p)
+    else if (category === "strane") strane.push(p)
+    else if (category === "narodne") narodne.push(p)
+    else mix.push(p)
   }
 })
  const PlaylistRow = ({ p }: any) => (

@@ -1,12 +1,18 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
-import { revalidatePath } from "next/cache"
 import PlaylistClient from "@/app/components/PlaylistClient"
+import { notFound } from "next/navigation"
+import { playlistOrder, playlistViewerId, readablePlaylistWhere } from "@/lib/playlists/server"
 
+export const dynamic = "force-dynamic"
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  return ["4-akorda", "beginner", "acoustic"].includes(id) ? {} : { robots: { index: false, follow: false } }
+}
 
-export default async function Page({ params }: any) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
 
-  const { id } = params
+  const { id } = await params
 
   const isGenerated = ["4-akorda", "beginner", "acoustic"].includes(id)
 
@@ -24,13 +30,13 @@ export default async function Page({ params }: any) {
       }
     })
 
-    const getChords = (song: any) => {
+    const getChords = (song: { lyrics: string; content?: string }) => {
       const text = song.lyrics || song.content || ""
       const matches = text.match(/\[?[A-G][^\s\]]*/g) || []
       return matches.map((c: string) => c.replace(/\[|\]/g, ""))
     }
 
-    let filtered: any[] = []
+    let filtered: typeof allSongs = []
 
     if (id === "4-akorda") {
       filtered = allSongs.filter((song) => {
@@ -132,14 +138,19 @@ export default async function Page({ params }: any) {
   }
 
   // ✅ NORMALNA PLAYLISTA
-  const playlist = await prisma.playlist.findUnique({
-    where: { id },
-    include: {
+  const viewerId = await playlistViewerId()
+  const playlist = await prisma.playlist.findFirst({
+    where: readablePlaylistWhere(id, viewerId),
+    select: {
+      id: true, name: true, userId: true, isPublic: true,
       songs: {
-        include: {
+        orderBy: playlistOrder,
+        select: {
+          id: true, songId: true, playlistId: true, order: true,
           song: {
-            include: {
-              artist: true,
+            select: {
+              title: true, slug: true, category: true,
+              artist: { select: { name: true, slug: true } },
             },
           },
         },
@@ -147,17 +158,15 @@ export default async function Page({ params }: any) {
     },
   })
 
-  if (!playlist) return <div>Ne postoji</div>
+  if (!playlist) notFound()
 
   return (
-  <div style={{ padding: "40px" }}>
-    <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>
-      {playlist.name}
-    </h1>
-
     <PlaylistClient
+  key={JSON.stringify([playlist.id, playlist.name, playlist.isPublic, playlist.songs.map(item => [item.id, item.order, item.song.title, item.song.artist.name])])}
   playlistId={playlist.id}
+  name={playlist.name}
+  initialPublic={playlist.isPublic}
+  canEdit={playlist.userId === viewerId}
   initialSongs={playlist.songs}
 />
-</div>
 )}

@@ -13,6 +13,7 @@
     "test:submissions": "node --test scripts/test-submissions.cjs",
     "test:admin-songs": "node --test scripts/test-admin-songs.cjs",
     "test:songbook": "node --test scripts/test-songbook.cjs",
+    "test:playlists": "node --test scripts/test-playlists.cjs",
     "test:theme": "node --test scripts/test-theme.cjs",
     "test:i18n": "node --test scripts/test-i18n.cjs",
     "artists:images": "node scripts/artist-images.cjs",

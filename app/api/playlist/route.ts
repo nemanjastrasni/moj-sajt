@@ -1,228 +1,76 @@
 import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "../../../lib/auth"
-import { prisma } from "../../../lib/prisma"
+import { submissionUser } from "@/lib/submissions/server"
+import { SubmissionError } from "@/lib/submissions/validation"
+import { playlistCategory, playlistId, playlistName, playlistUpdate } from "@/lib/playlists/validation"
+import { ownedPlaylist, playlistBody, playlistFailure, playlistOrder, playlistTransaction, privateHeaders, refreshPlaylist } from "@/lib/playlists/server"
 
-const normalizeCategory = (cat?: string) => {
-  const c = (cat || "").toLowerCase()
-
-  if (c.includes("dom")) return "domace"
-  if (c.includes("str")) return "strane"
-  if (c.includes("nar")) return "narodne"
-
-  return "mix"
-}
-
-// CREATE PLAYLIST
-export async function POST(req: Request) {
-  const session = await getServerSession(authOptions)
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-
-  const { name, category, songId } = await req.json()
-
-  const user = await prisma.user.findUnique({
-    where: { email: session.user?.email! },
-  })
-
-  if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 })
-  }
-
-  const playlist = await prisma.playlist.create({
-    data: {
-    name,
-    category: normalizeCategory(category),
-    userId: user.id,
-},
-  })
-
-  if (songId) {
-  await prisma.playlistSong.create({
-    data: {
-      playlistId: playlist.id,
-      songId,
-      order: 0,
-    },
-  })
-}
-
-  return NextResponse.json(playlist)
-}
-
-// ADD SONG TO PLAYLIST
-export async function PUT(req: Request) {
-  const session = await getServerSession(authOptions)
-
-  if (!session) {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
-    )
-  }
-
-  const { playlistId, songId } = await req.json()
-
-  const user = await prisma.user.findUnique({
-    where: {
-      email: session.user?.email!,
-    },
-  })
-
-  if (!user) {
-    return NextResponse.json(
-      { error: "User not found" },
-      { status: 404 }
-    )
-  }
-
+export async function POST(request: Request) {
   try {
-    const alreadyInAnyPlaylist = await prisma.playlistSong.findFirst({
-      where: {
-        songId,
-        playlist: {
-          userId: user.id,
-        },
-      },
+    const user = await submissionUser(), body = await playlistBody(request)
+    const name = playlistName(body?.name), category = playlistCategory(body?.category)
+    const songId = body?.songId == null ? null : playlistId(body.songId)
+    const playlist = await playlistTransaction(async tx => {
+      if (songId && !await tx.song.findUnique({ where: { id: songId }, select: { id: true } })) throw new SubmissionError(404, "Pesma nije dostupna.")
+      return tx.playlist.create({ data: { name, category, userId: user.id, isPublic: false, ...(songId ? { songs: { create: { songId, order: 0 } } } : {}) } })
     })
-
-    // 👉 nađi poslednji order u toj playlisti
-const last = await prisma.playlistSong.findFirst({
-  where: { playlistId },
-  orderBy: { order: "desc" },
-})
-
-const newOrder = (last?.order ?? -1) + 1
-
-const item = await prisma.playlistSong.create({
-  data: {
-    playlistId,
-    songId,
-    order: newOrder,
-  },
-})
-
-    if (!alreadyInAnyPlaylist) {
-      await prisma.song.update({
-        where: {
-          id: songId,
-        },
-        data: {
-          popularity: {
-            increment: 1,
-          },
-        },
-      })
-    }
-
-    return NextResponse.json(item)
-  } catch (e) {
-    return NextResponse.json(
-      { error: "Already exists" },
-      { status: 400 }
-    )
-  }
+    refreshPlaylist(playlist.id)
+    return NextResponse.json(playlist, { headers: privateHeaders })
+  } catch (error) { return playlistFailure(error) }
 }
 
-// DELETE (song ili cela playlista)
-export async function DELETE(req: Request) {
+export async function PUT(request: Request) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    const { playlistId, songId } = await req.json()
-
-    // 👉 briši pesmu iz playliste
-    if (songId) {
-      await prisma.playlistSong.delete({
-        where: {
-          playlistId_songId: {
-            playlistId,
-            songId,
-          },
-        },
-      })
-
-      return NextResponse.json({ ok: true })
-    }
-
-    // 👉 briši celu playlistu
-    await prisma.playlistSong.deleteMany({
-      where: { playlistId },
+    const user = await submissionUser(), body = await playlistBody(request)
+    const id = playlistId(body?.playlistId), songId = playlistId(body?.songId)
+    const item = await playlistTransaction(async tx => {
+      await ownedPlaylist(tx, id, user.id)
+      if (!await tx.song.findUnique({ where: { id: songId }, select: { id: true } })) throw new SubmissionError(404, "Pesma nije dostupna.")
+      const already = await tx.playlistSong.findFirst({ where: { songId, playlist: { userId: user.id } }, select: { id: true } })
+      const last = await tx.playlistSong.findFirst({ where: { playlistId: id, order: { not: null } }, orderBy: { order: "desc" }, select: { order: true } })
+      const created = await tx.playlistSong.create({ data: { playlistId: id, songId, order: (last?.order ?? -1) + 1 } })
+      if (!already) await tx.song.update({ where: { id: songId }, data: { popularity: { increment: 1 } } })
+      return created
     })
-
-    await prisma.playlist.delete({
-      where: { id: playlistId },
-    })
-
-    return NextResponse.json({ ok: true })
-  } catch (e) {
-    console.error("DELETE ERROR:", e)
-    return NextResponse.json({ error: "Delete failed" }, { status: 500 })
-  }
+    refreshPlaylist(id)
+    return NextResponse.json(item, { headers: privateHeaders })
+  } catch (error) { return playlistFailure(error) }
 }
 
-// GET USER PLAYLISTS
+export async function DELETE(request: Request) {
+  try {
+    const user = await submissionUser(), body = await playlistBody(request)
+    const id = playlistId(body?.playlistId), songId = body?.songId == null ? null : playlistId(body.songId)
+    await playlistTransaction(async tx => {
+      await ownedPlaylist(tx, id, user.id)
+      if (songId) await tx.playlistSong.delete({ where: { playlistId_songId: { playlistId: id, songId } } })
+      else { await tx.playlistSong.deleteMany({ where: { playlistId: id } }); await tx.playlist.delete({ where: { id } }) }
+    })
+    refreshPlaylist(id)
+    return NextResponse.json({ ok: true }, { headers: privateHeaders })
+  } catch (error) { return playlistFailure(error) }
+}
+
 export async function GET() {
-  const session = await getServerSession(authOptions)
-  if (!session) return NextResponse.json([])
-
-  const user = await prisma.user.findUnique({
-    where: { email: session.user?.email! },
-  })
-
-  if (!user) return NextResponse.json([])
-
-  // ✅ PROVERI DA LI POSTOJI MIX
-  let mix = await prisma.playlist.findFirst({
-    where: {
-      userId: user.id,
-      category: "mix",
-    },
-  })
-
-  // ✅ AKO NE POSTOJI → NAPRAVI GA
-  if (!mix) {
-    mix = await prisma.playlist.create({
-      data: {
-        name: "Mix",
-        category: "mix",
-        userId: user.id,
-      },
+  try {
+    const user = await submissionUser()
+    const playlists = await playlistTransaction(async tx => {
+      // Retain the existing default Mix list without ever making it public automatically.
+      if (!await tx.playlist.findFirst({ where: { userId: user.id, category: "mix" }, select: { id: true } })) await tx.playlist.create({ data: { name: "Mix", category: "mix", userId: user.id, isPublic: false } })
+      return tx.playlist.findMany({ where: { userId: user.id }, include: { songs: { orderBy: playlistOrder } }, orderBy: [{ createdAt: "desc" }, { id: "asc" }] })
     })
-  }
-
-  // ✅ VRATI SVE PLAYLISTE
-  const playlists = await prisma.playlist.findMany({
-    where: { userId: user.id },
-    include: {
-    songs: {
-    orderBy: {
-      order: "asc",
-    },
-  },
-},
-  })
-
-  return NextResponse.json(playlists)
+    return NextResponse.json(playlists, { headers: privateHeaders })
+  } catch (error) { return playlistFailure(error) }
 }
 
-// EDIT PLAYLIST (rename)
-export async function PATCH(req: Request) {
-  const session = await getServerSession(authOptions)
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-
-  const { playlistId, name } = await req.json()
-
-  const updated = await prisma.playlist.update({
-    where: { id: playlistId },
-    data: { name },
-  })
-
-  return NextResponse.json(updated)
+export async function PATCH(request: Request) {
+  try {
+    const user = await submissionUser(), body = await playlistBody(request)
+    const id = playlistId(body?.playlistId), data = playlistUpdate(body ?? {})
+    const updated = await playlistTransaction(async tx => {
+      await ownedPlaylist(tx, id, user.id)
+      return tx.playlist.update({ where: { id }, data, select: { id: true, name: true, isPublic: true } })
+    })
+    refreshPlaylist(id)
+    return NextResponse.json(updated, { headers: privateHeaders })
+  } catch (error) { return playlistFailure(error) }
 }

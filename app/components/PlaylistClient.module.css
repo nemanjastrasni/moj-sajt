@@ -1,0 +1,27 @@
+.page { max-width: 1000px; margin: 0 auto; padding: 32px 16px 48px; min-width: 0; }
+.header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.header h1 { font-size: 28px; overflow-wrap: anywhere; min-width: 0; flex: 1 1 180px; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.button, .icon, .privacy { min-height: 44px; display: inline-flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; }
+.button { padding: 8px 12px; border: 1px solid var(--theme-line, #56616c); border-radius: 6px; }
+.button svg, .icon svg, .privacy svg { width: 18px; height: 18px; flex-shrink: 0; }
+.icon { width: 44px; flex: 0 0 44px; border-radius: 4px; }
+.button:disabled, .icon:disabled, .privacy:disabled { opacity: .45; cursor: default; }
+.button:focus-visible, .icon:focus-visible, .privacy:focus-visible { outline: 2px solid var(--theme-link, #69baff); outline-offset: 3px; }
+.privacy { padding: 4px 0; font-size: 14px; cursor: default; }
+button.privacy { cursor: pointer; }
+.track { display: inline-flex; align-items: center; width: 36px; height: 20px; padding: 2px; border: 1px solid var(--theme-line, #56616c); background: var(--theme-panel, #191919); border-radius: 20px; flex-shrink: 0; }
+.track::after { content: ""; display: block; height: 14px; width: 14px; border-radius: 50%; background: var(--theme-ink, #eee); transition: transform .15s; }
+.privacy[aria-checked="true"] .track { background: #087da8; border-color: #087da8; }
+.privacy[aria-checked="true"] .track::after { transform: translateX(16px); background: #fff; }
+.row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--theme-line, #343b43); min-width: 0; }
+.row a { min-width: 0; flex: 1; overflow-wrap: anywhere; line-height: 1.5; }
+.row a:hover { text-decoration: underline; }
+.muted { color: var(--theme-muted, #a1a1aa); }
+.drag { touch-action: none; cursor: grab; }
+.drag:active { cursor: grabbing; }
+.remove { color: var(--theme-red, #ff8585); }
+.error { margin: 16px 0; border-left: 3px solid #dc6660; padding-left: 12px; color: var(--theme-red, #ff8585); overflow-wrap: anywhere; }
+.status { margin: 12px 0; overflow-wrap: anywhere; }
+.notice { margin: 12px 0; font-size: 14px; color: var(--theme-muted, #a1a1aa); }
+@media (max-width: 400px) { .page { padding-left: 0; padding-right: 0; } }
