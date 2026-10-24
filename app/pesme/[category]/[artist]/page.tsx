@@ -2,7 +2,9 @@ import UiText from "@/app/components/UiText"
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
-import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
+import ArtistHeader from "@/app/components/ArtistHeader"
+import { getArtistImage } from "@/lib/artistPhotos"
+import styles from "@/app/components/ArtistMedia.module.css"
 
 export const dynamic = "force-dynamic"
 
@@ -26,7 +28,7 @@ export async function generateMetadata({ params }: any) {
 }
 
 export default async function ArtistPage({ params }: any) {
-  const { category, artist } = params
+  const { category, artist } = await params
 
   const artistData = await prisma.artist.findFirst({
     where: {
@@ -49,46 +51,11 @@ export default async function ArtistPage({ params }: any) {
   })
 
   if (!artistData) notFound()
-    const allImages = await prisma.artist.findMany({
-  where: { category },
-  select: { image: true },
-})
-
-const images = allImages
-  .map((a) => a.image)
-  .filter((img: string | null): img is string => Boolean(img))
-  .sort(() => Math.random() - 0.5)
-  .slice(0, 3)
+  const image = getArtistImage(artistData)
 
   return (
-  <div className="relative min-h-screen"
-   
-  >
-    <div className="theme-page-scrim absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-black/95" />
-
-    <div
-      style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}
-      className="relative z-10"
-    >
-      {artistData.image && (
-  <div className="theme-dark-surface relative h-[180px] overflow-hidden rounded-2xl mb-10 bg-neutral-900 flex items-center justify-center">
-    <img
-      src={artistData.image}
-      alt={artistData.name}
-      className="max-h-full max-w-full object-contain"
-    />
-
-    <div className="absolute inset-0 bg-black/60" />
-
-    <div className="absolute bottom-6 left-6">
-      <h1 className="text-4xl font-bold text-white">
-        {artistData.name}
-      </h1>
-    </div>
-  </div>
-)}
-
-      <ArtistPhotoCredit image={artistData.image} />
+    <div className={styles.page}>
+      <ArtistHeader name={artistData.name} image={image} />
 
       {/* LINK KA BIOGRAFIJI */}
       <div style={{ marginBottom: "25px" }}>
@@ -120,7 +87,6 @@ const images = allImages
 }
 </div>
 </div>
-    </div>
  
   )
 }

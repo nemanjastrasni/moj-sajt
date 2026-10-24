@@ -1,0 +1,61 @@
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+  min-width: 0;
+}
+
+.heading { font-size: 30px; margin-bottom: 24px; overflow-wrap: anywhere; }
+.letters { display: flex; flex-wrap: wrap; gap: 8px; }
+.letters a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 4px 10px;
+  border: 1px solid var(--theme-line, #46515c);
+  border-radius: 6px;
+  color: var(--theme-link, #69baff);
+  font-weight: 600;
+}
+
+.image {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background: var(--theme-raised, #20262b);
+  color: var(--theme-ink, #e5e5e5);
+}
+.image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.initials { display: grid; place-items: center; width: 100%; height: 100%; font-weight: 600; }
+.avatar { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 50%; }
+.avatar img { object-position: center 20%; }
+.tile { width: 100%; aspect-ratio: 4 / 3; border-radius: 6px; }
+.tile img { object-fit: contain; }
+.tile .initials { font-size: 28px; }
+.portrait { width: 100%; max-width: 500px; aspect-ratio: 4 / 3; border-radius: 6px; }
+.portrait img { object-fit: contain; }
+.portrait .initials { font-size: 48px; }
+
+.mosaic { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 16px; margin-top: 32px; }
+.tileLink { min-width: 0; color: var(--theme-ink, #e5e5e5); text-decoration: none; }
+.tileName { display: block; margin-top: 8px; line-height: 1.4; overflow-wrap: anywhere; }
+.artistHeader { display: flex; align-items: center; gap: 24px; margin-bottom: 16px; }
+.artistHeader .portrait { width: 240px; flex: 0 0 240px; }
+.artistHeader h1 { font-size: 32px; font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+.artistRow { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 4px 0; }
+.artistRow > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.tileLink:focus-visible, .letters a:focus-visible, .artistRow:focus-visible { outline: 2px solid var(--theme-link, #69baff); outline-offset: 4px; }
+@media (hover: hover) {
+  .tileLink:hover .tileName, .artistRow:hover > span:last-child { text-decoration: underline; }
+  .letters a:hover { background: var(--theme-hover, #20262b); }
+}
+@media (max-width: 900px) { .mosaic { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+  .page { padding: 24px 16px 36px; }
+  .mosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 12px; margin-top: 24px; }
+  .artistHeader { gap: 16px; }
+  .artistHeader .portrait { width: 120px; flex-basis: 120px; }
+  .artistHeader h1 { font-size: 24px; }
+}

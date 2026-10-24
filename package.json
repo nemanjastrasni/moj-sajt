@@ -18,6 +18,7 @@
     "artists:wiki": "node scripts/artist-wiki.cjs",
     "test:artist-wiki": "node --test scripts/test-artist-wiki.cjs",
     "test:artist-images": "node --test scripts/test-artist-images.cjs",
+    "test:artist-media": "node --test scripts/test-artist-media.cjs",
     "postinstall": "prisma generate"
   },
   "dependencies": {

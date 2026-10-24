@@ -2,6 +2,25 @@
   "version": 1,
   "photos": [
     {
+      "artistId": "cmmxst0n50068obh8fw7hq0av",
+      "artistName": "Babe",
+      "slug": "babe",
+      "category": "domace",
+      "image": "/artist-photos/Q432675-5d35562552ad9484.webp",
+      "sha256": "5d35562552ad94843238bbb3f8545c188cee774cc5a3ebdccb001b4eff07fad8",
+      "width": 960,
+      "height": 588,
+      "wikidataId": "Q432675",
+      "entityUrl": "https://www.wikidata.org/wiki/Q432675",
+      "title": "Babe Nis 06-06-2015.jpg",
+      "author": "Milosppf",
+      "credit": "Own work",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Babe_Nis_06-06-2015.jpg",
+      "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
+    },
+    {
       "artistId": "cmmxswgjm00f1ob3gv27feu03",
       "artistName": "Bjesovi",
       "slug": "bjesovi",

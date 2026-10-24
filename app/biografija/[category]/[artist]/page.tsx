@@ -4,6 +4,9 @@ import BioText from "@/app/biografija/components/BioText"
 import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
 import ArtistWikiCredit from "@/app/components/ArtistWikiCredit"
 import { normalizeDiscography } from "@/lib/discography"
+import ArtistImage from "@/app/components/ArtistImage"
+import { getArtistImage } from "@/lib/artistPhotos"
+import styles from "@/app/components/ArtistMedia.module.css"
 
 function cirToLat(text: string) {
   const map: any = {
@@ -25,26 +28,16 @@ export default async function BiographyPage({ params }: any) {
 
   if (!artistData) notFound()
   const albums = normalizeDiscography(artistData.discography)
+  const image = getArtistImage(artistData)
 
   return (
-    <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
+    <div className={styles.page}>
 
       {/* SLIKA */}
-      {artistData.image && (
-        <img
-          src={artistData.image}
-          alt={artistData.name}
-          style={{
-            width: "100%",
-            maxWidth: "500px",
-            borderRadius: "12px",
-            marginBottom: "30px"
-          }}
-        />
-      )}
+      {image && <ArtistImage src={image} name={artistData.name} variant="portrait" priority />}
 
       {/* IME */}
-      <ArtistPhotoCredit image={artistData.image} />
+      <ArtistPhotoCredit image={image} />
       <h1 style={{ fontSize: "32px", marginBottom: "20px" }}>
         {artistData.name}
       </h1>

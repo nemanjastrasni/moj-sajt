@@ -1,5 +1,8 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
+import ArtistImage from "@/app/components/ArtistImage"
+import { getArtistImage } from "@/lib/artistPhotos"
+import styles from "@/app/components/ArtistMedia.module.css"
 
 export default async function ArtistsByLetter({ params }: { params: Promise<{ category: string; slovo: string }> }){
 
@@ -26,6 +29,7 @@ if (isSpecial) {
     id: true,
     name: true,
     slug: true,
+    category: true,
     image: true
   }
 })
@@ -49,6 +53,7 @@ artists = await prisma.artist.findMany({
     id: true,
     name: true,
     slug: true,
+    category: true,
     image: true
   }
 })
@@ -57,7 +62,7 @@ artists = await prisma.artist.findMany({
 
 return(
 
-<div style={{padding:"40px"}}>
+<div className={styles.page}>
 
 <h1 style={{fontSize:"28px",marginBottom:"20px"}}>
 Izvođači - {letter?.toUpperCase()}
@@ -69,22 +74,10 @@ Izvođači - {letter?.toUpperCase()}
 <Link
   key={a.id}
   href={`/biografija/${category}/${a.slug}`}
-  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+  className={styles.artistRow}
 >
 
-  {a.image && (
-    <img
-      src={a.image}
-      alt={a.name}
-      style={{
-        width: "28px",
-        height: "28px",
-        borderRadius: "50%",
-        objectFit: "cover",
-        flexShrink: 0
-      }}
-    />
-  )}
+  <ArtistImage src={getArtistImage(a)} name={a.name} />
 
   <span>{a.name}</span>
 

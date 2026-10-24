@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import { prisma } from "@/lib/prisma"
 import { getCategoryLabel } from "@/lib/categories"
 import { CategoryLabel } from "@/app/components/UiText"
+import ArtistMosaic from "@/app/components/ArtistMosaic"
+import styles from "@/app/components/ArtistMedia.module.css"
 
 export const dynamic = "force-dynamic"
 
@@ -27,7 +29,7 @@ export default async function CategoryPage(
 
   const artists = await prisma.artist.findMany({
   where: { category },
-  select: { name: true, image: true },
+  select: { id: true, name: true, slug: true, category: true, image: true, _count: { select: { songs: true } } },
 })
 
 const lettersSet = new Set<string>()
@@ -53,56 +55,24 @@ artists.forEach(artist=>{
 const letters = Array.from(lettersSet).sort()
 
   return (
-  <div className="relative min-h-screen overflow-hidden">
-
-    {/* BACKGROUND */}
-    <div className="absolute inset-0 grid grid-cols-6 opacity-20">
-      {artists.slice(0, 30).map((a, i) =>
-        a.image ? (
-          <img
-            key={i}
-            src={a.image}
-            className="w-full h-full object-cover"
-          />
-        ) : null
-      )}
-    </div>
-
-    {/* OVERLAY */}
-    <div className="theme-page-scrim absolute inset-0 bg-black/80 backdrop-blur-sm" />
-
-    {/* CONTENT */}
-    <div
-      style={{ padding: "40px", maxWidth: "1000px", margin: "0 auto" }}
-      className="relative z-10"
-    >
-
-      <h1 style={{ fontSize: "32px", marginBottom: "30px" }}>
+  <div className={styles.page}>
+      <h1 className={styles.heading}>
         <CategoryLabel value={category} />
       </h1>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+      <nav className={styles.letters} aria-label="A-Z">
 
         {letters.map((letter)=>(
           <Link
             key={letter}
             href={`/pesme/${category}/slovo/${letter === "#" ? "num" : letter.toLowerCase()}`}
-            style={{
-              padding: "6px 10px",
-              border: "1px solid #ccc",
-              borderRadius: "6px",
-              textDecoration: "none",
-              color: "#2563eb",
-              fontWeight: 600,
-            }}
           >
             {letter}
           </Link>
         ))}
 
-      </div>
-
-    </div>
+      </nav>
+      <ArtistMosaic artists={artists} category={category} />
     </div>
   )
 }

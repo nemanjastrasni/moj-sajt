@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { CategoryLabel } from "@/app/components/UiText"
+import ArtistImage from "@/app/components/ArtistImage"
+import { getArtistImage } from "@/lib/artistPhotos"
+import styles from "@/app/components/ArtistMedia.module.css"
 
 export const dynamic = "force-dynamic"
 
@@ -52,7 +55,7 @@ export default async function LetterPage({ params }: any) {
 })
 
   return (
-    <div style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
+    <div className={styles.page}>
       <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>
         <CategoryLabel value={category} /> – {letter}
       </h1>
@@ -65,23 +68,9 @@ export default async function LetterPage({ params }: any) {
   <Link
     key={artist.id}
     href={`/pesme/${category}/${artist.slug}`}
-    className="flex items-center gap-3 py-1"
-style={{ alignItems: "center" }}
+    className={styles.artistRow}
   >
-    {artist.image && (
-      <img
-        src={artist.image}
-        alt={artist.name}
-        style={{
-    width: "28px",
-    height: "28px",
-    borderRadius: "50%",
-    objectFit: "cover",
-    flexShrink: 0,
-  }}
-        className="w-8 h-8 object-cover rounded-full"
-      />
-    )}
+    <ArtistImage src={getArtistImage(artist)} name={artist.name} />
 
     <span>
       {artist.name} ({artist.songs.length})
