@@ -130,6 +130,11 @@ async function musicEvidence(entity, client) {
   return null
 }
 function plain(value = "") { return cheerio.load(String(value)).text().replace(/\s+/g, " ").trim() }
+function isArtistPhoto(photo) {
+  let source = photo.filePage || ""
+  try { source = decodeURIComponent(source) } catch {}
+  return !/\b(?:statue|monument|sculpture|gravestone|tombstone|tomb|headstone|memorial|logo|autograph|signature)\b|nadgrobn|spomenik|grobnica|\u0441\u043f\u043e\u043c\u0435\u043d\u0438\u043a|\u043d\u0430\u0434\u0433\u0440\u043e\u0431|\u043c\u043e\u0433\u0438\u043b|postage stamp|album cover/i.test((photo.description || "") + " " + source.replace(/_/g, " "))
+}
 function photoMetadata(info) {
   const meta = info.extmetadata ?? {}
   const field = name => plain(meta[name]?.value ?? "")
@@ -144,7 +149,7 @@ function photoMetadata(info) {
     validLicenseUrl = url.protocol === "https:" && url.hostname === "creativecommons.org" && !url.username && !url.password && !url.port && /^\/(?:licenses\/by(?:-sa)?\/[1-4](?:\.0|\.5)|publicdomain\/(?:zero|mark)\/1\.0)(?:\/deed\.[a-z-]+)?\/?$/i.test(url.pathname)
     if (validLicenseUrl) licenseUrl = url.href
   } catch {}
-  const allowed = freeLicense && !["true", "1"].includes(nonFree) && Boolean(author) && (validLicenseUrl || /^Public domain$/i.test(license)) && ["image/jpeg", "image/png", "image/webp"].includes(info.mime) && info.width >= 320 && info.height >= 240
+  const allowed = freeLicense && !["true", "1"].includes(nonFree) && Boolean(author) && (validLicenseUrl || /^Public domain$/i.test(license)) && ["image/jpeg", "image/png", "image/webp"].includes(info.mime) && info.width >= 320 && info.height >= 240 && isArtistPhoto({ description: field("ImageDescription"), filePage: info.descriptionurl })
   return { allowed, license, licenseUrl, author, credit: field("Credit"), restrictions: field("Restrictions"), description: field("ImageDescription"), filePage: info.descriptionurl, downloadUrl: info.thumburl || info.url, width: info.width, height: info.height }
 }
 
@@ -191,4 +196,4 @@ async function stagePhoto(candidate, directory, client) {
   return filename
 }
 
-module.exports = { WikiClient, localImage, auditArtist, normalizeName, nameMatches, claims, musicEvidence, photoMetadata, discoverPhoto, stagePhoto, safeWikiUrl, digest }
+module.exports = { WikiClient, localImage, auditArtist, normalizeName, nameMatches, claims, musicEvidence, photoMetadata, discoverPhoto, stagePhoto, safeWikiUrl, digest, isArtistPhoto }

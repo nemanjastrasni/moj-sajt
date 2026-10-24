@@ -14,6 +14,7 @@
     "test:theme": "node --test scripts/test-theme.cjs",
     "test:i18n": "node --test scripts/test-i18n.cjs",
     "artists:images": "node scripts/artist-images.cjs",
+    "artists:photos": "node scripts/artist-image-publish.cjs",
     "test:artist-images": "node --test scripts/test-artist-images.cjs",
     "postinstall": "prisma generate"
   },

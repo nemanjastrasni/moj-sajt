@@ -39,12 +39,15 @@ async function main(args = process.argv.slice(2)) {
     ca: { type: "string" }, snapshot: { type: "string" }, "report-dir": { type: "string" },
     "check-remote": { type: "boolean", default: false }, download: { type: "boolean", default: false },
     balanced: { type: "boolean", default: false },
+    "min-songs": { type: "string", default: "0" }, "exclude-report": { type: "string", multiple: true },
     limit: { type: "string", default: "12" }, name: { type: "string", multiple: true }, category: { type: "string" },
   } })
   const command = positionals[0] || "audit"
   if (!["audit", "discover"].includes(command) || positionals.length > 1) throw new Error("Use audit or discover; this tool cannot modify the database")
   const limit = Number(values.limit)
   if (!Number.isInteger(limit) || limit < 1 || limit > 100) throw new Error("--limit must be between 1 and 100")
+  const minSongs = Number(values["min-songs"])
+  if (!Number.isInteger(minSongs) || minSongs < 0) throw new Error("Invalid --min-songs")
   if (values.category && !["domace", "narodne", "strane"].includes(values.category)) throw new Error("Invalid category")
   for (const file of [".env.local", ".env"]) require("dotenv").config({ path: path.join(ROOT, file), quiet: true })
   if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === "0") throw new Error("Unsafe TLS override is not supported")
@@ -60,7 +63,12 @@ async function main(args = process.argv.slice(2)) {
   console.log("Audit:", JSON.stringify(report.summary))
   if (command === "discover") {
     const names = values.name?.map(normalizeName)
-    const sorted = report.artists.filter(item => item.state === "missing" && (!values.category || item.category === values.category) && (!names || names.includes(normalizeName(item.name))))
+    const attempted = new Set()
+    for (const file of values["exclude-report"] || []) {
+      const previous = JSON.parse(await fs.readFile(path.resolve(file), "utf8"))
+      for (const item of previous.artists) if (item.candidate) attempted.add(item.id)
+    }
+    const sorted = report.artists.filter(item => item.state === "missing" && (item.songCount ?? 0) >= minSongs && !attempted.has(item.id) && (!values.category || item.category === values.category) && (!names || names.includes(normalizeName(item.name))))
       .sort((a, b) => (b.songCount ?? 0) - (a.songCount ?? 0) || a.name.localeCompare(b.name))
     let eligible = sorted.slice(0, limit)
     if (values.balanced && !values.category && !names) {

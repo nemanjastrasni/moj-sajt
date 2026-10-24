@@ -2,6 +2,7 @@ import UiText from "@/app/components/UiText"
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
 
 export const dynamic = "force-dynamic"
 
@@ -86,6 +87,8 @@ const images = allImages
     </div>
   </div>
 )}
+
+      <ArtistPhotoCredit image={artistData.image} />
 
       {/* LINK KA BIOGRAFIJI */}
       <div style={{ marginBottom: "25px" }}>

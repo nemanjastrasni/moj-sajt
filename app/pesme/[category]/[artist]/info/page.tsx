@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
 
 type Props = {
   params: Promise<{
@@ -48,6 +49,8 @@ export default async function ArtistInfoPage({ params }: Props) {
           />
         </div>
       )}
+
+      <ArtistPhotoCredit image={artistData.image} />
 
       {artistData.bio && (
         <div className="mb-8 whitespace-pre-line text-lg leading-relaxed">

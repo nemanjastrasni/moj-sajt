@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import BioText from "@/app/biografija/components/BioText"
+import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
 
 function cirToLat(text: string) {
   const map: any = {
@@ -40,6 +41,7 @@ export default async function BiographyPage({ params }: any) {
       )}
 
       {/* IME */}
+      <ArtistPhotoCredit image={artistData.image} />
       <h1 style={{ fontSize: "32px", marginBottom: "20px" }}>
         {artistData.name}
       </h1>

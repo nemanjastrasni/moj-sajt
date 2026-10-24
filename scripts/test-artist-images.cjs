@@ -11,6 +11,7 @@ const { decodeCopy, artistRecord, readSnapshot } = require("./lib/artist-image-s
 const core = require("./lib/artist-image-core.cjs")
 const { isPublicAddress, imageRequestUrl, fetchPublicImage } = require("./lib/artist-image-network.cjs")
 const { reviewHtml } = require("./artist-images.cjs")
+const publisher = require("./artist-image-publish.cjs")
 
 const temporary = fs.mkdtemp(path.join(os.tmpdir(), "artist-image-tests-"))
 after(async () => {
@@ -140,4 +141,93 @@ test("report escapes untrusted artist text and does not create active unsafe lin
   const html = reviewHtml({ createdAt: "now", source: { kind: "database" }, summary: {}, artists: [{ name: "<script>alert(1)</script>", image: "javascript:alert(1)", state: "unverified", candidate: { state: "not-found", description: "<img src=x onerror=alert(1)>" } }] })
   assert.doesNotMatch(html, /<script>alert|href="javascript:|<img src=x/)
   assert.match(html, /&lt;script&gt;/)
+})
+
+test("publication eligibility requires a current blank field and matching musical identity", () => {
+  const current = { id: "a", name: "The Animals", slug: "animals", category: "strane", image: null, songCount: 20 }
+  const candidate = { state: "review-ready", evidence: "musical-group", label: "Animals", wikidataId: "Q100", photo: { allowed: true, author: "Photographer", restrictions: "" }, stagedFile: "staged/Q100-1234567890abcdef.webp" }
+  const record = { ...current, candidate }
+  assert.equal(publisher.eligible(record, current, 5), true)
+  for (const change of [{ image: "https://example.com/manual.jpg" }, { name: "Other" }, { slug: "other" }, { category: "domace" }, { songCount: 1 }]) assert.equal(publisher.eligible(record, { ...current, ...change }, 5), false)
+  for (const change of [{ state: "ambiguous" }, { evidence: "animal" }, { label: "Other" }, { stagedFile: "../private.webp" }, { photo: { ...candidate.photo, restrictions: "Check additional rights" } }, { photo: { ...candidate.photo, author: "Unknown authorUnknown author" } }]) assert.equal(publisher.eligible({ ...record, candidate: { ...candidate, ...change } }, current, 5), false)
+})
+
+test("artist image selection excludes statues, gravestones and signatures", () => {
+  for (const description of ["Statue of the singer", "Nadgrobna ploca", "\u0421\u043f\u043e\u043c\u0435\u043d\u0438\u043a \u043f\u0435\u0432\u0430\u0447\u0443", "Album cover"]) {
+    assert.equal(core.isArtistPhoto({ description }), false)
+    assert.equal(core.photoMetadata({ ...info, extmetadata: { ...info.extmetadata, ImageDescription: { value: description } } }).allowed, false)
+  }
+  assert.equal(core.isArtistPhoto({ filePage: "https://commons.wikimedia.org/wiki/File:Singer_gravestone.jpg" }), false)
+  assert.equal(core.isArtistPhoto({ description: "Singer performing in concert" }), true)
+})
+
+test("deployment origins cannot be arbitrary hosts or insecure URLs", () => {
+  assert.equal(publisher.deploymentOrigin("https://moj-sajt-rho.vercel.app"), "https://moj-sajt-rho.vercel.app")
+  for (const value of ["http://moj-sajt-rho.vercel.app", "https://127.0.0.1", "https://evilvercel.app", "https://x.vercel.app/other", "https://user:pass@x.vercel.app", "https://x.vercel.app:444"]) assert.throws(() => publisher.deploymentOrigin(value))
+})
+
+test("publication SQL cannot replace a manual photo or update an artist whose identity changed", async () => {
+  const photo = { image: "/artist-photos/Q100-1234567890abcdef.webp", artistId: "a", artistName: "Animals", slug: "animals", category: "strane" }
+  const client = { query: async (sql, values) => {
+    assert.match(sql, /image IS NULL OR btrim\(image\) = ''/)
+    assert.match(sql, /name = \$3 AND slug IS NOT DISTINCT FROM \$4 AND category IS NOT DISTINCT FROM \$5/)
+    assert.deepEqual(values, [photo.image, "a", "Animals", "animals", "strane"])
+    assert.equal(sql.split(" SET ")[1].split(" WHERE ")[0], "image = $1")
+    return { rowCount: 0 }
+  } }
+  assert.equal(await publisher.checkedUpdate(client, photo), false)
+})
+
+test("publication requires deployed attribution and refuses changed image bytes", async () => {
+  const source = require("../public/artist-photos/manifest.json")
+  const manifest = { version: 1, photos: source.photos.slice(0, 1) }
+  assert.equal(manifest.photos.length, 1)
+  const bytes = await fs.readFile(path.join(__dirname, "..", "public", manifest.photos[0].image.slice(1)))
+  const request = (credits, image) => async url => new Response(url.endsWith("manifest.json") ? JSON.stringify(manifest) : url.endsWith("/foto-izvori") ? credits : image)
+  const credits = `<section data-artist-photo-manifest="${core.digest(JSON.stringify(manifest))}"></section>`
+  await publisher.verifyDeployment(manifest, "https://test.vercel.app", request(credits, bytes))
+  await assert.rejects(publisher.verifyDeployment(manifest, "https://test.vercel.app", request("Old credits", bytes)), /credits/)
+  await assert.rejects(publisher.verifyDeployment(manifest, "https://test.vercel.app", request(credits, Buffer.from("wrong"))), /checksum/)
+  await assert.rejects(publisher.verifyDeployment(manifest, "https://test.vercel.app", async () => new Response("{}")), /manifest/)
+})
+
+function transactionHarness(failBackup = false, failUpdate = false) {
+  const events = []
+  return { events, options: {
+    log: () => {},
+    verify: async () => { events.push("verified") },
+    connect: async () => ({
+      query: async sql => {
+        events.push(sql)
+        if (sql.startsWith("SELECT")) return { rows: [{ id: "a", image: null }] }
+        if (sql.startsWith("UPDATE")) { if (failUpdate) throw Error("database failure"); return { rowCount: 1 } }
+        return {}
+      }, end: async () => { events.push("closed") },
+    }),
+    save: async file => { events.push(path.basename(file)); if (failBackup && file.endsWith("before.json")) throw Error("disk full") },
+  } }
+}
+
+test("transaction backs up locked rows before writes, commits once and closes", async () => {
+  const { events, options } = transactionHarness()
+  const result = await publisher.publish({ version: 1, photos: [{ artistId: "a" }] }, null, "https://test.vercel.app", options)
+  assert.equal(result.updated.length, 1)
+  assert.equal(events[0], "verified")
+  assert.ok(events.findIndex(event => event.includes("FOR UPDATE")) < events.indexOf("before.json"))
+  assert.ok(events.indexOf("before.json") < events.findIndex(event => event.startsWith("UPDATE")))
+  assert.ok(events.indexOf("intent.json") < events.indexOf("COMMIT"))
+  assert.equal(events.at(-1), "closed")
+})
+
+test("backup or update failure rolls back; duplicate identities never connect", async () => {
+  for (const [backup, update] of [[true, false], [false, true]]) {
+    const { events, options } = transactionHarness(backup, update)
+    await assert.rejects(publisher.publish({ version: 1, photos: [{ artistId: "a" }] }, null, "https://test.vercel.app", options))
+    assert.ok(events.includes("ROLLBACK")); assert.ok(!events.includes("COMMIT"))
+    if (backup) assert.ok(!events.some(event => event.startsWith("UPDATE")))
+    assert.equal(events.at(-1), "closed")
+  }
+  const { events, options } = transactionHarness()
+  await assert.rejects(publisher.publish({ version: 1, photos: [{ artistId: "a" }, { artistId: "a" }] }, null, "https://test.vercel.app", options), /Duplicate/)
+  assert.equal(events.length, 0)
 })
