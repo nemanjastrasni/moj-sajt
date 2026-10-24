@@ -47,6 +47,7 @@ model User {
   playlistLikes      ListeningPlaylistLike[]
   playlists          Playlist[]
   sessions           Session[]
+  songSubmissions    SongSubmission[]
 }
 
 model Artist {
@@ -76,9 +77,30 @@ model Song {
   difficulty    String         @default("beginner")
   favorites     Favorite[]
   playlistSongs PlaylistSong[]
+  submissions   SongSubmission[]
   artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([artistId, slug])
+}
+
+model SongSubmission {
+  id              String   @id @default(cuid())
+  userId          String
+  category        String
+  artistName      String
+  title           String
+  lyrics          String
+  status          String   @default("pending")
+  reviewNote      String?
+  reviewerId      String?
+  publishedSongId String?
+  createdAt       DateTime @default(now())
+  reviewedAt      DateTime?
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  publishedSong   Song?    @relation(fields: [publishedSongId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
 }
 
 model Account {

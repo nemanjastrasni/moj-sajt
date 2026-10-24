@@ -113,6 +113,8 @@ export default function Menu() {
         {open && <div id={id + "-account"} className="guitar-dropdown right-0 top-full mt-2 w-60 max-w-[calc(100vw-24px)]">
           <p className="truncate px-3 py-2 text-xs text-gray-400">{session.user?.email}</p>
           <Link href="/profile" prefetch={false} onClick={close} className="guitar-dropdown-link">Profil</Link>
+          <Link href="/predlozi-pesmu" prefetch={false} onClick={close} className="guitar-dropdown-link">Predlozi pesmu</Link>
+          <Link href="/moji-predlozi" prefetch={false} onClick={close} className="guitar-dropdown-link">Moji predlozi</Link>
           <Link href="/profile/plejliste" prefetch={false} onClick={close} className="guitar-dropdown-link">Moje plejliste</Link>
           <Link href="/listening-playlist" prefetch={false} onClick={close} className="guitar-dropdown-link">Plejliste za slusanje</Link>
           <Link href="/favorite" prefetch={false} onClick={close} className="guitar-dropdown-link">Favoriti</Link>

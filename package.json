@@ -10,6 +10,7 @@
     "test:chords": "node --test scripts/test-song-sheet.cjs",
     "test:auth": "node --test scripts/test-auth.cjs",
     "test:search": "node --test scripts/test-search.cjs",
+    "test:submissions": "node --test scripts/test-submissions.cjs",
     "postinstall": "prisma generate"
   },
   "dependencies": {

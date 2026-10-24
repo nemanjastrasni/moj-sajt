@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
 import BackButton from "@/app/components/BackButton"
+import Link from "next/link"
 
 export default async function AdminLayout({
   children,
@@ -22,38 +23,41 @@ export default async function AdminLayout({
 }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen min-w-0 flex-col md:flex-row">
 
       {/* SIDEBAR */}
-      <aside className="w-64 bg-black text-white p-6 space-y-4">
+      <aside className="w-full shrink-0 bg-black text-white p-6 space-y-4 md:w-64">
         <h2 className="text-xl font-bold">Admin</h2>
 
         <nav className="space-y-2 text-sm">
-  <a href="/admin" className="block hover:underline">
+  <Link href="/admin/predlozi" className="block hover:underline">
+    Predlozi pesama
+  </Link>
+  <Link href="/admin" className="block hover:underline">
     Dashboard
-  </a>
+  </Link>
 
-  <a href="/admin/edit" className="block hover:underline">
+  <Link href="/admin/edit" className="block hover:underline">
   Edit tabela
-</a>
+</Link>
 
-  <a href="/admin/artists" className="block hover:underline">
+  <Link href="/admin/artists" className="block hover:underline">
     Izvođači
-  </a>
+  </Link>
 
-  <a href="/admin/songs" className="block hover:underline">
+  <Link href="/admin/songs" className="block hover:underline">
     Pesme
-  </a>
+  </Link>
 
-  <a href="/admin/korisnici" className="block hover:underline">
+  <Link href="/admin/korisnici" className="block hover:underline">
   Korisnici
-</a>
+</Link>
 </nav>
       </aside>
 
       {/* CONTENT */}
-      <main className="flex-1 p-8 bg-gray-50">
-        <header className="flex justify-between items-center mb-6">
+      <main className="min-w-0 flex-1 p-4 bg-gray-50 sm:p-8">
+        <header className="flex flex-wrap justify-between items-center gap-3 mb-6">
           <h1 className="text-2xl font-bold">Admin Panel</h1>
           <BackButton />
         </header>
