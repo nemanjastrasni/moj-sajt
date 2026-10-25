@@ -4,7 +4,7 @@ import type { NextAuthOptions } from "next-auth"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import bcrypt from "bcrypt"
 import { prisma } from "@/lib/prisma"
-import { getGoogleCredentials } from "@/lib/auth/google"
+import { getGoogleCredentials, verifiedGoogleEmail } from "@/lib/auth/google"
 import { isValidEmail, normalizeEmail } from "@/lib/auth/validation"
 
 const googleCredentials = getGoogleCredentials()
@@ -48,8 +48,8 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === "credentials") return true
       if (account?.provider !== "google" || !profile) return false
       const google = profile as GoogleProfile
-      const email = normalizeEmail(google.email)
-      if (google.email_verified !== true || !isValidEmail(email) || !account.providerAccountId) return false
+      const email = verifiedGoogleEmail(profile, account.providerAccountId)
+      if (!email) return false
 
       try {
         return await prisma.$transaction(async (tx) => {
@@ -114,7 +114,8 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     async signIn({ user, account, profile }) {
-      if (account?.provider === "google" && profile?.email && normalizeEmail(profile.email) === user.email) {
+      const email = account?.provider === "google" ? verifiedGoogleEmail(profile, account.providerAccountId) : null
+      if (email && email === user.email) {
         await prisma.user.updateMany({
           where: { id: user.id, emailVerified: null },
           data: { emailVerified: new Date() },

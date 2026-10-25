@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Existing CommonJS module-loader test harness. */
 require("ts-node").register({
   transpileOnly: true,
   compilerOptions: { module: "CommonJS", moduleResolution: "Node" },
@@ -12,7 +13,7 @@ const root = path.resolve(__dirname, "..")
 const { validateSignup, normalizeEmail, getPasswordError, MAX_AVATAR_BYTES } = require("../lib/auth/validation.ts")
 const { safeCallbackUrl, authErrorMessage, withAuthTimeout } = require("../lib/auth/navigation.ts")
 const { readLimitedJson } = require("../lib/auth/request.ts")
-const { getGoogleCredentials } = require("../lib/auth/google.ts")
+const { getGoogleCredentials, verifiedGoogleEmail } = require("../lib/auth/google.ts")
 
 let state
 const calls = []
@@ -164,6 +165,9 @@ test("auth database failures never expose internal exception text", async () => 
 
 test("Google refuses unverified profiles, unsupported providers and bans", async () => {
   assert.equal(await googleSignIn({ email_verified: false }), false)
+  assert.equal(await googleSignIn({ email_verified: "true" }), false)
+  assert.equal(await googleSignIn({ sub: "other-google-user" }), false)
+  assert.equal(await googleSignIn({ sub: undefined }), false)
   assert.equal(await googleSignIn({}, { ...googleAccount, provider: "facebook" }), false)
   assert.equal(calls.length, 0)
   state.linked = { user: { ...baseUser, banned: true } }
@@ -221,10 +225,20 @@ test("JWT refreshes role and profile from DB and rejects bans and deleted users"
 })
 
 test("Google verification never marks a different local email as verified", async () => {
-  await authOptions.events.signIn({ user: baseUser, account: googleAccount, profile: { email: "other@gmail.com" } })
+  await authOptions.events.signIn({ user: baseUser, account: googleAccount, profile: { sub: "google-sub", email_verified: true, email: "other@gmail.com" } })
   assert.equal(calls.length, 0)
-  await authOptions.events.signIn({ user: baseUser, account: googleAccount, profile: { email: baseUser.email } })
+  await authOptions.events.signIn({ user: baseUser, account: googleAccount, profile: { sub: "google-sub", email_verified: true, email: baseUser.email } })
   assert.equal(calls[0][0], "updateUsers")
+})
+
+test("Google email verification requires a verified claim bound to this provider identity", async () => {
+  const profile = { sub: "google-sub", email_verified: true, email: baseUser.email }
+  assert.equal(verifiedGoogleEmail({ ...profile, email: " TEST@EXAMPLE.COM " }, "google-sub"), baseUser.email)
+  for (const invalid of [null, {}, { ...profile, email_verified: false }, { ...profile, email_verified: "true" }, { ...profile, sub: "other-sub" }, { ...profile, email: "not-an-email" }]) {
+    assert.equal(verifiedGoogleEmail(invalid, "google-sub"), null)
+    await authOptions.events.signIn({ user: baseUser, account: googleAccount, profile: invalid })
+  }
+  assert.equal(calls.length, 0)
 })
 
 test("signup API returns only success, stores optional fields, ignores admin injection", async () => {

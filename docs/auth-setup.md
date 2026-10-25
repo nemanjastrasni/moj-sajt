@@ -23,12 +23,36 @@ Proveriti OAuth consent screen i test korisnike ako je aplikacija u Testing rezi
 
 Dokumentacija: https://next-auth.js.org/providers/google
 
+## Provera redirect_uri_mismatch, 2026-10-25
+
+Javna provera produkcije i pocetka OAuth zahteva potvrdila je da sajt stvarno salje:
+
+```text
+https://moj-sajt-rho.vercel.app/api/auth/callback/google
+```
+
+U Google Cloud konzoli, Google Auth Platform > Clients (ili APIs & Services > Credentials), otvoriti **isti Web application OAuth klijent ciji Client ID je na Vercelu**. U **Authorized redirect URIs** dodati tacno gornji URL i sacuvati. Nije dovoljno upisati ga u Authorized JavaScript origins; tamo ide samo `https://moj-sajt-rho.vercel.app`, ako se to polje koristi. Ne menjati ni slati Client Secret radi ove provere.
+
+Za Production Vercel okruzenje kanonski `NEXTAUTH_URL`, ako je eksplicitno postavljen, treba da bude `https://moj-sajt-rho.vercel.app`. Posle izmene Vercel promenljivih potreban je redeploy. Lokalni `.env.local` koristi localhost; to nije dokaz da je isti URL postavljen u produkciji. Nemojte slepo kopirati lokalni NEXTAUTH_URL na Vercel.
+
+`https://moj-sajt-git-main-nemanjastrasnis-projects.vercel.app` trenutno preusmerava na Vercel SSO zastitu pri anonimnoj proveri. To je odvojeno od Google redirect greske. Za korisnike koristiti javni produkcioni domen; ne iskljucivati zastitu svih preview deploy-eva da bi prijava proradila. Ako i drugi javni domen treba da ima zasebnu OAuth prijavu, njegov tacan callback mora biti dozvoljen u Google Cloud-u i uskladjen sa NextAuth/cookie domenom. Ne preusmeravati samo OAuth callback na drugi host: PKCE/state cookies pripadaju hostu gde je tok zapocet.
+
+```powershell
+npm run auth:check-google
+npm run auth:check-google -- --start-oauth
+```
+
+Prvi poziva samo javni providers endpoint. Drugi zapocinje anonimni OAuth tok sa CSRF cookie-jem i staje pre Google prijave: ne prijavljuje korisnika, ne menja naloge, ne cita `.env`/bazu i ne ispisuje kljuceve, client ID, state, CSRF ili PKCE vrednosti. Proverava i da zahtev nosi PKCE S256, state i osnovne openid/email/profile dozvole. Provera ne moze da procita privatnu Google Cloud allowlist-u niti dokaze da je zavrsena prijava uspela. `redirect_uri_mismatch` se ne moze otkloniti izmenom dozvoljenog callback-a u Google Cloud-u kroz sam Git deploy ovog sajta.
+
+Pri ovoj proveri autorizacioni zahtev nije prisiljavao ponovnu saglasnost (`prompt=consent` nije postavljen). Google i dalje moze traziti prvi pristanak, izbor naloga ili bezbednosnu proveru.
+
 ## Postojeci nalozi
 
 PrismaAdapter koristi postojece tabele User/Account; nije dodata promena seme.
 Google identitet se pamti po providerAccountId, ne samo po prikazanom emailu.
 Google mora da potvrdi email. Zabranjeni korisnici ne dobijaju novu sesiju,
 a pri sledecoj proveri postojece sesije zabrana se ponovo proverava.
+Potvrdjen Google profil ne dobija dodatni email za potvrdu sa ovog sajta. Pri prijavi i upisu emailVerified provera zahteva `email_verified === true` i `sub` koji se poklapa sa providerAccountId; nickname, dostavljen email ili string "true" nisu dovoljan dokaz identiteta. Google-ovu sopstvenu sigurnosnu proveru ne zaobilazimo.
 
 Nalog napravljen emailom i lozinkom ne spajamo automatski sa Google nalogom.
 Prvo se prijaviti lozinkom, pa na Profilu pritisnuti "Povezi Google nalog".
