@@ -3,6 +3,7 @@ import Link from "next/link"
 import PlaylistClient from "@/app/components/PlaylistClient"
 import { notFound } from "next/navigation"
 import { playlistOrder, playlistViewerId, readablePlaylistWhere } from "@/lib/playlists/server"
+import { playlistSongHref } from "@/lib/navigation/parent"
 
 export const dynamic = "force-dynamic"
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
@@ -81,7 +82,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             {domace.map((song) => (
               <Link
                 key={song.id}
-                href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+                href={playlistSongHref(song, "/plejliste/" + encodeURIComponent(id))}
                 className="block py-1 border-b border-gray-800 hover:bg-[#1a1a1a] hover:text-green-400 transition px-2 rounded"
               >
                 <span className="text-gray-400">
@@ -100,7 +101,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             {strane.map((song) => (
               <Link
                 key={song.id}
-                href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+                href={playlistSongHref(song, "/plejliste/" + encodeURIComponent(id))}
                 className="block py-1 border-b border-gray-800 hover:bg-[#1a1a1a] hover:text-green-400 transition px-2 rounded"
               >
                 <span className="text-gray-400">
@@ -119,7 +120,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             {narodne.map((song) => (
               <Link
                 key={song.id}
-                href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+                href={playlistSongHref(song, "/plejliste/" + encodeURIComponent(id))}
                 className="block py-1 border-b border-gray-800 hover:bg-[#1a1a1a] hover:text-green-400 transition px-2 rounded"
               >
                 <span className="text-gray-400">

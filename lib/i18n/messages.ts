@@ -1,5 +1,6 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "Sajt vodi": "Website operator:", "Fizicko lice, Srbija.": "Individual, Serbia.",
   "Sajt vodi fizicko lice iz Srbije.": "This website is operated by an individual based in Serbia.",
   "Za pitanja o sajtu, ispravke sadrzaja i zahteve u vezi sa nalogom pisi na:": "For website questions, content corrections and account requests, contact:",
   "Ne salji JMBG, lozinke, podatke kartice ili skenirane licne dokumente.": "Do not send personal identification numbers, passwords, card details or scanned identity documents.",

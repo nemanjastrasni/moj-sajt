@@ -4,7 +4,32 @@ const { test } = require("node:test")
 const assert = require("node:assert/strict")
 const fs = require("node:fs")
 const path = require("node:path")
-const { parentHref, artistIndexHref, activeParentHref } = require("../lib/navigation/parent.ts")
+const { parentHref, artistIndexHref, activeParentHref, playlistReturnHref, playlistSongHref } = require("../lib/navigation/parent.ts")
+
+test("playlist song links carry their own list context, without global or browser-history state", () => {
+  const song = { category: "domace", artist: { slug: "divlje-jagode" }, slug: "kako-si-topla-i-mila" }
+  for (const playlist of ["/plejliste/cm123", "/plejliste/4-akorda", "/plejliste/kategorija/acoustic", "/plejliste/pesme-koje-znam", "/top-50/strane"]) {
+    const url = new URL(playlistSongHref(song, playlist), "https://site.test")
+    assert.equal(url.pathname, "/pesme/domace/divlje-jagode/kako-si-topla-i-mila")
+    assert.equal(url.searchParams.get("playlist"), playlist)
+    const target = { pathname: url.pathname, href: playlistReturnHref(url.searchParams.get("playlist")), owner: "song" }
+    assert.equal(activeParentHref(url.pathname, target), playlist)
+  }
+  const first = new URL(playlistSongHref(song, "/plejliste/first"), "https://site.test")
+  const second = new URL(playlistSongHref(song, "/plejliste/second"), "https://site.test")
+  assert.equal(first.searchParams.get("playlist"), "/plejliste/first")
+  assert.equal(second.searchParams.get("playlist"), "/plejliste/second")
+  assert.equal(activeParentHref(first.pathname, null), "/pesme/domace/divlje-jagode")
+})
+
+test("playlist return query accepts only supported internal list paths, never arbitrary destinations", () => {
+  for (const invalid of [undefined, null, 123, ["/plejliste/id"], ["/plejliste/a", "/plejliste/b"], "https://evil.test", "//evil.test", "/\\evil.test", "/admin", "/login", "/pesme/domace/bend", "/plejliste/id/other", "/plejliste/id?next=evil", "/plejliste/%2e%2e", "/plejliste/%2f%2fevil", "/plejliste/%252f", "/plejliste/id#other", "/plejliste/id\n", "/top-50/unknown", "/plejliste/" + "a".repeat(500)]) {
+    assert.equal(playlistReturnHref(invalid), null, String(invalid))
+  }
+  assert.equal(playlistReturnHref("/plejliste/cm123/"), "/plejliste/cm123")
+  const encoded = playlistSongHref({ category: "domace", artist: { slug: "\u0111or\u0111e" }, slug: "pesma #1" }, "/plejliste/id")
+  assert.ok(encoded.startsWith("/pesme/domace/%C4%91or%C4%91e/pesma%20%231?"))
+})
 
 test("song, artist index, category and home follow hierarchy rather than visit history", () => {
   const cases = [

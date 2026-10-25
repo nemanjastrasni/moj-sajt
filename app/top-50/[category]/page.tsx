@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
+import { playlistSongHref } from "@/lib/navigation/parent"
 
 export default async function Top50Page({
   params,
@@ -44,7 +45,7 @@ export default async function Top50Page({
         {songs.map((song) => (
           <Link
             key={song.id}
-            href={`/pesme/${category}/${song.artist.slug}/${song.slug}`}
+            href={playlistSongHref(song, "/top-50/" + encodeURIComponent(category))}
             className="block border-b border-gray-800 pb-3 hover:text-yellow-400 transition"
           >
             {song.artist.name} — {song.title}

@@ -10,6 +10,21 @@ function segments(pathname: string | null) {
 
 const href = (parts: string[]) => "/" + parts.map(encodeURIComponent).join("/")
 
+export function playlistReturnHref(value: unknown): string | null {
+  if (typeof value !== "string" || value.length > 300) return null
+  const parts = segments(value)
+  if (!parts || parts.some(part => !/^[a-z0-9_-]{1,128}$/i.test(part))) return null
+  if (parts[0] === "plejliste" && (parts.length === 2 || parts.length === 3 && parts[1] === "kategorija")) return href(parts)
+  if (parts[0] === "top-50" && parts.length === 2 && ["domace", "narodne", "strane"].includes(parts[1])) return href(parts)
+  return null
+}
+
+export function playlistSongHref(song: { category: string; slug: string; artist: { slug: string } }, playlistPath: string) {
+  const songPath = href(["pesme", song.category, song.artist.slug, song.slug])
+  const returnTo = playlistReturnHref(playlistPath)
+  return returnTo ? `${songPath}?playlist=${encodeURIComponent(returnTo)}` : songPath
+}
+
 export function artistIndexHref(section: ArtistSection, category: string, name: string) {
   const upper = name.trim().toUpperCase()
   // Biography indexes currently group digraphs under their first letter; song indexes do not.

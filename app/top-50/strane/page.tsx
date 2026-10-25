@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import UiText from "@/app/components/UiText"
+import { playlistSongHref } from "@/lib/navigation/parent"
 
 export default async function Page() {
   const songs = await prisma.song.findMany({
@@ -25,7 +26,7 @@ export default async function Page() {
       {songs.map((song) => (
         <Link
           key={song.id}
-          href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+          href={playlistSongHref(song, "/top-50/strane")}
           className="block py-2 border-b border-gray-800"
         >
           <span className="text-gray-400">

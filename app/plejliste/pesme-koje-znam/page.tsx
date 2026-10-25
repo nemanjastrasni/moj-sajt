@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import { playlistSongHref } from "@/lib/navigation/parent"
 
 export default async function SongsYouCanPlayPage() {
   const session = await getServerSession(authOptions)
@@ -56,7 +57,7 @@ const level: string = "beginner"
       {songs.map((song) => (
         <Link
           key={song.id}
-          href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+          href={playlistSongHref(song, "/plejliste/pesme-koje-znam")}
           className="block border-b border-zinc-800 pb-3 hover:text-yellow-400 transition"
         >
           <div className="text-lg font-medium">

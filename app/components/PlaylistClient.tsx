@@ -12,13 +12,14 @@ import { playlistPdfSongs, playlistRequest } from "@/lib/playlists/client"
 import { downloadPdf, pdfError, preparePdfDownload } from "@/lib/songbook/client"
 import { MAX_BOOK_SONGS } from "@/lib/songbook/model"
 import styles from "./PlaylistClient.module.css"
+import { playlistSongHref } from "@/lib/navigation/parent"
 
 export type PlaylistSongItem = {
   id: string; songId: string; playlistId: string; order: number | null
   song: { title: string; slug: string; category: string; artist: { name: string; slug: string } }
 }
 function SongLink({ item }: { item: PlaylistSongItem }) {
-  return <Link href={"/pesme/" + [item.song.category, item.song.artist.slug, item.song.slug].map(encodeURIComponent).join("/")} translate="no">
+  return <Link href={playlistSongHref(item.song, "/plejliste/" + encodeURIComponent(item.playlistId))} translate="no">
     <span className={styles.muted}>{item.song.artist.name}</span>{" - "}{item.song.title}
   </Link>
 }

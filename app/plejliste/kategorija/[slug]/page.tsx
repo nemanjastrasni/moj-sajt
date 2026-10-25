@@ -1,21 +1,21 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { CategoryLabel } from "@/app/components/UiText"
+import { playlistSongHref } from "@/lib/navigation/parent"
 
-export default async function PlaylistSongsPage({ params }: any) {
+export default async function PlaylistSongsPage({ params }: { params: Promise<{ slug: string }> }) {
 
-  const { slug } = params
-
-  let songs: any[] = []
+  const { slug } = await params
 
   const allSongs = await prisma.song.findMany({
     include: {
       artist: { select: { slug: true } }
     }
   })
+  let songs: typeof allSongs = []
 
   // ✅ fallback: chords ili lyrics
-  const getChords = (song: any) => {
+  const getChords = (song: { chords: string | null; lyrics: string | null }) => {
     const text = song.chords || song.lyrics || ""
     const matches = text.match(/\[?[A-G][^\s\]]*/g) || []
     return matches.map((c: string) => c.replace(/\[|\]/g, ""))
@@ -68,7 +68,7 @@ export default async function PlaylistSongsPage({ params }: any) {
         {songs.map((song) => (
           <Link
             key={song.id}
-            href={`/pesme/${song.category}/${song.artist.slug}/${song.slug}`}
+            href={playlistSongHref(song, "/plejliste/kategorija/" + encodeURIComponent(slug))}
           >
             {song.title}
           </Link>

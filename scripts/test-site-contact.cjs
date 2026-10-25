@@ -2,11 +2,12 @@
 require("ts-node").register({ transpileOnly: true, compilerOptions: { module: "CommonJS", moduleResolution: "Node" } })
 const { test } = require("node:test")
 const assert = require("node:assert/strict")
-const { PUBLIC_CONTACT_EMAIL, CONTACT_MAILTO, RIGHTS_REPORT_MAILTO } = require("../lib/site-contact.ts")
+const { PUBLIC_CONTACT_EMAIL, PUBLIC_OPERATOR_NAME, CONTACT_MAILTO, RIGHTS_REPORT_MAILTO } = require("../lib/site-contact.ts")
 const { parentHref } = require("../lib/navigation/parent.ts")
 
 test("contact links use the owner-approved public mailbox, not a placeholder", () => {
   assert.equal(PUBLIC_CONTACT_EMAIL, "nemanjaivanovic979@gmail.com")
+  assert.equal(PUBLIC_OPERATOR_NAME, "Nemanja Ivanovi\u0107")
   assert.equal(CONTACT_MAILTO, `mailto:${PUBLIC_CONTACT_EMAIL}`)
   const url = new URL(RIGHTS_REPORT_MAILTO)
   assert.equal(url.protocol, "mailto:")
