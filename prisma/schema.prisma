@@ -154,6 +154,7 @@ model Favorite {
   userId    String
   songId    String
   createdAt DateTime @default(now())
+  transpose Int      @default(0)
   song      Song     @relation(fields: [songId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 

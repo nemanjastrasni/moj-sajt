@@ -8,11 +8,15 @@ import UsedChordCard from "./UsedChordCard"
 import SongSheet from "./SongSheet"
 import SongPdfButton from "./SongPdfButton"
 import SongPlaylistButton from "./SongPlaylistButton"
+import useFavoriteSong from "./useFavoriteSong"
+import FavoriteTransposeStatus from "./FavoriteTransposeStatus"
+import { Minus, Plus, RotateCcw, Star } from "lucide-react"
 import { getUsedChords, parseSongSheet } from "@/lib/chords/songSheet"
 import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
 
 type Props = {
   adminTools?: ReactNode
+  fromFavorites?: boolean
   song: {
     id: string
     title: string
@@ -30,13 +34,13 @@ type Props = {
   } | null
 }
 
-export default function SongClient({ song, adminTools }: Props) {
+export default function SongClient({ song, adminTools, fromFavorites = false }: Props) {
   const { t } = useI18n()
 
-  const [transpose, setTranspose] = useState(0)
+  const favorite = useFavoriteSong(song.id, fromFavorites)
+  const { transpose, isFav } = favorite
   const [showVideo, setShowVideo] = useState(false)
   const [miniPlayer, setMiniPlayer] = useState(false)
-  const [isFav, setIsFav] = useState(false)
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
   const [scrollSpeed, setScrollSpeed] = useState(1)
   const scrollRef = useRef<NodeJS.Timeout | null>(null)
@@ -97,24 +101,7 @@ export default function SongClient({ song, adminTools }: Props) {
   }
 }, [])
 
-  useEffect(() => {
-  let mounted = true
 
-  async function checkFav() {
-    const res = await fetch(`/api/favorite/check?songId=${song.id}`)
-    const data = await res.json()
-
-    if (mounted) {
-      setIsFav(data.isFav)
-    }
-  }
-  
-  checkFav()
-
-  return () => {
-    mounted = false
-  }
-}, [song.id])
 
 
 
@@ -129,36 +116,12 @@ export default function SongClient({ song, adminTools }: Props) {
           {/* TOOLBAR */}
           <div className="mb-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-gray-400 border-b border-gray-800 pb-3">
 
-            {/* TON */}
             <div className="flex items-center gap-2">
-
-              <span className="uppercase tracking-wide text-xs">{t("Ton")}</span>
-
-              <button
-                aria-label={t("Smanji tonalitet")} onClick={() => setTranspose(t => t - 1)}
-                className="px-2 hover:text-white"
-              >
-                −
-              </button>
-
-              <span className="text-white font-medium w-6 text-center">
-                {transpose > 0 ? `+${transpose}` : transpose}
-              </span>
-
-              <button
-                aria-label={t("Povecaj tonalitet")} onClick={() => setTranspose(t => t + 1)}
-                className="px-2 hover:text-white"
-              >
-                +
-              </button>
-
-              <button
-                onClick={() => setTranspose(0)}
-                className="ml-1 text-xs text-red-400 hover:text-red-300"
-              >
-                {t("reset")}
-              </button>
-
+              <span className="uppercase text-xs">{t("Ton")}</span>
+              <button type="button" disabled={favorite.controlsDisabled || transpose <= -11} aria-label={t("Smanji tonalitet")} title={t("Smanji tonalitet")} onClick={() => favorite.change(value => Math.max(-11, value - 1))} className="inline-flex h-11 w-11 items-center justify-center disabled:opacity-40"><Minus size={18} /></button>
+              <output aria-label={t("Transpozicija")} className="text-white font-medium w-10 text-center">{transpose > 0 ? `+${transpose}` : transpose}</output>
+              <button type="button" disabled={favorite.controlsDisabled || transpose >= 11} aria-label={t("Povecaj tonalitet")} title={t("Povecaj tonalitet")} onClick={() => favorite.change(value => Math.min(11, value + 1))} className="inline-flex h-11 w-11 items-center justify-center disabled:opacity-40"><Plus size={18} /></button>
+              <button type="button" disabled={favorite.controlsDisabled} aria-label={t("Originalni tonalitet")} title={t("Originalni tonalitet")} onClick={() => favorite.change(0)} className="inline-flex h-11 w-11 items-center justify-center disabled:opacity-40"><RotateCcw size={18} /></button>
             </div>
 
             {/* SCROLL */}
@@ -253,6 +216,7 @@ export default function SongClient({ song, adminTools }: Props) {
 </button>
           </div>
 
+       <FavoriteTransposeStatus phase={favorite.phase} error={favorite.error} reload={favorite.reload} />
        {/* TITLE */}
       
 <div className="flex flex-wrap items-center gap-4 mb-2 relative z-10">
@@ -261,33 +225,8 @@ export default function SongClient({ song, adminTools }: Props) {
   </h1>
 
   <SongPdfButton song={{ id: song.id, title, artist, lyrics: displayContent }} transpose={transpose} textSize={textSize} chordSize={chordSize} />
-  {/* FAVORITE STAR */}
-  <button
-    aria-label={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")}
-    onClick={async () => {
-      const method = isFav ? "DELETE" : "POST"
-
-      const res = await fetch("/api/favorite", {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          songId: song.id,
-        }),
-      })
-
-      if (!res.ok) return
-
-      setIsFav(!isFav)
-    }}
-    className={`text-2xl transition ${
-      isFav
-        ? "text-yellow-400"
-        : "text-gray-500 hover:text-yellow-300"
-    }`}
-  >
-    ★
+  <button type="button" title={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")} aria-label={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")} aria-pressed={isFav} disabled={favorite.favoriteDisabled} onClick={() => void favorite.toggle()} className={`inline-flex h-11 w-11 items-center justify-center transition disabled:opacity-40 ${isFav ? "text-yellow-400" : "text-gray-500 hover:text-yellow-300"}`}>
+    <Star size={22} fill={isFav ? "currentColor" : "none"} />
   </button>
 
   <SongPlaylistButton key={song.id} songId={song.id} />

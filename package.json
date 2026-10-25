@@ -23,6 +23,7 @@
     "test:songbook": "node --test scripts/test-songbook.cjs",
     "test:playlists": "node --test scripts/test-playlists.cjs scripts/test-playlist-catalog.cjs",
     "test:difficulty": "node --test scripts/test-difficulty.cjs",
+    "test:favorite-transpose": "node --test scripts/test-favorite-transpose.cjs",
     "test:theme": "node --test scripts/test-theme.cjs",
     "test:i18n": "node --test scripts/test-i18n.cjs",
     "artists:images": "node scripts/artist-images.cjs",

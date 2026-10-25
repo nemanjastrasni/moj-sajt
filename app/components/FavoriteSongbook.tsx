@@ -9,7 +9,7 @@ import { emptyBook, MAX_BOOK_SONGS, moveBookEntry, restoreBookDraft, type BookDr
 import { downloadPdf, favoritePdfSongs, pdfError, preparePdfDownload } from "@/lib/songbook/client"
 import styles from "./FavoriteSongbook.module.css"
 
-export type FavoriteBookSong = { id: string; title: string; artist: string; href: string }
+export type FavoriteBookSong = { id: string; title: string; artist: string; href: string; transpose?: number }
 export default function FavoriteSongbook({ userId, favorites }: { userId: string; favorites: FavoriteBookSong[] }) {
   const { t, locale } = useI18n()
   const [open, setOpen] = useState(false), [draft, setDraft] = useState<BookDraft>(emptyBook)
@@ -35,7 +35,7 @@ export default function FavoriteSongbook({ userId, favorites }: { userId: string
   function toggleSong(id: string) {
     setError("")
     if (!selected.has(id) && entries.length >= MAX_BOOK_SONGS) { setError("Izaberi od 1 do 100 pesama."); return }
-    setDraft(current => ({ ...current, songs: selected.has(id) ? entries.filter(song => song.id !== id) : [...entries, { id, transpose: 0 }] }))
+    setDraft(current => ({ ...current, songs: selected.has(id) ? entries.filter(song => song.id !== id) : [...entries, { id, transpose: available.get(id)?.transpose ?? 0 }] }))
   }
   async function exportBook() {
     if (running.current) return
@@ -83,10 +83,11 @@ export default function FavoriteSongbook({ userId, favorites }: { userId: string
           })}</ol>
         </section>}
         <section>{open && <h2>{t("Favoriti")}</h2>}
-          {open && <div className={styles.tools}><button type="button" disabled={busy || favorites.length > MAX_BOOK_SONGS} className={styles.button} onClick={() => setDraft(current => ({ ...current, songs: [...entries, ...favorites.filter(song => !selected.has(song.id)).map(song => ({ id: song.id, transpose: 0 }))] }))}>{t("Izaberi sve")}</button><button type="button" disabled={busy || !entries.length} className={styles.button} onClick={() => setDraft(current => ({ ...current, songs: [] }))}>{t("Ponisti izbor")}</button></div>}
+          {open && <div className={styles.tools}><button type="button" disabled={busy || favorites.length > MAX_BOOK_SONGS} className={styles.button} onClick={() => setDraft(current => ({ ...current, songs: [...entries, ...favorites.filter(song => !selected.has(song.id)).map(song => ({ id: song.id, transpose: song.transpose ?? 0 }))] }))}>{t("Izaberi sve")}</button><button type="button" disabled={busy || !entries.length} className={styles.button} onClick={() => setDraft(current => ({ ...current, songs: [] }))}>{t("Ponisti izbor")}</button></div>}
           <ul className={styles.list}>{favorites.map(song => <li key={song.id} className={styles.row}>
             {open && <label className={styles.check}><input type="checkbox" disabled={busy} checked={selected.has(song.id)} onChange={() => toggleSong(song.id)} aria-label={t("Dodaj u PDF knjigu") + ": " + song.title} /></label>}
             <Link href={song.href} translate="no"><span className={styles.muted}>{song.artist}</span><br />{song.title}</Link>
+            {Boolean(song.transpose) && <span className={styles.muted}>{t("Ton")} {song.transpose! > 0 ? "+" : ""}{song.transpose}</span>}
           </li>)}</ul>
         </section>
       </div>

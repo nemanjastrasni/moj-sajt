@@ -46,3 +46,14 @@ test("separate list links for the same song retain independent server-rendered t
   }
   assert.equal(reads, updates, "navigation adds no queries and leaves existing visit-counter behavior unchanged")
 })
+
+test("Favorites explicitly restore the personal view and return there, while catalog/playlist visits stay original", async () => {
+  const props = query => ({ params: Promise.resolve({ category: "domace", artist: "bend", slug: "pesma" }), searchParams: Promise.resolve(query) })
+  const favorite = await SongPage(props({ from: "favorites" }))
+  assert.equal(favorite.props.children.find(child => child?.type === marker).props.href, "/favorite")
+  assert.equal(favorite.props.children.find(child => child?.type === SongClient).props.fromFavorites, true)
+  for (const query of [{}, { from: ["favorites"] }, { from: "Favorites" }, { from: "favorites", playlist: "/plejliste/first" }]) {
+    const tree = await SongPage(props(query))
+    assert.equal(tree.props.children.find(child => child?.type === SongClient).props.fromFavorites, false)
+  }
+})

@@ -1,0 +1,5 @@
+.status { display: inline-flex; gap: 6px; align-items: center; color: var(--theme-muted, #a1a1aa); font-size: 13px; }
+.status svg { width: 16px; height: 16px; flex-shrink: 0; }
+.error { font-size: 14px; color: var(--theme-red, #ff8585); margin: 8px 0 16px; overflow-wrap: anywhere; }
+.retry { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; padding: 8px 12px; margin-top: 8px; border: 1px solid var(--theme-line, #56616c); border-radius: 6px; }
+.retry svg { width: 18px; height: 18px; flex-shrink: 0; }

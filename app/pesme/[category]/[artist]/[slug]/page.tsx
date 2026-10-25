@@ -7,6 +7,7 @@ import { artistPageHref } from "@/lib/adminContent/paths"
 import { songReviewVersion } from "@/lib/songReview/server"
 import { BackNavigationTarget } from "@/app/components/BackNavigation"
 import { playlistReturnHref } from "@/lib/navigation/parent"
+import { isFavoriteView } from "@/lib/favorites/model"
 
 type Props = {
   params: Promise<{
@@ -33,7 +34,10 @@ export async function generateMetadata(
 
 export default async function SongPage({ params, searchParams }: Props) {
   const { artist, slug, category } = await params
-  const returnTo = playlistReturnHref((await searchParams)?.playlist)
+  const query = await searchParams ?? {}
+  const playlist = playlistReturnHref(query.playlist)
+  const fromFavorites = isFavoriteView(query, playlist)
+  const returnTo = playlist ?? (fromFavorites ? "/favorite" : null)
   const pathname = "/pesme/" + [category, artist, slug].map(encodeURIComponent).join("/")
 
   const song = await prisma.song.findFirst({
@@ -67,6 +71,8 @@ export default async function SongPage({ params, searchParams }: Props) {
     <>
     {returnTo && <BackNavigationTarget pathname={pathname} href={returnTo} />}
     <SongClient
+      key={song.id + (fromFavorites ? ":favorite" : ":original")}
+      fromFavorites={fromFavorites}
       adminTools={<AdminPageActions kind="song" id={song.id} name={song.title} songVersion={songReviewVersion(song)} editHref={`/admin/songs/${encodeURIComponent(song.id)}/edit?from=song`} afterDelete={artistPageHref(song.artist)} />}
       song={{
         id: song.id,

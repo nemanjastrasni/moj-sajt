@@ -1,13 +1,13 @@
 import UiText from "@/app/components/UiText"
 import { prisma } from "@/lib/prisma"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { favoriteViewer } from "@/lib/favorites/server"
+import { favoriteSongHref } from "@/lib/favorites/model"
 import FavoriteSongbook from "@/app/components/FavoriteSongbook"
 
 export default async function FavoritePage() {
-  const session = await getServerSession(authOptions)
+  const userId = await favoriteViewer()
 
-  if (!session) {
+  if (!userId) {
     return (
       <div style={{ padding: "40px" }}>
         <UiText text="Morate biti ulogovani." />
@@ -15,13 +15,13 @@ export default async function FavoritePage() {
     )
   }
 
-  const userId = session.user.id
 
   const favorites = await prisma.favorite.findMany({
     where: {
       userId,
     },
     select: {
+      transpose: true,
       song: {
         select: {
           id: true, title: true, slug: true, category: true,
@@ -34,7 +34,7 @@ export default async function FavoritePage() {
     },
   })
 
-  return <FavoriteSongbook key={userId} userId={userId} favorites={favorites.map(({ song }) => ({ id: song.id, title: song.title, artist: song.artist.name,
-    href: "/pesme/" + [song.category, song.artist.slug, song.slug].map(encodeURIComponent).join("/"),
+  return <FavoriteSongbook key={userId} userId={userId} favorites={favorites.map(({ song, transpose }) => ({ id: song.id, title: song.title, artist: song.artist.name, transpose,
+    href: favoriteSongHref(song),
   }))} />
 }
