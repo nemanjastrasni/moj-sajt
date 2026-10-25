@@ -4,9 +4,12 @@ CREATE TABLE IF NOT EXISTS public."SongReview" (
   "status" TEXT NOT NULL DEFAULT 'unreviewed',
   "reviewedById" TEXT NOT NULL,
   "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT "SongReview_songId_fkey" FOREIGN KEY ("songId") REFERENCES public."Song"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "SongReview_status_check" CHECK ("status" IN ('unreviewed', 'needs_fix', 'verified'))
+  CONSTRAINT "SongReview_songId_fkey" FOREIGN KEY ("songId") REFERENCES public."Song"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+-- Expand an existing three-state installation without changing any saved marks.
+ALTER TABLE public."SongReview" DROP CONSTRAINT IF EXISTS "SongReview_status_check";
+ALTER TABLE public."SongReview" ADD CONSTRAINT "SongReview_status_check"
+  CHECK ("status" IN ('unreviewed', 'needs_fix', 'manually_corrected', 'verified'));
 CREATE INDEX IF NOT EXISTS "SongReview_status_idx" ON public."SongReview"("status");
 -- Review metadata is server/admin-only, never available through public REST policies.
 ALTER TABLE public."SongReview" ENABLE ROW LEVEL SECURITY;

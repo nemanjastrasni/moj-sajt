@@ -20,7 +20,7 @@ async function main() {
       const columns = (await client.query("SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='SongReview' ORDER BY column_name")).rows.map(row => row.column_name)
       if (columns.join(",") !== "reviewedById,songId,status,updatedAt") throw Error("Unexpected existing review table; inspect manually")
       reviews = (await client.query('SELECT * FROM public."SongReview" ORDER BY "songId"')).rows
-      if (reviews.some(row => !["unreviewed", "needs_fix", "verified"].includes(row.status))) throw Error("Unexpected existing review statuses")
+      if (reviews.some(row => !["unreviewed", "needs_fix", "manually_corrected", "verified"].includes(row.status))) throw Error("Unexpected existing review statuses")
     }
     const before = (await client.query(digestSql)).rows[0]
     if (!values.apply) {

@@ -5,14 +5,20 @@ const assert = require("node:assert/strict")
 const Module = require("node:module")
 const path = require("node:path")
 const { Prisma } = require("@prisma/client")
+const { renderToStaticMarkup } = require("react-dom/server")
 const model = require("../lib/songReview/model.ts")
 const query = require("../lib/adminSongs/query.ts")
-let state, session, down, revoked, failWrite, conflicts, attempts, locked, cacheFailure, reads
+let state, session, down, revoked, failWrite, conflicts, attempts, locked, cacheFailure, reads, reviewQueries
 const tx = {
   user: { findUnique: async ({ where }) => { if (down) throw Error("postgres://secret"); reads++; return state.users.find(user => user.id === where.id) ?? null } },
   $queryRaw: async value => { assert.ok(value.sql.includes("FOR UPDATE")); assert.deepEqual(value.values, ["song"]); locked = true; return [{ id: "song" }] },
   song: { findUnique: async ({ where }) => { assert.equal(locked, true); return state.songs.find(song => song.id === where.id) ? { ...state.songs.find(song => song.id === where.id), review: state.reviews.find(row => row.songId === where.id) ?? null } : null } },
   songReview: {
+    findMany: async args => {
+      reviewQueries.push(args)
+      assert.deepEqual(args.select, { songId: true, status: true })
+      return state.reviews.filter(row => args.where.songId.in.includes(row.songId)).map(({ songId, status }) => ({ songId, status }))
+    },
     findUnique: async ({ where }) => { reads++; return state.reviews.find(row => row.songId === where.songId) ?? null },
     upsert: async ({ where, create, update }) => {
       assert.equal(locked, true)
@@ -38,25 +44,31 @@ Module._load = function(request, parent, isMain) {
   if (request === "@/lib/prisma") return { prisma }
   if (request === "next/cache") return { revalidatePath() { if (cacheFailure) throw Error("cache") } }
   if (request === "./AdminContentButtons" || request === "./SongReviewControl") return { __esModule: true, default: () => null }
+  if (request === "./UiText") return { __esModule: true, default: ({ text }) => text }
+  if (request.endsWith(".module.css")) return { __esModule: true, default: new Proxy({}, { get: (_, key) => key }) }
   if (request.startsWith("@/")) request = path.join(__dirname, "..", request.slice(2))
   return original.call(this, request, parent, isMain)
 }
-let server, route, PageActions
+let server, route, PageActions, ArtistSongList
 try {
   server = require("../lib/songReview/server.ts")
   route = require("../app/api/admin/songs/[id]/review/route.ts")
   PageActions = require("../app/components/AdminPageActions.tsx").default
+  ArtistSongList = require("../app/components/ArtistSongList.tsx").default
 } finally { Module._load = original }
 beforeEach(() => {
   state = { users: [{ id: "admin", role: "admin", banned: false }, { id: "user", role: "user", banned: false }], songs: [{ id: "song", title: "Song", lyrics: "  G       D\nOvo je stih.", chords: null }], reviews: [] }
   session = { user: { id: "admin", role: "admin" } }; down = revoked = failWrite = cacheFailure = false; conflicts = attempts = reads = 0; locked = false
+  reviewQueries = []
 })
 const body = (status = "verified", expectedStatus = "unreviewed") => ({ status, expectedStatus, version: server.songReviewVersion(state.songs[0]) })
 const req = (data, headers = {}) => new Request("https://site.test/api/admin/songs/song/review", { method: "PATCH", headers: { "content-type": "application/json", origin: "https://site.test", ...headers }, body: JSON.stringify(data) })
 const ctx = id => ({ params: Promise.resolve({ id }) })
 
-test("three explicit statuses distinguish unreviewed from known errors; no coercion or unknown status", () => {
-  assert.deepEqual(model.reviewStatuses, ["unreviewed", "needs_fix", "verified"])
+test("four explicit statuses separate manual layout corrections from verified music; no coercion", () => {
+  assert.deepEqual(model.reviewStatuses, ["unreviewed", "needs_fix", "manually_corrected", "verified"])
+  assert.equal(model.reviewLabels.manually_corrected, "Ispravljeno ru\u010dno")
+  assert.equal(require("../lib/i18n/messages.ts").english[model.reviewLabels.manually_corrected], "Manually corrected")
   for (const value of [null, "correct", ["verified"], true, {}, "__proto__"]) assert.equal(model.isReviewStatus(value), false)
   for (const value of [null, [], { ...body(), status: "bad" }, { ...body(), expectedStatus: "bad" }, { ...body(), version: "old" }]) assert.throws(() => server.validateSongReview(value))
   assert.deepEqual(server.validateSongReview({ ...body(), reviewedById: "user", lyrics: "injected" }), body())
@@ -88,10 +100,12 @@ test("manual review records the real actor and server timestamp without changing
   assert.equal(state.reviews[0].reviewedById, "admin"); assert.ok(state.reviews[0].updatedAt instanceof Date)
   assert.deepEqual(state.songs, before); assert.equal(response.headers.get("cache-control"), "private, no-store"); assert.equal(response.headers.get("vary"), "Cookie")
 })
-test("admin can move between all three statuses while retaining a single current row", async () => {
+test("admin can move between all four statuses while retaining a single current row", async () => {
   await route.PATCH(req(body()), ctx("song"))
   assert.equal((await route.PATCH(req(body("needs_fix", "verified")), ctx("song"))).status, 200)
-  assert.equal((await route.PATCH(req(body("unreviewed", "needs_fix")), ctx("song"))).status, 200)
+  assert.equal((await route.PATCH(req(body("manually_corrected", "needs_fix")), ctx("song"))).status, 200)
+  assert.equal(state.reviews[0].status, "manually_corrected")
+  assert.equal((await route.PATCH(req(body("unreviewed", "manually_corrected")), ctx("song"))).status, 200)
   assert.equal(state.reviews.length, 1); assert.equal(state.reviews[0].status, "unreviewed")
 })
 test("a stale displayed song cannot be marked verified after its text or chord spacing changes", async () => {
@@ -148,4 +162,48 @@ test("review is an optional private relation, not a public Song scalar field", (
   const song = Prisma.dmmf.datamodel.models.find(model => model.name === "Song")
   assert.equal(song.fields.find(field => field.name === "review").kind, "object")
   assert.ok(!song.fields.some(field => field.kind === "scalar" && /review/i.test(field.name)))
+})
+
+const artistListProps = () => ({ category: "domace", artist: "test-band", songs: state.songs.map(song => ({ ...song, slug: song.id, difficulty: "beginner" })) })
+
+test("artist song list exposes no reviews and performs no review query for non-admin visitors", async () => {
+  for (const identity of [null, { id: "user", role: "admin" }, { id: "missing", role: "admin" }, { id: "admin", role: "admin" }]) {
+    session = identity ? { user: identity } : null
+    state.users[0].banned = identity?.id === "admin"
+    const html = renderToStaticMarkup(await ArtistSongList(artistListProps()))
+    assert.ok(html.includes("Song"))
+    assert.ok(!html.includes("data-song-review"))
+    assert.equal(reviewQueries.length, 0)
+  }
+})
+
+test("admin artist list batches only displayed song IDs and shows all four marks plus default unreviewed", async () => {
+  state.songs = [...model.reviewStatuses, "absent"].map(id => ({ ...state.songs[0], id, title: id }))
+  state.reviews = model.reviewStatuses.map(status => ({ songId: status, status, reviewedById: "private-reviewer", updatedAt: new Date() }))
+  state.reviews.push({ songId: "another-artists-song", status: "verified", reviewedById: "secret" })
+  const html = renderToStaticMarkup(await ArtistSongList(artistListProps()))
+  assert.equal(reviewQueries.length, 1)
+  assert.deepEqual(reviewQueries[0].where.songId.in, state.songs.map(song => song.id))
+  for (const status of model.reviewStatuses) assert.ok(html.includes(`data-song-review="${status}"`))
+  assert.equal((html.match(/data-song-review="unreviewed"/g) || []).length, 2)
+  assert.ok(html.includes("Ispravljeno ru\u010dno"))
+  assert.ok(!/private-reviewer|another-artists-song|secret/.test(html))
+  assert.ok(html.includes('/pesme/domace/test-band/manually_corrected'))
+})
+
+test("empty artist list skips all auth/status reads; authorization outages are not silent public fallbacks", async () => {
+  await ArtistSongList({ ...artistListProps(), songs: [] })
+  assert.equal(reads, 0); assert.equal(reviewQueries.length, 0)
+  down = true
+  await assert.rejects(() => ArtistSongList(artistListProps()))
+  assert.equal(reviewQueries.length, 0)
+})
+
+test("new manual-correction status rejects stale content and stale previous marks", async () => {
+  const stale = body("manually_corrected")
+  state.songs[0].lyrics += " changed"
+  assert.equal((await route.PATCH(req(stale), ctx("song"))).status, 409)
+  state.reviews.push({ songId: "song", status: "verified" })
+  assert.equal((await route.PATCH(req(body("manually_corrected")), ctx("song"))).status, 409)
+  assert.equal(state.reviews[0].status, "verified")
 })

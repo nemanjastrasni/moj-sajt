@@ -27,6 +27,7 @@ export default function SongReviewControl({ songId, initial }: { songId: string;
       {reviewStatuses.map(value => <option key={value} value={value}>{t(reviewLabels[value])}</option>)}
     </select></label>
     <SongReviewBadge status={status} />
+    {status === "manually_corrected" && <p className={styles.description}>{t("Raspored ili tekst su ispravljeni; muzicka tacnost jos nije potvrdjena.")}</p>}
     {busy && <span role="status" className={styles.saved}>{t("Cuvam...")}</span>}
     {saved && <span role="status" className={styles.saved}>{t("Oznaka je sacuvana.")}</span>}
     {error && <div role="alert" className={styles.error}><p>{t(error)}</p><button type="button" className={styles.refresh} onClick={() => router.refresh()}><RefreshCw />{t("Osvezi stranicu")}</button></div>}

@@ -1,0 +1,8 @@
+.list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; min-width: 0; }
+.link { min-width: 0; overflow-wrap: anywhere; }
+.difficulty { opacity: .7; margin-left: 8px; font-size: 14px; }
+.status { display: inline-flex; min-width: 0; }
+@media (max-width: 600px) {
+  .status { flex-basis: 100%; padding-left: 24px; }
+}

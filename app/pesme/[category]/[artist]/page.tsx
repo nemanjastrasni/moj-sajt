@@ -7,6 +7,7 @@ import { getArtistImage } from "@/lib/artistPhotos"
 import styles from "@/app/components/ArtistMedia.module.css"
 import AdminPageActions from "@/app/components/AdminPageActions"
 import { artistContentVersion } from "@/lib/adminContent/server"
+import ArtistSongList from "@/app/components/ArtistSongList"
 
 export const dynamic = "force-dynamic"
 
@@ -72,23 +73,7 @@ export default async function ArtistPage({ params }: any) {
 
       {artistData.songs.length === 0 && <p><UiText text="Nema pesama." /></p>}
 
-      <div style={{ display: "grid", gap: "8px" }}>
-        {artistData.songs.map((song) => (
-          <Link
-            key={song.id}
-            href={`/pesme/${category}/${artist}/${song.slug}`}
-          >
-{/\b[A-G](#|b)?(m|maj|min|sus|dim|aug)?\d*\b/.test(song.lyrics)
-  ? "🎸 "
-  : "🎵 "}
-{song.title}
-<span style={{ opacity: 0.7, marginLeft: "8px", fontSize: "14px" }}>
-  • {song.difficulty}
-</span>
-</Link>
-))
-}
-</div>
+      <ArtistSongList category={category} artist={artist} songs={artistData.songs} />
 </div>
  
   )

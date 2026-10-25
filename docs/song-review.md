@@ -2,13 +2,16 @@
 
 ## Workflow
 
-Only an active admin sees the review control below the song title/admin actions and the status column/filter in Admin Songs.
+Only an active admin sees the review control below the song title/admin actions, the status column/filter in Admin Songs and review badges beside songs on an artist's song-list page.
 
 - `unreviewed`: Not reviewed. This is also the meaning of a missing review record; new/imported songs are not declared wrong or correct automatically.
 - `needs_fix`: An admin has identified a problem to fix.
-- `verified`: An admin has manually checked the song.
+- `manually_corrected`: An admin has corrected lyrics/layout/chord positions, but musical accuracy has not yet been confirmed by playing the song. The label is "Ispravljeno rucno" / "Manually corrected", distinct from Verified.
+- `verified`: An admin has checked both layout and musical accuracy.
 
 Open a song, inspect its lyrics/chord positions, and choose a status. Fix content through the existing editor, then check the rendered song before choosing Verified again. The admin list filter combines with search, artist, letter, category, sort and pagination. Icons and explicit labels distinguish the states without relying only on color.
+
+The artist song list reads review status in one batched query only after fresh non-banned admin authorization. Anonymous/ordinary/banned/deleted visitors receive the normal song list without badges or review queries. Missing records are shown as Unreviewed to admins. These badges show saved manual marks, never automatic audit classifications. The public page stays force-dynamic; review metadata is not added to public Song selects. Mobile badges wrap below their song title, with desktop badges alongside it.
 
 This is a manual review workflow, not an automatic claim that the chords are musically correct. No bulk automatic verification or heuristic classification is performed by this change.
 
@@ -28,12 +31,16 @@ Client controls update only after a confirmed success, retain the old mark on fa
 
 The schema and SQL add a separate table, a status check constraint, index and reset trigger. Existing musical content is untouched. The setup CLI uses the existing verified-TLS pg connection helper and an ignored local backup, locks song writes briefly, and compares count/content digest plus existing review records before committing. Reapplying preserves manual marks.
 
+The four-state extension replaces only the status check constraint to allow `manually_corrected`; no new Prisma fields/client generation are needed. Run the same setup CLI before deploying the new app. The transaction also reapplies the unchanged reset trigger/RLS setup; existing song content and every review record must compare identical before commit. A rollback to a three-state constraint must not be attempted while manual-correction records exist.
+
 ```powershell
 node scripts/apply-song-review.cjs --ca "C:\path\to\supabase.crt"
 node scripts/apply-song-review.cjs --ca "C:\path\to\supabase.crt" --apply
 ```
 
 Applied to the configured Supabase database with user approval on 2026-10-25: all 9,351 songs retained unchanged, zero records automatically marked Verified. Backup: `reports/song-reviews/setup-2026-10-25T12-14-58-961Z.json`. Initial Unreviewed status is implicit, not a mass update to songs. Deploy the new app after setup and regenerate Prisma Client. No new dependency is required.
+
+Four-state extension applied with explicit user approval on 2026-10-25: 9,351 songs preserved, 0 existing review records, no automatic marks. Backup: `reports/song-reviews/setup-2026-10-25T13-17-37-224Z.json`. Deploy the updated app to make the new status and artist-list badges visible.
 
 ## Verification
 
