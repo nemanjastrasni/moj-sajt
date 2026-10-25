@@ -44,7 +44,7 @@ Module._load = function(request, parent, isMain) {
   if (request === "@/lib/prisma") return { prisma }
   if (request === "next/cache") return { revalidatePath() { if (cacheFailure) throw Error("cache") } }
   if (request === "./AdminContentButtons" || request === "./SongReviewControl") return { __esModule: true, default: () => null }
-  if (request === "./UiText") return { __esModule: true, default: ({ text }) => text }
+  if (request === "./UiText") return { __esModule: true, default: ({ text }) => text, useI18n: () => ({ t: text => text, locale: "sr" }) }
   if (request.endsWith(".module.css")) return { __esModule: true, default: new Proxy({}, { get: (_, key) => key }) }
   if (request.startsWith("@/")) request = path.join(__dirname, "..", request.slice(2))
   return original.call(this, request, parent, isMain)

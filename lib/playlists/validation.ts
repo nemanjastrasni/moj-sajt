@@ -35,3 +35,13 @@ export function playlistReorder(value: unknown): { id: string; order: number }[]
     return { id, order: index }
   })
 }
+export function playlistExpectedOrder(value: unknown): { id: string; order: number | null }[] {
+  if (!Array.isArray(value) || value.length > 2000) throw new SubmissionError(409, "Playlista je izmenjena. Osvezi je pre promene redosleda.")
+  const ids = new Set<string>()
+  return value.map(entry => {
+    const id = playlistId(entry?.id), order = entry?.order
+    if (ids.has(id) || (order !== null && (!Number.isSafeInteger(order) || order < 0))) throw new SubmissionError(400, "Proveri redosled pesama.")
+    ids.add(id)
+    return { id, order }
+  })
+}

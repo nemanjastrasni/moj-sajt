@@ -1,16 +1,12 @@
 import { prisma } from "@/lib/prisma"
-
-function extractChords(text: string) {
-  const matches = text.match(/[A-G][#b]?m?(maj7|7|sus4|dim|aug)?/g) || []
-  return [...new Set(matches)]
-}
+import type { Prisma } from "@prisma/client"
+import { estimateDifficulty, songChords } from "./difficulty"
 
 export async function getEasyGuitarSongs() {
   const songs = await prisma.song.findMany()
 
   return songs.filter(song => {
-    const chords = extractChords(song.chords || song.lyrics || "")
-    return chords.length <= 5
+    return ["very_easy", "easy"].includes(estimateDifficulty(song).level ?? "")
   })
 }
 
@@ -18,13 +14,13 @@ export async function getFourChordSongs() {
   const songs = await prisma.song.findMany()
 
   return songs.filter(song => {
-    const chords = extractChords(song.chords || song.lyrics || "")
+    const chords = songChords(song)
     return chords.length === 4
   })
 }
 export async function getPlaylist(slug: string) {
 
-  const playlists: Record<string, any> = {
+  const playlists: Record<string, { title: string; description: string; query: Pick<Prisma.SongFindManyArgs, "where" | "take"> }> = {
 
     "easy-guitar": {
       title: "Easy Guitar Songs",

@@ -1,0 +1,40 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Node tests run the real TypeScript modules. */
+require("ts-node").register({ transpileOnly: true, compilerOptions: { module: "CommonJS", moduleResolution: "Node" } })
+const { test } = require("node:test")
+const assert = require("node:assert/strict")
+const { songChords, estimateDifficulty, difficultyLevels, playableLevel } = require("../lib/music/difficulty.ts")
+const { matchesCatalog, catalogEntry } = require("../lib/playlists/catalog.ts")
+const song = lyrics => ({ lyrics, category: "domace", difficulty: "beginner" })
+
+test("five difficulty levels use recognized shapes and complexity, not the database beginner default", () => {
+  const examples = ["C G Am", "C G Am D Em", "F#m Bm E", "C/E D/F# G/B", "E(#9) E(b9) Am A7"]
+  assert.deepEqual(examples.map(lyrics => estimateDifficulty(song(lyrics)).level), difficultyLevels)
+  assert.equal(estimateDifficulty(song("Bez akorda ovde\nPamet kad se pomeri")).level, null)
+})
+test("musical lines, inline symbols, lowercase, European names and connectors use the shared parser", () => {
+  assert.deepEqual(songChords(song("b----em-- tad")), ["B", "Em"])
+  assert.deepEqual(songChords(song("E(#9) E(b9) Am A7\nPamet kad se pomeri")), ["E(#9)", "E(b9)", "Am", "A7"])
+  assert.deepEqual(songChords(song("F# B F# C# (bass: C# C# B A# G# F#)")), ["F#", "B", "C#"])
+  assert.deepEqual(songChords(song("Prelaz 2:\nG{riff}\n...U velikoj zurbi\nA{riff}\nKraj: G, C,")), ["G", "A", "C"])
+  assert.deepEqual(songChords(song("[Am]Stih [G]pesme")), ["Am", "G"])
+  assert.deepEqual(songChords(song("Fis H B")), ["F#", "B"])
+})
+test("words and tablature are not chords; isolated backing chords are a fallback only", () => {
+  assert.deepEqual(songChords(song("Belo oko mene sve je belo\nDanas dolazim\nA ljubav ostaje")), [])
+  assert.deepEqual(songChords(song("e|--0--2--3--|\nB|--0--1--0--|")), [])
+  assert.deepEqual(songChords({ lyrics: "Tekst pesme", chords: "Am G" }), ["Am", "G"])
+  assert.deepEqual(songChords({ lyrics: "D Em\nTekst pesme", chords: "C" }), ["D", "Em"])
+  assert.deepEqual(songChords(song("H B Cb B")), ["B"])
+})
+test("catalogs share the same estimate, never fill an empty selection with unrelated songs", () => {
+  for (const level of ["veoma-lako", "lako", "srednje", "tesko", "veoma-tesko"]) assert.ok(catalogEntry(level))
+  assert.equal(matchesCatalog(song("E(#9) A7"), "veoma-lako"), false)
+  assert.equal(matchesCatalog(song("E(#9) A7"), "veoma-tesko"), true)
+  assert.equal(matchesCatalog(song("C G Am"), "beginner"), true)
+  assert.equal(matchesCatalog(song("C G Am"), "4-akorda"), true)
+  assert.equal(matchesCatalog(song("Belo oko mene sve je belo"), "4-akorda"), false)
+  assert.equal(matchesCatalog(song("C G Am"), "rock"), false)
+  assert.equal(matchesCatalog(song("Bez akorda"), "domace"), true)
+  assert.equal(matchesCatalog(song("C G"), "narodne"), false)
+  assert.deepEqual(["beginner", "intermediate", "advanced", "unknown"].map(playableLevel), [1, 2, 4, 1])
+})

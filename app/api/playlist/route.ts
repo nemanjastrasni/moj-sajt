@@ -53,11 +53,7 @@ export async function DELETE(request: Request) {
 export async function GET() {
   try {
     const user = await submissionUser()
-    const playlists = await playlistTransaction(async tx => {
-      // Retain the existing default Mix list without ever making it public automatically.
-      if (!await tx.playlist.findFirst({ where: { userId: user.id, category: "mix" }, select: { id: true } })) await tx.playlist.create({ data: { name: "Mix", category: "mix", userId: user.id, isPublic: false } })
-      return tx.playlist.findMany({ where: { userId: user.id }, include: { songs: { orderBy: playlistOrder } }, orderBy: [{ createdAt: "desc" }, { id: "asc" }] })
-    })
+    const playlists = await playlistTransaction(tx => tx.playlist.findMany({ where: { userId: user.id }, include: { songs: { orderBy: playlistOrder } }, orderBy: [{ createdAt: "desc" }, { id: "asc" }] }))
     return NextResponse.json(playlists, { headers: privateHeaders })
   } catch (error) { return playlistFailure(error) }
 }

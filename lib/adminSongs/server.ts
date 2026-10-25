@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 import { Prisma } from "@prisma/client"
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { slugify } from "@/lib/until/slug"
 import { submissionUser } from "@/lib/submissions/server"
@@ -100,5 +100,6 @@ export async function listAdminSongs(filters: AdminSongFilters) {
 }
 export function refreshAdminSongs() {
   // Database work has committed; cache errors must not report a failed write.
+  try { revalidateTag("playlist-catalog") } catch {}
   try { for (const path of ["/pesme", "/biografija", "/admin/songs", "/favorite", "/profile", "/plejliste", "/moji-predlozi"]) revalidatePath(path, "layout"); revalidatePath("/") } catch {}
 }

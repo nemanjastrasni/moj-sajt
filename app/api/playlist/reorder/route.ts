@@ -1,18 +1,19 @@
 import { NextResponse } from "next/server"
 import { submissionUser } from "@/lib/submissions/server"
 import { SubmissionError } from "@/lib/submissions/validation"
-import { playlistId, playlistReorder } from "@/lib/playlists/validation"
+import { playlistExpectedOrder, playlistId, playlistReorder } from "@/lib/playlists/validation"
 import { ownedPlaylist, playlistBody, playlistFailure, playlistOrder, playlistTransaction, privateHeaders, refreshPlaylist } from "@/lib/playlists/server"
 
 export async function POST(request: Request) {
   try {
     const user = await submissionUser(), body = await playlistBody(request)
-    const id = playlistId(body?.playlistId), items = playlistReorder(body?.items)
+    const id = playlistId(body?.playlistId), items = playlistReorder(body?.items), expected = playlistExpectedOrder(body?.expectedOrder)
     await playlistTransaction(async tx => {
       await ownedPlaylist(tx, id, user.id)
-      const current = await tx.playlistSong.findMany({ where: { playlistId: id }, select: { id: true } })
+      const current = await tx.playlistSong.findMany({ where: { playlistId: id }, select: { id: true, order: true } })
       const ids = new Set(current.map(item => item.id))
-      if (items.length !== ids.size || items.some(item => !ids.has(item.id))) throw new SubmissionError(409, "Playlista je izmenjena. Osvezi je pre promene redosleda.")
+      const snapshot = new Map(expected.map(item => [item.id, item.order]))
+      if (items.length !== ids.size || items.some(item => !ids.has(item.id)) || snapshot.size !== current.length || current.some(item => !snapshot.has(item.id) || snapshot.get(item.id) !== item.order)) throw new SubmissionError(409, "Playlista je izmenjena. Osvezi je pre promene redosleda.")
       for (const item of items) await tx.playlistSong.update({ where: { id: item.id }, data: { order: item.order } })
     })
     refreshPlaylist(id)

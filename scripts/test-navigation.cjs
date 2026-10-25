@@ -31,6 +31,14 @@ test("playlist return query accepts only supported internal list paths, never ar
   assert.ok(encoded.startsWith("/pesme/domace/%C4%91or%C4%91e/pesma%20%231?"))
 })
 
+test("catalog return links retain only validated page/category filters", () => {
+  const path = "/plejliste/lako?page=2&category=strane"
+  assert.equal(playlistReturnHref(path), path)
+  assert.equal(activeParentHref("/pesme/strane/bend/song", { pathname: "/pesme/strane/bend/song", href: path, owner: "song" }), path)
+  assert.equal(new URL(playlistSongHref({ category: "strane", slug: "song", artist: { slug: "bend" } }, path), "https://site.test").searchParams.get("playlist"), path)
+  for (const suffix of ["?page=0", "?page=-1", "?page=1&page=2", "?category=evil", "?next=https://evil.test", "?category=strane&next=evil", "?page=2#x", "?page=2?x", "?page=%00", "?"]) assert.equal(playlistReturnHref("/plejliste/lako" + suffix), null)
+})
+
 test("song, artist index, category and home follow hierarchy rather than visit history", () => {
   const cases = [
     ["/pesme/narodne/100-band/zivot-s-tobom", "/pesme/narodne/100-band"],

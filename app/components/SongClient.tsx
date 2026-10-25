@@ -7,15 +7,9 @@ import { useMemo } from "react"
 import UsedChordCard from "./UsedChordCard"
 import SongSheet from "./SongSheet"
 import SongPdfButton from "./SongPdfButton"
+import SongPlaylistButton from "./SongPlaylistButton"
 import { getUsedChords, parseSongSheet } from "@/lib/chords/songSheet"
 import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-
-type ChordVariant = {
-  name: string
-  image: string
-}
 
 type Props = {
   adminTools?: ReactNode
@@ -36,11 +30,9 @@ type Props = {
   } | null
 }
 
-export default function SongClient({ song, media, adminTools }: Props) {
+export default function SongClient({ song, adminTools }: Props) {
   const { t } = useI18n()
 
-  const { data: session } = useSession()
-  const router = useRouter()
   const [transpose, setTranspose] = useState(0)
   const [showVideo, setShowVideo] = useState(false)
   const [miniPlayer, setMiniPlayer] = useState(false)
@@ -48,11 +40,6 @@ export default function SongClient({ song, media, adminTools }: Props) {
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
   const [scrollSpeed, setScrollSpeed] = useState(1)
   const scrollRef = useRef<NodeJS.Timeout | null>(null)
-  const [showModal, setShowModal] = useState(false)
-
-  const [playlistName, setPlaylistName] = useState("")
-  const [playlists, setPlaylists] = useState<any[]>([])
-  const [showSelect, setShowSelect] = useState(false)
 
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [loadingVideo, setLoadingVideo] = useState(false)
@@ -60,16 +47,6 @@ export default function SongClient({ song, media, adminTools }: Props) {
   const [showChordsPanel, setShowChordsPanel] = useState(false)
   const [textSize, setTextSize] = useState(18)
   const [chordSize, setChordSize] = useState(18)
-  const normalize = (str?: string) =>
-  (str || "")
-    .toLowerCase()
-    .replace("ć", "c")
-    .replace("č", "c")
-    .replace("š", "s")
-    .replace("ž", "z")
-    .trim()
-
-  if (!song) return null
   const { title, artist, content, lyrics } = song
   const displayContent = lyrics || content || ""
 
@@ -139,18 +116,6 @@ export default function SongClient({ song, media, adminTools }: Props) {
   }
 }, [song.id])
 
-useEffect(() => {
-  async function fetchPlaylists() {
-    if (!session) return
-
-    const res = await fetch("/api/playlist")
-    const data = await res.json()
-
-    setPlaylists(data)
-  }
-
-  fetchPlaylists()
-}, [session])
 
 
   return (
@@ -325,100 +290,8 @@ useEffect(() => {
     ★
   </button>
 
-  {/* PLAYLIST */}
-  <div className="relative inline-block">
-    <button
-      onClick={() => {
-  if (!session) {
-    router.push(`/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`)
-    return
-  }
+  <SongPlaylistButton key={song.id} songId={song.id} />
 
-  setShowSelect(!showSelect)
-}}
-      className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 rounded text-white"
-    >
-      {t("+ Playlist")}
-    </button>
-
-    {showSelect && (
-      <div className="fixed left-4 right-4 top-24 max-h-[70vh] overflow-auto bg-neutral-900 border border-gray-700 rounded p-2 z-[999999] sm:absolute sm:left-0 sm:right-auto sm:top-auto sm:mt-2 sm:w-64">
-
-  {(() => {
-  const sc = (song.category || "").toLowerCase()
-
-  const filtered = playlists.filter(p => {
-    const pc = (p.category || "").toLowerCase()
-    return pc === sc || pc === "mix"
-  })
-
-  const sorted = [
-    ...filtered.filter(p => p.category !== "mix"),
-    ...filtered.filter(p => p.category === "mix"),
-  ]
-
-  return sorted.map((p) => {
-    const isAdded = p.songs?.some(
-      (s: any) => s.songId === song.id
-    )
-  
-
-    return (
-      <div
-        key={p.id}
-        onClick={async () => {
-          if (isAdded) return
-
-          await fetch("/api/playlist", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              playlistId: p.id,
-              songId: song.id,
-            }),
-          })
-
-          setPlaylists(prev =>
-            prev.map(pl =>
-              pl.id === p.id
-                ? {
-                    ...pl,
-                    songs: [...(pl.songs || []), { songId: song.id }]
-                  }
-                : pl
-            )
-          )
-
-          setShowSelect(false)
-        }}
-        className="px-2 py-2 hover:bg-white/10 cursor-pointer flex justify-between items-center"
-      >
-        <span className="truncate max-w-[180px]">
-          {p.name}
-        </span>
-
-        <span className="text-green-400">
-          {isAdded ? "✓" : "+"}
-        </span>
-      </div>
-    )
-  })
-})()}
-
-        {/* NOVA PLAYLISTA */}
-        <div
-  onClick={() => {
-    setShowModal(true)
-    setShowSelect(false)
-  }}
-          className="px-2 py-2 hover:bg-white/10 cursor-pointer border-t border-gray-700 mt-1 text-blue-400"
-        >
-          {t("+ Nova playlista")}
-        </div>
-
-      </div>
-    )}
-  </div>
 </div>
 
 {adminTools}
@@ -475,45 +348,7 @@ useEffect(() => {
   </div>
 
 )}
-{showModal && (
-  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[999999] px-4">
-    <div className="bg-gray-900 p-6 rounded w-full max-w-[320px]">
-      
-      <h2 className="mb-4 text-lg">{t("Nova playlista")}</h2>
 
-      <input
-        value={playlistName}
-        onChange={(e) => setPlaylistName(e.target.value)}
-        placeholder={t("Naziv...")}
-        className="w-full p-2 mb-4 bg-gray-800 text-white rounded"
-      />
-
-      <button
-        onClick={async () => {
-          const res = await fetch("/api/playlist", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: playlistName,
-              category: song.category,
-              songId: song.id,
-       }),
-          })
-
-          const data = await res.json()
-
-          
-          setShowModal(false)
-          setPlaylistName("")
-        }}
-        className="w-full bg-blue-500 py-2 rounded"
-      >
-        {t("Sačuvaj")}
-      </button>
-
-    </div>
-  </div>
-)}
 
 
         </div>

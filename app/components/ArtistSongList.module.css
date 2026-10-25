@@ -3,6 +3,7 @@
 .link { min-width: 0; overflow-wrap: anywhere; }
 .difficulty { opacity: .7; margin-left: 8px; font-size: 14px; }
 .status { display: inline-flex; min-width: 0; }
+.note { font-size: 12px; margin-top: 16px; color: var(--theme-muted, #a1a1aa); }
 @media (max-width: 600px) {
   .status { flex-basis: 100%; padding-left: 24px; }
 }

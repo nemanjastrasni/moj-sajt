@@ -84,6 +84,7 @@ Module._load = function(request, parent, isMain) {
   if (request === "next/cache") return { revalidatePath() { if (cacheFailure) throw Error("cache") } }
   if (request === "next/navigation") return { notFound() { throw Error("NEXT_NOT_FOUND") } }
   if (request === "@/app/components/PlaylistClient") return { __esModule: true, default: () => null }
+  if (request === "@/app/components/PlaylistCatalog") return { __esModule: true, default: () => null }
   if (request.startsWith("@/")) request = path.join(__dirname, "..", request.slice(2))
   return original.call(this, request, parent, isMain)
 }
@@ -97,11 +98,12 @@ try {
   page = require("../app/plejliste/[id]/page.tsx")
 } finally { Module._load = original }
 const validation = require("../lib/playlists/validation.ts")
-const { playlistRequest, playlistPdfSongs } = require("../lib/playlists/client.ts")
+const { playlistRequest, playlistPdfSongs, readPlaylistChoices } = require("../lib/playlists/client.ts")
 const req = (data, method = "POST", headers = {}) => new Request("https://site.test/api/playlist", { method, headers: { "content-type": "application/json", origin: "https://site.test", ...headers }, body: JSON.stringify(data) })
 const context = id => ({ params: Promise.resolve({ id }) })
 const order = [{ id: "i-b", order: 0 }, { id: "i-a", order: 1 }]
-const mutators = [() => route.PATCH(req({ playlistId: "p", isPublic: true }, "PATCH")), () => route.PUT(req({ playlistId: "p", songId: "c" }, "PUT")), () => route.DELETE(req({ playlistId: "p", songId: "a" }, "DELETE")), () => route.DELETE(req({ playlistId: "p" }, "DELETE")), () => reorder.POST(req({ playlistId: "p", items: order })), () => reorder.PATCH(req({ playlistId: "p", songId: "a", direction: "down" }, "PATCH")), () => legacy.POST(req({ playlistSongId: "i-a" }))]
+const expectedOrder = () => state.items.filter(item => item.playlistId === "p").map(({ id, order }) => ({ id, order }))
+const mutators = [() => route.PATCH(req({ playlistId: "p", isPublic: true }, "PATCH")), () => route.PUT(req({ playlistId: "p", songId: "c" }, "PUT")), () => route.DELETE(req({ playlistId: "p", songId: "a" }, "DELETE")), () => route.DELETE(req({ playlistId: "p" }, "DELETE")), () => reorder.POST(req({ playlistId: "p", items: order, expectedOrder: expectedOrder() })), () => reorder.PATCH(req({ playlistId: "p", songId: "a", direction: "down" }, "PATCH")), () => legacy.POST(req({ playlistSongId: "i-a" }))]
 beforeEach(() => {
   state = { users: [{ id: "one", role: "user", banned: false }, { id: "two", role: "admin", banned: false }], playlists: [{ id: "p", name: "Morski", userId: "one", isPublic: false, category: "domace" }, { id: "other", name: "Other", userId: "two", isPublic: true }], items: [{ id: "i-a", playlistId: "p", songId: "a", order: 0 }, { id: "i-b", playlistId: "p", songId: "b", order: 1 }, { id: "i-other", playlistId: "other", songId: "c", order: 0 }], songs: ["a", "b", "c"].map(id => ({ id, title: "Pesma " + id, slug: id, category: "domace", lyrics: "G       D\nStih pesme " + id, artist: { name: "Bend", slug: "bend" }, popularity: 0 })) }
   session = { user: { id: "one" } }; down = failDelete = cacheFailure = false; serialFailures = attempts = 0; pdfArgs = null
@@ -184,16 +186,33 @@ test("empty/oversized PDF playlists and lyrics fail without partial files", asyn
   assert.equal((await pdf.POST(req({ songIds: Array(101).fill("a") }), context("p"))).status, 400)
 })
 test("owner reorder is atomic and rejects foreign, missing and duplicate rows", async () => {
-  assert.equal((await reorder.POST(req({ playlistId: "p", items: order }))).status, 200)
+  assert.equal((await reorder.POST(req({ playlistId: "p", items: order, expectedOrder: expectedOrder() }))).status, 200)
   assert.equal(state.items[0].order, 1); assert.equal(state.items[1].order, 0)
   const before = structuredClone(state)
-  for (const items of [[{ id: "i-other", order: 0 }, { id: "i-a", order: 1 }], [{ id: "i-a", order: 0 }], [{ id: "i-a", order: 0 }, { id: "i-a", order: 1 }]]) assert.ok([400, 409].includes((await reorder.POST(req({ playlistId: "p", items }))).status))
+  for (const items of [[{ id: "i-other", order: 0 }, { id: "i-a", order: 1 }], [{ id: "i-a", order: 0 }], [{ id: "i-a", order: 0 }, { id: "i-a", order: 1 }]]) assert.ok([400, 409].includes((await reorder.POST(req({ playlistId: "p", items, expectedOrder: expectedOrder() }))).status))
   assert.deepEqual(state, before)
 })
 test("legacy up/down reorder normalizes null/tied positions and preserves other playlists", async () => {
   state.items[0].order = state.items[1].order = null
   assert.equal((await reorder.PATCH(req({ playlistId: "p", songId: "a", direction: "down" }, "PATCH"))).status, 200)
   assert.equal(state.items[0].order, 1); assert.equal(state.items[1].order, 0); assert.equal(state.items[2].order, 0)
+})
+
+test("stale reorder from another tab is rejected even when the song membership is unchanged", async () => {
+  const snapshot = expectedOrder()
+  assert.equal((await reorder.POST(req({ playlistId: "p", items: order, expectedOrder: snapshot }))).status, 200)
+  const saved = structuredClone(state)
+  assert.equal((await reorder.POST(req({ playlistId: "p", items: [{ id: "i-a", order: 0 }, { id: "i-b", order: 1 }], expectedOrder: snapshot }))).status, 409)
+  assert.deepEqual(state, saved)
+  assert.equal((await reorder.POST(req({ playlistId: "p", items: order }))).status, 409)
+})
+
+test("reorder accepts the exact legacy null/tied snapshot and permits another reorder after saving", async () => {
+  state.items[0].order = state.items[1].order = null
+  assert.equal((await reorder.POST(req({ playlistId: "p", items: order, expectedOrder: expectedOrder() }))).status, 200)
+  assert.equal((await reorder.POST(req({ playlistId: "p", items: [{ id: "i-a", order: 0 }, { id: "i-b", order: 1 }], expectedOrder: expectedOrder() }))).status, 200)
+  assert.throws(() => validation.playlistExpectedOrder([{ id: "x", order: -1 }]))
+  assert.throws(() => validation.playlistExpectedOrder([{ id: "x", order: null }, { id: "x", order: 0 }]))
 })
 test("add and remove operate only on the selected playlist; duplicate add is not success", async () => {
   assert.equal((await route.PUT(req({ playlistId: "p", songId: "c" }, "PUT"))).status, 200)
@@ -208,10 +227,14 @@ test("whole playlist deletion rolls back all links on failure, never deletes act
   failDelete = false; assert.equal((await route.DELETE(req({ playlistId: "p" }, "DELETE"))).status, 200)
   assert.equal(state.songs.length, 3); assert.equal(state.playlists.length, 1); assert.equal(state.items.length, 1)
 })
-test("GET returns only own playlists and preserves default Mix behavior privately", async () => {
+test("GET returns only own playlists and is read-only, including when none exist", async () => {
+  const before = structuredClone(state)
   const response = await route.GET(), data = await response.json()
-  assert.equal(response.status, 200); assert.ok(data.every(row => row.userId === "one")); assert.equal(data.find(row => row.category === "mix").isPublic, false)
-  await route.GET(); assert.equal(state.playlists.filter(row => row.category === "mix").length, 1)
+  assert.equal(response.status, 200); assert.ok(data.every(row => row.userId === "one"))
+  assert.deepEqual(state, before)
+  state.playlists = state.playlists.filter(row => row.userId !== "one")
+  assert.deepEqual(await (await route.GET()).json(), [])
+  assert.equal(state.playlists.length, 1)
 })
 test("serial conflicts retry at most twice and cache failure cannot misreport a committed visibility change", async () => {
   serialFailures = 2; cacheFailure = true
@@ -254,4 +277,13 @@ test("client rejects HTML, errors, reordered/incomplete PDF contents and validat
   await assert.rejects(playlistPdfSongs("p", ["a"]), /Spisak/)
   global.fetch = async (url, options) => { assert.equal(options.method, "PATCH"); return new Response(JSON.stringify({ ok: true })) }
   assert.deepEqual(await playlistRequest("/api/playlist", "PATCH", {}), { ok: true })
+})
+
+test("playlist picker validates fresh responses and treats an empty list as a valid empty state", async () => {
+  global.fetch = async (_, options) => { assert.equal(options.method, "GET"); assert.equal(options.body, undefined); return new Response("[]") }
+  assert.deepEqual(await readPlaylistChoices(), [])
+  for (const data of [{ error: "bad" }, [null], [{ id: "p", name: "P", isPublic: false, songs: [null] }]]) {
+    global.fetch = async () => new Response(JSON.stringify(data))
+    await assert.rejects(readPlaylistChoices(), /Spisak/)
+  }
 })

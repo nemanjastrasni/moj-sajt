@@ -12,9 +12,21 @@ const href = (parts: string[]) => "/" + parts.map(encodeURIComponent).join("/")
 
 export function playlistReturnHref(value: unknown): string | null {
   if (typeof value !== "string" || value.length > 300) return null
-  const parts = segments(value)
+  if (value.includes("#")) return null
+  const [path, query, extra] = value.split("?")
+  if (extra !== undefined) return null
+  const parts = segments(path)
   if (!parts || parts.some(part => !/^[a-z0-9_-]{1,128}$/i.test(part))) return null
-  if (parts[0] === "plejliste" && (parts.length === 2 || parts.length === 3 && parts[1] === "kategorija")) return href(parts)
+  if (parts[0] === "plejliste" && (parts.length === 2 || parts.length === 3 && parts[1] === "kategorija")) {
+    if (query === undefined) return href(parts)
+    const params = new URLSearchParams(query), clean = new URLSearchParams()
+    if (!query || [...params.keys()].some(key => !["page", "category"].includes(key) || params.getAll(key).length !== 1)) return null
+    const page = params.get("page"), category = params.get("category")
+    if (page !== null) { if (!/^[1-9]\d{0,5}$/.test(page)) return null; clean.set("page", page) }
+    if (category !== null) { if (!["domace", "narodne", "strane"].includes(category)) return null; clean.set("category", category) }
+    return href(parts) + "?" + clean.toString()
+  }
+  if (query !== undefined) return null
   if (parts[0] === "top-50" && parts.length === 2 && ["domace", "narodne", "strane"].includes(parts[1])) return href(parts)
   return null
 }
@@ -61,6 +73,6 @@ export function parentHref(pathname: string | null): string | null {
 export type ParentTarget = { pathname: string; href: string; owner: string }
 export function activeParentHref(pathname: string | null, target: ParentTarget | null) {
   const fallback = parentHref(pathname)
-  if (!fallback || !target || pathname !== target.pathname || target.href === pathname || !segments(target.href)) return fallback
+  if (!fallback || !target || pathname !== target.pathname || target.href === pathname || !(segments(target.href) || playlistReturnHref(target.href))) return fallback
   return target.href
 }

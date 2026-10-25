@@ -13,6 +13,8 @@ import { downloadPdf, pdfError, preparePdfDownload } from "@/lib/songbook/client
 import { MAX_BOOK_SONGS } from "@/lib/songbook/model"
 import styles from "./PlaylistClient.module.css"
 import { playlistSongHref } from "@/lib/navigation/parent"
+import PlaylistActions from "./PlaylistActions"
+import PlaylistSongSearch from "./PlaylistSongSearch"
 
 export type PlaylistSongItem = {
   id: string; songId: string; playlistId: string; order: number | null
@@ -38,10 +40,11 @@ export default function PlaylistClient({ playlistId, name, initialPublic, canEdi
 }) {
   const { t, locale } = useI18n(), router = useRouter()
   const [songs, setSongs] = useState(initialSongs), [isPublic, setPublic] = useState(initialPublic)
+  const [title, setTitle] = useState(name)
   const [busy, setBusy] = useState<"pdf" | "save" | null>(null), [error, setError] = useState(""), [notice, setNotice] = useState("")
   const [progress, setProgress] = useState(0), [file, setFile] = useState<{ url: string; filename: string; key: string } | null>(null)
   const running = useRef(false), alive = useRef(true)
-  const key = JSON.stringify([songs.map(song => song.songId), locale])
+  const key = JSON.stringify([title, songs.map(song => song.songId), locale])
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }))
   useEffect(() => { alive.current = true; return () => { alive.current = false } }, [])
   useEffect(() => () => { if (file) URL.revokeObjectURL(file.url) }, [file])
@@ -84,10 +87,10 @@ export default function PlaylistClient({ playlistId, name, initialPublic, canEdi
     if (!canEdit || !over || active.id === over.id) return
     const from = songs.findIndex(song => song.id === active.id), to = songs.findIndex(song => song.id === over.id)
     if (from < 0 || to < 0 || !begin("save")) return
-    const before = songs, ordered = arrayMove(songs, from, to)
+    const before = songs, ordered = arrayMove(songs, from, to).map((song, order) => ({ ...song, order }))
     setSongs(ordered)
     try {
-      const data = await playlistRequest("/api/playlist/reorder", "POST", { playlistId, items: ordered.map((song, order) => ({ id: song.id, order })) })
+      const data = await playlistRequest("/api/playlist/reorder", "POST", { playlistId, expectedOrder: before.map(({ id, order }) => ({ id, order })), items: ordered.map((song, order) => ({ id: song.id, order })) })
       if (data.ok !== true) throw new Error("Promena nije uspela. Osvezi playlistu i pokusaj ponovo.")
     } catch (cause) { if (alive.current) { setSongs(before); setError(pdfError(cause)) } }
     finally { finish() }
@@ -95,8 +98,9 @@ export default function PlaylistClient({ playlistId, name, initialPublic, canEdi
   const tooMany = songs.length > MAX_BOOK_SONGS
   return <section className={styles.page} aria-busy={Boolean(busy)}>
     <div className={styles.header}>
-      <h1 translate="no">{name}</h1>
+      <h1 translate="no">{title}</h1>
       <div className={styles.actions}>
+        {canEdit && <PlaylistActions id={playlistId} name={title} onRename={setTitle} disabled={Boolean(busy)} />}
         <button type="button" onClick={() => void exportPdf()} disabled={Boolean(busy) || !songs.length || tooMany} className={styles.button} title={t("Preuzmi celu playlistu kao PDF")} aria-label={t("Preuzmi celu playlistu kao PDF")}>
           {busy === "pdf" ? <LoaderCircle className="animate-spin" /> : <FileDown />}PDF
         </button>
@@ -111,6 +115,7 @@ export default function PlaylistClient({ playlistId, name, initialPublic, canEdi
     {error && <div role="alert" className={styles.error}><p>{t(error)}</p><button type="button" onClick={() => router.refresh()} disabled={Boolean(busy)} className={styles.button}><RefreshCw />{t("Osvezi playlistu")}</button></div>}
     {file?.key === key && <a href={file.url} download={file.filename} className={styles.button}><Download />{t("Preuzmi PDF")}</a>}
     {!songs.length && <p>{t("Nema pesama.")}</p>}
+    {canEdit && <PlaylistSongSearch playlistId={playlistId} songs={songs} disabled={Boolean(busy)} startSave={() => begin("save")} finishSave={finish} add={item => setSongs(current => [...current, item])} />}
     {canEdit ? <DndContext id={"playlist-" + playlistId} sensors={sensors} collisionDetection={closestCenter} onDragEnd={event => void reorder(event)}>
       <SortableContext items={songs.map(song => song.id)} strategy={verticalListSortingStrategy}>
         {songs.map(item => <SortableItem key={item.id} item={item} disabled={Boolean(busy)} remove={() => void remove(item)} />)}

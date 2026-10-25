@@ -4,8 +4,12 @@ import { contentAdmin } from "@/lib/adminContent/server"
 import { isReviewStatus, type ReviewStatus } from "@/lib/songReview/model"
 import SongReviewBadge from "./SongReviewBadge"
 import styles from "./ArtistSongList.module.css"
+import { estimateDifficulty } from "@/lib/music/difficulty"
+import SongDifficulty from "./SongDifficulty"
+import UiText from "./UiText"
+import { difficultyExplanation } from "@/lib/music/difficulty"
 
-type Song = { id: string; slug: string; title: string; lyrics: string; difficulty: string }
+type Song = { id: string; slug: string; title: string; lyrics: string; chords?: string | null; difficulty: string }
 type Props = { category: string; artist: string; songs: Song[] }
 
 export default async function ArtistSongList({ category, artist, songs }: Props) {
@@ -22,14 +26,14 @@ export default async function ArtistSongList({ category, artist, songs }: Props)
 }
 
 export function ArtistSongRows({ category, artist, songs, statuses }: Props & { statuses?: Map<string, ReviewStatus> }) {
-  return <ul className={styles.list}>
+  return <><ul className={styles.list}>
     {songs.map(song => <li key={song.id} className={styles.row}>
       <Link href={`/pesme/${category}/${artist}/${song.slug}`} className={styles.link}>
-        {/\b[A-G](#|b)?(m|maj|min|sus|dim|aug)?\d*\b/.test(song.lyrics) ? "\uD83C\uDFB8 " : "\uD83C\uDFB5 "}
+        {estimateDifficulty(song).chords.length ? "\uD83C\uDFB8 " : "\uD83C\uDFB5 "}
         {song.title}
-        <span className={styles.difficulty}>{" \u2022 "}{song.difficulty}</span>
+        <span className={styles.difficulty}>{" \u2022 "}<SongDifficulty level={estimateDifficulty(song).level} /></span>
       </Link>
       {statuses && <span className={styles.status}><SongReviewBadge status={statuses.get(song.id) ?? "unreviewed"} /></span>}
     </li>)}
-  </ul>
+  </ul>{songs.length > 0 && <p className={styles.note}><UiText text={difficultyExplanation} /></p>}</>
 }

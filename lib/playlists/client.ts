@@ -1,4 +1,4 @@
-export async function playlistRequest<T = { ok: boolean }>(url: string, method: string, body: unknown): Promise<T> {
+export async function playlistRequest<T = { ok: boolean }>(url: string, method: string, body?: unknown): Promise<T> {
   const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 20000)
   try {
     const response = await fetch(url, { method, headers: { "Content-Type": "application/json" }, signal: controller.signal, body: JSON.stringify(body) })
@@ -12,6 +12,12 @@ export async function playlistRequest<T = { ok: boolean }>(url: string, method: 
     if (error instanceof TypeError) throw new Error("Promena nije uspela. Proveri internet vezu.")
     throw error
   } finally { clearTimeout(timer) }
+}
+export type PlaylistChoice = { id: string; name: string; isPublic: boolean; category: string | null; songs: { songId: string }[] }
+export async function readPlaylistChoices() {
+  const data = await playlistRequest<PlaylistChoice[]>("/api/playlist", "GET")
+  if (!Array.isArray(data) || data.some(row => !row || typeof row.id !== "string" || typeof row.name !== "string" || typeof row.isPublic !== "boolean" || !Array.isArray(row.songs) || row.songs.some(item => !item || typeof item.songId !== "string"))) throw new Error("Spisak pesama nije ispravan. Osvezi playlistu.")
+  return data
 }
 import type { PdfSong } from "../songbook/model"
 

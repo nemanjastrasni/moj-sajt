@@ -25,3 +25,26 @@ button.privacy { cursor: pointer; }
 .status { margin: 12px 0; overflow-wrap: anywhere; }
 .notice { margin: 12px 0; font-size: 14px; color: var(--theme-muted, #a1a1aa); }
 @media (max-width: 400px) { .page { padding-left: 0; padding-right: 0; } }
+.title { font-size: 28px; margin-bottom: 16px; overflow-wrap: anywhere; }
+.band { padding: 24px 0; border-top: 1px solid var(--theme-line, #343b43); }
+.band h2 { font-size: 20px; margin-bottom: 16px; }
+.button[aria-current="page"] { background: var(--theme-panel, #191919); border-color: var(--theme-link, #69baff); }
+.dialog { margin: auto; width: min(480px, calc(100% - 24px)); max-height: calc(100dvh - 32px); overflow-y: auto; padding: 20px; border: 1px solid var(--theme-line, #56616c); border-radius: 8px; background: var(--theme-panel, #191919); color: var(--theme-ink, #eee); }
+.dialog::backdrop { background: rgb(0 0 0 / .65); }
+.dialog h2 { font-size: 20px; min-width: 0; flex: 1; overflow-wrap: anywhere; }
+.field { display: grid; gap: 8px; margin: 16px 0; font-size: 14px; }
+.field > span { display: flex; align-items: center; gap: 8px; }
+.field input { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border-radius: 6px; border: 1px solid var(--theme-line, #56616c); background: var(--theme-panel, #111); color: inherit; font-size: 16px; }
+.choice { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 8px; width: 100%; text-align: left; border-bottom: 1px solid var(--theme-line, #343b43); }
+.choice span { min-width: 0; overflow-wrap: anywhere; }
+.choice svg { width: 20px; height: 20px; flex-shrink: 0; }
+.choice:disabled { opacity: .6; }
+.search { margin: 24px 0; padding: 12px 0 20px; border-block: 1px solid var(--theme-line, #343b43); }
+.results { list-style: none; margin: 0; padding: 0; max-height: 360px; overflow-y: auto; }
+.resultText { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.meta { display: block; font-size: 13px; color: var(--theme-muted, #a1a1aa); margin-top: 4px; }
+.visibility { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--theme-muted, #a1a1aa); }
+.visibility svg { width: 16px; height: 16px; flex-shrink: 0; }
+.level { font-size: 13px; flex: 0 1 120px; text-align: right; overflow-wrap: anywhere; color: var(--theme-muted, #a1a1aa); }
+.pagination { display: flex; gap: 16px; align-items: center; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+@media (max-width: 500px) { .visibility > span { display: none; } .actions { gap: 6px; } .dialog { padding: 16px; } .level { flex-basis: 82px; } }
