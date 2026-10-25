@@ -71,7 +71,9 @@ export async function updateAdminSong(id: string, input: ReturnType<typeof valid
     const artist = await chooseArtist(tx, input, false)
     await duplicateTitle(tx, artist.id, input.title, id)
     if (await tx.song.findFirst({ where: { artistId: artist.id, slug: before.slug, id: { not: id } } })) throw new SubmissionError(409, "Ova oznaka pesme vec postoji kod izabranog izvodjaca.")
-    const song = await tx.song.update({ where: { id }, data: { title: input.title, lyrics: input.lyrics, chords: input.chords, artistId: artist.id, category: input.category } })
+    // An untouched empty form field must not turn NULL into a content change.
+    const chords = before.chords === null && input.chords === "" ? null : input.chords
+    const song = await tx.song.update({ where: { id }, data: { title: input.title, lyrics: input.lyrics, chords, artistId: artist.id, category: input.category } })
     return { song, artist, before }
   })
 }
@@ -93,7 +95,7 @@ export async function listAdminSongs(filters: AdminSongFilters) {
   const totalPages = Math.max(1, Math.ceil(total / ADMIN_PAGE_SIZE))
   const page = Math.min(filters.page, totalPages)
   const orderBy: Prisma.SongOrderByWithRelationInput[] = filters.sort === "title" ? [{ title: "asc" }, { id: "asc" }] : filters.sort === "artist" ? [{ artist: { name: "asc" } }, { title: "asc" }, { id: "asc" }] : [{ createdAt: "desc" }, { id: "desc" }]
-  const songs = await prisma.song.findMany({ where, select: { id: true, title: true, slug: true, category: true, artist: { select: { id: true, name: true, slug: true } } }, orderBy, skip: (page - 1) * ADMIN_PAGE_SIZE, take: ADMIN_PAGE_SIZE })
+  const songs = await prisma.song.findMany({ where, select: { id: true, title: true, slug: true, category: true, review: { select: { status: true } }, artist: { select: { id: true, name: true, slug: true } } }, orderBy, skip: (page - 1) * ADMIN_PAGE_SIZE, take: ADMIN_PAGE_SIZE })
   return { songs, total, totalPages, page }
 }
 export function refreshAdminSongs() {

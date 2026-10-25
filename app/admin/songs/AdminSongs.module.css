@@ -4,6 +4,7 @@
 .page h3 { font-size: 18px; font-weight: 600; }
 .filters { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-bottom: 24px; }
 .filters label { flex: 1 1 150px; }
+.filters .reviewFilter { flex-basis: 210px; }
 .page label { display: block; min-width: 0; font-size: 14px; font-weight: 500; }
 .input { display: block; width: 100%; min-width: 0; margin-top: 6px; border: 1px solid #a8b4bd; border-radius: 6px; padding: 10px 12px; background: #fff; color: #18232b; min-height: 44px; font-size: 16px; }
 .input::placeholder { color: #60717e; }

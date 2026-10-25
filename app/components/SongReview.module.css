@@ -1,0 +1,13 @@
+.badge { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; line-height: 1.4; }
+.badge svg { width: 18px; height: 18px; flex-shrink: 0; }
+.unreviewed svg { color: #7b8794; }
+.needs_fix svg { color: #c78817; }
+.verified svg { color: #2a9d62; }
+.control { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 20px; min-width: 0; }
+.control label { font-size: 14px; min-width: 0; }
+.select { display: block; width: 100%; min-width: 0; min-height: 44px; margin-top: 6px; padding: 8px 10px; border: 1px solid var(--theme-line, #59636d); border-radius: 6px; font-size: 16px; color: inherit; background: var(--theme-panel, #171717); }
+.select:focus-visible { outline: 2px solid var(--theme-link, #69baff); outline-offset: 3px; }
+.error { width: 100%; color: var(--theme-red, #ff8585); overflow-wrap: anywhere; }
+.refresh { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; text-decoration: underline; cursor: pointer; }
+.refresh svg { width: 16px; height: 16px; }
+.saved { color: var(--theme-muted, #a1a1aa); font-size: 14px; }

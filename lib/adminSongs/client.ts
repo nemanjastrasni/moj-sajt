@@ -1,4 +1,4 @@
-type AdminResult = { success: boolean; error?: string; href?: string; bioHref?: string; infoHref?: string; songs?: { id: string; title: string; slug: string }[]; artist?: { name: string; slug: string }; category?: string; user?: { id: string; role: string } }
+type AdminResult = { success: boolean; error?: string; review?: { status: string; version: string }; href?: string; bioHref?: string; infoHref?: string; songs?: { id: string; title: string; slug: string }[]; artist?: { name: string; slug: string }; category?: string; user?: { id: string; role: string } }
 
 export async function adminSongRequest(url: string, method: "POST" | "PATCH" | "DELETE", data: unknown): Promise<AdminResult> {
   const controller = new AbortController()

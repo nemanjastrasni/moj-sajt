@@ -1,7 +1,8 @@
 import type { Prisma } from "@prisma/client"
+import { isReviewStatus } from "../songReview/model"
 export const ADMIN_PAGE_SIZE = 20
 export const adminLetters = ["#", "A", "B", "C", "\u010c", "\u0106", "D", "D\u017d", "\u0110", "E", "F", "G", "H", "I", "J", "K", "L", "LJ", "M", "N", "NJ", "O", "P", "Q", "R", "S", "\u0160", "T", "U", "V", "W", "X", "Y", "Z", "\u017d"]
-export type AdminSongFilters = { q: string; artist: string; category: string; letter: string; sort: string; page: number }
+export type AdminSongFilters = { q: string; artist: string; category: string; letter: string; sort: string; review: string; page: number }
 export type AdminSearchParams = Record<string, string | string[] | undefined>
 const scalar = (value: string | string[] | undefined) => typeof value === "string" ? value : ""
 export function adminSongFilters(params: AdminSearchParams): AdminSongFilters {
@@ -9,6 +10,7 @@ export function adminSongFilters(params: AdminSearchParams): AdminSongFilters {
   const category = scalar(params.category)
   const letter = scalar(params.letter || params.artistLetter).toUpperCase()
   return { q: scalar(params.q).trim().slice(0, 120), artist: scalar(params.artist).trim().slice(0, 200),
+    review: isReviewStatus(scalar(params.review)) ? scalar(params.review) : "",
     category: ["domace", "narodne", "strane"].includes(category) ? category : "",
     letter: adminLetters.includes(letter) ? letter : "", sort: ["title", "artist"].includes(scalar(params.sort)) ? scalar(params.sort) : "latest",
     page: /^[1-9]\d{0,7}$/.test(page) ? Number(page) : 1 }
@@ -19,6 +21,8 @@ export function adminSongWhere(filters: AdminSongFilters): Prisma.SongWhereInput
   if (filters.q) and.push({ OR: [{ title: { contains: escapeAdminLike(filters.q), mode: "insensitive" } }, { artist: { name: { contains: escapeAdminLike(filters.q), mode: "insensitive" } } }] })
   if (filters.artist) and.push({ artist: { name: { contains: escapeAdminLike(filters.artist), mode: "insensitive" } } })
   if (filters.category) and.push({ category: filters.category })
+  if (filters.review === "unreviewed") and.push({ OR: [{ review: { is: null } }, { review: { is: { status: "unreviewed" } } }] })
+  else if (isReviewStatus(filters.review)) and.push({ review: { is: { status: filters.review } } })
   if (filters.letter === "#") and.push({ artist: { NOT: adminLetters.filter(letter => letter.length === 1 && letter !== "#").map(letter => ({ name: { startsWith: letter, mode: "insensitive" } })) } })
   else if (filters.letter) and.push({ artist: { name: { startsWith: filters.letter, mode: "insensitive" } } })
   return { AND: and }

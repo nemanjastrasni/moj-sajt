@@ -1,0 +1,46 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Opt-in temporary-table database regression check. */
+const fs = require("node:fs/promises")
+const path = require("node:path")
+const assert = require("node:assert/strict")
+const { parseArgs } = require("node:util")
+const { loadEnvConfig } = require("@next/env")
+const { databaseClient } = require("./lib/artist-image-source.cjs")
+async function main() {
+  const { values } = parseArgs({ options: { ca: { type: "string" } } })
+  loadEnvConfig(path.resolve(__dirname, ".."))
+  const client = await databaseClient(values.ca)
+  try {
+    await client.query("BEGIN")
+    await client.query('CREATE TEMP TABLE "Song" (id TEXT PRIMARY KEY, title TEXT, lyrics TEXT, chords TEXT, popularity INT DEFAULT 0, category TEXT) ON COMMIT DROP')
+    const sql = (await fs.readFile(path.join(__dirname, "../prisma/sql/song-review.sql"), "utf8"))
+      .replaceAll('public."SongReview"', 'pg_temp."SongReview"').replaceAll('public."Song"', 'pg_temp."Song"').replaceAll('public.reset_song_review_on_content_change', 'pg_temp.reset_song_review_on_content_change')
+    await client.query(sql)
+    await client.query(sql)
+    await client.query(`INSERT INTO pg_temp."Song" (id,title,lyrics,chords,category) VALUES ('fixture','Song','G    D\nLyric',NULL,'domace')`)
+    const mark = async () => client.query(`INSERT INTO pg_temp."SongReview" ("songId",status,"reviewedById") VALUES ('fixture','verified','test-admin') ON CONFLICT ("songId") DO UPDATE SET status='verified'`)
+    const count = async () => (await client.query('SELECT count(*)::int AS n FROM pg_temp."SongReview"')).rows[0].n
+    assert.equal(await count(), 0)
+    await mark()
+    await client.query(sql)
+    assert.equal(await count(), 1)
+    await client.query(`UPDATE pg_temp."Song" SET popularity=popularity+1,title='Renamed',category='strane' WHERE id='fixture'`)
+    assert.equal(await count(), 1)
+    await client.query(`UPDATE pg_temp."Song" SET lyrics=lyrics,chords=chords WHERE id='fixture'`)
+    assert.equal(await count(), 1)
+    await client.query(`UPDATE pg_temp."Song" SET lyrics=lyrics || ' changed' WHERE id='fixture'`)
+    assert.equal(await count(), 0)
+    await mark(); await client.query(`UPDATE pg_temp."Song" SET chords='' WHERE id='fixture'`)
+    assert.equal(await count(), 0)
+    await mark(); await client.query(`UPDATE pg_temp."Song" SET chords=NULL WHERE id='fixture'`)
+    assert.equal(await count(), 0)
+    await mark(); await client.query(`DELETE FROM pg_temp."Song" WHERE id='fixture'`)
+    assert.equal(await count(), 0)
+    await client.query("ROLLBACK")
+    console.log("PASS: actual PostgreSQL trigger resets changed lyrics/chords including NULL transitions; identical updates, titles, categories and visits retain review; deletion cascades; SQL rerun is safe. Only temporary tables used, transaction rolled back.")
+  } catch (error) {
+    await client.query("ROLLBACK").catch(() => {})
+    console.error("Temporary review regression failed:", error.code || error.message)
+    process.exitCode = 1
+  } finally { await client.end() }
+}
+main().catch(() => { console.error("Could not connect securely. No permanent objects modified."); process.exitCode = 1 })

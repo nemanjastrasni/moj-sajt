@@ -183,6 +183,14 @@ test("failed final deletion rolls back removed references", async () => {
   assert.equal((await item.DELETE(request({ title: "Moja pesma" }, "DELETE"), context("target"))).status, 503)
   assert.equal(state.songs.length, 1); assert.equal(state.favorites.length, 1); assert.equal(state.playlistSongs.length, 1)
 })
+
+test("metadata-only saves preserve an untouched NULL chord field so reviews are not reset spuriously", async () => {
+  seeded(); state.songs[0].chords = null
+  const response = await item.PATCH(request({ artistId: "artist", artistName: "Bend", category: "domace", title: "Renamed", lyrics: "Original lyrics", chords: "" }, "PATCH"), context("target"))
+  assert.equal(response.status, 200)
+  assert.equal(state.songs[0].chords, null)
+  assert.equal(state.songs[0].title, "Renamed")
+})
 test("serializable conflicts retry twice; an unavailable DB never looks like success", async () => {
   serialFailures = 2; assert.equal((await routes.POST(request(valid()))).status, 201); assert.equal(attempts, 3)
   down = true; assert.equal((await routes.POST(request(valid()))).status, 503)
