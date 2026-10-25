@@ -14,6 +14,8 @@
     "test:admin-songs": "node --test scripts/test-admin-songs.cjs",
     "test:admin-content": "node --test scripts/test-admin-content.cjs",
     "test:song-review": "node --test scripts/test-song-review.cjs",
+    "test:song-audit": "node --test scripts/test-song-audit.cjs",
+    "songs:audit": "node scripts/audit-songs.cjs",
     "test:songbook": "node --test scripts/test-songbook.cjs",
     "test:playlists": "node --test scripts/test-playlists.cjs",
     "test:theme": "node --test scripts/test-theme.cjs",
