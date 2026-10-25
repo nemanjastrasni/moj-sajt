@@ -6,6 +6,7 @@ import { playlistSongHref } from "@/lib/navigation/parent"
 import UiText, { CategoryLabel } from "./UiText"
 import SongDifficulty from "./SongDifficulty"
 import styles from "./PlaylistClient.module.css"
+import difficultyStyles from "./SongDifficulty.module.css"
 
 export default async function PlaylistCatalog({ slug, page = "1", category }: { slug: string; page?: string; category?: string }) {
   const entry = catalogEntry(slug)!
@@ -13,7 +14,7 @@ export default async function PlaylistCatalog({ slug, page = "1", category }: { 
   const { songs, total, pages, current } = await catalogPage(slug, selectedCategory ?? null, catalogPageNumber(page))
   const href = (p: number, cat?: string) => `/plejliste/${slug}?page=${p}${cat ? "&category=" + cat : ""}`
   return <section className={styles.page}>
-    <h1 className={styles.title}><UiText text={entry.title} /></h1>
+    <h1 className={entry.level ? `${styles.title} ${difficultyStyles.label}` : styles.title} data-difficulty={entry.level ?? undefined}><UiText text={entry.title} /></h1>
     <p className={styles.notice}><UiText text={difficultyExplanation} /></p>
     <nav className={styles.actions} aria-label="Kategorije">
       {[undefined, "domace", "strane", "narodne"].map(cat => <Link key={cat ?? "all"} className={styles.button} aria-current={cat === selectedCategory ? "page" : undefined} href={href(1, cat)}>

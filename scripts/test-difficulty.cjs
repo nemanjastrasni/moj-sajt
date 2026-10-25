@@ -2,6 +2,8 @@
 require("ts-node").register({ transpileOnly: true, compilerOptions: { module: "CommonJS", moduleResolution: "Node" } })
 const { test } = require("node:test")
 const assert = require("node:assert/strict")
+const fs = require("node:fs")
+const path = require("node:path")
 const { songChords, estimateDifficulty, difficultyLevels, playableLevel } = require("../lib/music/difficulty.ts")
 const { matchesCatalog, catalogEntry } = require("../lib/playlists/catalog.ts")
 const song = lyrics => ({ lyrics, category: "domace", difficulty: "beginner" })
@@ -37,4 +39,22 @@ test("catalogs share the same estimate, never fill an empty selection with unrel
   assert.equal(matchesCatalog(song("Bez akorda"), "domace"), true)
   assert.equal(matchesCatalog(song("C G"), "narodne"), false)
   assert.deepEqual(["beginner", "intermediate", "advanced", "unknown"].map(playableLevel), [1, 2, 4, 1])
+})
+
+test("all five difficulty colors stay distinct and readable in both themes", () => {
+  const css = fs.readFileSync(path.join(__dirname, "../app/components/SongDifficulty.module.css"), "utf8")
+  const luminance = hex => {
+    const channels = hex.match(/[\da-f]{2}/gi).map(value => parseInt(value, 16) / 255).map(value => value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4)
+    return channels[0] * .2126 + channels[1] * .7152 + channels[2] * .0722
+  }
+  for (const [light, background] of [[false, "111111"], [true, "ffffff"], [true, "f5f7f8"]]) {
+    const lines = css.split("\n").filter(line => line.includes("--difficulty-color:") && line.includes("data-difficulty=") && line.includes(':global(:root[data-theme="light"])') === light)
+    const colors = difficultyLevels.map(level => lines.find(line => line.includes(`data-difficulty="${level}"`))?.match(/--difficulty-color: #([a-f\d]{6})/i)?.[1])
+    assert.equal(new Set(colors).size, 5)
+    for (const color of colors) {
+      assert.ok(color)
+      const values = [luminance(color), luminance(background)].sort((a, b) => a - b)
+      assert.ok((values[1] + .05) / (values[0] + .05) >= 4.5, `${color} on ${background}`)
+    }
+  }
 })

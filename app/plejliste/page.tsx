@@ -3,6 +3,7 @@ import UiText from "@/app/components/UiText"
 import { catalogEntries } from "@/lib/playlists/catalog"
 import { difficultyExplanation } from "@/lib/music/difficulty"
 import styles from "@/app/components/PlaylistClient.module.css"
+import difficultyStyles from "@/app/components/SongDifficulty.module.css"
 
 export default function PlaylistsPage() {
   return <main className={styles.page}>
@@ -10,7 +11,7 @@ export default function PlaylistsPage() {
     <section className={styles.band}>
       <h2><UiText text="Po tezini" /></h2>
       <p className={styles.notice}><UiText text={difficultyExplanation} /></p>
-      <div className={styles.actions}>{catalogEntries.filter(entry => entry.level).map(entry => <Link className={styles.button} key={entry.slug} href={`/plejliste/${entry.slug}`}><UiText text={entry.title} /></Link>)}</div>
+      <div className={styles.actions}>{catalogEntries.filter(entry => entry.level).map(entry => <Link className={`${styles.button} ${difficultyStyles.label}`} data-difficulty={entry.level} key={entry.slug} href={`/plejliste/${entry.slug}`}><UiText text={entry.title} /></Link>)}</div>
     </section>
     <section className={styles.band}><h2><UiText text="Po akordima" /></h2><div className={styles.actions}>
       {catalogEntries.filter(entry => ["4-akorda", "acoustic"].includes(entry.slug)).map(entry => <Link className={styles.button} key={entry.slug} href={`/plejliste/${entry.slug}`}><UiText text={entry.title} /></Link>)}

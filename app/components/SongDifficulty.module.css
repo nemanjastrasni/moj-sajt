@@ -1,0 +1,11 @@
+.label { color: var(--difficulty-color, var(--theme-muted, #a1a1aa)); }
+.label[data-difficulty="very_easy"] { --difficulty-color: #4ade80; }
+.label[data-difficulty="easy"] { --difficulty-color: #a3e635; }
+.label[data-difficulty="medium"] { --difficulty-color: #facc15; }
+.label[data-difficulty="hard"] { --difficulty-color: #fb923c; }
+.label[data-difficulty="very_hard"] { --difficulty-color: #f87171; }
+:global(:root[data-theme="light"]) .label[data-difficulty="very_easy"] { --difficulty-color: #13783a; }
+:global(:root[data-theme="light"]) .label[data-difficulty="easy"] { --difficulty-color: #4b6b0a; }
+:global(:root[data-theme="light"]) .label[data-difficulty="medium"] { --difficulty-color: #856000; }
+:global(:root[data-theme="light"]) .label[data-difficulty="hard"] { --difficulty-color: #a84c08; }
+:global(:root[data-theme="light"]) .label[data-difficulty="very_hard"] { --difficulty-color: #bf2525; }
