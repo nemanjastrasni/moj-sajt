@@ -8,6 +8,8 @@ import styles from "@/app/components/ArtistMedia.module.css"
 import AdminPageActions from "@/app/components/AdminPageActions"
 import { artistContentVersion } from "@/lib/adminContent/server"
 import ArtistSongList from "@/app/components/ArtistSongList"
+import { BackNavigationTarget } from "@/app/components/BackNavigation"
+import { artistIndexHref } from "@/lib/navigation/parent"
 
 export const dynamic = "force-dynamic"
 
@@ -58,6 +60,7 @@ export default async function ArtistPage({ params }: any) {
 
   return (
     <div className={styles.page}>
+      <BackNavigationTarget pathname={`/pesme/${encodeURIComponent(category)}/${encodeURIComponent(artist)}`} href={artistIndexHref("pesme", category, artistData.name)} />
       <ArtistHeader name={artistData.name} image={image} />
       <AdminPageActions kind="artist" id={artistData.id} name={artistData.name} editHref={`/admin/artists/${encodeURIComponent(artistData.id)}/edit?from=artist`} biography={Boolean(artistData.bio || artistData.bioShort)} version={artistContentVersion(artistData)} />
 

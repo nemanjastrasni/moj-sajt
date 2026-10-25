@@ -1,18 +1,20 @@
 "use client"
 
-import { useRouter, usePathname } from "next/navigation"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { ArrowLeft } from "lucide-react"
 import { useI18n } from "./UiText"
+import { useParentHref } from "./BackNavigation"
 
 export default function BackButton() {
   const { t } = useI18n()
-  const router = useRouter()
-  const pathname = usePathname()
+  const href = useParentHref(usePathname())
 
-  if (pathname === "/") return null
+  if (!href) return null
 
   return (
-    <button
-      onClick={() => router.back()}
+    <Link
+      href={href}
       className="
         group flex items-center gap-2
         px-4 py-2
@@ -27,12 +29,10 @@ export default function BackButton() {
         shadow-md
       "
     >
-      <span className="text-lg group-hover:-translate-x-1 transition-transform">
-        ←
-      </span>
+      <ArrowLeft size={18} aria-hidden="true" className="group-hover:-translate-x-1 transition-transform" />
       <span className="text-sm tracking-wide">
         {t("Nazad")}
       </span>
-    </button>
+    </Link>
   )
 }

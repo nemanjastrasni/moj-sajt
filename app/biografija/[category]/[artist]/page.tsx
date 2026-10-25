@@ -9,6 +9,8 @@ import { getArtistImage } from "@/lib/artistPhotos"
 import styles from "@/app/components/ArtistMedia.module.css"
 import AdminPageActions from "@/app/components/AdminPageActions"
 import { artistContentVersion } from "@/lib/adminContent/server"
+import { BackNavigationTarget } from "@/app/components/BackNavigation"
+import { artistIndexHref } from "@/lib/navigation/parent"
 
 function cirToLat(text: string) {
   const map: any = {
@@ -22,7 +24,7 @@ function cirToLat(text: string) {
 export const dynamic = "force-dynamic"
 
 export default async function BiographyPage({ params }: any) {
-  const artistSlug = (await params).artist
+  const { artist: artistSlug, category } = await params
 
   const artistData = await prisma.artist.findUnique({
     where: { slug: artistSlug }
@@ -33,6 +35,7 @@ export default async function BiographyPage({ params }: any) {
 
   return (
     <div className={styles.page}>
+      <BackNavigationTarget pathname={`/biografija/${encodeURIComponent(category)}/${encodeURIComponent(artistSlug)}`} href={artistIndexHref("biografija", category, artistData.name)} />
 
       {/* SLIKA */}
       {image && <ArtistImage src={image} name={artistData.name} variant="portrait" priority />}
