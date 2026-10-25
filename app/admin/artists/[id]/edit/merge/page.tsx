@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
+import { requireSongAdmin } from "@/lib/adminSongs/server"
 
 export default async function MergeArtist({
   params,
@@ -8,6 +9,7 @@ export default async function MergeArtist({
   params: Promise<{ id: string }>
   searchParams: Promise<{ search?: string }>
 }) {
+  await requireSongAdmin()
 
   const { id } = await params
 
@@ -44,6 +46,7 @@ const artists = await prisma.artist.findMany({
 
   async function merge(formData: FormData) {
     "use server"
+    await requireSongAdmin()
 
     const targetId = formData.get("targetId") as string
     if (!targetId) {

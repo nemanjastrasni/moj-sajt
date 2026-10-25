@@ -5,6 +5,8 @@ import Link from "next/link"
 import ArtistHeader from "@/app/components/ArtistHeader"
 import { getArtistImage } from "@/lib/artistPhotos"
 import styles from "@/app/components/ArtistMedia.module.css"
+import AdminPageActions from "@/app/components/AdminPageActions"
+import { artistContentVersion } from "@/lib/adminContent/server"
 
 export const dynamic = "force-dynamic"
 
@@ -56,6 +58,7 @@ export default async function ArtistPage({ params }: any) {
   return (
     <div className={styles.page}>
       <ArtistHeader name={artistData.name} image={image} />
+      <AdminPageActions kind="artist" id={artistData.id} name={artistData.name} editHref={`/admin/artists/${encodeURIComponent(artistData.id)}/edit?from=artist`} biography={Boolean(artistData.bio || artistData.bioShort)} version={artistContentVersion(artistData)} />
 
       {/* LINK KA BIOGRAFIJI */}
       <div style={{ marginBottom: "25px" }}>

@@ -12,6 +12,7 @@
     "test:search": "node --test scripts/test-search.cjs",
     "test:submissions": "node --test scripts/test-submissions.cjs",
     "test:admin-songs": "node --test scripts/test-admin-songs.cjs",
+    "test:admin-content": "node --test scripts/test-admin-content.cjs",
     "test:songbook": "node --test scripts/test-songbook.cjs",
     "test:playlists": "node --test scripts/test-playlists.cjs",
     "test:theme": "node --test scripts/test-theme.cjs",

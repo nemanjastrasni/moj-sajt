@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { adminSongFailure, requireSongAdmin } from "@/lib/adminSongs/server"
+import { adminSongBody, adminSongFailure, requireSongAdmin } from "@/lib/adminSongs/server"
 import { escapeAdminLike } from "@/lib/adminSongs/query"
+import { adminSongId } from "@/lib/adminSongs/validation"
+import { validateArtistEdit } from "@/lib/adminContent/validation"
+import { refreshArtistContent, updateArtistContent } from "@/lib/adminContent/server"
 
 export async function GET(req: Request) {
   try {
@@ -24,50 +25,20 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions)
-
-  if (!session || session.user.role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-
-  const body = await req.json()
-
-  const { name, slug, bio, discography, image, category } = body
-
-  if (!name || !slug || !category) {
-    return NextResponse.json(
-      { error: "Missing required fields" },
-      { status: 400 }
-    )
-  }
-
-  const artist = await prisma.artist.create({
-    data: {
-      name,
-      slug,
-      bio,
-      discography,
-      image,
-      category, // 🔥 OVO JE BILO KLJUČNO
-    },
-  })
-
-  return NextResponse.json(artist)
+  try {
+    await requireSongAdmin()
+    const body = await adminSongBody(req) as Record<string, unknown>
+    const input = validateArtistEdit({ ...body, version: "0".repeat(64), image: body?.image ?? "", bio: body?.bio ?? "", discography: typeof body?.discography === "string" ? body.discography : JSON.stringify(body?.discography ?? []) })
+    const artist = await prisma.artist.create({ data: { name: input.name, slug: adminSongId(body?.slug), category: input.category, bio: input.bio, image: input.image, discography: input.discography } })
+    refreshArtistContent(artist)
+    return NextResponse.json(artist)
+  } catch (error) { return adminSongFailure(error) }
 }
 export async function PATCH(req: Request) {
-  const session = await getServerSession(authOptions)
-
-  if (!session || session.user.role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-
-  const body = await req.json()
-  const { id, name, bio, discography, image, category } = body
-
-  const updated = await prisma.artist.update({
-    where: { id },
-    data: { name, bio, discography, image, category },
-  })
-
-  return NextResponse.json(updated)
+  try {
+    const actor = await requireSongAdmin(), body = await adminSongBody(req) as Record<string, unknown>
+    const result = await updateArtistContent(adminSongId(body?.id), actor.id, validateArtistEdit(body))
+    refreshArtistContent(result.before, result.artist)
+    return NextResponse.json({ success: true })
+  } catch (error) { return adminSongFailure(error) }
 }

@@ -6,6 +6,8 @@ import ArtistWikiCredit from "@/app/components/ArtistWikiCredit"
 import ArtistDiscography from "@/app/components/ArtistDiscography"
 import ArtistImage from "@/app/components/ArtistImage"
 import { getArtistImage } from "@/lib/artistPhotos"
+import AdminPageActions from "@/app/components/AdminPageActions"
+import { artistContentVersion } from "@/lib/adminContent/server"
 
 type Props = {
   params: Promise<{
@@ -33,6 +35,7 @@ export default async function ArtistInfoPage({ params }: Props) {
       <h1 className="text-3xl font-bold mb-4">
         {artistData.name}
       </h1>
+      <AdminPageActions kind="artist" id={artistData.id} name={artistData.name} editHref={`/admin/artists/${encodeURIComponent(artistData.id)}/edit?from=info`} biography={Boolean(artistData.bio || artistData.bioShort)} version={artistContentVersion(artistData)} />
 
       {image && (
         <div className="mb-6">

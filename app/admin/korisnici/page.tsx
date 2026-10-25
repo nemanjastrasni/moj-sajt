@@ -1,9 +1,13 @@
 import { prisma } from "@/lib/prisma"
+import { requireSongAdmin } from "@/lib/adminSongs/server"
+import UserRoleButton from "./UserRoleButton"
 
 export default async function AdminUsersPage() {
+  const actor = await requireSongAdmin()
   const users = await prisma.user.findMany({
+  select: { id: true, name: true, email: true, city: true, birthYear: true, image: true, role: true, banned: true, createdAt: true },
   orderBy: { createdAt: "desc" },
-}) as any
+})
 
 const onlineUsers = await prisma.$queryRaw<
   {
@@ -75,7 +79,7 @@ function timeAgo(date?: Date) {
   </div>
 )}
 
-    <table className="w-full border">
+    <div className="max-w-full overflow-x-auto"><table className="w-full border">
         <thead>
           <tr className="bg-gray-100 text-left">
   <th className="p-2">Slika</th>
@@ -91,7 +95,7 @@ function timeAgo(date?: Date) {
 </tr>
         </thead>
         <tbody>
-  {users.map((u: any) => (
+  {users.map((u) => (
     <tr key={u.id} className="border-t">
       <td className="p-2">
         {u.image ? (
@@ -115,7 +119,8 @@ function timeAgo(date?: Date) {
         {u.banned ? "❌ Banned" : "✅ Active"}
       </td>
       <td className="p-2">
-        {!u.banned && (
+        <UserRoleButton key={u.id + u.role} user={u} currentId={actor.id} />
+        {!u.banned && u.id !== actor.id && (
           <form action={`/api/admin/users/ban`} method="POST">
             <input type="hidden" name="userId" value={u.id} />
             <button className="text-red-600 hover:underline">
@@ -127,7 +132,7 @@ function timeAgo(date?: Date) {
     </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
     </div>
   )
 }

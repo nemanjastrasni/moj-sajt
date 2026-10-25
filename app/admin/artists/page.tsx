@@ -1,10 +1,11 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { getCategoryLabel } from "@/lib/categories"
+import { requireSongAdmin } from "@/lib/adminSongs/server"
 
 async function deleteArtist(id: string) {
 "use server"
-
+await requireSongAdmin()
 await prisma.artist.delete({
 where: { id }
 })
@@ -15,6 +16,7 @@ export default async function AdminArtistsPage({
 }: {
   searchParams: Promise<{ search?: string; category?: string; letter?: string }>
 }) {
+  await requireSongAdmin()
 
   const params = await searchParams
   const search = params?.search || ""

@@ -1,10 +1,13 @@
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
+import { requireSongAdmin } from "@/lib/adminSongs/server"
 
-export default function NewArtistPage() {
+export default async function NewArtistPage() {
+  await requireSongAdmin()
 
   async function createArtist(formData: FormData) {
     "use server"
+    await requireSongAdmin()
 
     const name = formData.get("name") as string
     let slug = (formData.get("slug") as string)?.toLowerCase().trim()

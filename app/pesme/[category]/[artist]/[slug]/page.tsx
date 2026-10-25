@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import SongClient from "../../../../components/SongClient"
-import { resolveMusic } from "@/lib/music/resolver"
 import type { Metadata } from "next"
+import AdminPageActions from "@/app/components/AdminPageActions"
+import { artistPageHref } from "@/lib/adminContent/paths"
 
 type Props = {
   params: Promise<{
@@ -58,6 +59,7 @@ export default async function SongPage({ params }: Props) {
 
   return (
     <SongClient
+      adminTools={<AdminPageActions kind="song" id={song.id} name={song.title} editHref={`/admin/songs/${encodeURIComponent(song.id)}/edit?from=song`} afterDelete={artistPageHref(song.artist)} />}
       song={{
         id: song.id,
         title: song.title,

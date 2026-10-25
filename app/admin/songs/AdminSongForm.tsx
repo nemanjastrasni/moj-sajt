@@ -21,7 +21,7 @@ function SongPreview({ lyrics }: { lyrics: string }) {
   return <div className={`${styles.preview} theme-dark-surface`}><SongSheet lines={lines} transpose={0} textSize={16} chordSize={16} /></div>
 }
 
-export default function AdminSongForm({ initial }: { initial?: EditableAdminSong }) {
+export default function AdminSongForm({ initial, returnToSong = false, backHref = "/admin/songs" }: { initial?: EditableAdminSong; returnToSong?: boolean; backHref?: string }) {
   const router = useRouter()
   const nextKey = useRef(1)
   const [artistName, setArtistName] = useState(initial?.artist.name ?? "")
@@ -69,7 +69,8 @@ export default function AdminSongForm({ initial }: { initial?: EditableAdminSong
     catch (cause) { setError(cause instanceof Error ? cause.message : "Proveri podatke."); return }
     setBusy(true)
     try {
-      await adminSongRequest(initial ? "/api/admin/songs/" + encodeURIComponent(initial.id) : "/api/admin/songs", initial ? "PATCH" : "POST", body)
+      const result = await adminSongRequest(initial ? "/api/admin/songs/" + encodeURIComponent(initial.id) : "/api/admin/songs", initial ? "PATCH" : "POST", body)
+      if (returnToSong && result.href) { router.push(result.href); router.refresh(); return }
       setSaved(true); router.refresh()
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Cuvanje nije uspelo.") }
     finally { setBusy(false) }
@@ -81,7 +82,7 @@ export default function AdminSongForm({ initial }: { initial?: EditableAdminSong
   </div>
 
   return <div className={styles.page}>
-    <div className={styles.heading}><h2>{initial ? "Uredi pesmu" : "Nova pesma"}</h2><Link href="/admin/songs" className={styles.button}><ArrowLeft />Spisak pesama</Link></div>
+    <div className={styles.heading}><h2>{initial ? "Uredi pesmu" : "Nova pesma"}</h2><Link href={backHref} className={styles.button}><ArrowLeft />{returnToSong ? "Nazad na pesmu" : "Spisak pesama"}</Link></div>
     <form onSubmit={submit} className={styles.form}>
       <fieldset disabled={busy}>
         <div className={styles.grid}>

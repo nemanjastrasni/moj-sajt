@@ -1,7 +1,7 @@
 "use client"
 
 import { useI18n } from "@/app/components/UiText"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, type ReactNode } from "react"
 import Link from "next/link"
 import { useMemo } from "react"
 import UsedChordCard from "./UsedChordCard"
@@ -18,6 +18,7 @@ type ChordVariant = {
 }
 
 type Props = {
+  adminTools?: ReactNode
   song: {
     id: string
     title: string
@@ -35,7 +36,7 @@ type Props = {
   } | null
 }
 
-export default function SongClient({ song, media }: Props) {
+export default function SongClient({ song, media, adminTools }: Props) {
   const { t } = useI18n()
 
   const { data: session } = useSession()
@@ -420,6 +421,7 @@ useEffect(() => {
   </div>
 </div>
 
+{adminTools}
 {song.artistSlug ? (
   <Link
   href={`/pesme/${song.category}/${song.artistSlug}`}

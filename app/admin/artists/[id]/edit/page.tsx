@@ -1,148 +1,21 @@
 import { prisma } from "@/lib/prisma"
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
+import { requireSongAdmin } from "@/lib/adminSongs/server"
+import { artistContentVersion } from "@/lib/adminContent/server"
+import { artistPageHref, type ArtistReturn } from "@/lib/adminContent/paths"
+import ArtistEditForm from "../../ArtistEditForm"
 
-
-
-
-export default async function EditArtistPage({
-  params,
-  searchParams,
-}: {
+export default async function EditArtistPage({ params, searchParams }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ search?: string; category?: string; letter?: string }>
+  searchParams: Promise<{ from?: string; search?: string; category?: string; letter?: string }>
 }) {
-  const { id } = await params
-  const sp = await searchParams
-  const artist = await prisma.artist.findUnique({
-    where: { id },
-  })
-
+  await requireSongAdmin()
+  const { id } = await params, sp = await searchParams
+  const artist = await prisma.artist.findUnique({ where: { id } })
   if (!artist) notFound()
-
-  async function updateArtist(formData: FormData) {
-    "use server"
-
-    const name = formData.get("name") as string
-    const bio = formData.get("bio") as string
-    const image = formData.get("image") as string
-    const category = (formData.get("category") as string)?.toLowerCase().trim()
-    const discographyRaw = formData.get("discography") as string
-
-    let parsedDiscography: string[] = []
-
-    if (discographyRaw?.trim()) {
-      try {
-        parsedDiscography = JSON.parse(discographyRaw)
-      } catch {
-        parsedDiscography = discographyRaw
-          .split("\n")
-          .map((line) => line.trim())
-          .filter(Boolean)
-      }
-    }
-    
-    await prisma.artist.update({
-      where: { id },
-      data: {
-        name,
-        bio,
-        image,
-        category,
-        discography: parsedDiscography,
-      },
-    })
-
-    redirect(`/admin/artists?search=${sp?.search || ""}&category=${sp?.category || ""}&letter=${sp?.letter || ""}`)
-  }
-  const artists = await prisma.artist.findMany({
-  orderBy: { name: "asc" },
-})
-
-async function mergeArtist(formData: FormData) {
-  "use server"
-
-  const targetId = formData.get("targetId") as string
-
-  await prisma.song.updateMany({
-    where: { artistId: id },
-    data: { artistId: targetId },
-  })
-
-  await prisma.artist.delete({
-    where: { id },
-  })
-
-  redirect("/admin/artists")
-}
-
-  return (
-    <div className="max-w-2xl text-gray-900">
-      <h1 className="text-2xl font-bold mb-6">Edit izvođač</h1>
-
-      <form action={updateArtist} className="space-y-4">
-        <div>
-          <label className="block text-sm mb-1">Ime</label>
-          <input
-            name="name"
-            defaultValue={artist.name}
-            className="border p-2 w-full rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm mb-1">Kategorija</label>
-          <select
-  name="category"
-  defaultValue={artist.category ?? ""}
-  className="border p-2 w-full rounded"
->
-  <option value="">-- izaberi --</option>
-  <option value="domace">Zabavne</option>
-  <option value="strane">Strane</option>
-  <option value="narodne">Narodne</option>
-</select>
-        </div>
-
-        <div>
-          <label className="block text-sm mb-1">Slika (URL)</label>
-          <input
-            name="image"
-            defaultValue={artist.image ?? ""}
-            className="border p-2 w-full rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm mb-1">Biografija</label>
-          <textarea
-            name="bio"
-            defaultValue={artist.bio ?? ""}
-            rows={6}
-            className="border p-2 w-full rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm mb-1">
-            Diskografija (jedan album po redu ili JSON niz)
-          </label>
-          <textarea
-            name="discography"
-            defaultValue={
-              typeof artist.discography === "string" ? artist.discography
-                : artist.discography == null ? "" : JSON.stringify(artist.discography, null, 2)
-            }
-            rows={6}
-            className="border p-2 w-full rounded"
-          />
-        </div>
-
-        <button className="bg-black text-white px-4 py-2 rounded">
-          Sačuvaj izmene
-        </button>
-      </form>
-      <hr className="my-6" />
-
-    </div>
-  )
+  const destination = ["artist", "bio", "info"].includes(sp.from || "") ? sp.from as ArtistReturn : "list"
+  const filters = new URLSearchParams()
+  for (const key of ["search", "category", "letter"] as const) if (sp[key]) filters.set(key, sp[key]!)
+  const backHref = destination === "list" ? "/admin/artists" + (filters.size ? "?" + filters.toString() : "") : artistPageHref(artist, destination)
+  return <ArtistEditForm initial={{ id: artist.id, name: artist.name, bio: artist.bio, image: artist.image, category: artist.category, discography: artist.discography, version: artistContentVersion(artist) }} destination={destination} backHref={backHref} />
 }
