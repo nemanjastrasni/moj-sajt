@@ -1,5 +1,6 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "Ukupno prisutnih": "Total online", "Ulogovani": "Signed in", "Gosti": "Guests", "Gost": "Guest", "Nepoznato": "Unknown", "Osvezi prisustvo": "Refresh presence", "Osvezeno": "Updated", "Aktivnost u poslednja 2 minuta": "Activity in the last 2 minutes", "Pristup admin pregledu vise nije dozvoljen.": "Access to this admin view is no longer allowed.", "Prisustvo trenutno nije dostupno. Podaci mozda nisu azurni.": "Presence is currently unavailable. Data may be out of date.", "Gosti trenutno online": "Guests currently online", "Nema trenutno aktivnih gostiju.": "No active guests at the moment.", "Zemlja posete (priblizno)": "Visit country (approximate)",
   "Sajt vodi": "Website operator:", "Fizicko lice, Srbija.": "Individual, Serbia.",
   "Sajt vodi fizicko lice iz Srbije.": "This website is operated by an individual based in Serbia.",
   "Za pitanja o sajtu, ispravke sadrzaja i zahteve u vezi sa nalogom pisi na:": "For website questions, content corrections and account requests, contact:",

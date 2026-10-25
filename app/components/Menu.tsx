@@ -6,6 +6,7 @@ import Link from "next/link"
 import { signOut, useSession } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
 import { useI18n } from "./UiText"
+import { PRESENCE_EVENT, validCounts, type PresenceCounts } from "@/lib/presence/model"
 
 const categories = [
   { href: "/pesme/narodne", label: "Narodne" },
@@ -32,25 +33,34 @@ export default function Menu() {
   const accountButton = useRef<HTMLButtonElement>(null)
   const [open, setOpen] = useState(false)
   const [openPesme, setOpenPesme] = useState(false)
-  const [online, setOnline] = useState({ total: 0, loggedIn: 0 })
+  const [online, setOnline] = useState<PresenceCounts | null>(null)
   const close = () => { setOpen(false); setOpenPesme(false) }
 
   useEffect(() => {
+    if (status === "loading") return
     let disposed = false
+    let running: AbortController | null = null
+    const accept = (data: unknown) => { if (validCounts(data) && !disposed) setOnline(current => !current || Date.parse(data.checkedAt) >= Date.parse(current.checkedAt) ? data : current) }
+    const update = (event: Event) => accept((event as CustomEvent).detail)
     async function heartbeat() {
+      if (running || document.visibilityState === "hidden") return
+      const controller = new AbortController(); running = controller
+      const deadline = window.setTimeout(() => controller.abort(), 10000)
       try {
-        const res = await fetch("/api/online", { method: "POST", credentials: "include", cache: "no-store" })
+        const res = await fetch("/api/online", { method: "POST", credentials: "include", cache: "no-store", signal: controller.signal })
         if (!res.ok) return
         const data = await res.json()
-        if (!disposed) setOnline({ total: data.total || 0, loggedIn: data.loggedIn || 0 })
+        if (!controller.signal.aborted) accept(data)
       } catch {}
+      finally { window.clearTimeout(deadline); if (running === controller) running = null }
     }
     heartbeat()
     const interval = window.setInterval(heartbeat, 30000)
     const visible = () => { if (document.visibilityState === "visible") heartbeat() }
     document.addEventListener("visibilitychange", visible)
-    return () => { disposed = true; window.clearInterval(interval); document.removeEventListener("visibilitychange", visible) }
-  }, [session?.user?.id])
+    window.addEventListener(PRESENCE_EVENT, update)
+    return () => { disposed = true; running?.abort(); window.clearInterval(interval); document.removeEventListener("visibilitychange", visible); window.removeEventListener(PRESENCE_EVENT, update) }
+  }, [session?.user?.id, status])
 
   useEffect(() => {
     if (!open && !openPesme) return
@@ -99,7 +109,7 @@ export default function Menu() {
 
     <div className="absolute top-0 right-3 z-30 flex h-[var(--menu-row)] items-center gap-3 sm:right-6">
       <div className="hidden whitespace-nowrap text-xs text-white sm:block" title={t("Korisnici trenutno na sajtu / ulogovani korisnici")}>
-        online {online.total} | {t("ulogovani")} {online.loggedIn}
+        online {online?.total ?? "-"} | {t("ulogovani")} {online?.loggedIn ?? "-"} | {t("Gosti")} {online?.guests ?? "-"}
       </div>
       {!session ? <button type="button" disabled={status === "loading"}
         onClick={() => router.push("/login?callbackUrl=" + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash))}
