@@ -24,6 +24,8 @@
     "artists:images": "node scripts/artist-images.cjs",
     "artists:photos": "node scripts/artist-image-publish.cjs",
     "artists:wiki": "node scripts/artist-wiki.cjs",
+    "artists:bios:audit": "node scripts/audit-biography-sources.cjs",
+    "test:biography-sources": "node --test scripts/test-biography-sources.cjs",
     "artists:discographies:recheck": "node scripts/recheck-discographies.cjs",
     "test:artist-wiki": "node --test scripts/test-artist-wiki.cjs",
     "test:artist-images": "node --test scripts/test-artist-images.cjs",

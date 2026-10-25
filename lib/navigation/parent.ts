@@ -39,6 +39,7 @@ export function parentHref(pathname: string | null): string | null {
   // These route families have category pages but no standalone index at their root.
   if (section === "top-50") return ["domace", "narodne", "strane"].includes(category) ? href(["pesme", category]) : "/pesme"
   if (section === "top-listening-playlists") return "/plejliste"
+  if (section === "prijava-povrede") return "/kontakt"
   return parts.length === 1 ? "/" : href(parts.slice(0, -1))
 }
 

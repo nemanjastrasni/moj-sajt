@@ -9,6 +9,7 @@ import ThemeToggle from "@/app/components/ThemeToggle"
 import { THEME_INIT_SCRIPT } from "@/lib/theme"
 import LanguageSelect from "@/app/components/LanguageSelect"
 import { LOCALE_INIT_SCRIPT } from "@/lib/i18n"
+import UiText from "@/app/components/UiText"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -54,6 +55,9 @@ export default function RootLayout({
           </main>
 
           <footer className="mx-auto max-w-6xl px-4 pb-8 text-xs text-gray-400">
+            <a href="/kontakt" className="underline underline-offset-2"><UiText text="Kontakt" /></a>
+            {" · "}<a href="/prijava-povrede" className="underline underline-offset-2"><UiText text="Prijava povrede prava" /></a>
+            {" · "}
             <a href="/foto-izvori" className="underline underline-offset-2">Fotografije / Photo Credits</a>
             {" · "}<a href="/wiki-izvori" className="underline underline-offset-2">Wikipedia / Sources</a>
           </footer>

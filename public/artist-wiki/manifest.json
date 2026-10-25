@@ -42,6 +42,26 @@
       }
     },
     {
+      "artistId": "cmmxssyf8002hobh8vj91jytu",
+      "artistName": "Alen Islamović",
+      "slug": "alen-islamovic",
+      "category": "domace",
+      "wikidataId": "Q1264770",
+      "bio": {
+        "hash": "ad9e5a7cd741b2592e3e704394cf622c8f5787b187023f336f1bc2c1d4db649d",
+        "language": "sr",
+        "title": "Ален Исламовић",
+        "pageId": 60226,
+        "revisionId": 31742746,
+        "timestamp": "2026-10-03T11:47:42Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%90%D0%BB%D0%B5%D0%BD_%D0%98%D1%81%D0%BB%D0%B0%D0%BC%D0%BE%D0%B2%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31742746",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%90%D0%BB%D0%B5%D0%BD+%D0%98%D1%81%D0%BB%D0%B0%D0%BC%D0%BE%D0%B2%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
       "artistId": "cmmxt19s404veob3geb3gwp0p",
       "artistName": "Amadeus Bend",
       "slug": "amadeus-bend",
@@ -154,7 +174,7 @@
       "category": "domace",
       "wikidataId": "Q780684",
       "bio": {
-        "hash": "489af4a738d296a85e48dce081766eb558d5c09b42946086fd32f61da4e030fb",
+        "hash": "55f6e55bc50ee3fd83560a24c6a562a515ffffd7eef7593531ebee90ef1bce75",
         "language": "sr",
         "title": "Атомско склониште",
         "pageId": 587682,
@@ -164,7 +184,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31208803",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%90%D1%82%D0%BE%D0%BC%D1%81%D0%BA%D0%BE+%D1%81%D0%BA%D0%BB%D0%BE%D0%BD%D0%B8%D1%88%D1%82%D0%B5&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       },
       "discography": {
         "hash": "bf1430175ea591013dac92e70bb8ecea7f5d6ca3033b42e359182ec932ccc516",
@@ -178,6 +198,26 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%90%D1%82%D0%BE%D0%BC%D1%81%D0%BA%D0%BE+%D1%81%D0%BA%D0%BB%D0%BE%D0%BD%D0%B8%D1%88%D1%82%D0%B5&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      }
+    },
+    {
+      "artistId": "cmmxt1k2e0551ob3g870sj0t2",
+      "artistName": "Baja Mali Knindža",
+      "slug": "baja-mali-knindza",
+      "category": "narodne",
+      "wikidataId": "Q712829",
+      "bio": {
+        "hash": "115fef9e2440267f68a85872c564d47a1bff59b44de90cb09b43bee0c0e86959",
+        "language": "sr",
+        "title": "Баја Мали Книнџа",
+        "pageId": 32570,
+        "revisionId": 31696647,
+        "timestamp": "2026-09-08T06:06:27Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%91%D0%B0%D1%98%D0%B0_%D0%9C%D0%B0%D0%BB%D0%B8_%D0%9A%D0%BD%D0%B8%D0%BD%D1%9F%D0%B0",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31696647",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%91%D0%B0%D1%98%D0%B0+%D0%9C%D0%B0%D0%BB%D0%B8+%D0%9A%D0%BD%D0%B8%D0%BD%D1%9F%D0%B0&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -218,6 +258,19 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Block+Out&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "fa6a09b8e25589c820e232766f16597b0fce36407dc6482ec97c587cdcbce75e",
+        "language": "sr",
+        "title": "Block Out",
+        "pageId": 110302,
+        "revisionId": 31759627,
+        "timestamp": "2026-10-10T22:00:16Z",
+        "url": "https://sr.wikipedia.org/wiki/Block_Out",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31759627",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Block+Out&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -227,7 +280,7 @@
       "category": "strane",
       "wikidataId": "Q392",
       "bio": {
-        "hash": "b84ded29270230f5cb82cb596c276c68a9712bd64ed04197651d9f79050e6672",
+        "hash": "6456d4ce35086a23354447a2bb43b4f46d3b798a509e270876e61ec2e503e029",
         "language": "sr",
         "title": "Боб Дилан",
         "pageId": 165341,
@@ -237,7 +290,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31723634",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%91%D0%BE%D0%B1+%D0%94%D0%B8%D0%BB%D0%B0%D0%BD&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       },
       "discography": {
         "hash": "fa87ba3250090ade1ee9fb12e602d8aea1f9c5ba64c1b50a7ac53e055fadc583",
@@ -291,6 +344,19 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%91%D1%80%D0%BA%D0%BE%D0%B2%D0%B8+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "04d5237eef4e1234d9a94536d2fc47932bc3f414415dc97ee51128244a8ef5fc",
+        "language": "sr",
+        "title": "Бркови (музичка група)",
+        "pageId": 1334366,
+        "revisionId": 31842087,
+        "timestamp": "2026-10-17T06:47:17Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%91%D1%80%D0%BA%D0%BE%D0%B2%D0%B8_(%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0_%D0%B3%D1%80%D1%83%D0%BF%D0%B0)",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31842087",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%91%D1%80%D0%BA%D0%BE%D0%B2%D0%B8+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -380,6 +446,86 @@
       }
     },
     {
+      "artistId": "cmmxt1txm05e8ob3gb8jpenj4",
+      "artistName": "Dado Polumenta",
+      "slug": "dado-polumenta",
+      "category": "narodne",
+      "wikidataId": "Q168163",
+      "bio": {
+        "hash": "c765db17bb53e72d66bf2e53b3b8ed424c336e1eae6ae0830621a7f5a4e60cf2",
+        "language": "sr",
+        "title": "Дадо Полумента",
+        "pageId": 414151,
+        "revisionId": 31785789,
+        "timestamp": "2026-10-12T00:07:07Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%94%D0%B0%D0%B4%D0%BE_%D0%9F%D0%BE%D0%BB%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31785789",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%94%D0%B0%D0%B4%D0%BE+%D0%9F%D0%BE%D0%BB%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxswqzk00o6ob3gyp0fevgs",
+      "artistName": "Dado Topić",
+      "slug": "dado-topic",
+      "category": "domace",
+      "wikidataId": "Q630155",
+      "bio": {
+        "hash": "b9b4b11c0037c8b1e253e8882787db4b7b1ef5b6f46900d12db5fe86ada482eb",
+        "language": "sr",
+        "title": "Дадо Топић",
+        "pageId": 149682,
+        "revisionId": 31785790,
+        "timestamp": "2026-10-12T00:07:09Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%94%D0%B0%D0%B4%D0%BE_%D0%A2%D0%BE%D0%BF%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31785790",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%94%D0%B0%D0%B4%D0%BE+%D0%A2%D0%BE%D0%BF%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxswrj600onob3gs01t9eq1",
+      "artistName": "Daleka Obala",
+      "slug": "daleka-obala",
+      "category": "domace",
+      "wikidataId": "Q3012338",
+      "bio": {
+        "hash": "c00c9915ce60d8a7b18baee33ac2af070e43b80281d15b40e0006bf9d8c7d141",
+        "language": "sr",
+        "title": "Далека обала",
+        "pageId": 4312683,
+        "revisionId": 31005302,
+        "timestamp": "2026-06-04T23:53:14Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%94%D0%B0%D0%BB%D0%B5%D0%BA%D0%B0_%D0%BE%D0%B1%D0%B0%D0%BB%D0%B0",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31005302",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%94%D0%B0%D0%BB%D0%B5%D0%BA%D0%B0+%D0%BE%D0%B1%D0%B0%D0%BB%D0%B0&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxswt1m00q4ob3gghwu2xws",
+      "artistName": "Damir Urban",
+      "slug": "damir-urban",
+      "category": "domace",
+      "wikidataId": "Q1259210",
+      "bio": {
+        "hash": "e2234715984cb440af1477710aaede740eb4e9cc96dc7d9b76b9f25459455ede",
+        "language": "sr",
+        "title": "Дамир Урбан",
+        "pageId": 4029743,
+        "revisionId": 31005298,
+        "timestamp": "2026-06-04T23:50:51Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%94%D0%B0%D0%BC%D0%B8%D1%80_%D0%A3%D1%80%D0%B1%D0%B0%D0%BD",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31005298",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%94%D0%B0%D0%BC%D0%B8%D1%80+%D0%A3%D1%80%D0%B1%D0%B0%D0%BD&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
       "artistId": "cmmxt1vdt05fmob3gmk07mith",
       "artistName": "Darko Lazic",
       "slug": "darko-lazic",
@@ -397,6 +543,66 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%94%D0%B0%D1%80%D0%BA%D0%BE+%D0%9B%D0%B0%D0%B7%D0%B8%D1%9B+%28%D0%BF%D0%B5%D0%B2%D0%B0%D1%87%29&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      }
+    },
+    {
+      "artistId": "cmmxswtii00qkob3gogt7ojov",
+      "artistName": "Darko Rundek",
+      "slug": "darko-rundek",
+      "category": "domace",
+      "wikidataId": "Q2508581",
+      "bio": {
+        "hash": "7677857e8a922488d27644f95a4858def2cf40a88c92ef13b28ca4c83856fe38",
+        "language": "sr",
+        "title": "Дарко Рундек",
+        "pageId": 30947,
+        "revisionId": 31053709,
+        "timestamp": "2026-07-03T21:48:01Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%94%D0%B0%D1%80%D0%BA%D0%BE_%D0%A0%D1%83%D0%BD%D0%B4%D0%B5%D0%BA",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31053709",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%94%D0%B0%D1%80%D0%BA%D0%BE+%D0%A0%D1%83%D0%BD%D0%B4%D0%B5%D0%BA&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxt0c9g040dob3g66mc5i78",
+      "artistName": "Đavoli",
+      "slug": "djavoli",
+      "category": "domace",
+      "wikidataId": "Q12646008",
+      "bio": {
+        "hash": "b94a523672efa3e3f86ad9a3e224a86c5503dc7bec8e37b641648570c9eed3b6",
+        "language": "sr",
+        "title": "Ђаволи (музичка група)",
+        "pageId": 4049362,
+        "revisionId": 31848498,
+        "timestamp": "2026-10-20T23:42:32Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%82%D0%B0%D0%B2%D0%BE%D0%BB%D0%B8_(%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0_%D0%B3%D1%80%D1%83%D0%BF%D0%B0)",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31848498",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%82%D0%B0%D0%B2%D0%BE%D0%BB%D0%B8+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxswuv600rvob3gcq76ss5k",
+      "artistName": "Dejan Cukić",
+      "slug": "dejan-cukic",
+      "category": "domace",
+      "wikidataId": "Q5252652",
+      "bio": {
+        "hash": "ff6474c4654c7153c859f2d52bbeedf523959cff868067efb0dca6fff437cccc",
+        "language": "sr",
+        "title": "Дејан Цукић",
+        "pageId": 254518,
+        "revisionId": 31786868,
+        "timestamp": "2026-10-12T00:49:35Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%94%D0%B5%D1%98%D0%B0%D0%BD_%D0%A6%D1%83%D0%BA%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31786868",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%94%D0%B5%D1%98%D0%B0%D0%BD+%D0%A6%D1%83%D0%BA%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -426,7 +632,7 @@
       "category": "domace",
       "wikidataId": "Q310679",
       "bio": {
-        "hash": "871d5bde0d65389863949634ea8cab6e6c28814901901db1aaf8e0255e94ae50",
+        "hash": "c6fb41e17539769458ac55681e3ca9b64d1fb8669ae44f9e4c19ae5eff18ab69",
         "language": "sr",
         "title": "Дино Мерлин",
         "pageId": 115241,
@@ -436,7 +642,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31684385",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%94%D0%B8%D0%BD%D0%BE+%D0%9C%D0%B5%D1%80%D0%BB%D0%B8%D0%BD&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -506,13 +712,33 @@
       }
     },
     {
+      "artistId": "cmmxt1zp105joob3gu607g1c7",
+      "artistName": "Dragana Mirković",
+      "slug": "dragana-mirkovic",
+      "category": "narodne",
+      "wikidataId": "Q291970",
+      "bio": {
+        "hash": "e4169b38fba5ce5f68354fa03f10dabef1fbb83a96ee9ac6c54f265596b95011",
+        "language": "sr",
+        "title": "Драгана Мирковић",
+        "pageId": 96825,
+        "revisionId": 31847801,
+        "timestamp": "2026-10-20T15:51:50Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%94%D1%80%D0%B0%D0%B3%D0%B0%D0%BD%D0%B0_%D0%9C%D0%B8%D1%80%D0%BA%D0%BE%D0%B2%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31847801",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%94%D1%80%D0%B0%D0%B3%D0%B0%D0%BD%D0%B0+%D0%9C%D0%B8%D1%80%D0%BA%D0%BE%D0%B2%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
       "artistId": "cmmxsx3lq0105ob3gkd5ivi0v",
       "artistName": "Drugi Način",
       "slug": "drugi-nacin",
       "category": "domace",
       "wikidataId": "Q910037",
       "bio": {
-        "hash": "2aee7e0f24bb25a03e3e23a349520257b23dd27109422df408c957d5b7d66b37",
+        "hash": "3d148b8966d508eb624c33a17e7d9d461a5538b0d215508ce55bceef0dc2b5c8",
         "language": "sr",
         "title": "Drugi način",
         "pageId": 4166798,
@@ -522,7 +748,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31760773",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Drugi+na%C4%8Din&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       },
       "discography": {
         "hash": "d76611a64d552f153e5215a60f881ff224b4a4eb18f8bb44f9ab3dc153e0863d",
@@ -596,6 +822,19 @@
         "historyUrl": "https://hr.wikipedia.org/w/index.php?title=Ed+Sheeran&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "fc05d6bebed124693e64248c1616173f6ccac2f38041a89c44baa46b35f02823",
+        "language": "sr",
+        "title": "Ед Ширан",
+        "pageId": 920166,
+        "revisionId": 31789342,
+        "timestamp": "2026-10-12T02:52:22Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%95%D0%B4_%D0%A8%D0%B8%D1%80%D0%B0%D0%BD",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31789342",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%95%D0%B4+%D0%A8%D0%B8%D1%80%D0%B0%D0%BD&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -645,7 +884,7 @@
       "category": "strane",
       "wikidataId": "Q303",
       "bio": {
-        "hash": "b7b072c1b341f51bb8c578593fd786732d87c3e704ec5b2c3bce737abf4e3a21",
+        "hash": "ac85d5a2b15ad5a7dfa7169a42eb60423cdf07c035eff2bfa5c44008e1426a3a",
         "language": "sr",
         "title": "Елвис Пресли",
         "pageId": 29427,
@@ -655,7 +894,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31852831",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%95%D0%BB%D0%B2%D0%B8%D1%81+%D0%9F%D1%80%D0%B5%D1%81%D0%BB%D0%B8&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -665,7 +904,7 @@
       "category": "narodne",
       "wikidataId": "Q5568785",
       "bio": {
-        "hash": "f44cf009c888cc21d732013efd36f73845ad9cc18aec5a43466f5d939a78b68e",
+        "hash": "79bca4787b375b9284cbe6c902a967faa0e08cf25132bf67e8b037ee65772e80",
         "language": "sr",
         "title": "Енес Беговић",
         "pageId": 4127087,
@@ -675,7 +914,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31790339",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%95%D0%BD%D0%B5%D1%81+%D0%91%D0%B5%D0%B3%D0%BE%D0%B2%D0%B8%D1%9B&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       },
       "discography": {
         "hash": "98254c2f360fe1c8df91551851cee76ddcc57254d2034de720330213b0291cc2",
@@ -729,6 +968,19 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%95%D0%B2%D0%B0+%D0%91%D1%80%D0%B0%D1%83%D0%BD+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected explicitly labeled studio albums; corrected layout-table section boundaries; singles, live releases, compilations and other artists omitted; no translation."
+      },
+      "bio": {
+        "hash": "169915d5aa654df7bd0741092b5c12e1d4a91c426ac4b995fc53dc37539b3606",
+        "language": "sr",
+        "title": "Ева Браун (музичка група)",
+        "pageId": 166765,
+        "revisionId": 30829970,
+        "timestamp": "2026-03-15T15:34:23Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%95%D0%B2%D0%B0_%D0%91%D1%80%D0%B0%D1%83%D0%BD_(%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0_%D0%B3%D1%80%D1%83%D0%BF%D0%B0)",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=30829970",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%95%D0%B2%D0%B0+%D0%91%D1%80%D0%B0%D1%83%D0%BD+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -769,6 +1021,19 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Fleetwood+Mac&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "bd805a256605a8ae43a30d0e808029a0fc7d8daf24663267fbedd269b0305050",
+        "language": "sr",
+        "title": "Fleetwood Mac",
+        "pageId": 3885999,
+        "revisionId": 31721561,
+        "timestamp": "2026-09-22T21:39:57Z",
+        "url": "https://sr.wikipedia.org/wiki/Fleetwood_Mac",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31721561",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Fleetwood+Mac&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -902,6 +1167,19 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%93%D0%BE%D0%B1%D0%BB%D0%B8%D0%BD%D0%B8+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "181ad1423d63f1829dc46f0b8fcb75f0e825591df6dbaad988fd02f3f7d67f18",
+        "language": "sr",
+        "title": "Гоблини (музичка група)",
+        "pageId": 97134,
+        "revisionId": 31712302,
+        "timestamp": "2026-09-18T11:21:24Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%93%D0%BE%D0%B1%D0%BB%D0%B8%D0%BD%D0%B8_(%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0_%D0%B3%D1%80%D1%83%D0%BF%D0%B0)",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31712302",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%93%D0%BE%D0%B1%D0%BB%D0%B8%D0%BD%D0%B8+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -911,7 +1189,7 @@
       "category": "strane",
       "wikidataId": "Q11895",
       "bio": {
-        "hash": "59059ce52827fc031d2cbee9fa1b725d603e2b7dc4fa0b3dd07b458250e3a6e4",
+        "hash": "e2f172cc218b93173151ea66daf49c2801d93730321601898a3a65660c389b1d",
         "language": "sr",
         "title": "Guns N' Roses",
         "pageId": 76102,
@@ -921,7 +1199,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=30943314",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Guns+N%27+Roses&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       },
       "discography": {
         "hash": "2fab60f7b957b90feb8c3f6f7850fa4c01e9ed7819848461a9b8673093766c26",
@@ -955,6 +1233,46 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A5%D0%B0%D0%BB%D0%B8%D0%B4+%D0%91%D0%B5%D1%88%D0%BB%D0%B8%D1%9B&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      }
+    },
+    {
+      "artistId": "cmmxt2hir0605ob3gtmtjj8uf",
+      "artistName": "Halid Muslimović",
+      "slug": "halid-muslimovic",
+      "category": "narodne",
+      "wikidataId": "Q1560861",
+      "bio": {
+        "hash": "27703678e9ba9cc86a6a7b83740f6d6bc88ea5a4a6403bebca7321274913f76f",
+        "language": "sr",
+        "title": "Халид Муслимовић",
+        "pageId": 741922,
+        "revisionId": 31832785,
+        "timestamp": "2026-10-14T00:03:39Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%A5%D0%B0%D0%BB%D0%B8%D0%B4_%D0%9C%D1%83%D1%81%D0%BB%D0%B8%D0%BC%D0%BE%D0%B2%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31832785",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A5%D0%B0%D0%BB%D0%B8%D0%B4+%D0%9C%D1%83%D1%81%D0%BB%D0%B8%D0%BC%D0%BE%D0%B2%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxt2k28062gob3gmbop9896",
+      "artistName": "Haris Džinović",
+      "slug": "haris-dzinovic",
+      "category": "narodne",
+      "wikidataId": "Q3435157",
+      "bio": {
+        "hash": "0b8bfd55d93491f10f228c7300117c49aec4e4b23d46049d4c621e123f9ed2d8",
+        "language": "sr",
+        "title": "Харис Џиновић",
+        "pageId": 307098,
+        "revisionId": 31832967,
+        "timestamp": "2026-10-14T00:13:28Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%A5%D0%B0%D1%80%D0%B8%D1%81_%D0%8F%D0%B8%D0%BD%D0%BE%D0%B2%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31832967",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A5%D0%B0%D1%80%D0%B8%D1%81+%D0%8F%D0%B8%D0%BD%D0%BE%D0%B2%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1035,6 +1353,19 @@
         "historyUrl": "https://hr.wikipedia.org/w/index.php?title=ITD+Band&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "5999200103ec6649a482219d438e484e792338d9adc2e709e9014417e18f7aa4",
+        "language": "sr",
+        "title": "ИТД бенд",
+        "pageId": 4049618,
+        "revisionId": 31793122,
+        "timestamp": "2026-10-12T08:28:30Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%98%D0%A2%D0%94_%D0%B1%D0%B5%D0%BD%D0%B4",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31793122",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%98%D0%A2%D0%94+%D0%B1%D0%B5%D0%BD%D0%B4&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1055,6 +1386,19 @@
         "historyUrl": "https://en.wikipedia.org/w/index.php?title=Josipa+Lisac&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected explicitly labeled studio albums; corrected layout-table section boundaries; singles, live releases, compilations and other artists omitted; no translation."
+      },
+      "bio": {
+        "hash": "f95a8c880a430477ad10da5dbc128cb71f9fd1b531e0544747967c7796747f64",
+        "language": "sr",
+        "title": "Јосипа Лисац",
+        "pageId": 121893,
+        "revisionId": 31018536,
+        "timestamp": "2026-06-12T10:54:12Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%88%D0%BE%D1%81%D0%B8%D0%BF%D0%B0_%D0%9B%D0%B8%D1%81%D0%B0%D1%86",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31018536",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%88%D0%BE%D1%81%D0%B8%D0%BF%D0%B0+%D0%9B%D0%B8%D1%81%D0%B0%D1%86&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1095,6 +1439,19 @@
         "historyUrl": "https://bs.wikipedia.org/w/index.php?title=Kemal+Monteno&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "42ceca7ded4e16937e667e683c7a3a02ab3fde473e584bf01a84f71f9daa897a",
+        "language": "sr",
+        "title": "Кемал Монтено",
+        "pageId": 60228,
+        "revisionId": 31796743,
+        "timestamp": "2026-10-12T11:41:12Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%9A%D0%B5%D0%BC%D0%B0%D0%BB_%D0%9C%D0%BE%D0%BD%D1%82%D0%B5%D0%BD%D0%BE",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31796743",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9A%D0%B5%D0%BC%D0%B0%D0%BB+%D0%9C%D0%BE%D0%BD%D1%82%D0%B5%D0%BD%D0%BE&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1138,6 +1495,26 @@
       }
     },
     {
+      "artistId": "cmmxsxy6801shob3ggniwfard",
+      "artistName": "Kraljevski Apartman",
+      "slug": "kraljevski-apartman",
+      "category": "domace",
+      "wikidataId": "Q125657",
+      "bio": {
+        "hash": "9fb051f1d897ff2953865df2666abdcf5c761927fa52e492318c6245db3b9f0d",
+        "language": "sh",
+        "title": "Kraljevski apartman (bend)",
+        "pageId": 4628018,
+        "revisionId": 42315139,
+        "timestamp": "2024-12-21T15:45:06Z",
+        "url": "https://sh.wikipedia.org/wiki/Kraljevski_apartman_(bend)",
+        "revisionUrl": "https://sh.wikipedia.org/w/index.php?oldid=42315139",
+        "historyUrl": "https://sh.wikipedia.org/w/index.php?title=Kraljevski+apartman+%28bend%29&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
       "artistId": "cmmxsxzfk01tnob3g869wrsrs",
       "artistName": "Kud Idijoti",
       "slug": "kud-idijoti",
@@ -1155,6 +1532,39 @@
         "historyUrl": "https://en.wikipedia.org/w/index.php?title=KUD+Idijoti&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "03dc192f7ebd3d3e085d8e2fb222d0af5d41fc1d7a899baf285495aaf7dcb734",
+        "language": "sr",
+        "title": "КУД Идијоти",
+        "pageId": 42439,
+        "revisionId": 31795367,
+        "timestamp": "2026-10-12T10:06:27Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%9A%D0%A3%D0%94_%D0%98%D0%B4%D0%B8%D1%98%D0%BE%D1%82%D0%B8",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31795367",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9A%D0%A3%D0%94+%D0%98%D0%B4%D0%B8%D1%98%D0%BE%D1%82%D0%B8&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxsy0ib01unob3g6l5ivkr7",
+      "artistName": "Leb i Sol",
+      "slug": "leb-i-sol",
+      "category": "domace",
+      "wikidataId": "Q432707",
+      "bio": {
+        "hash": "754beb698b5cfeea994a6261e2664dddbf54e17177faf82bbd9581f3d833975d",
+        "language": "sr",
+        "title": "Леб и сол",
+        "pageId": 255967,
+        "revisionId": 31423185,
+        "timestamp": "2026-08-20T06:28:29Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%9B%D0%B5%D0%B1_%D0%B8_%D1%81%D0%BE%D0%BB",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31423185",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9B%D0%B5%D0%B1+%D0%B8+%D1%81%D0%BE%D0%BB&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1164,7 +1574,7 @@
       "category": "strane",
       "wikidataId": "Q2331",
       "bio": {
-        "hash": "716581b472b7794c57ea71fe5cf6bd81b859967c8ed55385f4ab70ee40286f1f",
+        "hash": "ca9fb859da5dc17b91966a0c78f09bc988ea0f4bf3eebb57af4ab288b808abe5",
         "language": "sr",
         "title": "Led Zeppelin",
         "pageId": 109085,
@@ -1174,7 +1584,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31763409",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Led+Zeppelin&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       },
       "discography": {
         "hash": "efd979c29398c3d1ba3a251fdbf15481123910a903aeafe64c59deba723d0bc4",
@@ -1221,6 +1631,26 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9B%D0%B5%D0%BF%D0%B0+%D0%91%D1%80%D0%B5%D0%BD%D0%B0&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      }
+    },
+    {
+      "artistId": "cmmxt30ko06hiob3gm7ewcj37",
+      "artistName": "Ljubiša Stojanović Luis",
+      "slug": "ljubisa-stojanovic-luis",
+      "category": "narodne",
+      "wikidataId": "Q3395238",
+      "bio": {
+        "hash": "e231a208f8291c17ee36143e62651841123d124d08d3f3086e2b324bba7ae58c",
+        "language": "sr",
+        "title": "Љубиша Стојановић Луис",
+        "pageId": 66786,
+        "revisionId": 31771525,
+        "timestamp": "2026-10-11T12:25:27Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%89%D1%83%D0%B1%D0%B8%D1%88%D0%B0_%D0%A1%D1%82%D0%BE%D1%98%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%9B_%D0%9B%D1%83%D0%B8%D1%81",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31771525",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%89%D1%83%D0%B1%D0%B8%D1%88%D0%B0+%D0%A1%D1%82%D0%BE%D1%98%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%9B+%D0%9B%D1%83%D0%B8%D1%81&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1284,6 +1714,26 @@
       }
     },
     {
+      "artistId": "cmmxsy4nx01yiob3gsy4tec3n",
+      "artistName": "Massimo Savić",
+      "slug": "massimo-savic",
+      "category": "domace",
+      "wikidataId": "Q6784763",
+      "bio": {
+        "hash": "7e4b3baef7a402589a48f32b11a6baab41784205d03a7357cc57cc1617322fbe",
+        "language": "sr",
+        "title": "Масимо Савић",
+        "pageId": 1287377,
+        "revisionId": 31804231,
+        "timestamp": "2026-10-12T21:22:27Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%9C%D0%B0%D1%81%D0%B8%D0%BC%D0%BE_%D0%A1%D0%B0%D0%B2%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31804231",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9C%D0%B0%D1%81%D0%B8%D0%BC%D0%BE+%D0%A1%D0%B0%D0%B2%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
       "artistId": "cmmxt63dd0982ob3gqvrysmud",
       "artistName": "Metallica",
       "slug": "metallica",
@@ -1304,6 +1754,26 @@
       }
     },
     {
+      "artistId": "cmmxsy7bk020yob3ghzjzl1n4",
+      "artistName": "Miladin Šobić",
+      "slug": "miladin-sobic",
+      "category": "domace",
+      "wikidataId": "Q2916298",
+      "bio": {
+        "hash": "78be41405424d526ea2718d9e8b9e81197f88c0fa161a57bf23b6218316e2b77",
+        "language": "en",
+        "title": "Miladin Šobić",
+        "pageId": 8561318,
+        "revisionId": 1364443689,
+        "timestamp": "2026-07-16T15:30:43Z",
+        "url": "https://en.wikipedia.org/wiki/Miladin_%C5%A0obi%C4%87",
+        "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1364443689",
+        "historyUrl": "https://en.wikipedia.org/w/index.php?title=Miladin+%C5%A0obi%C4%87&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
       "artistId": "cmmxt3f7206ulob3g7xcq3l8x",
       "artistName": "Miligram",
       "slug": "miligram",
@@ -1321,6 +1791,139 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9C%D0%B8%D0%BB%D0%B8%D0%B3%D1%80%D0%B0%D0%BC+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "92317f84e04f7c6b92a7a1888cf35068626ad9c6abd89259c34024b4f7491525",
+        "language": "sr",
+        "title": "Милиграм (музичка група)",
+        "pageId": 899991,
+        "revisionId": 30520491,
+        "timestamp": "2025-11-08T23:15:36Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%9C%D0%B8%D0%BB%D0%B8%D0%B3%D1%80%D0%B0%D0%BC_(%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0_%D0%B3%D1%80%D1%83%D0%BF%D0%B0)",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=30520491",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9C%D0%B8%D0%BB%D0%B8%D0%B3%D1%80%D0%B0%D0%BC+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxt3ijn06xmob3g770p32py",
+      "artistName": "Miroslav Ilić",
+      "slug": "miroslav-ilic",
+      "category": "narodne",
+      "wikidataId": "Q818171",
+      "bio": {
+        "hash": "e925f987410db09ca6cee60be957aada75564497c12fd6d6fd79cd22d68a3531",
+        "language": "sr",
+        "title": "Мирослав Илић",
+        "pageId": 40534,
+        "revisionId": 31806641,
+        "timestamp": "2026-10-12T23:06:37Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%9C%D0%B8%D1%80%D0%BE%D1%81%D0%BB%D0%B0%D0%B2_%D0%98%D0%BB%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31806641",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9C%D0%B8%D1%80%D0%BE%D1%81%D0%BB%D0%B0%D0%B2+%D0%98%D0%BB%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxt3kzj06ztob3g98kz5825",
+      "artistName": "Mirza Selimović",
+      "slug": "mirza-selimovic",
+      "category": "narodne",
+      "wikidataId": "Q61123044",
+      "bio": {
+        "hash": "ea2c59047b0886ed8fdab947d5b254065e26749a02d2a22d18ee1b6ab4dd2d6b",
+        "language": "sr",
+        "title": "Mirza Selimović",
+        "pageId": 1616196,
+        "revisionId": 31154785,
+        "timestamp": "2026-08-14T09:40:33Z",
+        "url": "https://sr.wikipedia.org/wiki/Mirza_Selimovi%C4%87",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31154785",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Mirza+Selimovi%C4%87&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxt3mrm071gob3ggw07s3pn",
+      "artistName": "Muharem Serbezovski",
+      "slug": "muharem-serbezovski",
+      "category": "narodne",
+      "wikidataId": "Q3624254",
+      "bio": {
+        "hash": "9253f7adfbfdadcf37d737dd4502b652ac5ba35e4e49b8f9455bbeb75f79ad25",
+        "language": "sr",
+        "title": "Мухарем Сербезовски",
+        "pageId": 458406,
+        "revisionId": 31808186,
+        "timestamp": "2026-10-13T00:12:19Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%9C%D1%83%D1%85%D0%B0%D1%80%D0%B5%D0%BC_%D0%A1%D0%B5%D1%80%D0%B1%D0%B5%D0%B7%D0%BE%D0%B2%D1%81%D0%BA%D0%B8",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31808186",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9C%D1%83%D1%85%D0%B0%D1%80%D0%B5%D0%BC+%D0%A1%D0%B5%D1%80%D0%B1%D0%B5%D0%B7%D0%BE%D0%B2%D1%81%D0%BA%D0%B8&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxt3rbp075job3g9eutc715",
+      "artistName": "Nedeljko Bajic Baja",
+      "slug": "nedeljko-bajic-baja",
+      "category": "narodne",
+      "wikidataId": "Q253468",
+      "bio": {
+        "hash": "f1cb2664e9c5aaafe1d7793cff463492e1e39b929d53c2f59ab92958c4717267",
+        "language": "en",
+        "title": "Nedeljko Bajić Baja",
+        "pageId": 5360275,
+        "revisionId": 1373742323,
+        "timestamp": "2026-09-07T17:58:28Z",
+        "url": "https://en.wikipedia.org/wiki/Nedeljko_Baji%C4%87_Baja",
+        "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1373742323",
+        "historyUrl": "https://en.wikipedia.org/w/index.php?title=Nedeljko+Baji%C4%87+Baja&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxsydpp026uob3gfa5xchue",
+      "artistName": "Neno Belan",
+      "slug": "neno-belan",
+      "category": "domace",
+      "wikidataId": "Q3513894",
+      "bio": {
+        "hash": "e09bd718df214b0c39035be259c65d53d56a9b079f95a43850599a83f02fafeb",
+        "language": "sr",
+        "title": "Нено Белан",
+        "pageId": 4029280,
+        "revisionId": 31809545,
+        "timestamp": "2026-10-13T01:07:31Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%9D%D0%B5%D0%BD%D0%BE_%D0%91%D0%B5%D0%BB%D0%B0%D0%BD",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31809545",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9D%D0%B5%D0%BD%D0%BE+%D0%91%D0%B5%D0%BB%D0%B0%D0%BD&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxt3uwb078qob3gbro4g643",
+      "artistName": "Nikola Rokvić",
+      "slug": "nikola-rokvic",
+      "category": "narodne",
+      "wikidataId": "Q19883314",
+      "bio": {
+        "hash": "0a2ee2c97d4c0eb2706f0303c7dcafedd0c24eede80d4528f87db4f790b547cb",
+        "language": "sr",
+        "title": "Никола Роквић",
+        "pageId": 952084,
+        "revisionId": 30603021,
+        "timestamp": "2025-12-18T14:19:36Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%9D%D0%B8%D0%BA%D0%BE%D0%BB%D0%B0_%D0%A0%D0%BE%D0%BA%D0%B2%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=30603021",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9D%D0%B8%D0%BA%D0%BE%D0%BB%D0%B0+%D0%A0%D0%BE%D0%BA%D0%B2%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1437,13 +2040,33 @@
       }
     },
     {
+      "artistId": "cmmxt3ych07bqob3g6xpl4xq5",
+      "artistName": "Pedja Medenica",
+      "slug": "pedja-medenica",
+      "category": "narodne",
+      "wikidataId": "Q61131050",
+      "bio": {
+        "hash": "cd097e2d1fae776d0bbf915771bfc298b3bd1e7a18b84d6228a06fe6d0858b13",
+        "language": "sr",
+        "title": "Пеђа Меденица",
+        "pageId": 3893781,
+        "revisionId": 31512646,
+        "timestamp": "2026-08-22T01:57:22Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%9F%D0%B5%D1%92%D0%B0_%D0%9C%D0%B5%D0%B4%D0%B5%D0%BD%D0%B8%D1%86%D0%B0",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31512646",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9F%D0%B5%D1%92%D0%B0+%D0%9C%D0%B5%D0%B4%D0%B5%D0%BD%D0%B8%D1%86%D0%B0&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
       "artistId": "cmmxsyu7h02m2ob3gnj27pasl",
       "artistName": "Piloti",
       "slug": "piloti",
       "category": "domace",
       "wikidataId": "Q20525675",
       "bio": {
-        "hash": "7e812711700b608914f3b2c266d2c1b7c7d3ae84ee11fd27bbed3e4fe2da7c13",
+        "hash": "7e2938cfbf840c462cb666405e9d5574697144630ab0a1ed40e28b336cb765b6",
         "language": "sr",
         "title": "Пилоти (музичка група)",
         "pageId": 4035447,
@@ -1453,7 +2076,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=30520989",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9F%D0%B8%D0%BB%D0%BE%D1%82%D0%B8+%28%D0%BC%D1%83%D0%B7%D0%B8%D1%87%D0%BA%D0%B0+%D0%B3%D1%80%D1%83%D0%BF%D0%B0%29&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       },
       "discography": {
         "hash": "d66fbd598f4accefb6bab8837aa8323184fe8b6e465f41841556dd88a961c0c4",
@@ -1527,6 +2150,19 @@
         "historyUrl": "https://en.wikipedia.org/w/index.php?title=Poslednja+Igra+Leptira&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "fcc3381ca9caca3b4c0aaa0431733fcf41a9eda5db073582207766061969fce8",
+        "language": "sr",
+        "title": "Последња игра лептира",
+        "pageId": 158630,
+        "revisionId": 30520175,
+        "timestamp": "2025-11-08T23:05:34Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%9F%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D1%9A%D0%B0_%D0%B8%D0%B3%D1%80%D0%B0_%D0%BB%D0%B5%D0%BF%D1%82%D0%B8%D1%80%D0%B0",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=30520175",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9F%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D1%9A%D0%B0+%D0%B8%D0%B3%D1%80%D0%B0+%D0%BB%D0%B5%D0%BF%D1%82%D0%B8%D1%80%D0%B0&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1556,7 +2192,7 @@
       "category": "domace",
       "wikidataId": "Q6646220",
       "bio": {
-        "hash": "43621b9a023a59698091801a1a8177a6eab3be81894e9353ededbb64783b6c7a",
+        "hash": "8c9e953c89d4ec3b54b8797a8d6e02f94fea115dc83471bc5955ddeb761b1a4a",
         "language": "sr",
         "title": "Психомодо поп",
         "pageId": 955315,
@@ -1566,7 +2202,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31005249",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%9F%D1%81%D0%B8%D1%85%D0%BE%D0%BC%D0%BE%D0%B4%D0%BE+%D0%BF%D0%BE%D0%BF&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1726,6 +2362,19 @@
         "historyUrl": "https://en.wikipedia.org/w/index.php?title=Ritam+Nereda&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "b0e2b2de09cb237f264dfbce08612822c378da78f16f0d576fc911eae265b0e7",
+        "language": "sr",
+        "title": "Ритам нереда",
+        "pageId": 141968,
+        "revisionId": 31819033,
+        "timestamp": "2026-10-13T10:20:19Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%A0%D0%B8%D1%82%D0%B0%D0%BC_%D0%BD%D0%B5%D1%80%D0%B5%D0%B4%D0%B0",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31819033",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A0%D0%B8%D1%82%D0%B0%D0%BC+%D0%BD%D0%B5%D1%80%D0%B5%D0%B4%D0%B0&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1749,6 +2398,26 @@
       }
     },
     {
+      "artistId": "cmmxt43vt07gmob3gayvxhxsj",
+      "artistName": "Safet Isović",
+      "slug": "safet-isovic",
+      "category": "narodne",
+      "wikidataId": "Q83499",
+      "bio": {
+        "hash": "e140386798da27c925b2430871a809f2ca367e059a205f4c653ff1167ef3cd94",
+        "language": "sr",
+        "title": "Safet Isović",
+        "pageId": 121777,
+        "revisionId": 31766591,
+        "timestamp": "2026-10-11T07:29:34Z",
+        "url": "https://sr.wikipedia.org/wiki/Safet_Isovi%C4%87",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31766591",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Safet+Isovi%C4%87&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
       "artistId": "cmmxt452g07hpob3gp6o2dx0y",
       "artistName": "Šako Polumenta",
       "slug": "sako-polumenta",
@@ -1766,6 +2435,39 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A8%D0%B0%D0%BA%D0%BE+%D0%9F%D0%BE%D0%BB%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "1d428aa83c706d2531d0e4826ca2f02c956b0ec89ca1cab7cc7de5ae46ff6b4d",
+        "language": "sr",
+        "title": "Шако Полумента",
+        "pageId": 153268,
+        "revisionId": 31666085,
+        "timestamp": "2026-08-25T04:46:38Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%A8%D0%B0%D0%BA%D0%BE_%D0%9F%D0%BE%D0%BB%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31666085",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A8%D0%B0%D0%BA%D0%BE+%D0%9F%D0%BE%D0%BB%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmxt45be07hxob3g29opiy03",
+      "artistName": "Saša Matić",
+      "slug": "sasa-matic",
+      "category": "narodne",
+      "wikidataId": "Q1495124",
+      "bio": {
+        "hash": "51cae6d6aae35a64319f78eb8493ec33aae27747b1f943578e1b05cce9ef245d",
+        "language": "sr",
+        "title": "Саша Матић",
+        "pageId": 151787,
+        "revisionId": 31181873,
+        "timestamp": "2026-08-15T01:36:32Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%A1%D0%B0%D1%88%D0%B0_%D0%9C%D0%B0%D1%82%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31181873",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A1%D0%B0%D1%88%D0%B0+%D0%9C%D0%B0%D1%82%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1839,6 +2541,19 @@
         "historyUrl": "https://hr.wikipedia.org/w/index.php?title=Sergej+%C4%86etkovi%C4%87&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "ed58efbdd03e5cf52d31a26dc99738ca2042b23cecb6e35680c9cfe65dd6e6f6",
+        "language": "sr",
+        "title": "Сергеј Ћетковић",
+        "pageId": 148831,
+        "revisionId": 31822132,
+        "timestamp": "2026-10-13T15:15:26Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%A1%D0%B5%D1%80%D0%B3%D0%B5%D1%98_%D0%8B%D0%B5%D1%82%D0%BA%D0%BE%D0%B2%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31822132",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A1%D0%B5%D1%80%D0%B3%D0%B5%D1%98+%D0%8B%D0%B5%D1%82%D0%BA%D0%BE%D0%B2%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1868,7 +2583,7 @@
       "category": "narodne",
       "wikidataId": "Q10672665",
       "bio": {
-        "hash": "3bd72dd9d98d7b0c88b981ac7a194ab71fc9fd6565d5712516b7105306f5289e",
+        "hash": "8f7172c487dcfe3c836e2843fe1dd355bdf071646d1fa3ed4e33881df1a639bc",
         "language": "sr",
         "title": "Снежана Ђуришић",
         "pageId": 781791,
@@ -1878,7 +2593,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31823482",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A1%D0%BD%D0%B5%D0%B6%D0%B0%D0%BD%D0%B0+%D0%82%D1%83%D1%80%D0%B8%D1%88%D0%B8%D1%9B&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -1952,6 +2667,19 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A2%D0%B0%D1%9A%D0%B0+%D0%A1%D0%B0%D0%B2%D0%B8%D1%9B&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "d8c6c59ee391216b2d849d0430e515d60b2db734993ee6bae4692a3feae03ac9",
+        "language": "sr",
+        "title": "Тања Савић",
+        "pageId": 176380,
+        "revisionId": 31755769,
+        "timestamp": "2026-10-10T18:56:27Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%A2%D0%B0%D1%9A%D0%B0_%D0%A1%D0%B0%D0%B2%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31755769",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A2%D0%B0%D1%9A%D0%B0+%D0%A1%D0%B0%D0%B2%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -2153,7 +2881,7 @@
       "category": "domace",
       "wikidataId": "Q220645",
       "bio": {
-        "hash": "1cf11fe6c08476daac03e13ef7a9805d9d1f79d74af55df6fe3c03512d73f6d0",
+        "hash": "1d1af82f097677f74e2983f972605dab1ec2433377620249bece5acd42bb9553",
         "language": "sr",
         "title": "Тоше Проески",
         "pageId": 156514,
@@ -2163,7 +2891,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31841599",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A2%D0%BE%D1%88%D0%B5+%D0%9F%D1%80%D0%BE%D0%B5%D1%81%D0%BA%D0%B8&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       },
       "discography": {
         "hash": "7db1ca45de987b64de5a82d8f60e72a922b845effa78ea79b84bddd16aea33bf",
@@ -2197,6 +2925,19 @@
         "historyUrl": "https://en.wikipedia.org/w/index.php?title=Trula+Koalicija&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "54dc0d3618940669f41ea0071a331fde743c64268eb5040e621247a35f40b189",
+        "language": "sr",
+        "title": "Трула коалиција",
+        "pageId": 251458,
+        "revisionId": 31829344,
+        "timestamp": "2026-10-13T21:11:23Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%A2%D1%80%D1%83%D0%BB%D0%B0_%D0%BA%D0%BE%D0%B0%D0%BB%D0%B8%D1%86%D0%B8%D1%98%D0%B0",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31829344",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%A2%D1%80%D1%83%D0%BB%D0%B0+%D0%BA%D0%BE%D0%B0%D0%BB%D0%B8%D1%86%D0%B8%D1%98%D0%B0&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -2266,7 +3007,7 @@
       "category": "domace",
       "wikidataId": "Q7938171",
       "bio": {
-        "hash": "aa8dfca5f6467d4a7392172f270f0b3c0a70e2d158da337b5b0d354d9545f34a",
+        "hash": "a0f6a1fd35bf68e5940283cc1b7bd918df05b5e1b4b38af84cf0d8aab13f2a25",
         "language": "sr",
         "title": "Влада Дивљан",
         "pageId": 28900,
@@ -2276,7 +3017,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31782559",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%92%D0%BB%D0%B0%D0%B4%D0%B0+%D0%94%D0%B8%D0%B2%D1%99%D0%B0%D0%BD&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -2286,7 +3027,7 @@
       "category": "domace",
       "wikidataId": "Q2846562",
       "bio": {
-        "hash": "351edafc2f69293e88057715bcd69eb431c46fd96b330decf349aea01615ff4a",
+        "hash": "e43c71361d7e5f5cc8dea79930a9c00866e772385548a6ac2afe9e028854df4c",
         "language": "sr",
         "title": "Владо Георгиев",
         "pageId": 147051,
@@ -2296,7 +3037,27 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31678179",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%92%D0%BB%D0%B0%D0%B4%D0%BE+%D0%93%D0%B5%D0%BE%D1%80%D0%B3%D0%B8%D0%B5%D0%B2&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
+      }
+    },
+    {
+      "artistId": "cmmwlgdms007iobak6jfy4x6h",
+      "artistName": "Vlatko Stefanovski",
+      "slug": "vlatko-stefanovski",
+      "category": "domace",
+      "wikidataId": "Q3131452",
+      "bio": {
+        "hash": "777efb71ae3c8236cd6040fb5be5ff10232ec3b7360bc801df6ee937503e9b89",
+        "language": "sr",
+        "title": "Влатко Стефановски",
+        "pageId": 147023,
+        "revisionId": 30520171,
+        "timestamp": "2025-11-08T23:05:24Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%92%D0%BB%D0%B0%D1%82%D0%BA%D0%BE_%D0%A1%D1%82%D0%B5%D1%84%D0%B0%D0%BD%D0%BE%D0%B2%D1%81%D0%BA%D0%B8",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=30520171",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%92%D0%BB%D0%B0%D1%82%D0%BA%D0%BE+%D0%A1%D1%82%D0%B5%D1%84%D0%B0%D0%BD%D0%BE%D0%B2%D1%81%D0%BA%D0%B8&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -2326,7 +3087,7 @@
       "category": "strane",
       "wikidataId": "Q189965",
       "bio": {
-        "hash": "29f84b6357e2d90574f5d0bd9cd287bc0ddb3488bca800b8ae7e7c9779a8083f",
+        "hash": "b3898fde10deff217329e6fbb1618bfef438bcd8756cd17183ed5d4efa0c94ca",
         "language": "sr",
         "title": "Whitesnake",
         "pageId": 39357,
@@ -2336,7 +3097,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=30520074",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=Whitesnake&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -2346,7 +3107,7 @@
       "category": "domace",
       "wikidataId": "Q139061",
       "bio": {
-        "hash": "3e048e70b790c8d0564bbf61bd7629b618c7f62e12834d117b4e693326a3c931",
+        "hash": "591deaf39c9d6c8fbbccf48c878fb12476620f1bccd2f82a5b41964e07b4f108",
         "language": "sr",
         "title": "Забрањено пушење",
         "pageId": 119895,
@@ -2356,7 +3117,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31791875",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%97%D0%B0%D0%B1%D1%80%D0%B0%D1%9A%D0%B5%D0%BD%D0%BE+%D0%BF%D1%83%D1%88%D0%B5%D1%9A%D0%B5&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       },
       "discography": {
         "hash": "bce7b773656c04080d8e8a460a6f60e20e8ae08966283b8ff87a36a75bd20a49",
@@ -2390,6 +3151,19 @@
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%97%D0%B0%D0%BD%D0%B0&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "a4a14ffc5c0ed5947c48a020c7a4086ea5d4577fad09fa3f53cc3d4a720ab463",
+        "language": "sr",
+        "title": "Зана",
+        "pageId": 232956,
+        "revisionId": 31329732,
+        "timestamp": "2026-08-18T07:25:13Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%97%D0%B0%D0%BD%D0%B0",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31329732",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%97%D0%B0%D0%BD%D0%B0&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -2410,6 +3184,19 @@
         "historyUrl": "https://en.wikipedia.org/w/index.php?title=Zdravko+%C4%8Coli%C4%87&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      },
+      "bio": {
+        "hash": "3da357a77b9f89777c90c7476a7665de4e341517208c26eb2464ba12a815a6b5",
+        "language": "sr",
+        "title": "Здравко Чолић",
+        "pageId": 73540,
+        "revisionId": 31792523,
+        "timestamp": "2026-10-12T08:00:05Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D0%BA%D0%BE_%D0%A7%D0%BE%D0%BB%D0%B8%D1%9B",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31792523",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D0%BA%D0%BE+%D0%A7%D0%BE%D0%BB%D0%B8%D1%9B&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     },
     {
@@ -2419,7 +3206,7 @@
       "category": "domace",
       "wikidataId": "Q202752",
       "bio": {
-        "hash": "d0d44af61658f895c05cd90b447e02b03c1aeb9763da21c48f3d56379458677e",
+        "hash": "b0509578f7dd0814ea7f7db17748680da2c18a4ddc6c418dda27328cba7066e0",
         "language": "sr",
         "title": "Жељко Јоксимовић",
         "pageId": 34355,
@@ -2429,7 +3216,7 @@
         "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31745538",
         "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%96%D0%B5%D1%99%D0%BA%D0%BE+%D0%88%D0%BE%D0%BA%D1%81%D0%B8%D0%BC%D0%BE%D0%B2%D0%B8%D1%9B&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       },
       "discography": {
         "hash": "010686abe0164f03d147d558aa93d8aebab476c220a28a5d064d4aed7889cf21",
@@ -2483,6 +3270,26 @@
         "historyUrl": "https://hr.wikipedia.org/w/index.php?title=Zorica+Brunclik&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
+      }
+    },
+    {
+      "artistId": "cmmxt57bf08foob3g2f47vlvd",
+      "artistName": "Zvonko Bogdan",
+      "slug": "zvonko-bogdan",
+      "category": "narodne",
+      "wikidataId": "Q2633794",
+      "bio": {
+        "hash": "88f22a5632b02601e59d2fe6159d8e3db321742fc506321ce4e151560dc60424",
+        "language": "sr",
+        "title": "Звонко Богдан",
+        "pageId": 42251,
+        "revisionId": 31837432,
+        "timestamp": "2026-10-14T18:40:05Z",
+        "url": "https://sr.wikipedia.org/wiki/%D0%97%D0%B2%D0%BE%D0%BD%D0%BA%D0%BE_%D0%91%D0%BE%D0%B3%D0%B4%D0%B0%D0%BD",
+        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31837432",
+        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=%D0%97%D0%B2%D0%BE%D0%BD%D0%BA%D0%BE+%D0%91%D0%BE%D0%B3%D0%B4%D0%B0%D0%BD&action=history",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "changes": "Existing legacy biography; selected prose, citation markers/whitespace normalized, Serbian Cyrillic transliterated to Latin where applicable; may be truncated at 1200 characters. Entire stored text matched against this revision. Original import date/revision is unknown; no translation or factual verification claimed."
       }
     }
   ]
