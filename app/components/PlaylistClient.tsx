@@ -6,7 +6,7 @@ import Link from "next/link"
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, useSortable, arrayMove } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { Download, FileDown, Globe, GripVertical, LoaderCircle, LockKeyhole, RefreshCw, Trash2 } from "lucide-react"
+import { Download, FileDown, Globe, GripVertical, LoaderCircle, LockKeyhole, Play, RefreshCw, Trash2 } from "lucide-react"
 import { useI18n } from "./UiText"
 import { playlistPdfSongs, playlistRequest } from "@/lib/playlists/client"
 import { downloadPdf, pdfError, preparePdfDownload } from "@/lib/songbook/client"
@@ -15,6 +15,7 @@ import styles from "./PlaylistClient.module.css"
 import { playlistSongHref } from "@/lib/navigation/parent"
 import PlaylistActions from "./PlaylistActions"
 import PlaylistSongSearch from "./PlaylistSongSearch"
+import { performanceHref } from "@/lib/performance/model"
 
 export type PlaylistSongItem = {
   id: string; songId: string; playlistId: string; order: number | null
@@ -100,6 +101,7 @@ export default function PlaylistClient({ playlistId, name, initialPublic, canEdi
     <div className={styles.header}>
       <h1 translate="no">{title}</h1>
       <div className={styles.actions}>
+        {songs.length > 0 && <button type="button" className={styles.button} disabled={Boolean(busy)} onClick={() => router.push(performanceHref(playlistId))}><Play />{t("Sviraj playlistu")}</button>}
         {canEdit && <PlaylistActions id={playlistId} name={title} onRename={setTitle} disabled={Boolean(busy)} />}
         <button type="button" onClick={() => void exportPdf()} disabled={Boolean(busy) || !songs.length || tooMany} className={styles.button} title={t("Preuzmi celu playlistu kao PDF")} aria-label={t("Preuzmi celu playlistu kao PDF")}>
           {busy === "pdf" ? <LoaderCircle className="animate-spin" /> : <FileDown />}PDF

@@ -10,13 +10,16 @@ import SongPdfButton from "./SongPdfButton"
 import SongPlaylistButton from "./SongPlaylistButton"
 import useFavoriteSong from "./useFavoriteSong"
 import FavoriteTransposeStatus from "./FavoriteTransposeStatus"
-import { Minus, Plus, RotateCcw, Star } from "lucide-react"
+import PerformanceView from "./PerformanceView"
+import { Maximize, Minus, Plus, RotateCcw, Star } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { getUsedChords, parseSongSheet } from "@/lib/chords/songSheet"
 import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
 
 type Props = {
   adminTools?: ReactNode
   fromFavorites?: boolean
+  performanceHref?: string
   song: {
     id: string
     title: string
@@ -34,8 +37,10 @@ type Props = {
   } | null
 }
 
-export default function SongClient({ song, adminTools, fromFavorites = false }: Props) {
+export default function SongClient({ song, adminTools, fromFavorites = false, performanceHref }: Props) {
   const { t } = useI18n()
+  const router = useRouter()
+  const [performance, setPerformance] = useState(false)
 
   const favorite = useFavoriteSong(song.id, fromFavorites)
   const { transpose, isFav } = favorite
@@ -225,6 +230,7 @@ export default function SongClient({ song, adminTools, fromFavorites = false }: 
   </h1>
 
   <SongPdfButton song={{ id: song.id, title, artist, lyrics: displayContent }} transpose={transpose} textSize={textSize} chordSize={chordSize} />
+  <button type="button" disabled={["loading", "saving", "updating"].includes(favorite.phase)} title={t("Rezim za sviranje")} aria-label={t("Rezim za sviranje")} className="inline-flex h-11 w-11 items-center justify-center rounded border border-gray-600 disabled:opacity-40" onClick={() => { stopAutoScroll(); setShowVideo(false); if (performanceHref) router.push(performanceHref); else setPerformance(true) }}><Maximize size={18} /></button>
   <button type="button" title={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")} aria-label={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")} aria-pressed={isFav} disabled={favorite.favoriteDisabled} onClick={() => void favorite.toggle()} className={`inline-flex h-11 w-11 items-center justify-center transition disabled:opacity-40 ${isFav ? "text-yellow-400" : "text-gray-500 hover:text-yellow-300"}`}>
     <Star size={22} fill={isFav ? "currentColor" : "none"} />
   </button>
@@ -234,6 +240,7 @@ export default function SongClient({ song, adminTools, fromFavorites = false }: 
 </div>
 
 {adminTools}
+{performance && <PerformanceView song={{ id: song.id, title, artist, lyrics: displayContent }} controls={favorite} close={() => setPerformance(false)} />}
 {song.artistSlug ? (
   <Link
   href={`/pesme/${song.category}/${song.artistSlug}`}

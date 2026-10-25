@@ -8,6 +8,8 @@ import { songReviewVersion } from "@/lib/songReview/server"
 import { BackNavigationTarget } from "@/app/components/BackNavigation"
 import { playlistReturnHref } from "@/lib/navigation/parent"
 import { isFavoriteView } from "@/lib/favorites/model"
+import { catalogEntry } from "@/lib/playlists/catalog"
+import { performanceHref } from "@/lib/performance/model"
 
 type Props = {
   params: Promise<{
@@ -39,6 +41,8 @@ export default async function SongPage({ params, searchParams }: Props) {
   const fromFavorites = isFavoriteView(query, playlist)
   const returnTo = playlist ?? (fromFavorites ? "/favorite" : null)
   const pathname = "/pesme/" + [category, artist, slug].map(encodeURIComponent).join("/")
+  const playlistMatch = playlist?.match(/^\/plejliste\/([a-zA-Z0-9_-]+)$/)
+  const playablePlaylist = playlistMatch && !catalogEntry(playlistMatch[1]) && !["pesme-koje-znam", "top-user", "generisane", "kategorija"].includes(playlistMatch[1]) ? playlistMatch[1] : null
 
   const song = await prisma.song.findFirst({
     where: {
@@ -73,6 +77,7 @@ export default async function SongPage({ params, searchParams }: Props) {
     <SongClient
       key={song.id + (fromFavorites ? ":favorite" : ":original")}
       fromFavorites={fromFavorites}
+      performanceHref={playablePlaylist ? performanceHref(playablePlaylist, song.id) : undefined}
       adminTools={<AdminPageActions kind="song" id={song.id} name={song.title} songVersion={songReviewVersion(song)} editHref={`/admin/songs/${encodeURIComponent(song.id)}/edit?from=song`} afterDelete={artistPageHref(song.artist)} />}
       song={{
         id: song.id,

@@ -24,7 +24,7 @@ The existing `/plejliste/[id]` user playlist now has PDF and Public/Private cont
 - Songs I Can Play now reads the current user's actual skill: beginner includes the first two levels, intermediate the first three, advanced all five. It does not trust legacy song difficulty defaults.
 - Public catalog pages cache only 50 metadata/level results for 60 seconds, never user data or complete lyric bodies. Song edits, deletion, artist changes and approved submissions invalidate the catalog tag. Direct database imports become visible on the next cache refresh.
 - Read-only live audit: 9,351 songs; 9,333 old `beginner` values. Estimates: 400 very easy, 646 easy, 6,419 medium, 1,240 hard, 569 very hard, 77 unassessed. Run `node scripts/audit-song-difficulty.cjs --ca path/to/certificate.crt` to recount. The script issues `BEGIN READ ONLY` and never writes songs or marks them verified.
-- Performance/fullscreen mode, saved per-playlist transpose/settings and subscriptions remain separate future work. Playlist PDFs still use original keys.
+- Performance/fullscreen mode is now documented in `docs/performance-mode.md`. Saved per-playlist transpose overrides/settings and subscriptions remain future work. Playlist PDFs still use original keys.
 
 ## Database Setup
 

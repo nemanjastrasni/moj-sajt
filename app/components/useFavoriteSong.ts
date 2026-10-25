@@ -22,7 +22,7 @@ export default function useFavoriteSong(songId: string, fromFavorites: boolean) 
     const runtime: Runtime = { scope, transpose: 0, favorite: null, phase: status === "unauthenticated" ? "ready" : "loading", error: "", pending: null, running: false, blocked: false }
     const controller = new AbortController()
     active.current = runtime; setView({ ...runtime })
-    if (status === "authenticated") {
+    if (status === "authenticated" && songId) {
       void favoriteRequest("GET", songId, controller.signal).then(data => {
         if (active.current !== runtime) return
         runtime.favorite = data.favorite

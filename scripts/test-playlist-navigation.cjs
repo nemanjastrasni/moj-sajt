@@ -57,3 +57,13 @@ test("Favorites explicitly restore the personal view and return there, while cat
     assert.equal(tree.props.children.find(child => child?.type === SongClient).props.fromFavorites, false)
   }
 })
+
+test("actual playlist contexts link to performance at this song; generated catalogs keep standalone mode", async () => {
+  const props = playlist => ({ params: Promise.resolve({ category: "domace", artist: "bend", slug: "pesma" }), searchParams: Promise.resolve({ playlist }) })
+  const personal = await SongPage(props("/plejliste/first"))
+  assert.equal(personal.props.children.find(child => child?.type === SongClient).props.performanceHref, "/plejliste/first/sviranje?song=song")
+  for (const playlist of ["/plejliste/4-akorda", "/plejliste/lako", "/plejliste/pesme-koje-znam", "/top-50/strane", "/plejliste/lako?page=2"]) {
+    const tree = await SongPage(props(playlist))
+    assert.equal(tree.props.children.find(child => child?.type === SongClient).props.performanceHref, undefined)
+  }
+})
