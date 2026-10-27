@@ -39,6 +39,8 @@ button.privacy { cursor: pointer; }
 .choice span { min-width: 0; overflow-wrap: anywhere; }
 .choice svg { width: 20px; height: 20px; flex-shrink: 0; }
 .choice:disabled { opacity: .6; }
+.choice[data-added="true"] { color: #4ade80; opacity: 1; }
+:global(:root[data-theme="light"]) .choice[data-added="true"] { color: #13783a; }
 .search { margin: 24px 0; padding: 12px 0 20px; border-block: 1px solid var(--theme-line, #343b43); }
 .results { list-style: none; margin: 0; padding: 0; max-height: 360px; overflow-y: auto; }
 .resultText { flex: 1; min-width: 0; overflow-wrap: anywhere; }

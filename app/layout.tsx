@@ -10,6 +10,7 @@ import { THEME_INIT_SCRIPT } from "@/lib/theme"
 import LanguageSelect from "@/app/components/LanguageSelect"
 import { LOCALE_INIT_SCRIPT } from "@/lib/i18n"
 import UiText from "@/app/components/UiText"
+import MetronomeButton from "@/app/components/MetronomeButton"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -45,7 +46,7 @@ export default function RootLayout({
             {/* Back dugme dole levo */}
             <div className="flex min-h-12 flex-wrap items-center justify-between gap-x-3 px-3 pb-1 sm:px-6">
               <BackButton />
-              <div className="ml-auto flex items-center gap-1"><ThemeToggle /><LanguageSelect /></div>
+              <div className="ml-auto flex flex-wrap items-center justify-end gap-1"><MetronomeButton /><ThemeToggle /><LanguageSelect /></div>
             </div>
           </header>
 

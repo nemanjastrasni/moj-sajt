@@ -34,7 +34,7 @@ export default function SongPlaylistButton({ songId }: { songId: string }) {
       {!busy && !error && !choices.length && <p className={styles.notice}>{t("Nema playlisti.")}</p>}
       {choices.map(choice => {
         const added = choice.songs.some(item => item.songId === songId)
-        return <button type="button" key={choice.id} className={styles.choice} disabled={busy || added} onClick={async () => {
+        return <button type="button" key={choice.id} className={styles.choice} data-added={added} disabled={busy || added} onClick={async () => {
           if (running.current) return
           running.current = true; setBusy(true); setError("")
           try {

@@ -25,6 +25,7 @@
     "test:difficulty": "node --test scripts/test-difficulty.cjs",
     "test:favorite-transpose": "node --test scripts/test-favorite-transpose.cjs",
     "test:performance": "node --test scripts/test-performance.cjs",
+    "test:metronome": "node --test scripts/test-metronome.cjs",
     "test:theme": "node --test scripts/test-theme.cjs",
     "test:i18n": "node --test scripts/test-i18n.cjs",
     "artists:images": "node scripts/artist-images.cjs",
@@ -64,7 +65,8 @@
     "puppeteer": "^24.40.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "sharp": "^0.34.5"
+    "sharp": "^0.34.5",
+    "tone": "15.1.22"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

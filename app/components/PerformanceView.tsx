@@ -7,6 +7,7 @@ import type { PerformanceSong } from "@/lib/performance/model"
 import type useFavoriteSong from "./useFavoriteSong"
 import SongSheet from "./SongSheet"
 import FavoriteTransposeStatus from "./FavoriteTransposeStatus"
+import MetronomeButton from "./MetronomeButton"
 import { useI18n } from "./UiText"
 import styles from "./PerformanceView.module.css"
 
@@ -74,6 +75,7 @@ export default function PerformanceView({ song, controls, close, loading = false
         <div className={styles.top}>
           <div className={styles.identity}><h1 translate="no" title={song?.title ?? name}>{song?.title ?? name ?? t("Rezim za sviranje")}</h1>{song && <p translate="no" title={song.artist}>{song.artist}</p>}</div>
           <div className={styles.actions}>
+            <MetronomeButton />
             <button type="button" className={styles.icon} aria-label={t("Podesavanja prikaza")} title={t("Podesavanja prikaza")} aria-expanded={settings} onClick={() => setSettings(value => !value)}><SlidersHorizontal /></button>
             <button type="button" className={styles.icon} aria-label={t(fullscreen ? "Izadji iz celog ekrana" : "Ceo ekran")} title={t(fullscreen ? "Izadji iz celog ekrana" : "Ceo ekran")} onClick={() => void toggleFullscreen()}>{fullscreen ? <Minimize /> : <Maximize />}</button>
             <button type="button" className={styles.icon} aria-label={t("Zatvori")} title={t("Zatvori")} disabled={saving} onClick={leave}><X /></button>

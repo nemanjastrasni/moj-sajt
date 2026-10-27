@@ -11,6 +11,7 @@
 
 - The native modal dialog occupies the whole viewport with safe-area padding. A separate Fullscreen icon requests the browser's Fullscreen API on the dialog's inner DIV in response to a user gesture. The dialog element itself is not used as the fullscreen target. Unsupported/rejected requests show a status while keeping the immersive reader usable. No promise is made to hide browser chrome on every mobile browser.
 - Controls include bounded transpose/reset, manual start/stop scrolling and an expandable settings panel for lyric size, chord size and scroll speed. The existing synchronized chord/lyric renderer handles wrapping, not a copied or reformatted sheet.
+- The Timer icon opens the client-only metronome within the reader. It can be minimized to keep the sheet usable while playing; see `metronome.md` for audio lifecycle and limits.
 - Auto-scroll targets the reader's own scroll container, uses elapsed animation-frame time, stops at the end, pauses on document visibility loss or touch/wheel input, and cancels its animation frame on exit. It never starts automatically on opening or changing a song.
 - The reader keeps a bounded header and a dedicated scroll area even on small landscape screens. Theme/language follow the site's current settings. Original titles, artists and lyrics are not translated.
 
