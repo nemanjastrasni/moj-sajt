@@ -1,7 +1,6 @@
 export const MIN_BPM = 40
 export const MAX_BPM = 240
 export const METRONOME_KEY = "gitarakordi-metronome-v1"
-export const METRONOME_CLAIM = "gitarakordi-metronome-claim"
 export type MetronomeSettings = { bpm: number; beats: number; volume: number; accent: boolean }
 export const DEFAULT_METRONOME: MetronomeSettings = { bpm: 90, beats: 4, volume: 60, accent: true }
 

@@ -115,3 +115,9 @@
 .theme-toggle[aria-checked="false"] > svg:last-child { opacity: .5; }
 .theme-toggle[aria-checked="true"] > svg:first-child { opacity: .5; }
 @media (prefers-reduced-motion: reduce) { .theme-toggle-thumb { transition: none; } }
+@media (max-width: 400px) {
+  .theme-toggle { gap: 4px; padding-inline: 4px; }
+  .theme-toggle-track { width: 32px; flex-basis: 32px; }
+  .theme-toggle[aria-checked="true"] .theme-toggle-thumb { transform: translateX(8px); }
+  .language-select select { width: 84px; }
+}

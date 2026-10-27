@@ -10,6 +10,7 @@
 - Stop, close, Escape, navigation, hidden tab/pagehide and audio interruption dispose the sound and clock. Opening after X/Escape is always stopped.
 - Minimize explicitly hides only the panel so visitors can read/scroll the song while hearing the beat. Its Timer icon turns green while playing; reopening that panel retains the current beat. X/Escape fully stop and dispose, unlike Minimize.
 - Opening the reader's metronome stops a minimized header metronome (and vice versa), so two instances never tick simultaneously.
+- The tuner shares this exclusive audio-tool claim: opening the tuner stops clicks, and opening a metronome stops active tuner capture.
 - The panel works inside the native-fullscreen reader and restores keyboard focus on close.
 - Browser audio interruptions require another explicit Start. Background/lock-screen playback is intentionally not supported.
 - Verify on real Android/iPhone hardware before promising timing under Bluetooth or OS interruptions; desktop emulation does not establish device audio latency.

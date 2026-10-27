@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
 import { Hand, LoaderCircle, Minimize2, Minus, Play, Plus, Square, Timer, X } from "lucide-react"
-import { DEFAULT_METRONOME, isMetronomeSettings, MAX_BPM, METRONOME_CLAIM, METRONOME_KEY, MIN_BPM, tapTempo, type MetronomeSettings } from "@/lib/metronome/model"
+import { DEFAULT_METRONOME, isMetronomeSettings, MAX_BPM, METRONOME_KEY, MIN_BPM, tapTempo, type MetronomeSettings } from "@/lib/metronome/model"
+import { AUDIO_TOOL_CLAIM } from "@/lib/audio-tools"
 import type { MetronomeAudio } from "@/lib/metronome/audio"
 import { useI18n } from "./UiText"
 import styles from "./MetronomeButton.module.css"
@@ -53,10 +54,10 @@ function MetronomePanel({ close, visible, hide, activeChanged }: { close: () => 
   useEffect(() => release, [release])
   useEffect(() => {
     const claim = (event: Event) => { if (event instanceof CustomEvent && event.detail !== id) stop() }
-    window.addEventListener(METRONOME_CLAIM, claim)
-    return () => window.removeEventListener(METRONOME_CLAIM, claim)
+    window.addEventListener(AUDIO_TOOL_CLAIM, claim)
+    return () => window.removeEventListener(AUDIO_TOOL_CLAIM, claim)
   }, [id, stop])
-  useEffect(() => { if (visible) window.dispatchEvent(new CustomEvent(METRONOME_CLAIM, { detail: id })) }, [id, visible])
+  useEffect(() => { if (visible) window.dispatchEvent(new CustomEvent(AUDIO_TOOL_CLAIM, { detail: id })) }, [id, visible])
   useEffect(() => {
     if (!visible) return
     const element = dialog.current, trigger = document.activeElement, oldOverflow = document.body.style.overflow
