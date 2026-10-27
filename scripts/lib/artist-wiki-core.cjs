@@ -34,7 +34,10 @@ function albumFromText(text, title, kind, yearNow) {
     title = title.replace(/\s*\([^()]*\)\s*$/, "").replace(/,\s*(?:PGP|Jugoton|Diskoton|Croatia|City|Dallas|ПГП|Југотон|Дискотон|Кроација|Сити|Далас).*$/i, "")
   }
   title = title.replace(/\s*[-–—,]\s*$/, "")
-  title = clean(title).replace(/^["„“]|["”“]$/g, "").trim()
+  title = clean(title)
+  for (const [opening, closing] of [['"', '"'], ['„', '“'], ['“', '”']]) {
+    if (title.startsWith(opening) && title.endsWith(closing)) { title = title.slice(opening.length, -closing.length).trim(); break }
+  }
   if (!title || title.length > 180 || /^(?:albums?|albumi|studio albums?|diskografija|discography|released|izdato|godina|title|naslov)$/i.test(title) || /https?:|\[object Object\]|demo album|snimljen|сингл плоча|singl ploca/i.test(title) || (kind === "album" && title.includes("/")) || title.includes("(") && !title.includes(")")) return null
   return { title, year, kind }
 }
@@ -73,7 +76,7 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
     }
     if (discLevel !== null && blockedDiscLevel === null && ["p", "dt", "b", "strong"].includes(tag) && !element.parents("li,h2,h3,h4,h5,h6").length) {
       const label = key(element.text())
-      if (label.length < 80 && /album|singl|single|kompila|compila|spotovi|ucesca/.test(label)) kind = albumKind(label)
+      if (label.length < 80 && /album|singl|single|kompila|compila|spotovi|ucesca|extended play|\beps?\b/.test(label)) kind = albumKind(label)
     }
     let itemKind = kind
     if (tag === "li" && element.parents("table").length) {

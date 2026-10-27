@@ -811,7 +811,7 @@
       "category": "strane",
       "wikidataId": "Q47447",
       "discography": {
-        "hash": "4fc9a55e7d9523026ad7914a5a3c8e11ed3101d65d671e87732499384ae8823a",
+        "hash": "698e7f4a6aebe799444a0a8c09239be117d4233fff164fe4e41850906156dc38",
         "language": "hr",
         "title": "Ed Sheeran",
         "pageId": 505633,
@@ -2702,17 +2702,17 @@
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       },
       "discography": {
-        "hash": "1c32e2135d71bd6b165361ec9065f7ecc1ca21855cbf7cccbf6491c06adeac01",
-        "language": "sh",
+        "hash": "297a17dec465801d8a3d3bf7f72b2216491eecc2d98aed91f7ea9108050de802",
+        "language": "en",
         "title": "The Beach Boys",
-        "pageId": 108935,
-        "revisionId": 42462296,
-        "timestamp": "2025-05-09T10:09:56Z",
-        "url": "https://sh.wikipedia.org/wiki/The_Beach_Boys",
-        "revisionUrl": "https://sh.wikipedia.org/w/index.php?oldid=42462296",
-        "historyUrl": "https://sh.wikipedia.org/w/index.php?title=The+Beach+Boys&action=history",
+        "pageId": 4477,
+        "revisionId": 1381574679,
+        "timestamp": "2026-10-23T12:24:19Z",
+        "url": "https://en.wikipedia.org/wiki/The_Beach_Boys",
+        "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1381574679",
+        "historyUrl": "https://en.wikipedia.org/w/index.php?title=The+Beach+Boys&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "changes": "Selected explicitly labeled studio albums; corrected layout-table section boundaries; singles, live releases, compilations and other artists omitted; no translation."
+        "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }
     },
     {
@@ -2788,15 +2788,15 @@
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       },
       "discography": {
-        "hash": "b28ba393d85a69f3906c4b4af223c631677598d24c4e24ccd7077bc80b3256a5",
-        "language": "sr",
+        "hash": "b2917a2ce8270918fd85e1a9573f1931babbc71560e531f0b633c360158a52cf",
+        "language": "en",
         "title": "The Killers",
-        "pageId": 98954,
-        "revisionId": 31767704,
-        "timestamp": "2026-10-11T09:01:49Z",
-        "url": "https://sr.wikipedia.org/wiki/The_Killers",
-        "revisionUrl": "https://sr.wikipedia.org/w/index.php?oldid=31767704",
-        "historyUrl": "https://sr.wikipedia.org/w/index.php?title=The+Killers&action=history",
+        "pageId": 804238,
+        "revisionId": 1381629218,
+        "timestamp": "2026-10-23T19:39:59Z",
+        "url": "https://en.wikipedia.org/wiki/The_Killers",
+        "revisionUrl": "https://en.wikipedia.org/w/index.php?oldid=1381629218",
+        "historyUrl": "https://en.wikipedia.org/w/index.php?title=The+Killers&action=history",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "changes": "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation."
       }

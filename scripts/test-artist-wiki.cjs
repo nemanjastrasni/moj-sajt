@@ -129,6 +129,18 @@ test("failed backup rolls back without any mutation", async () => {
 
 require("ts-node").register({ transpileOnly: true, compilerOptions: { module: "CommonJS", moduleResolution: "Node" } })
 const { normalizeDiscography } = require("../lib/discography.ts")
+
+test("standalone EP labels end studio-album lists in definition, paragraph and bold markup", () => {
+  for (const label of ["<dl><dt>EP</dt></dl>", "<p>EPs</p>", "<b>EP</b>", "<strong>Extended plays</strong>"]) {
+    const result = core.extractArticle('<h2>Discography</h2><dl><dt>Studio albums</dt></dl><ul><li>Studio (2011)</li></ul>' + label + '<ul><li>Not Studio (2005)</li></ul><h3>Studio albums</h3><ul><li>Next Studio (2014)</li></ul>')
+    assert.deepEqual(result.albums.map(album => album.title), ["Studio", "Next Studio"])
+  }
+})
+
+test("album title quotation marks are stripped only as a complete outer pair", () => {
+  const result = core.extractArticle('<h2>Studio albums</h2><ul><li><i>Carl and the Passions - &quot;So Tough&quot;</i> (1972)</li><li><i>&quot;Quoted&quot;</i> (2000)</li></ul>')
+  assert.deepEqual(result.albums.map(album => album.title), ['Carl and the Passions - "So Tough"', 'Quoted'])
+})
 test("both legacy string lists and structured albums render without object coercion", () => {
   assert.deepEqual(normalizeDiscography([{ title: "Album A", year: 2000, kind: "studio" }, "Album B (2001)", null, {}, "[object Object]"]), [{ title: "Album A", year: "2000", kind: "studio" }, { title: "Album B", year: "2001", kind: "album" }])
   assert.equal(normalizeDiscography("Album A (2000)\nAlbum A (2000)").length, 1)
@@ -205,4 +217,24 @@ test("discography recheck holds suspicious sources and never overwrites changed 
   assert.equal(result.unchanged.artists.length, 1)
   assert.equal(result.unchanged.artists[0].id, "good")
   assert.equal(result.skipped.length, 2)
+})
+
+test("published recheck requires exact current credit hashes and preserves manual or renamed data", () => {
+  const { publishedReport } = require("./recheck-discographies.cjs")
+  const albums = [{ title: "Album", year: "2000", kind: "studio" }]
+  const original = { id: "a", name: "Artist", slug: "artist", category: "strane", proposal: { wikidataId: "Q123", evidence: "musical-group" } }
+  const current = { ...original, bio: "Keep", discography: albums }
+  const manifest = { artists: [{ artistId: "a", wikidataId: "Q123", discography: { hash: tool.hashValue(albums), language: "en", revisionId: 1 } }] }
+  const report = { source: "live-database", artists: [original] }
+  const found = publishedReport(report, [current], manifest)
+  assert.equal(found.artists.length, 1)
+  assert.deepEqual(found.artists[0].changes.discography.before, albums)
+  assert.deepEqual(Object.keys(found.artists[0].changes), ["discography"])
+  assert.equal(Object.hasOwn(found.artists[0].proposal.discographySource, "hash"), false)
+  for (const changed of [{ ...current, name: "Renamed" }, { ...current, discography: [...albums, { title: "Manual", year: "2001" }] }]) {
+    const result = publishedReport(report, [changed], manifest)
+    assert.equal(result.artists.length, 0)
+    assert.equal(result.preserved.length, 1)
+  }
+  assert.equal(publishedReport(report, [current], { artists: [] }).artists.length, 0)
 })

@@ -1,82 +1,9 @@
-import Link from "next/link"
-import { prisma } from "@/lib/prisma"
+import { BiographyLetters } from "@/app/biografija/components/BiographyCatalog"
+import { readBiographyArtists } from "@/lib/biographies/server"
 
-export default async function BioCategory({ params }: any) {
+export const dynamic = "force-dynamic"
 
+export default async function BioCategory({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params
-
-  const artists = await prisma.artist.findMany({
-    where: { category },
-    select: { name: true }
-  })
-
-  const lettersSet = new Set<string>()
-
-  artists.forEach((a) => {
-
-    if (!a.name) return
-
-    const first = a.name[0].toUpperCase()
-
-if (!/^[A-ZČĆŠĐŽ]/.test(first)) {
-  lettersSet.add("#")
-} else {
-  lettersSet.add(first)
-}
-
-  })
-
-  const letters = Array.from(lettersSet).sort((a, b) => {
-  if (a === "#") return -1
-  if (b === "#") return 1
-  return a.localeCompare(b, "sr")
-})
-
-  const title =
-    category === "domace"
-      ? "Zabavne"
-      : category === "strane"
-      ? "Strane"
-      : "Narodne"
-
-  return (
-    <div style={{ padding: "40px" }}>
-
-      <h1
-        style={{
-          fontSize: "32px",
-          marginBottom: "30px",
-        }}
-      >
-        {title}
-      </h1>
-
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "10px",
-          maxWidth: "900px",
-        }}
-      >
-
-        {letters.map((letter) => (
-          <Link
-            key={letter}
-            href={`/biografija/${category}/slovo/${letter === "#" ? "num" : letter.toLowerCase()}`}
-            style={{
-              border: "1px solid #555",
-              padding: "8px 12px",
-              borderRadius: "6px",
-              textDecoration: "none",
-            }}
-          >
-            {letter}
-          </Link>
-        ))}
-
-      </div>
-
-    </div>
-  )
+  return <BiographyLetters category={category} artists={await readBiographyArtists(category)} />
 }

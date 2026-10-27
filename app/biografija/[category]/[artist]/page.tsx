@@ -11,6 +11,8 @@ import AdminPageActions from "@/app/components/AdminPageActions"
 import { artistContentVersion } from "@/lib/adminContent/server"
 import { BackNavigationTarget } from "@/app/components/BackNavigation"
 import { artistIndexHref } from "@/lib/navigation/parent"
+import { biographyText } from "@/lib/biographies/catalog"
+import UiText from "@/app/components/UiText"
 
 function cirToLat(text: string) {
   const map: any = {
@@ -32,6 +34,7 @@ export default async function BiographyPage({ params }: any) {
 
   if (!artistData) notFound()
   const image = getArtistImage(artistData)
+  const biography = biographyText(artistData.bio) || biographyText(artistData.bioShort)
 
   return (
     <div className={styles.page}>
@@ -51,13 +54,13 @@ export default async function BiographyPage({ params }: any) {
         href={`/pesme/${artistData.category}/${artistData.slug}`}
         className="text-blue-500 underline block mb-6"
       >
-        ▶ Idi na pesme izvođača
+        <UiText text="Idi na pesme izvođača" />
       </a>
 
       {/* BIOGRAFIJA */}
       <div style={{ marginBottom: "40px" }}>
-        <BioText text={cirToLat(artistData.bio || "Biografija nije dostupna.")} />
-        <ArtistWikiCredit artistId={artistData.id} field="bio" value={artistData.bio} />
+        {biography ? <BioText text={cirToLat(biography)} /> : <p><UiText text="Biografija nije dostupna." /></p>}
+        {biographyText(artistData.bio) && <ArtistWikiCredit artistId={artistData.id} field="bio" value={artistData.bio} />}
       </div>
 
       {/* DISKOGRAFIJA */}

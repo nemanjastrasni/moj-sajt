@@ -10,6 +10,7 @@ import { artistContentVersion } from "@/lib/adminContent/server"
 import ArtistSongList from "@/app/components/ArtistSongList"
 import { BackNavigationTarget } from "@/app/components/BackNavigation"
 import { artistIndexHref } from "@/lib/navigation/parent"
+import { hasBiographyContent } from "@/lib/biographies/catalog"
 
 export const dynamic = "force-dynamic"
 
@@ -65,14 +66,14 @@ export default async function ArtistPage({ params }: any) {
       <AdminPageActions kind="artist" id={artistData.id} name={artistData.name} editHref={`/admin/artists/${encodeURIComponent(artistData.id)}/edit?from=artist`} biography={Boolean(artistData.bio || artistData.bioShort)} version={artistContentVersion(artistData)} />
 
       {/* LINK KA BIOGRAFIJI */}
-      <div style={{ marginBottom: "25px" }}>
+      {hasBiographyContent(artistData) && <div style={{ marginBottom: "25px" }}>
         <Link
           href={`/biografija/${category}/${artistData.slug}`}
           style={{ color: "#2563eb", fontWeight: 600 }}
         >
           <UiText text="Pogledaj biografiju" />
         </Link>
-      </div>
+      </div>}
 
       {artistData.songs.length === 0 && <p><UiText text="Nema pesama." /></p>}
 

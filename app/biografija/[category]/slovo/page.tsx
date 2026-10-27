@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 
-export default function Page({ params }: any) {
-  const { category } = params
-  return redirect(`/biografija/${category}`)
+export default async function Page({ params }: { params: Promise<{ category: string }> }) {
+  const { category } = await params
+  return redirect(`/biografija/${encodeURIComponent(category)}`)
 }

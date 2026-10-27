@@ -7,14 +7,19 @@ export const albumGroups = [
 ] as const
 
 export function normalizeDiscography(value: unknown): Album[] {
-  const rows: unknown[] = Array.isArray(value) ? value : typeof value === "string" ? value.split(/\r?\n/) : []
+  let rows: unknown[] = Array.isArray(value) ? value : typeof value === "string" ? value.split(/\r?\n/) : []
+  if (typeof value === "string" && value.trim().startsWith("[")) {
+    try { const parsed: unknown = JSON.parse(value); rows = Array.isArray(parsed) ? parsed : [] } catch { rows = [] }
+  }
   const result: Album[] = []
   const seen = new Set<string>()
   for (const row of rows) {
     let title = "", year = "", kind = "album"
     if (typeof row === "string") {
-      year = row.match(/\b(?:19|20)\d{2}\b/)?.[0] || ""
-      title = row.replace(/^\s*(?:19|20)\d{2}\.?\s*[-–—:]\s*/, "").replace(/\s*\((?:19|20)\d{2}\)\s*$/, "").trim()
+      const leading = row.match(/^\s*((?:19|20)\d{2})(?:\s*[-–—:]\s*|\.\s+)/)
+      const trailing = row.match(/\s+(?:\(((?:19|20)\d{2})\)|[-–—]\s*((?:19|20)\d{2})\.?)\s*$/)
+      year = leading?.[1] || trailing?.[1] || trailing?.[2] || ""
+      title = row.slice(leading?.[0].length || 0, trailing?.index ?? row.length).trim()
     } else if (row && typeof row === "object" && "title" in row && typeof row.title === "string") {
       title = row.title.trim()
       if ("year" in row && /^(?:19|20)\d{2}$/.test(String(row.year))) year = String(row.year)
@@ -23,7 +28,9 @@ export function normalizeDiscography(value: unknown): Album[] {
     // Some legacy sources include the release year inside the displayed title too.
     if (year) title = title.replace(new RegExp(`\\s*\\(${year}\\)\\s*$`), "").trim()
     const key = `${title.toLowerCase()}|${year}`
-    if (title && title !== "[object Object]" && !seen.has(key)) { seen.add(key); result.push({ title, year, kind }) }
+    if (title && !/^(?:\[object Object\]|null|undefined|n\/?a|[-–—.]+|(?:diskografija|discography)(?:\s+(?:jo[sš]\s+)?nije dostupna|\s+is not available(?: yet)?)?[.!]?)$/i.test(title) && !seen.has(key)) {
+      seen.add(key); result.push({ title, year, kind })
+    }
   }
   return result
 }
