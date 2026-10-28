@@ -8,6 +8,7 @@ import UsedChordCard from "./UsedChordCard"
 import SongSheet from "./SongSheet"
 import SongPdfButton from "./SongPdfButton"
 import SongPlaylistButton from "./SongPlaylistButton"
+import SongReportButton from "./SongReportButton"
 import useFavoriteSong from "./useFavoriteSong"
 import FavoriteTransposeStatus from "./FavoriteTransposeStatus"
 import PerformanceView from "./PerformanceView"
@@ -20,6 +21,7 @@ type Props = {
   adminTools?: ReactNode
   fromFavorites?: boolean
   performanceHref?: string
+  songVersion?: string
   song: {
     id: string
     title: string
@@ -37,7 +39,7 @@ type Props = {
   } | null
 }
 
-export default function SongClient({ song, adminTools, fromFavorites = false, performanceHref }: Props) {
+export default function SongClient({ song, adminTools, fromFavorites = false, performanceHref, songVersion }: Props) {
   const { t } = useI18n()
   const router = useRouter()
   const [performance, setPerformance] = useState(false)
@@ -236,6 +238,7 @@ export default function SongClient({ song, adminTools, fromFavorites = false, pe
   </button>
 
   <SongPlaylistButton key={song.id} songId={song.id} />
+  {songVersion && <SongReportButton songId={song.id} songVersion={songVersion} title={title} artist={artist} transpose={transpose} />}
 
 </div>
 

@@ -48,6 +48,7 @@ model User {
   playlists          Playlist[]
   sessions           Session[]
   songSubmissions    SongSubmission[]
+  songReports        SongReport[]
 }
 
 model Artist {
@@ -79,6 +80,7 @@ model Song {
   playlistSongs PlaylistSong[]
   submissions   SongSubmission[]
   review        SongReview?
+  reports       SongReport[]
   artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([artistId, slug])
@@ -92,6 +94,30 @@ model SongReview {
   song          Song     @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([status])
+}
+
+model SongReport {
+  id           String   @id @default(cuid())
+  songId       String?
+  userId       String?
+  kind         String
+  description  String
+  songTitle    String
+  artistName   String
+  songVersion  String
+  transpose    Int      @default(0)
+  status       String   @default("pending")
+  reviewNote   String?
+  reviewerId   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  reviewedAt   DateTime?
+  song         Song?    @relation(fields: [songId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([status, createdAt])
+  @@index([userId, createdAt])
+  @@index([songId])
 }
 
 model SongSubmission {

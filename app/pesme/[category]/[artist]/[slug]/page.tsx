@@ -60,6 +60,7 @@ export default async function SongPage({ params, searchParams }: Props) {
   if (!song) {
     notFound()
   }
+  const contentVersion = songReviewVersion(song)
  await prisma.song.update({
   where: {
     id: song.id,
@@ -77,8 +78,9 @@ export default async function SongPage({ params, searchParams }: Props) {
     <SongClient
       key={song.id + (fromFavorites ? ":favorite" : ":original")}
       fromFavorites={fromFavorites}
+      songVersion={contentVersion}
       performanceHref={playablePlaylist ? performanceHref(playablePlaylist, song.id) : undefined}
-      adminTools={<AdminPageActions kind="song" id={song.id} name={song.title} songVersion={songReviewVersion(song)} editHref={`/admin/songs/${encodeURIComponent(song.id)}/edit?from=song`} afterDelete={artistPageHref(song.artist)} />}
+      adminTools={<AdminPageActions kind="song" id={song.id} name={song.title} songVersion={contentVersion} editHref={`/admin/songs/${encodeURIComponent(song.id)}/edit?from=song`} afterDelete={artistPageHref(song.artist)} />}
       song={{
         id: song.id,
         title: song.title,

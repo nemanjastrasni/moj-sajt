@@ -4,6 +4,7 @@ import { requireSongAdmin } from "@/lib/adminSongs/server"
 import { SubmissionError } from "@/lib/submissions/validation"
 import BackButton from "@/app/components/BackButton"
 import Link from "next/link"
+import UiText from "@/app/components/UiText"
 
 export default async function AdminLayout({
   children,
@@ -25,6 +26,7 @@ export default async function AdminLayout({
         <h2 className="text-xl font-bold">Admin</h2>
 
         <nav className="space-y-2 text-sm">
+  <Link href="/admin/prijave" className="block hover:underline"><UiText text="Prijave gresaka" /></Link>
   <Link href="/admin/predlozi" className="block hover:underline">
     Predlozi pesama
   </Link>
