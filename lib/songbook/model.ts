@@ -2,7 +2,7 @@ export const MAX_BOOK_SONGS = 100
 export const MAX_PDF_CHARACTERS = 1500000
 export type BookEntry = { id: string; transpose: number }
 export type BookDraft = { version: 1; title: string; fontSize: number; contents: boolean; songs: BookEntry[] }
-export type PdfSong = BookEntry & { title: string; artist: string; lyrics: string }
+export type PdfSong = BookEntry & { title: string; artist: string; lyrics: string; capo?: number }
 export const emptyBook = (): BookDraft => ({ version: 1, title: "", fontSize: 11, contents: true, songs: [] })
 export const normalizeTranspose = (value: number) => Number.isFinite(value) ? Math.trunc(value) % 12 || 0 : 0
 

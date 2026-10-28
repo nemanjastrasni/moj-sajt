@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:chords": "node --test scripts/test-song-sheet.cjs",
+    "test:capo": "node --test scripts/test-capo.cjs",
     "test:auth": "node --test scripts/test-auth.cjs",
     "test:presence": "node --test scripts/test-presence.cjs",
     "presence:setup": "node scripts/setup-online-presence.cjs",

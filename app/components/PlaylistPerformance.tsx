@@ -8,7 +8,7 @@ import type { PerformanceSnapshot } from "@/lib/performance/model"
 import useFavoriteSong from "./useFavoriteSong"
 import PerformanceView from "./PerformanceView"
 
-export default function PlaylistPerformance({ playlistId, initialSong }: { playlistId: string; initialSong?: string }) {
+export default function PlaylistPerformance({ playlistId, initialSong, initialCapo }: { playlistId: string; initialSong?: string; initialCapo?: number }) {
   const router = useRouter(), { data: session, status } = useSession()
   const [snapshot, setSnapshot] = useState<{ key: string; data: PerformanceSnapshot | null; error: string } | null>(null)
   const [selected, setSelected] = useState(initialSong), [retry, setRetry] = useState(0)
@@ -28,7 +28,7 @@ export default function PlaylistPerformance({ playlistId, initialSong }: { playl
     return () => controller.abort()
   }, [playlistId, selected, requestKey, status])
   const index = current ? current.songs.findIndex(song => song.id === current.current.id) : -1
-  return <PerformanceView song={current?.current ?? null} name={current?.name} controls={controls} loading={loading} error={error} close={() => router.replace(`/plejliste/${encodeURIComponent(playlistId)}`)} retry={() => setRetry(value => value + 1)}
+  return <PerformanceView song={current?.current ?? null} name={current?.name} controls={controls} initialCapo={initialSong && initialCapo !== undefined ? { id: initialSong, fret: initialCapo } : undefined} loading={loading} error={error} close={() => router.replace(`/plejliste/${encodeURIComponent(playlistId)}`)} retry={() => setRetry(value => value + 1)}
     position={index >= 0 ? index : undefined} total={current?.songs.length ?? 0}
     previous={current && index > 0 ? () => setSelected(current.songs[index - 1].id) : undefined}
     next={current && index >= 0 && index < current.songs.length - 1 ? () => setSelected(current.songs[index + 1].id) : undefined}

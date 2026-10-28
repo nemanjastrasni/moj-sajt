@@ -9,12 +9,14 @@ import SongSheet from "./SongSheet"
 import FavoriteTransposeStatus from "./FavoriteTransposeStatus"
 import MetronomeButton from "./MetronomeButton"
 import TunerButton from "./TunerButton"
+import CapoControl from "./CapoControl"
+import useSongCapo, { type SongCapo } from "./useSongCapo"
 import { useI18n } from "./UiText"
 import styles from "./PerformanceView.module.css"
 
 type KeyControls = Pick<ReturnType<typeof useFavoriteSong>, "transpose" | "phase" | "error" | "controlsDisabled" | "change" | "reload">
-type Props = { song: PerformanceSong | null; controls: KeyControls; close: () => void; loading?: boolean; error?: string; retry?: () => void; previous?: () => void; next?: () => void; position?: number; total?: number; name?: string }
-export default function PerformanceView({ song, controls, close, loading = false, error = "", retry, previous, next, position, total, name }: Props) {
+type Props = { song: PerformanceSong | null; controls: KeyControls; capoControl?: SongCapo; initialCapo?: { id: string; fret: number }; close: () => void; loading?: boolean; error?: string; retry?: () => void; previous?: () => void; next?: () => void; position?: number; total?: number; name?: string }
+export default function PerformanceView({ song, controls, capoControl, initialCapo, close, loading = false, error = "", retry, previous, next, position, total, name }: Props) {
   const { t } = useI18n(), dialog = useRef<HTMLDialogElement>(null), screen = useRef<HTMLDivElement>(null), scroll = useRef<HTMLDivElement>(null)
   const [fullscreen, setFullscreen] = useState(false), [notice, setNotice] = useState(""), [settings, setSettings] = useState(false)
   const [textSize, setTextSize] = useState(20), [chordSize, setChordSize] = useState(20), [speed, setSpeed] = useState(3)
@@ -24,6 +26,8 @@ export default function PerformanceView({ song, controls, close, loading = false
   const playing = sameSong && transport.playing
   const setPlaying = useCallback((value: boolean) => setTransport({ id: song?.id, loading, playing: value }), [song?.id, loading])
   const sheet = useMemo(() => parseSongSheet(song?.lyrics ?? ""), [song?.lyrics])
+  const ownCapo = useSongCapo(song?.id ?? "", sheet, controls.transpose, initialCapo)
+  const capo = capoControl ?? ownCapo
   const saving = ["saving", "updating"].includes(controls.phase)
   const disabled = loading || !song || controls.controlsDisabled
   useEffect(() => {
@@ -89,6 +93,7 @@ export default function PerformanceView({ song, controls, close, loading = false
           <button type="button" className={styles.icon} disabled={disabled} title={t("Originalni tonalitet")} aria-label={t("Originalni tonalitet")} onClick={() => controls.change(0)}><RotateCcw /></button>
           <button type="button" className={styles.icon} disabled={loading || !song} title={t(playing ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} aria-label={t(playing ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} aria-pressed={playing} onClick={() => setPlaying(!playing)}>{playing ? <Pause /> : <Play />}</button>
           <TunerButton /><MetronomeButton />
+          <CapoControl key={song?.id} capo={capo} disabled={disabled} />
           {song && <FavoriteTransposeStatus phase={controls.phase} error={controls.error} reload={controls.reload} />}
         </div>
         {settings && <div className={styles.settings}>
@@ -99,7 +104,7 @@ export default function PerformanceView({ song, controls, close, loading = false
         {notice && <p role="status" className={styles.small}>{t(notice)}</p>}
       </header>
       <div ref={scroll} className={styles.content} tabIndex={0} aria-label={t("Tekst pesme")} onWheel={() => setPlaying(false)} onTouchStart={() => setPlaying(false)}>
-        {loading ? <p role="status">{t("Ucitavam pesmu...")}</p> : error ? <div role="alert"><p>{t(error)}</p>{retry && <button type="button" className={styles.button} onClick={retry}>{t("Pokusaj ponovo")}</button>}</div> : song && <SongSheet lines={sheet} transpose={controls.transpose} textSize={textSize} chordSize={chordSize} />}
+        {loading ? <p role="status">{t("Ucitavam pesmu...")}</p> : error ? <div role="alert"><p>{t(error)}</p>{retry && <button type="button" className={styles.button} onClick={retry}>{t("Pokusaj ponovo")}</button>}</div> : song && <SongSheet lines={capo.lines} transpose={capo.shift} textSize={textSize} chordSize={chordSize} />}
       </div>
       {total !== undefined && <nav className={styles.navigation} aria-label={t("Pesme u playlisti")}>
         <button type="button" className={styles.button} disabled={!previous || loading || saving} onClick={previous}><ChevronLeft />{t("Prethodna")}</button>

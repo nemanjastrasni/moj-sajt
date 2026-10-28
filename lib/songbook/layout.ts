@@ -1,11 +1,11 @@
-import { groupSheetLines, parseSongSheet, wrapSheetBlock, type SheetToken } from "../chords/songSheet"
+import { groupSheetLines, parseSongSheet, wrapSheetBlock, type SheetToken, type SheetLine } from "../chords/songSheet"
 
 export type PrintRow = { kind: "chords" | "lyrics" | "tab"; text: string; tokens: SheetToken[] }
 export type PrintBlock = { rows: PrintRow[]; section: boolean }
 
-export function printBlocks(lyrics: string, columns: number): PrintBlock[] {
+export function printBlocks(lyrics: string | SheetLine[], columns: number): PrintBlock[] {
   columns = Math.max(16, Math.floor(columns))
-  const blocks = groupSheetLines(parseSongSheet(lyrics.normalize("NFC")))
+  const blocks = groupSheetLines(typeof lyrics === "string" ? parseSongSheet(lyrics.normalize("NFC")) : lyrics)
   const result: PrintBlock[] = []
   for (let i = 0; i < blocks.length; i++) {
     const block = blocks[i]

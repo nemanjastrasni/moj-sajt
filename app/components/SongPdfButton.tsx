@@ -6,21 +6,21 @@ import { useI18n } from "./UiText"
 import { normalizeTranspose } from "@/lib/songbook/model"
 import { downloadPdf, pdfError, preparePdfDownload } from "@/lib/songbook/client"
 
-type Props = { song: { id: string; title: string; artist: string; lyrics: string }; transpose: number; textSize: number; chordSize: number }
-export default function SongPdfButton({ song, transpose, textSize, chordSize }: Props) {
+type Props = { song: { id: string; title: string; artist: string; lyrics: string }; transpose: number; capo?: number | null; textSize: number; chordSize: number }
+export default function SongPdfButton({ song, transpose, capo, textSize, chordSize }: Props) {
   const { t, locale } = useI18n()
   const running = useRef(false)
   const alive = useRef(true)
   const [busy, setBusy] = useState(false), [error, setError] = useState("")
   const [file, setFile] = useState<{ url: string; filename: string; key: string } | null>(null)
-  const key = JSON.stringify([song, transpose, textSize, chordSize, locale])
+  const key = JSON.stringify([song, transpose, capo, textSize, chordSize, locale])
   useEffect(() => { alive.current = true; return () => { alive.current = false } }, [])
   useEffect(() => () => { if (file) URL.revokeObjectURL(file.url) }, [file])
   async function exportSong() {
     if (running.current) return
     running.current = true; setBusy(true); setError("")
     try {
-      const result = await preparePdfDownload([{ ...song, transpose: normalizeTranspose(transpose) }], {
+      const result = await preparePdfDownload([{ ...song, transpose: normalizeTranspose(transpose), ...(capo != null ? { capo } : {}) }], {
         title: `${song.artist} - ${song.title}`, locale, book: false, contents: false,
         fontSize: Math.max(8, Math.min(24, textSize * .75)), chordSize: Math.max(8, Math.min(24, chordSize * .75)),
       })

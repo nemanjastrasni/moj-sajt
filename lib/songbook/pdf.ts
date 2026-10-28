@@ -1,6 +1,8 @@
 import { PDFDocument, PageSizes, rgb, type PDFFont, type PDFPage } from "pdf-lib"
 import fontkit from "@pdf-lib/fontkit"
 import { transposeChordSymbol } from "../chords/chordSymbols"
+import { capoSheet, isCapo } from "../chords/capo"
+import { parseSongSheet } from "../chords/songSheet"
 import { MAX_BOOK_SONGS, MAX_PDF_CHARACTERS, type PdfSong } from "./model"
 import { printBlocks } from "./layout"
 
@@ -29,6 +31,7 @@ export function wrapPdfText(value: string, font: PDFFont, size: number, width: n
 export async function generateSongbookPdf(songs: PdfSong[], options: PdfOptions, fonts: PdfFonts, progress?: (done: number) => void) {
   if (!songs.length || songs.length > MAX_BOOK_SONGS || songs.some(song => typeof song.lyrics !== "string" || !song.lyrics.trim() || song.lyrics.length > 100000 || typeof song.title !== "string" || !song.title || song.title.length > 400 || typeof song.artist !== "string" || song.artist.length > 400 || !Number.isInteger(song.transpose) || Math.abs(song.transpose) > 11) || songs.reduce((n, s) => n + s.lyrics.length, 0) > MAX_PDF_CHARACTERS) throw new Error("Izaberi od 1 do 100 pesama sa tekstom.")
   if (!Number.isFinite(options.fontSize) || options.fontSize < 8 || options.fontSize > 24 || !Number.isFinite(options.chordSize ?? options.fontSize) || (options.chordSize ?? options.fontSize) < 8 || (options.chordSize ?? options.fontSize) > 24) throw new Error("Proveri velicinu teksta.")
+  if (songs.some(song => song.capo !== undefined && !isCapo(song.capo))) throw new Error("Neispravan capo prag.")
   const doc = await PDFDocument.create()
   doc.registerFontkit(fontkit)
   const regular = await doc.embedFont(fonts.regular, { subset: true }), bold = await doc.embedFont(fonts.bold, { subset: true })
@@ -70,6 +73,8 @@ export async function generateSongbookPdf(songs: PdfSong[], options: PdfOptions,
   const unit = regular.widthOfTextAtSize("M", fontSize), rowHeight = Math.max(fontSize, chordSize) * 1.45
   const columns = Math.max(16, Math.floor(ROOM / unit) - 3)
   for (const [index, song] of songs.entries()) {
+    const display = capoSheet(parseSongSheet(text(song.lyrics)), song.transpose, song.capo ?? null)
+    if (song.capo !== undefined && !display.active) throw new Error("Oznaka capoa u izvornom zapisu nije jasna. Preporuka nije dostupna.")
     let current = page()
     songPages.push({ id: song.id, page: doc.getPageCount() })
     function header(continued: boolean) {
@@ -77,12 +82,14 @@ export async function generateSongbookPdf(songs: PdfSong[], options: PdfOptions,
       y = paragraph(current, song.title, y, continued ? 12 : 20, true)
       y = paragraph(current, song.artist, y - 6, continued ? 9 : 11)
       const note = song.transpose ? `${en ? "Transpose" : "Transpozicija"}: ${song.transpose > 0 ? "+" : ""}${song.transpose}` : en ? "Original key" : "Originalni tonalitet"
-      y = paragraph(current, note + (continued ? en ? " - Continued" : " - Nastavak" : ""), y - 7, 8)
+      const capoNote = display.active ? ` | Capo ${display.fret} (${en ? "chord shapes" : "hvatovi"})` : ""
+      y = paragraph(current, note + capoNote + (continued ? en ? " - Continued" : " - Nastavak" : ""), y - 7, 8)
+      if (display.active && display.lines.some(line => line.kind === "tab")) y = paragraph(current, en ? "Tablature remains as originally written." : "Tabulatura ostaje u izvornom zapisu.", y - 2, 8)
       current.drawLine({ start: { x: MARGIN, y: y - 8 }, end: { x: WIDTH - MARGIN, y: y - 8 }, thickness: 0.5, color: rgb(.75, .75, .75) })
       return y - 24
     }
     let y = header(false)
-    const blocks = printBlocks(text(song.lyrics), columns)
+    const blocks = printBlocks(display.lines, columns)
     for (const [blockIndex, block] of blocks.entries()) {
       const height = block.rows.length * rowHeight + 2
       const nextHeight = block.section && blocks[blockIndex + 1] ? blocks[blockIndex + 1].rows.length * rowHeight : 0
@@ -96,7 +103,7 @@ export async function generateSongbookPdf(songs: PdfSong[], options: PdfOptions,
           for (const token of row.tokens) residual = residual.slice(0, token.start) + " ".repeat(token.end - token.start) + residual.slice(token.end)
           draw(current, residual, MARGIN, y, fontSize * scale)
           row.tokens.forEach((token, tokenIndex) => {
-            const symbol = transposeChordSymbol(token.chord, song.transpose)
+            const symbol = transposeChordSymbol(token.chord, display.shift)
             const right = Math.min(ROOM, (row.tokens[tokenIndex + 1]?.start ?? columns + 3) * cell)
             const available = Math.max(cell * .5, right - token.start * cell - cell * .55)
             const size = Math.min(chordSize * scale, available / bold.widthOfTextAtSize(symbol, 1))
