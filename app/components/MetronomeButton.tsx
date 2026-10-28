@@ -9,17 +9,18 @@ import type { MetronomeAudio } from "@/lib/metronome/audio"
 import { useI18n } from "./UiText"
 import styles from "./MetronomeButton.module.css"
 
-export default function MetronomeButton() {
+export default function MetronomeButton({ onPlayingChange }: { onPlayingChange?: (playing: boolean) => void }) {
   const pathname = usePathname()
-  return <MetronomeControl key={pathname} />
+  return <MetronomeControl key={pathname} onPlayingChange={onPlayingChange} />
 }
 
-function MetronomeControl() {
+function MetronomeControl({ onPlayingChange }: { onPlayingChange?: (playing: boolean) => void }) {
   const { t } = useI18n(), [open, setOpen] = useState(false), [visible, setVisible] = useState(false), [playing, setPlaying] = useState(false)
-  function close() { setOpen(false); setVisible(false); setPlaying(false) }
+  const activeChanged = useCallback((value: boolean) => { setPlaying(value); onPlayingChange?.(value) }, [onPlayingChange])
+  function close() { setOpen(false); setVisible(false); activeChanged(false) }
   return <>
     <button type="button" className={styles.icon} data-playing={playing} title={t(playing ? "Metronom radi" : "Metronom")} aria-label={t("Metronom")} aria-haspopup="dialog" aria-expanded={visible} onClick={() => { setOpen(true); setVisible(true) }}><Timer /></button>
-    {open && <MetronomePanel visible={visible} hide={() => setVisible(false)} activeChanged={setPlaying} close={close} />}
+    {open && <MetronomePanel visible={visible} hide={() => setVisible(false)} activeChanged={activeChanged} close={close} />}
   </>
 }
 

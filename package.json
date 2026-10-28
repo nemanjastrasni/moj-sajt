@@ -30,6 +30,7 @@
     "test:metronome": "node --test scripts/test-metronome.cjs",
     "test:tuner": "node --test scripts/test-tuner.cjs",
     "test:theme": "node --test scripts/test-theme.cjs",
+    "test:mobile-header": "node --test scripts/test-mobile-header.cjs",
     "test:i18n": "node --test scripts/test-i18n.cjs",
     "artists:images": "node scripts/artist-images.cjs",
     "artists:photos": "node scripts/artist-image-publish.cjs",

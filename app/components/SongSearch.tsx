@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { createPortal } from "react-dom"
 import { useRouter } from "next/navigation"
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react"
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react"
 import { getCategoryLabel } from "@/lib/categories"
 import { cleanSearchQuery, prepareSongQuery, SEARCH_MAX_LENGTH, songSearchHref, type SongSearchResult } from "@/lib/songSearch"
 import { loadSongSearch, type SongSearchLoader } from "@/lib/songSearchClient"
@@ -11,7 +11,7 @@ import { useI18n } from "./UiText"
 
 type Snapshot = { query: string; status: "idle" | "ready" | "error"; results: SongSearchResult[]; error?: string }
 
-export default function SongSearch({ loadResults = loadSongSearch }: { loadResults?: SongSearchLoader }) {
+export default function SongSearch({ loadResults = loadSongSearch, inlinePopup = false, onNavigate }: { loadResults?: SongSearchLoader; inlinePopup?: boolean; onNavigate?: () => void }) {
   const { t, locale } = useI18n()
   const router = useRouter()
   const id = useId()
@@ -112,10 +112,14 @@ export default function SongSearch({ loadResults = loadSongSearch }: { loadResul
       event.preventDefault()
       if (expanded && results.length) {
         setOpen(false)
+        onNavigate?.()
         router.push(songSearchHref(results[active] ?? results[0]))
       } else setOpen(true)
     }
   }
+
+  // Native modal dialogs require results inside their own top layer, not a body portal.
+  function renderPopup(content: ReactNode) { return inlinePopup ? content : createPortal(content, document.body) }
 
   return <div ref={container} role="search" aria-label={t("Pretraga pesama")} className="relative w-full min-w-0 max-w-md">
     <label htmlFor={`${id}-input`} className="sr-only">{t("Pesma ili izvodjac")}</label>
@@ -127,7 +131,7 @@ export default function SongSearch({ loadResults = loadSongSearch }: { loadResul
         placeholder={t("Pesma ili izvodjac...")} className="song-search-input min-h-12 w-full rounded-lg border border-gray-600 bg-black/40 py-3 pl-3 pr-12 text-base text-white outline-none placeholder:text-gray-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20" />
       {query && <button type="button" aria-label={t("Obrisi pretragu")} title={t("Obrisi pretragu")} onClick={() => { setQuery(""); setActive(-1); input.current?.focus() }} className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-lg text-2xl text-gray-400 hover:text-white focus-visible:outline-2 focus-visible:outline-sky-400">{"\u00d7"}</button>}
     </div>
-    {expanded && popup.width > 0 && typeof document !== "undefined" && createPortal(<div ref={popupContainer}
+    {expanded && popup.width > 0 && typeof document !== "undefined" && renderPopup(<div ref={popupContainer}
       style={{ left: popup.left, width: popup.width, ...(popup.above ? { bottom: popup.bottom } : { top: popup.top }) }}
       className="fixed z-[1000001] min-w-0 overflow-hidden rounded-lg border border-gray-600 bg-neutral-900 text-gray-100 shadow-2xl">
       {loading && <p role="status" className="px-4 py-3 text-sm text-gray-300">{t("Trazim...")}</p>}
@@ -139,7 +143,7 @@ export default function SongSearch({ loadResults = loadSongSearch }: { loadResul
       <ul ref={list} id={`${id}-results`} role="listbox" aria-label={t("Pronadjene pesme")} aria-busy={loading} style={{ maxHeight: popup.maxHeight }} className="overflow-y-auto overscroll-contain">
         {results.map((song, index) => <li key={song.id} role="presentation">
           <Link href={songSearchHref(song)} prefetch={false} id={`${id}-result-${index}`} role="option" aria-selected={active === index} tabIndex={-1}
-            onMouseEnter={() => setActive(index)} onPointerDown={event => { if (event.pointerType === "mouse") event.preventDefault() }} onClick={() => setOpen(false)}
+            onMouseEnter={() => setActive(index)} onPointerDown={event => { if (event.pointerType === "mouse") event.preventDefault() }} onClick={() => { setOpen(false); onNavigate?.() }}
             className={`block min-h-14 min-w-0 border-b border-white/5 px-4 py-3 last:border-b-0 ${active === index ? "bg-sky-900/50" : "hover:bg-white/10"}`}>
             <span className="block break-words text-sm font-semibold">{song.title}</span>
             <span className="mt-1 block break-words text-xs text-gray-400">{song.artist.name}{song.category ? ` / ${getCategoryLabel(song.category, locale)}` : ""}</span>
@@ -147,6 +151,6 @@ export default function SongSearch({ loadResults = loadSongSearch }: { loadResul
         </li>)}
       </ul>
       {results.length > 0 && <span role="status" className="sr-only">{t("Pronadjeno {count} pesama.", { count: results.length })}</span>}
-    </div>, document.body)}
+    </div>)}
   </div>
 }

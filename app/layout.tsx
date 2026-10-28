@@ -1,17 +1,12 @@
 import "./globals.css"
 import "./theme.css"
 import Menu from "@/app/components/Menu"
-import BackButton from "@/app/components/BackButton"
 import { Poppins } from "next/font/google"
 import type { Metadata } from "next"
 import Providers from "./providers"
-import ThemeToggle from "@/app/components/ThemeToggle"
 import { THEME_INIT_SCRIPT } from "@/lib/theme"
-import LanguageSelect from "@/app/components/LanguageSelect"
 import { LOCALE_INIT_SCRIPT } from "@/lib/i18n"
 import UiText from "@/app/components/UiText"
-import MetronomeButton from "@/app/components/MetronomeButton"
-import TunerButton from "@/app/components/TunerButton"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -41,14 +36,8 @@ export default function RootLayout({
         <Providers>
 
           {/* HEADER */}
-          <header className="relative z-[999999] w-full border-b border-gray-800 flex flex-col py-1">
+          <header className="site-header relative z-[999999] w-full border-b border-gray-800 flex flex-col py-1">
             <Menu />
-
-            {/* Back dugme dole levo */}
-            <div className="flex min-h-12 flex-wrap items-center justify-between gap-x-3 px-3 pb-1 sm:px-6">
-              <BackButton />
-              <div className="ml-auto flex flex-wrap items-center justify-end gap-1"><TunerButton /><MetronomeButton /><ThemeToggle /><LanguageSelect /></div>
-            </div>
           </header>
 
           {/* CONTENT */}
