@@ -2,7 +2,7 @@
 const fs = require('node:fs/promises'), path = require('node:path'), { parseArgs } = require('node:util')
 const { loadEnvConfig } = require('@next/env'), { databaseClient } = require('./lib/artist-image-source.cjs')
 const ROOT = path.resolve(__dirname, '..')
-const TABLES = new Set(['Account','Artist','Favorite','ListeningItem','ListeningPlaylist','ListeningPlaylistLike','Playlist','PlaylistSong','PlaylistSongSetting','Session','Song','SongReport','SongReview','SongSubmission','User','VerificationToken','Visit','analytics','online_presence','playing_with_neon'])
+const TABLES = new Set(['Account','Artist','Favorite','ListeningItem','ListeningPlaylist','ListeningPlaylistLike','Playlist','PlaylistSong','PlaylistSongSetting','Session','Song','SongPerformer','SongReport','SongReview','SongSubmission','User','VerificationToken','Visit','analytics','online_presence','playing_with_neon'])
 const quote = value => '"' + value.replaceAll('"', '""') + '"'
 const targets = 'PUBLIC, anon, authenticated'
 function normalized(state) {

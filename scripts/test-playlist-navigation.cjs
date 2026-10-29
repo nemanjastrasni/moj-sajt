@@ -67,3 +67,24 @@ test("actual playlist contexts link to performance at this song; generated catal
     assert.equal(tree.props.children.find(child => child?.type === SongClient).props.performanceHref, undefined)
   }
 })
+
+test("duets return to the credited performer used to open them, without trusting arbitrary artist IDs", async () => {
+  song.performers = [
+    { artist: { id: "first", name: "Prvi", category: "domace", slug: "prvi" } },
+    { artist: { id: "second", name: "Drugi", category: "narodne", slug: "drugi" } },
+  ]
+  try {
+    const props = query => ({ params: Promise.resolve({ category: "domace", artist: "bend", slug: "pesma" }), searchParams: Promise.resolve(query) })
+    for (const [query, expected] of [
+      [{ artist: "second" }, "/pesme/narodne/drugi"],
+      [{ artist: "unknown" }, "/pesme/domace/prvi"],
+      [{ artist: ["second"] }, "/pesme/domace/prvi"],
+      [{ artist: "second", playlist: "/plejliste/first" }, "/plejliste/first"],
+      [{ artist: "second", from: "favorites" }, "/favorite"],
+    ]) {
+      const tree = await SongPage(props(query))
+      assert.equal(tree.props.children.find(child => child?.type === marker).props.href, expected)
+      assert.equal(tree.props.children.find(child => child?.type === SongClient).props.song.performers.length, 2)
+    }
+  } finally { delete song.performers }
+})

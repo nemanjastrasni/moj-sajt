@@ -53,6 +53,10 @@ const artists = await prisma.artist.findMany({
     if (!targetId) {
   throw new Error("Izaberi izvođača za merge")
 }
+    const creditedSongs = await prisma.songPerformer.count({ where: { OR: [
+      { artistId: { in: [id, targetId] } }, { song: { artistId: { in: [id, targetId] } } },
+    ] } })
+    if (creditedSongs) throw new Error("Ovi izvo\u0111a\u010di imaju povezane duete. Spajanje zahteva posebnu proveru veza; ni\u0161ta nije izmenjeno.")
 
     const songs = await prisma.song.findMany({
   where: { artistId: id },

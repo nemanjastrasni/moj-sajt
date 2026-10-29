@@ -33,6 +33,14 @@ continue
 }
 
 const main = map[key]
+const credited = await prisma.songPerformer.count({ where: { OR: [
+  { artistId: { in: [artist.id, main.id] } },
+  { song: { artistId: { in: [artist.id, main.id] } } },
+] } })
+if (credited) {
+  console.log("Skipped credited artist; manual merge required:", artist.name)
+  continue
+}
 
 await prisma.song.updateMany({
 where:{ artistId: artist.id },

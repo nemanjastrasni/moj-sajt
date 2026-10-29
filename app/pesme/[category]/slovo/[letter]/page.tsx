@@ -4,6 +4,7 @@ import { CategoryLabel } from "@/app/components/UiText"
 import ArtistImage from "@/app/components/ArtistImage"
 import { getArtistImage } from "@/lib/artistPhotos"
 import styles from "@/app/components/ArtistMedia.module.css"
+import { isResolvedCollaboration } from "@/lib/artists/performers"
 
 export const dynamic = "force-dynamic"
 
@@ -40,11 +41,13 @@ export default async function LetterPage({ params }: any) {
   where: { category },
   orderBy: { name: "asc" },
   include: {
-    songs: true,
+    songs: { select: { id: true, performers: { select: { artistId: true } } } },
+    performances: { select: { songId: true } },
   },
 })
 
   const filtered = artists.filter((artist) => {
+  if (isResolvedCollaboration(artist.songs)) return false
   const first = getFirstLetter(artist.name)
 
   if (isSpecial) {
@@ -73,7 +76,7 @@ export default async function LetterPage({ params }: any) {
     <ArtistImage src={getArtistImage(artist)} name={artist.name} />
 
     <span>
-      {artist.name} ({artist.songs.length})
+      {artist.name} ({new Set([...artist.songs.map(song => song.id), ...artist.performances.map(row => row.songId)]).size})
     </span>
   </Link>
 ))}

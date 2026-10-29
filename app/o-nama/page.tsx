@@ -1,10 +1,11 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowRight, AudioLines, FileDown, Flag, Guitar, ListMusic, Maximize, Music2, Palette, type LucideIcon } from "lucide-react"
+import { ArrowRight, AudioLines, BookOpen, FileDown, Flag, Guitar, ListMusic, Maximize, Music2, Palette, type LucideIcon } from "lucide-react"
 import UiText from "@/app/components/UiText"
 import { aboutAccountNote, aboutAppearance, aboutContactNote, aboutIntro, aboutSections } from "@/lib/about"
 import { PUBLIC_OPERATOR_NAME } from "@/lib/site-contact"
 import styles from "./page.module.css"
+import AboutScreenshot from "@/app/components/AboutScreenshot"
 
 export const metadata: Metadata = {
   title: "O nama",
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 
 const icons: Record<typeof aboutSections[number]["id"], LucideIcon> = {
   pesme: Music2, repertoar: ListMusic, tonalitet: Guitar, sviranje: Maximize,
-  pdf: FileDown, alati: AudioLines, doprinos: Flag,
+  pdf: FileDown, alati: AudioLines, doprinos: Flag, biografije: BookOpen,
 }
 
 export default function AboutPage() {
@@ -37,6 +38,9 @@ export default function AboutPage() {
         <div>
           <h2 id={section.id + "-title"}><UiText text={section.title} /></h2>
           {section.paragraphs.map(paragraph=><p key={paragraph}><UiText text={paragraph} /></p>)}
+          {section.id === "repertoar" && <AboutScreenshot kind="playlist" />}
+          {section.id === "tonalitet" && <AboutScreenshot kind="capo" />}
+          {section.id === "biografije" && <AboutScreenshot kind="music" />}
           {section.links.length>0&&<ul className={styles.links}>{section.links.map(link=><li key={link.href}><Link href={link.href} prefetch={false}><UiText text={link.label} /><ArrowRight aria-hidden="true" /></Link></li>)}</ul>}
         </div>
       </section>

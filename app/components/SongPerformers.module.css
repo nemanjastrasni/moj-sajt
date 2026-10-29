@@ -1,0 +1,4 @@
+.credit { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; color: var(--control-muted); margin: 12px 0 20px; font-size: 16px; overflow-wrap: anywhere; }
+.label { display: inline-flex; align-items: center; gap: 6px; color: var(--control-accent); font-size: 13px; }
+.credit a { text-decoration: underline; text-underline-offset: 3px; }
+.compact { flex-basis: 100%; margin: 0 0 0 24px; font-size: 12px; }

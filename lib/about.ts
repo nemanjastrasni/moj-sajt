@@ -1,4 +1,4 @@
-export const aboutIntro = "GitaraAkordi je mesto za tra\u017eenje pesama sa akordima, pripremu repertoara i ve\u017ebanje gitare."
+export const aboutIntro = "GitaraAkordi povezuje pesme sa akordima, li\u010dni repertoar i ve\u017ebanje gitare sa biografijama, diskografijama i muzikom za slu\u0161anje."
 export const aboutAccountNote = "Javni sadr\u017eaj mo\u017ee\u0161 da pregleda\u0161 bez naloga. Za favorite, li\u010dne plejliste, slanje predloga i prijavu gre\u0161ke potrebna je prijava. Podaci platne kartice nisu potrebni."
 export const aboutAppearance = "Dostupne su svetla i tamna tema i interfejs na srpskom i engleskom. Menja se jezik kontrola, ne originalni tekstovi pesama."
 export const aboutContactNote = "Za pitanja, predloge i zahteve u vezi sa sadr\u017eajem ili nalogom poseti Kontakt."
@@ -23,6 +23,21 @@ export const aboutSections = [
         "href": "/biografija",
         "label": "Biografije i diskografije"
       }
+    ]
+  },
+  {
+    "id": "biografije",
+    "title": "Biografije i muzika za slu\u0161anje",
+    "paragraphs": [
+      "Upoznaj izvo\u0111a\u010de kroz biografije i diskografije, sa albumima i godinama tamo gde imamo pouzdane podatke. Za \u010ditanje ovih stranica ne mora\u0161 da svira\u0161 gitaru.",
+      "U delu Moja muzika napravi zasebne liste YouTube snimaka ili dodaj vezu do cele YouTube plejliste. Ove liste su za slu\u0161anje; plejliste pesama sa akordima ostaju tvoj repertoar za sviranje.",
+      "Dugme Slu\u0161aj uz biografiju otvara izbor muzike. Vidljivi plejer ostaje otvoren pri prelasku na druge stranice unutar sajta, pa mo\u017ee\u0161 da \u010dita\u0161 i slu\u0161a\u0161 istovremeno.",
+      "YouTube odre\u0111uje dostupnost snimaka i reklame. Reprodukcija se pauzira kada sakrije\u0161 karticu; osve\u017eavanje stranice ili odjava prekidaju plejer. Ovo nije preuzimanje muzike niti garantovana reprodukcija sa zaklju\u010danim telefonom."
+    ],
+    "links": [
+      { "href": "/biografija", "label": "Biografije i diskografije" },
+      { "href": "/listening-playlist", "label": "Moja muzika" },
+      { "href": "/public-listening-playlists", "label": "Javne muzicke liste" }
     ]
   },
   {

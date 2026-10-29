@@ -10,6 +10,7 @@ import { playlistReturnHref } from "@/lib/navigation/parent"
 import { isFavoriteView } from "@/lib/favorites/model"
 import { catalogEntry } from "@/lib/playlists/catalog"
 import { performanceHref } from "@/lib/performance/model"
+import { performerSelect, performerArtists, performerHref } from "@/lib/artists/performers"
 
 type Props = {
   params: Promise<{
@@ -39,7 +40,6 @@ export default async function SongPage({ params, searchParams }: Props) {
   const query = await searchParams ?? {}
   const playlist = playlistReturnHref(query.playlist)
   const fromFavorites = isFavoriteView(query, playlist)
-  const returnTo = playlist ?? (fromFavorites ? "/favorite" : null)
   const pathname = "/pesme/" + [category, artist, slug].map(encodeURIComponent).join("/")
   const playlistMatch = playlist?.match(/^\/plejliste\/([a-zA-Z0-9_-]+)$/)
   const playablePlaylist = playlistMatch && !catalogEntry(playlistMatch[1]) && !["pesme-koje-znam", "top-user", "generisane", "kategorija"].includes(playlistMatch[1]) ? playlistMatch[1] : null
@@ -54,12 +54,16 @@ export default async function SongPage({ params, searchParams }: Props) {
     },
     include: {
       artist: true,
+      performers: performerSelect,
     },
   })
 
   if (!song) {
     notFound()
   }
+  const performers = performerArtists(song.performers)
+  const fromArtist = typeof query.artist === "string" ? performers.find(artist => artist.id === query.artist) : undefined
+  const returnTo = playlist ?? (fromFavorites ? "/favorite" : fromArtist ? performerHref(fromArtist) : performers[0] ? performerHref(performers[0]) : null)
   const contentVersion = songReviewVersion(song)
  await prisma.song.update({
   where: {
@@ -92,6 +96,7 @@ export default async function SongPage({ params, searchParams }: Props) {
         category: song.artist.category ?? undefined,
         artistSlug: song.artist.slug,
         artistName: song.artist.name,
+        performers,
       }}
       /*media={media}*/
     />

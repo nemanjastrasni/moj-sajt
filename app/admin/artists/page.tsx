@@ -10,6 +10,8 @@ import ConfirmSubmitButton from "../ConfirmSubmitButton"
 async function deleteArtist(id: string) {
 "use server"
 await requireSongAdmin()
+const credited = await prisma.songPerformer.count({ where: { OR: [{ artistId: id }, { song: { artistId: id } }] } })
+if (credited) throw new Error("Izvo\u0111a\u010d ima povezane duete. Brisanje zahteva posebnu proveru veza; ni\u0161ta nije izmenjeno.")
 await prisma.artist.delete({
 where: { id }
 })

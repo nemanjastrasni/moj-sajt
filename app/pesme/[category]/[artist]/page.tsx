@@ -11,6 +11,7 @@ import ArtistSongList from "@/app/components/ArtistSongList"
 import { BackNavigationTarget } from "@/app/components/BackNavigation"
 import { artistIndexHref } from "@/lib/navigation/parent"
 import { hasBiographyContent } from "@/lib/biographies/catalog"
+import { performerSelect } from "@/lib/artists/performers"
 
 export const dynamic = "force-dynamic"
 
@@ -41,22 +42,15 @@ export default async function ArtistPage({ params }: any) {
       slug: artist,
       category,
     },
-    include: {
-  songs: {
-  select: {
-    id: true,
-    slug: true,
-    title: true,
-    chords: true,
-    lyrics: true,
-    difficulty: true,
-  },
-  orderBy: { title: "asc" },
-},
-},
   })
 
   if (!artistData) notFound()
+  const songs = await prisma.song.findMany({
+    where: { OR: [{ artistId: artistData.id }, { performers: { some: { artistId: artistData.id } } }] },
+    select: { id: true, slug: true, title: true, chords: true, lyrics: true, difficulty: true,
+      artist: { select: { slug: true, category: true } }, performers: performerSelect },
+    orderBy: [{ title: "asc" }, { id: "asc" }],
+  })
   const image = getArtistImage(artistData)
 
   return (
@@ -75,9 +69,9 @@ export default async function ArtistPage({ params }: any) {
         </Link>
       </div>}
 
-      {artistData.songs.length === 0 && <p><UiText text="Nema pesama." /></p>}
+      {songs.length === 0 && <p><UiText text="Nema pesama." /></p>}
 
-      <ArtistSongList category={category} artist={artist} songs={artistData.songs} />
+      <ArtistSongList category={category} artist={artist} artistId={artistData.id} songs={songs} />
 </div>
  
   )

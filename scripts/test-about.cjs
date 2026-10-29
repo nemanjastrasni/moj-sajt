@@ -31,3 +31,14 @@ test('Contact and the global footer link to the public about page',()=>{
   const page=fs.readFileSync(path.join(ROOT,'app/o-nama/page.tsx'),'utf8')
   assert.doesNotMatch(page,/getServerSession|prisma|useSession|<form|<input/)
 })
+
+test('About screenshots are local readable images, with translated captions and no live user data',async()=>{
+  const sharp=require('sharp')
+  for(const file of ['plejlista.png','tonalitet-capo.png','moja-muzika.png']){
+    const image=await sharp(path.join(ROOT,'public/guide',file)).metadata()
+    assert.equal(image.format,'png');assert.ok(image.width>=800&&image.height>=300)
+  }
+  const component=fs.readFileSync(path.join(ROOT,'app/components/AboutScreenshot.tsx'),'utf8')
+  assert.doesNotMatch(component,/useSession|fetch\(|prisma|user\.email/)
+  assert.match(component,/unoptimized/)
+})

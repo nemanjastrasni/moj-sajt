@@ -20,6 +20,9 @@ import { getUsedChords, parseSongSheet } from "@/lib/chords/songSheet"
 import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
 import usePlaylistSongSettings from "./usePlaylistSongSettings"
 import PlaylistSettingsStatus from "./PlaylistSettingsStatus"
+import SongPerformers from "./SongPerformers"
+import type { SongPerformerView } from "@/lib/artists/performers"
+import PlaylistSongNavigation from "./PlaylistSongNavigation"
 
 type Props = {
   adminTools?: ReactNode
@@ -38,6 +41,7 @@ type Props = {
     category?: string
     artistSlug?: string
     artistName?: string
+    performers?: SongPerformerView[]
   }
   media?: {
     platform: string
@@ -124,6 +128,7 @@ export default function SongClient({ song, adminTools, fromFavorites = false, pe
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
+      {playlistId && <PlaylistSongNavigation playlistId={playlistId} songId={song.id} blocked={playlistSettings.phase === "saving"} />}
 
       <div className="grid min-w-0 lg:grid-cols-[minmax(0,1fr)_380px] gap-10">
 
@@ -255,7 +260,7 @@ export default function SongClient({ song, adminTools, fromFavorites = false, pe
 
 {adminTools}
 {performance && <PerformanceView playlistId={playlistId} song={{ id: song.id, title, artist, lyrics: displayContent }} controls={controls} capoControl={capo} settingsTools={playlistId ? <PlaylistSettingsStatus controls={playlistSettings} /> : undefined} leaveGuard={playlistId ? playlistSettings.canLeave : undefined} close={() => setPerformance(false)} />}
-{song.artistSlug ? (
+{song.performers && song.performers.length >= 2 ? <SongPerformers artists={song.performers} /> : song.artistSlug ? (
   <Link
   href={`/pesme/${song.category}/${song.artistSlug}`}
   className="text-lg text-gray-500 mb-6 block hover:text-blue-400 transition"

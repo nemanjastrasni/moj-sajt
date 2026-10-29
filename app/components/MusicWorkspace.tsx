@@ -33,12 +33,14 @@ function YouTubeDock(){
   useEffect(()=>{
     const element=mount.current;if(!element)return
     let disposed=false
+    const deadline=window.setTimeout(()=>{if(!disposed){setPhase("error");setNotice("YouTube plejer nije dostupan. Pokusaj ponovo.")}},20000)
     const target=document.createElement("div");element.appendChild(target)
     import("@/lib/music/youtubePlayer").then(module=>module.loadYouTubeAPI()).then(api=>{
       if(disposed)return
       const created=new api.Player(target,{width:"100%",height:"200",host:"https://www.youtube-nocookie.com",playerVars:{origin:location.origin,playsinline:1,controls:1,autoplay:0},events:{
         onReady:event=>{
           if(disposed)return
+          window.clearTimeout(deadline)
           player.current=event.target
           const iframe=element.querySelector("iframe")
           iframe?.setAttribute("title","YouTube");iframe?.setAttribute("allow","autoplay; encrypted-media; picture-in-picture; fullscreen");iframe?.setAttribute("referrerpolicy","strict-origin-when-cross-origin")
@@ -61,7 +63,7 @@ function YouTubeDock(){
       // Keep the handle even before onReady, so a late SDK callback cannot leak an iframe.
       player.current=created
     }).catch(()=>{if(!disposed){setPhase("error");setNotice("YouTube plejer nije dostupan. Pokusaj ponovo.")}})
-    return()=>{disposed=true;player.current?.destroy();player.current=null;element.replaceChildren()}
+    return()=>{disposed=true;window.clearTimeout(deadline);player.current?.destroy?.();player.current=null;element.replaceChildren()}
   },[retry])
   const source=current.source!,selection=queue.list.id+current.id+source.kind+source.id+queue.nonce
   useEffect(()=>{
@@ -75,10 +77,10 @@ function YouTubeDock(){
     }
   },[selection,ready,source.id,source.kind])
   useEffect(()=>{
-    const pause=()=>{if(document.hidden||document.querySelector("dialog[open]")){player.current?.pauseVideo();setPhase(value=>value==="playing"?"paused":value)}}
+    const pause=()=>{if(document.hidden||document.querySelector("dialog[open]")){player.current?.pauseVideo?.();setPhase(value=>value==="playing"?"paused":value)}}
     document.addEventListener("visibilitychange",pause)
     const observer=new MutationObserver(pause);observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:["open"],childList:true})
-    const visibility=new IntersectionObserver(entries=>{if(entries[0]&&!entries[0].isIntersecting)player.current?.pauseVideo()})
+    const visibility=new IntersectionObserver(entries=>{if(entries[0]&&!entries[0].isIntersecting)player.current?.pauseVideo?.()})
     if(mount.current)visibility.observe(mount.current)
     return()=>{document.removeEventListener("visibilitychange",pause);observer.disconnect();visibility.disconnect()}
   },[])
