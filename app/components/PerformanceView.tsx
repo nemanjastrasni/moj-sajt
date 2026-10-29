@@ -16,12 +16,13 @@ import styles from "./PerformanceView.module.css"
 import SongDisplayMode from "./SongDisplayMode"
 
 type KeyControls = { transpose: number; phase: string; error: string; controlsDisabled: boolean; change: (value: number | ((current: number) => number)) => void; reload: () => Promise<void> }
-type Props = { song: PerformanceSong | null; controls: KeyControls; capoControl?: SongCapo; initialCapo?: { id: string; fret: number }; playlistId?: string; settingsTools?: ReactNode; leaveGuard?: () => boolean; close: () => void; loading?: boolean; error?: string; retry?: () => void; previous?: () => void; next?: () => void; position?: number; total?: number; name?: string; displayMode?: { lyricsOnly: boolean; change: (value: boolean) => void } }
+type Props = { song: PerformanceSong | null; controls: KeyControls; capoControl?: SongCapo; initialCapo?: { id: string; fret: number }; playlistId?: string; settingsTools?: ReactNode; leaveGuard?: () => boolean | Promise<boolean>; close: () => void; loading?: boolean; error?: string; retry?: () => void; previous?: () => void; next?: () => void; position?: number; total?: number; name?: string; displayMode?: { lyricsOnly: boolean; change: (value: boolean) => void } }
 export default function PerformanceView({ song, controls, capoControl, initialCapo, playlistId, settingsTools, leaveGuard, close, loading = false, error = "", retry, previous, next, position, total, name, displayMode }: Props) {
   const { t } = useI18n(), dialog = useRef<HTMLDialogElement>(null), screen = useRef<HTMLDivElement>(null), scroll = useRef<HTMLDivElement>(null)
   const [fullscreen, setFullscreen] = useState(false), [notice, setNotice] = useState(""), [settings, setSettings] = useState(false)
   const [textSize, setTextSize] = useState(20), [chordSize, setChordSize] = useState(20), [speed, setSpeed] = useState(3)
   const [ownLyricsOnly, setOwnLyricsOnly] = useState(false)
+  const [navigating, setNavigating] = useState(false), leaving = useRef(false)
   const lyricsOnly = displayMode?.lyricsOnly ?? ownLyricsOnly
   const [transport, setTransport] = useState({ id: song?.id, loading, playing: false })
   const sameSong = transport.id === song?.id && transport.loading === loading
@@ -33,7 +34,8 @@ export default function PerformanceView({ song, controls, capoControl, initialCa
   const capo = capoControl ?? ownCapo
   useRememberPerformance(song?.id, playlistId, loading || Boolean(error))
   const saving = ["saving", "updating"].includes(controls.phase)
-  const disabled = loading || !song || controls.controlsDisabled
+  const navigationDisabled = loading || navigating || saving && !leaveGuard
+  const disabled = loading || navigating || !song || controls.controlsDisabled
   useEffect(() => {
     const element = dialog.current, trigger = document.activeElement, oldOverflow = document.body.style.overflow
     element?.showModal(); document.body.style.overflow = "hidden"
@@ -64,11 +66,20 @@ export default function PerformanceView({ song, controls, capoControl, initialCa
     frame = requestAnimationFrame(advance)
     return () => cancelAnimationFrame(frame)
   }, [playing, speed, loading, song, setPlaying])
+  async function navigate(action: () => void | Promise<void>) {
+    if (leaving.current || navigationDisabled) return
+    leaving.current = true; setNavigating(true)
+    try {
+      if (leaveGuard && !await leaveGuard()) return
+      setPlaying(false)
+      await action()
+    } finally { leaving.current = false; setNavigating(false) }
+  }
   function leave() {
-    if (saving || leaveGuard && !leaveGuard()) return
-    setPlaying(false)
-    if (document.fullscreenElement === screen.current) void document.exitFullscreen().catch(() => {}).finally(close)
-    else close()
+    void navigate(async () => {
+      if (document.fullscreenElement === screen.current) await document.exitFullscreen().catch(() => {})
+      close()
+    })
   }
   async function toggleFullscreen() {
     setNotice("")
@@ -86,7 +97,7 @@ export default function PerformanceView({ song, controls, capoControl, initialCa
           <div className={styles.actions}>
             <button type="button" className={styles.icon} aria-label={t("Podesavanja prikaza")} title={t("Podesavanja prikaza")} aria-expanded={settings} onClick={() => setSettings(value => !value)}><SlidersHorizontal /></button>
             <button type="button" className={styles.icon} aria-label={t(fullscreen ? "Izadji iz celog ekrana" : "Ceo ekran")} title={t(fullscreen ? "Izadji iz celog ekrana" : "Ceo ekran")} onClick={() => void toggleFullscreen()}>{fullscreen ? <Minimize /> : <Maximize />}</button>
-            <button type="button" className={styles.icon} aria-label={t("Zatvori")} title={t("Zatvori")} disabled={saving} onClick={leave}><X /></button>
+            <button type="button" className={styles.icon} aria-label={t("Zatvori")} title={t("Zatvori")} disabled={navigationDisabled} onClick={leave}><X /></button>
           </div>
         </div>
         <div className={styles.toolbar}>
@@ -112,9 +123,9 @@ export default function PerformanceView({ song, controls, capoControl, initialCa
         {loading ? <p role="status">{t("Ucitavam pesmu...")}</p> : error ? <div role="alert"><p>{t(error)}</p>{retry && <button type="button" className={styles.button} onClick={retry}>{t("Pokusaj ponovo")}</button>}</div> : song && <SongSheet lines={capo.lines} transpose={capo.shift} textSize={textSize} chordSize={chordSize} lyricsOnly={lyricsOnly} />}
       </div>
       {total !== undefined && <nav className={styles.navigation} aria-label={t("Pesme u playlisti")}>
-        <button type="button" className={styles.button} disabled={!previous || loading || saving} onClick={() => { if (!leaveGuard || leaveGuard()) previous?.() }}><ChevronLeft />{t("Prethodna")}</button>
+        <button type="button" className={styles.button} disabled={!previous || navigationDisabled} onClick={() => void navigate(() => previous?.())}><ChevronLeft />{t("Prethodna")}</button>
         <span aria-live="polite">{position === undefined ? "-" : position + 1} / {total}</span>
-        <button type="button" className={styles.button} disabled={!next || loading || saving} onClick={() => { if (!leaveGuard || leaveGuard()) next?.() }}>{t("Sledeca")}<ChevronRight /></button>
+        <button type="button" className={styles.button} disabled={!next || navigationDisabled} onClick={() => void navigate(() => next?.())}>{t("Sledeca")}<ChevronRight /></button>
       </nav>}
     </div>
   </dialog>

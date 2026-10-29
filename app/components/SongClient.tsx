@@ -131,7 +131,7 @@ export default function SongClient({ song, adminTools, fromFavorites = false, pe
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      {playlistId && <PlaylistSongNavigation playlistId={playlistId} songId={song.id} blocked={playlistSettings.phase === "saving"} />}
+      {playlistId && <PlaylistSongNavigation playlistId={playlistId} songId={song.id} />}
 
       <div className="grid min-w-0 lg:grid-cols-[minmax(0,1fr)_380px] gap-10">
 
@@ -253,7 +253,7 @@ export default function SongClient({ song, adminTools, fromFavorites = false, pe
 
   <SongPdfButton song={{ id: song.id, title, artist, lyrics: displayContent }} transpose={transpose} capo={capo.active ? capo.selected : null} disabled={controls.controlsDisabled} textSize={textSize} chordSize={chordSize} />
   <SongTutorial songId={song.id} onPlay={() => { stopAutoScroll(); setShowVideo(false) }} />
-  <button type="button" disabled={["loading", "saving", "updating"].includes(controls.phase)} title={t("Rezim za sviranje")} aria-label={t("Rezim za sviranje")} className="inline-flex h-11 w-11 items-center justify-center rounded border border-gray-600 disabled:opacity-40" onClick={() => { if (performanceHref && !playlistSettings.canLeave()) return; stopAutoScroll(); setShowVideo(false); if (performanceHref) router.push(performanceHref); else setPerformance(true) }}><Maximize size={18} /></button>
+  <button type="button" disabled={controls.phase === "loading" || controls.phase === "updating" || !playlistId && controls.phase === "saving"} title={t("Rezim za sviranje")} aria-label={t("Rezim za sviranje")} className="inline-flex h-11 w-11 items-center justify-center rounded border border-gray-600 disabled:opacity-40" onClick={async () => { if (performanceHref && !await playlistSettings.canLeave()) return; stopAutoScroll(); setShowVideo(false); if (performanceHref) router.push(performanceHref); else setPerformance(true) }}><Maximize size={18} /></button>
   <button type="button" title={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")} aria-label={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")} aria-pressed={isFav} disabled={favorite.favoriteDisabled} onClick={() => void favorite.toggle()} className={`inline-flex h-11 w-11 items-center justify-center transition disabled:opacity-40 ${isFav ? "text-yellow-400" : "text-gray-500 hover:text-yellow-300"}`}>
     <Star size={22} fill={isFav ? "currentColor" : "none"} />
   </button>

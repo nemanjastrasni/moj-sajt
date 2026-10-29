@@ -30,7 +30,7 @@ export default function PlaylistSongNavigation({ playlistId, songId, blocked = f
   const error = state.scope === scope && state.error
   const index = data?.songs.findIndex(song => song.id === songId) ?? -1
   function guard(event: React.MouseEvent<HTMLAnchorElement>) { if (blocked) event.preventDefault() }
-  // Keep ordinary links so the shared unsaved-settings guard also covers this navigation.
+  // Ordinary links also pass through the shared playlist autosave navigation guard.
   return <nav className={styles.nav} aria-label={t("Pesme u plejlisti")}>
     <Link href={`/plejliste/${encodeURIComponent(playlistId)}`} className={styles.name} onClick={guard} aria-disabled={blocked}>
       <ListMusic size={18} aria-hidden="true" /><span translate="no">{data?.name ?? t("Playlista")}</span>
