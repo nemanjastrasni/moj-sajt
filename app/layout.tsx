@@ -10,6 +10,7 @@ import { LOCALE_INIT_SCRIPT } from "@/lib/i18n"
 import UiText from "@/app/components/UiText"
 import MusicWorkspace from "@/app/components/MusicWorkspace"
 import Link from "next/link"
+import HeaderSearch from "@/app/components/HeaderSearch"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
       <head><script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT + ";" + LOCALE_INIT_SCRIPT }} /></head>
       <body className={`${poppins.className} m-0 p-0 overflow-x-hidden`}>
         <Providers>
+          <HeaderSearch />
 
           {/* HEADER */}
           <header className="site-header relative z-[999999] w-full border-b border-gray-800 flex flex-col py-1">

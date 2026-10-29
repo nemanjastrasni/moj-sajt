@@ -6,7 +6,7 @@ const { test, beforeEach } = require("node:test")
 const assert = require("node:assert/strict")
 const path = require("node:path")
 const Module = require("node:module")
-const { prepareSongQuery, songSearchWhere, exactSongWhere, rankSearchResults, songSearchHref, SEARCH_LIMIT } = require("../lib/songSearch.ts")
+const { prepareSongQuery, songSearchWhere, exactSongWhere, rankSearchResults, songSearchHref, SEARCH_LIMIT, foldSearchText } = require("../lib/songSearch.ts")
 const { loadSongSearch } = require("../lib/songSearchClient.ts")
 const { slugify } = require("../lib/until/slug.ts")
 
@@ -17,6 +17,7 @@ const fixtures = [
   song("slovenska", "Slovenska", "\u0110or\u0111e Bala\u0161evi\u0107", 10),
   song("ruza", "Ru\u017eo moja", "Zdravko \u010coli\u0107", 9),
   { ...song("wish", "Wish You Were Here", "Pink Floyd", 4), category: "strane" },
+  { ...song("zeljko", "Probna pesma", "\u017deljko Joksimovi\u0107"), slug: "old-import-1", artist: artist("\u017deljko Joksimovi\u0107", "old-import-artist") },
   ...Array.from({ length: 50 }, (_, i) => song("partial-" + i, "Neka druga zemlja " + i, "Drugi izvodjac", 1000 - i)),
 ]
 
@@ -44,14 +45,21 @@ const prisma = { song: { async findMany(args) {
     .sort((a, b) => b.popularity - a.popularity || a.title.localeCompare(b.title) || a.id.localeCompare(b.id))
     .slice(0, args.take)
 } } }
+let normalizedSearchQuery
 const originalLoad = Module._load
 Module._load = function(request, parent, isMain) {
   if (request === "@/lib/prisma") return { prisma }
+  if (request === "@/lib/songSearchServer") return { normalizedSongSearch: async search => {
+    calls.push({ query: normalizedSearchQuery(search) })
+    if (failDatabase) throw Error("private-database-error")
+    const found = fixtures.filter(record => search.terms.every(term => [record.title, record.artist.name].some(text => foldSearchText(text).includes(foldSearchText(term))) || [record.slug, record.artist.slug].some(slug => slugify(term) && slug.toLowerCase().includes(slugify(term)))))
+    return rankSearchResults(found, search.query).map(result => fixtures.find(record => record.id === result.id))
+  } }
   if (request.startsWith("@/")) request = path.join(__dirname, "..", request.slice(2))
   return originalLoad.call(this, request, parent, isMain)
 }
 let GET
-try { GET = require("../app/api/search/route.ts").GET }
+try { normalizedSearchQuery = require("../lib/songSearchServer.ts").normalizedSearchQuery; GET = require("../app/api/search/route.ts").GET }
 finally { Module._load = originalLoad }
 beforeEach(() => { calls.length = 0; failDatabase = false })
 const request = query => new Request("https://site.test/api/search?" + new URLSearchParams({ q: query }))
@@ -118,8 +126,8 @@ test("API retains exact title even behind 50 more popular partial matches", asyn
   const data = await response.json()
   assert.equal(data[0].id, "zemlja")
   assert.equal(data.length, SEARCH_LIMIT)
-  assert.equal(calls.length, 2)
-  assert.ok(calls.every(call => !call.select.lyrics))
+  assert.equal(calls.length, 1)
+  assert.ok(calls.every(call => !/lyrics|password|email/i.test(call.query.text)))
   assert.equal(response.headers.get("cache-control"), "no-store")
 })
 
@@ -130,6 +138,21 @@ test("API matches artist plus title and distinguishes no matches from DB failure
   const response = await GET(request("zemlja"))
   assert.equal(response.status, 503)
   assert.ok(!(await response.text()).includes("private-database"))
+})
+
+test("normalized matching is independent of import slugs and supports Serbian case/accents", async () => {
+  for (const query of ["Zeljko", "\u017deljko", "ZELJKO"]) assert.deepEqual((await (await GET(request(query))).json()).map(song => song.id), ["zeljko"])
+  for (const [first, second] of [["Djordje", "\u0110or\u0111e"], ["Ceca", "\u0106e\u010da"], ["Saban", "\u0160aban"], ["Ruzo", "Ru\u017eo"]]) assert.equal(foldSearchText(first), foldSearchText(second))
+})
+
+test("normalized SQL binds hostile inputs, escapes LIKE metacharacters and never fetches lyric bodies", () => {
+  const input = "ab%_' OR 1=1 --", query = normalizedSearchQuery(prepareSongQuery(input))
+  assert.equal(query.text.includes(input), false)
+  assert.ok(query.values.some(value => typeof value === "string" && value.includes("\\%\\_")))
+  assert.match(query.text, /normalize\(lower\(/)
+  assert.doesNotMatch(query.text, /lyrics|password|email/i)
+  assert.match(query.text, /LIMIT \$\d+/)
+  assert.equal(query.values.at(-1), SEARCH_LIMIT)
 })
 
 test("client encodes special query characters and uses abortable fetch", async () => {

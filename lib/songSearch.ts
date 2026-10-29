@@ -18,6 +18,10 @@ export function cleanSearchQuery(value: string): string {
   return value.normalize("NFC").trim().replace(/\s+/g, " ")
 }
 
+export function foldSearchText(value: string) {
+  return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\u0111/g, "dj")
+}
+
 export function prepareSongQuery(value: string | null) {
   const query = cleanSearchQuery(value ?? "")
   if (query.length > SEARCH_MAX_LENGTH || query.split(" ").length > SEARCH_MAX_WORDS) {

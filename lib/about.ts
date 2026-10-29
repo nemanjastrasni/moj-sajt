@@ -8,7 +8,8 @@ export const aboutSections = [
     "title": "Pesme, akordi i izvo\u0111a\u010di",
     "paragraphs": [
       "Prona\u0111i pesmu po naslovu ili izvo\u0111a\u010du i istra\u017ei kategorije Narodne, Zabavne i Strane. Engleski nazivi kategorija razlikuju ex-YU folk, ex-YU pop i rock i me\u0111unarodni repertoar.",
-      "Uz pesme su dostupni tekstovi sa akordima, procena te\u017eine i prikazi gitarskih hvatova. Biografije i diskografije izvo\u0111a\u010da prikazujemo tamo gde imamo podatke."
+      "Uz pesme su dostupni tekstovi sa akordima, procena te\u017eine i prikazi gitarskih hvatova. Biografije i diskografije izvo\u0111a\u010da prikazujemo tamo gde imamo podatke.",
+      "Prebaci na Samo tekst kada \u017eeli\u0161 stihove bez akorda i tabulatura, uz sa\u010duvane strofe. Originalni zapis se ne menja. Dugme Kako se svira pojavljuje se tamo gde je admin dodao izabrani YouTube video-tutorijal ili Shorts."
     ],
     "links": [
       {

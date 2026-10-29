@@ -6,7 +6,7 @@ import Link from "next/link"
 import { signOut, useSession } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
 import type { Session } from "next-auth"
-import { BookOpen, ClipboardList, FilePlus2, Guitar, Headphones, Heart, House, ListMusic, LogIn, LogOut, Mail, Menu as MenuIcon, Music2, Search, Shield, UserRound, X } from "lucide-react"
+import { BookOpen, ClipboardList, FilePlus2, Guitar, Headphones, Heart, House, ListMusic, LogIn, LogOut, Mail, Menu as MenuIcon, Music2, Shield, UserRound, X } from "lucide-react"
 import { useI18n } from "./UiText"
 import { PRESENCE_EVENT, validCounts, type PresenceCounts } from "@/lib/presence/model"
 import BackButton from "./BackButton"
@@ -14,7 +14,6 @@ import ThemeToggle from "./ThemeToggle"
 import LanguageSelect from "./LanguageSelect"
 import TunerButton from "./TunerButton"
 import MetronomeButton from "./MetronomeButton"
-import HeaderSearch from "./HeaderSearch"
 
 const categories = [
   { href: "/pesme/narodne", label: "Narodne" },
@@ -80,7 +79,7 @@ function HeaderNavigation({ session, status, pathname, online }: {
   const navigation = useRef<HTMLDivElement>(null)
   const songsButton = useRef<HTMLButtonElement>(null), accountButton = useRef<HTMLButtonElement>(null), mobileButton = useRef<HTMLButtonElement>(null)
   const [open, setOpen] = useState(false), [openPesme, setOpenPesme] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false), [searchOpen, setSearchOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const [metronomePlaying, setMetronomePlaying] = useState(false)
   const close = () => { setOpen(false); setOpenPesme(false); setMobileOpen(false) }
   const login = () => router.push("/login?callbackUrl=" + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash))
@@ -124,7 +123,6 @@ function HeaderNavigation({ session, status, pathname, online }: {
       <BackButton compact />
       <Link href="/" className="mobile-header-brand" onClick={close}>GitaraAkordi</Link>
       <div className="mobile-header-buttons">
-        <button type="button" className="mobile-header-icon" title={t("Pretraga pesama")} aria-label={t("Pretraga pesama")} aria-haspopup="dialog" onClick={() => { close(); setSearchOpen(true) }}><Search aria-hidden="true" /></button>
         <button ref={mobileButton} type="button" className="mobile-header-icon" data-playing={metronomePlaying} title={t(mobileOpen ? "Zatvori meni" : "Otvori meni") + (metronomePlaying ? ` · ${t("Metronom radi")}` : "")} aria-label={t(mobileOpen ? "Zatvori meni" : "Otvori meni") + (metronomePlaying ? ` · ${t("Metronom radi")}` : "")} aria-expanded={mobileOpen} aria-controls={id + "-mobile"} onClick={() => { setMobileOpen(value => !value); setOpen(false); setOpenPesme(false) }}>{mobileOpen ? <X aria-hidden="true" /> : <MenuIcon aria-hidden="true" />}</button>
       </div>
     </div>
@@ -209,6 +207,5 @@ function HeaderNavigation({ session, status, pathname, online }: {
         <div className="header-tool-buttons ml-auto flex flex-wrap items-center justify-end gap-1"><TunerButton /><MetronomeButton onPlayingChange={setMetronomePlaying} /><ThemeToggle /><LanguageSelect /></div>
       </div>
     </div>
-    {searchOpen && <HeaderSearch close={() => setSearchOpen(false)} />}
   </div>
 }

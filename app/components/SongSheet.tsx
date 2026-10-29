@@ -4,20 +4,25 @@ import { useEffect, useRef, useState } from "react"
 import Chord from "./Chord"
 import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
 import { groupSheetLines, wrapSheetBlock, type SheetLine } from "@/lib/chords/songSheet"
+import { lyricsOnlyLines } from "@/lib/chords/lyricsOnly"
+import { useI18n } from "./UiText"
 
 type Props = {
   lines: SheetLine[]
   transpose: number
   textSize: number
   chordSize: number
+  lyricsOnly?: boolean
 }
 
-export default function SongSheet({ lines, transpose, textSize, chordSize }: Props) {
+export default function SongSheet({ lines, transpose, textSize, chordSize, lyricsOnly = false }: Props) {
+  const { t } = useI18n()
   const sheetRef = useRef<HTMLDivElement>(null)
   const measureRef = useRef<HTMLSpanElement>(null)
   const [columns, setColumns] = useState(80)
 
   useEffect(() => {
+    if (lyricsOnly) return
     const sheet = sheetRef.current
     const measure = measureRef.current
     if (!sheet || !measure) return
@@ -30,7 +35,12 @@ export default function SongSheet({ lines, transpose, textSize, chordSize }: Pro
     observer.observe(sheet)
     void document.fonts.ready.then(update)
     return () => observer.disconnect()
-  }, [textSize])
+  }, [textSize, lyricsOnly])
+
+  if (lyricsOnly) {
+    const text = lyricsOnlyLines(lines).join("\n")
+    return <div data-song-sheet data-lyrics-only translate="no" style={{ fontSize: textSize, lineHeight: 1.8, whiteSpace: "pre-line", overflowWrap: "anywhere", letterSpacing: 0 }}>{text || <p role="status">{t("Tekst pesme nije dostupan.")}</p>}</div>
+  }
 
   return (
     <div

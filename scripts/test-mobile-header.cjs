@@ -26,13 +26,11 @@ try {
 
 const render = component => cheerio.load(renderToStaticMarkup(component))
 
-test("mobile navigation starts collapsed with an accessible search and disclosure trigger", () => {
+test("mobile navigation stays collapsed while search has moved to the shared permanent strip", () => {
   session = null; pathname = "/kontakt"
   const $ = render(React.createElement(Menu))
   const buttons = $(".mobile-header-buttons button")
-  assert.equal(buttons.length, 2)
-  assert.equal(buttons.first().attr("aria-haspopup"), "dialog")
-  assert.equal(buttons.first().attr("aria-label"), "Pretraga pesama")
+  assert.equal(buttons.length, 1)
   assert.equal(buttons.last().attr("aria-expanded"), "false")
   assert.equal(buttons.last().attr("aria-label"), "Otvori meni")
   assert.equal($(".header-panel").attr("id"), buttons.last().attr("aria-controls"))
@@ -71,12 +69,12 @@ test("compact Back retains the logical parent and an accessible label, and is ab
   assert.equal(renderToStaticMarkup(React.createElement(BackButton, { compact: true })), "")
 })
 
-test("search dialog is server-renderable without window/document and has a labeled search field", () => {
-  const $ = render(React.createElement(HeaderSearch, { close: () => {} }))
-  assert.equal($("dialog").attr("aria-labelledby"), $("h2").attr("id"))
-  assert.equal($("dialog input[role=combobox]").length, 1)
-  assert.equal($("dialog input").attr("aria-expanded"), "false")
-  assert.equal($("button[aria-label='Zatvori']").length, 1)
+test("permanent search strip is server-renderable, labeled and closed until a query is typed", () => {
+  const $ = render(React.createElement(HeaderSearch))
+  assert.equal($("[data-header-search] input[role=combobox]").length, 1)
+  assert.equal($("input").attr("aria-expanded"), "false")
+  assert.equal($("label").attr("for"), $("input").attr("id"))
+  assert.equal($("dialog").length, 0)
 })
 
 test("mobile account text is escaped, not injected as markup", () => {

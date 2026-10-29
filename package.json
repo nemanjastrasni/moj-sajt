@@ -14,6 +14,8 @@
     "presence:setup": "node scripts/setup-online-presence.cjs",
     "auth:check-google": "node scripts/check-google-auth.cjs",
     "test:search": "node --test scripts/test-search.cjs",
+    "test:tutorials": "node --test scripts/test-tutorials.cjs",
+    "tutorials:setup": "node scripts/setup-song-tutorials.cjs",
     "test:submissions": "node --test scripts/test-submissions.cjs",
     "test:admin-songs": "node --test scripts/test-admin-songs.cjs",
     "test:admin-content": "node --test scripts/test-admin-content.cjs",

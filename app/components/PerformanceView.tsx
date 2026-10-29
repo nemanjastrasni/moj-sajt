@@ -13,13 +13,16 @@ import useSongCapo, { type SongCapo } from "./useSongCapo"
 import useRememberPerformance from "./useRememberPerformance"
 import { useI18n } from "./UiText"
 import styles from "./PerformanceView.module.css"
+import SongDisplayMode from "./SongDisplayMode"
 
 type KeyControls = { transpose: number; phase: string; error: string; controlsDisabled: boolean; change: (value: number | ((current: number) => number)) => void; reload: () => Promise<void> }
-type Props = { song: PerformanceSong | null; controls: KeyControls; capoControl?: SongCapo; initialCapo?: { id: string; fret: number }; playlistId?: string; settingsTools?: ReactNode; leaveGuard?: () => boolean; close: () => void; loading?: boolean; error?: string; retry?: () => void; previous?: () => void; next?: () => void; position?: number; total?: number; name?: string }
-export default function PerformanceView({ song, controls, capoControl, initialCapo, playlistId, settingsTools, leaveGuard, close, loading = false, error = "", retry, previous, next, position, total, name }: Props) {
+type Props = { song: PerformanceSong | null; controls: KeyControls; capoControl?: SongCapo; initialCapo?: { id: string; fret: number }; playlistId?: string; settingsTools?: ReactNode; leaveGuard?: () => boolean; close: () => void; loading?: boolean; error?: string; retry?: () => void; previous?: () => void; next?: () => void; position?: number; total?: number; name?: string; displayMode?: { lyricsOnly: boolean; change: (value: boolean) => void } }
+export default function PerformanceView({ song, controls, capoControl, initialCapo, playlistId, settingsTools, leaveGuard, close, loading = false, error = "", retry, previous, next, position, total, name, displayMode }: Props) {
   const { t } = useI18n(), dialog = useRef<HTMLDialogElement>(null), screen = useRef<HTMLDivElement>(null), scroll = useRef<HTMLDivElement>(null)
   const [fullscreen, setFullscreen] = useState(false), [notice, setNotice] = useState(""), [settings, setSettings] = useState(false)
   const [textSize, setTextSize] = useState(20), [chordSize, setChordSize] = useState(20), [speed, setSpeed] = useState(3)
+  const [ownLyricsOnly, setOwnLyricsOnly] = useState(false)
+  const lyricsOnly = displayMode?.lyricsOnly ?? ownLyricsOnly
   const [transport, setTransport] = useState({ id: song?.id, loading, playing: false })
   const sameSong = transport.id === song?.id && transport.loading === loading
   if (!sameSong) setTransport({ id: song?.id, loading, playing: false })
@@ -87,25 +90,26 @@ export default function PerformanceView({ song, controls, capoControl, initialCa
           </div>
         </div>
         <div className={styles.toolbar}>
-          <span className={styles.small}>{t("Ton")}</span>
+          <SongDisplayMode lyricsOnly={lyricsOnly} change={displayMode?.change ?? setOwnLyricsOnly} />
+          {!lyricsOnly && <><span className={styles.small}>{t("Ton")}</span>
           <button type="button" className={styles.icon} disabled={disabled || controls.transpose <= -11} title={t("Smanji tonalitet")} aria-label={t("Smanji tonalitet")} onClick={() => controls.change(value => Math.max(-11, value - 1))}><Minus /></button>
           <output className={styles.key} aria-label={t("Transpozicija")}>{controls.transpose > 0 ? "+" : ""}{controls.transpose}</output>
           <button type="button" className={styles.icon} disabled={disabled || controls.transpose >= 11} title={t("Povecaj tonalitet")} aria-label={t("Povecaj tonalitet")} onClick={() => controls.change(value => Math.min(11, value + 1))}><Plus /></button>
-          <button type="button" className={styles.icon} disabled={disabled} title={t("Originalni tonalitet")} aria-label={t("Originalni tonalitet")} onClick={() => controls.change(0)}><RotateCcw /></button>
+          <button type="button" className={styles.icon} disabled={disabled} title={t("Originalni tonalitet")} aria-label={t("Originalni tonalitet")} onClick={() => controls.change(0)}><RotateCcw /></button></>}
           <button type="button" className={styles.icon} disabled={loading || !song} title={t(playing ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} aria-label={t(playing ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} aria-pressed={playing} onClick={() => setPlaying(!playing)}>{playing ? <Pause /> : <Play />}</button>
           <TunerButton /><MetronomeButton />
-          <CapoControl key={song?.id} capo={capo} disabled={disabled} />
+          {!lyricsOnly && <CapoControl key={song?.id} capo={capo} disabled={disabled} />}
           {song && (settingsTools ?? <FavoriteTransposeStatus phase={controls.phase} error={controls.error} reload={controls.reload} />)}
         </div>
         {settings && <div className={styles.settings}>
           <label>{t("Velicina teksta")}<input type="range" min={14} max={32} value={textSize} onChange={event => setTextSize(Number(event.target.value))} /></label>
-          <label>{t("Velicina akorda")}<input type="range" min={14} max={32} value={chordSize} onChange={event => setChordSize(Number(event.target.value))} /></label>
+          <label>{t("Velicina akorda")}<input type="range" min={14} max={32} value={chordSize} disabled={lyricsOnly} onChange={event => setChordSize(Number(event.target.value))} /></label>
           <label>{t("Brzina skrolovanja")}<input type="range" min={1} max={10} value={speed} onChange={event => setSpeed(Number(event.target.value))} /></label>
         </div>}
         {notice && <p role="status" className={styles.small}>{t(notice)}</p>}
       </header>
       <div ref={scroll} className={styles.content} tabIndex={0} aria-label={t("Tekst pesme")} onWheel={() => setPlaying(false)} onTouchStart={() => setPlaying(false)}>
-        {loading ? <p role="status">{t("Ucitavam pesmu...")}</p> : error ? <div role="alert"><p>{t(error)}</p>{retry && <button type="button" className={styles.button} onClick={retry}>{t("Pokusaj ponovo")}</button>}</div> : song && <SongSheet lines={capo.lines} transpose={capo.shift} textSize={textSize} chordSize={chordSize} />}
+        {loading ? <p role="status">{t("Ucitavam pesmu...")}</p> : error ? <div role="alert"><p>{t(error)}</p>{retry && <button type="button" className={styles.button} onClick={retry}>{t("Pokusaj ponovo")}</button>}</div> : song && <SongSheet lines={capo.lines} transpose={capo.shift} textSize={textSize} chordSize={chordSize} lyricsOnly={lyricsOnly} />}
       </div>
       {total !== undefined && <nav className={styles.navigation} aria-label={t("Pesme u playlisti")}>
         <button type="button" className={styles.button} disabled={!previous || loading || saving} onClick={() => { if (!leaveGuard || leaveGuard()) previous?.() }}><ChevronLeft />{t("Prethodna")}</button>

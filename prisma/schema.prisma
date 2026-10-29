@@ -83,9 +83,20 @@ model Song {
   review        SongReview?
   reports       SongReport[]
   performers    SongPerformer[]
+  tutorial      SongTutorial?
   artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([artistId, slug])
+}
+
+model SongTutorial {
+  songId      String   @id
+  videoId     String
+  title       String   @default("")
+  version     String
+  updatedById String
+  updatedAt   DateTime @default(now())
+  song        Song     @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model SongPerformer {

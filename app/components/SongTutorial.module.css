@@ -1,0 +1,7 @@
+.tools { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; max-width: 100%; }
+.form { display: grid; gap: 16px; padding-top: 8px; }
+.form label { display: grid; gap: 8px; font-size: 14px; }
+.commands { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.title { margin: 12px 0; color: var(--control-ink); overflow-wrap: anywhere; font-size: 14px; }
+.video { display: block; width: 100%; aspect-ratio: 16 / 9; min-height: 200px; border: 0; margin: 12px 0; background: #000; }
+.error { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--control-danger); font-size: 13px; overflow-wrap: anywhere; }

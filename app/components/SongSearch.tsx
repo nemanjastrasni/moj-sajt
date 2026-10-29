@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { Search, X } from "lucide-react"
 import { createPortal } from "react-dom"
 import { useRouter } from "next/navigation"
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react"
@@ -11,7 +12,7 @@ import { useI18n } from "./UiText"
 
 type Snapshot = { query: string; status: "idle" | "ready" | "error"; results: SongSearchResult[]; error?: string }
 
-export default function SongSearch({ loadResults = loadSongSearch, inlinePopup = false, onNavigate }: { loadResults?: SongSearchLoader; inlinePopup?: boolean; onNavigate?: () => void }) {
+export default function SongSearch({ loadResults = loadSongSearch, inlinePopup = false, onNavigate, compact = false }: { loadResults?: SongSearchLoader; inlinePopup?: boolean; onNavigate?: () => void; compact?: boolean }) {
   const { t, locale } = useI18n()
   const router = useRouter()
   const id = useId()
@@ -55,11 +56,12 @@ export default function SongSearch({ loadResults = loadSongSearch, inlinePopup =
   }, [prepared.search, requestKey, loadResults])
 
   useEffect(() => {
-    function outside(event: PointerEvent) {
+    function outside(event: Event) {
       if (event.target instanceof Node && !container.current?.contains(event.target) && !popupContainer.current?.contains(event.target)) setOpen(false)
     }
     document.addEventListener("pointerdown", outside)
-    return () => document.removeEventListener("pointerdown", outside)
+    document.addEventListener("focusin", outside)
+    return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("focusin", outside) }
   }, [])
 
   useEffect(() => {
@@ -99,6 +101,16 @@ export default function SongSearch({ loadResults = loadSongSearch, inlinePopup =
     if (expanded && active >= 0) list.current?.children[active]?.scrollIntoView({ block: "nearest" })
   }, [active, expanded])
 
+  useEffect(() => {
+    if (!expanded) return
+    function escape(event: globalThis.KeyboardEvent) {
+      if (event.key !== "Escape" || event.defaultPrevented || document.querySelector("dialog[open]")) return
+      event.preventDefault(); input.current?.focus(); setOpen(false); setActive(-1)
+    }
+    document.addEventListener("keydown", escape)
+    return () => document.removeEventListener("keydown", escape)
+  }, [expanded])
+
   function handleKey(event: KeyboardEvent<HTMLInputElement>) {
     if (event.nativeEvent.isComposing) return
     if (event.key === "Escape") { event.preventDefault(); setOpen(false); setActive(-1); return }
@@ -121,15 +133,16 @@ export default function SongSearch({ loadResults = loadSongSearch, inlinePopup =
   // Native modal dialogs require results inside their own top layer, not a body portal.
   function renderPopup(content: ReactNode) { return inlinePopup ? content : createPortal(content, document.body) }
 
-  return <div ref={container} role="search" aria-label={t("Pretraga pesama")} className="relative w-full min-w-0 max-w-md">
+  return <div ref={container} role="search" aria-label={t("Pretraga pesama")} className={`relative w-full min-w-0 ${compact ? "header-song-search" : "max-w-md"}`}>
     <label htmlFor={`${id}-input`} className="sr-only">{t("Pesma ili izvodjac")}</label>
     <div className="relative">
+      {compact && <Search aria-hidden="true" className="header-search-symbol" size={18} />}
       <input ref={input} id={`${id}-input`} type="search" role="combobox" autoComplete="off" autoCapitalize="none" spellCheck={false} enterKeyHint="search" maxLength={SEARCH_MAX_LENGTH} value={query}
         aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={expanded} aria-controls={expanded ? `${id}-results` : undefined}
         aria-activedescendant={expanded && active >= 0 && results[active] ? `${id}-result-${active}` : undefined}
         onChange={event => { setQuery(event.target.value); setActive(-1); setOpen(true) }} onFocus={() => setOpen(true)} onKeyDown={handleKey}
-        placeholder={t("Pesma ili izvodjac...")} className="song-search-input min-h-12 w-full rounded-lg border border-gray-600 bg-black/40 py-3 pl-3 pr-12 text-base text-white outline-none placeholder:text-gray-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20" />
-      {query && <button type="button" aria-label={t("Obrisi pretragu")} title={t("Obrisi pretragu")} onClick={() => { setQuery(""); setActive(-1); input.current?.focus() }} className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-lg text-2xl text-gray-400 hover:text-white focus-visible:outline-2 focus-visible:outline-sky-400">{"\u00d7"}</button>}
+        placeholder={t("Pesma ili izvodjac...")} className={`song-search-input ${compact ? "header-search-input" : "min-h-12 rounded-lg py-3 pl-3"} w-full border border-gray-600 bg-black/40 pr-12 text-base text-white outline-none placeholder:text-gray-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20`} />
+      {query && <button type="button" aria-label={t("Obrisi pretragu")} title={t("Obrisi pretragu")} onClick={() => { setQuery(""); setActive(-1); input.current?.focus() }} className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-lg text-gray-400 hover:text-white focus-visible:outline-2 focus-visible:outline-sky-400"><X size={18} /></button>}
     </div>
     {expanded && popup.width > 0 && typeof document !== "undefined" && renderPopup(<div ref={popupContainer}
       style={{ left: popup.left, width: popup.width, ...(popup.above ? { bottom: popup.bottom } : { top: popup.top }) }}
