@@ -7,6 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
+    "test:route-boundaries": "node --test scripts/test-route-boundaries.cjs",
     "test:chords": "node --test scripts/test-song-sheet.cjs",
     "test:capo": "node --test scripts/test-capo.cjs",
     "test:auth": "node --test scripts/test-auth.cjs",

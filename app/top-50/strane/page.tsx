@@ -3,6 +3,8 @@ import Link from "next/link"
 import UiText from "@/app/components/UiText"
 import { playlistSongHref } from "@/lib/navigation/parent"
 
+export const dynamic = "force-dynamic"
+
 export default async function Page() {
   const songs = await prisma.song.findMany({
     where: {
