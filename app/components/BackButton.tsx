@@ -17,22 +17,10 @@ export default function BackButton({ compact = false }: { compact?: boolean }) {
       href={href}
       aria-label={t("Nazad")}
       title={compact ? t("Nazad") : undefined}
-      className={compact ? "mobile-header-icon mobile-header-back" : `
-        group flex items-center gap-2
-        px-4 py-2
-        rounded-full
-        bg-white/10
-        backdrop-blur
-        border border-white/20
-        text-gray-300
-        hover:text-white
-        hover:bg-white/20
-        transition-all duration-200
-        shadow-md
-      `}
+      className={compact ? "mobile-header-icon mobile-header-back" : "ui-button group"}
     >
       <ArrowLeft size={18} aria-hidden="true" className="group-hover:-translate-x-1 transition-transform" />
-      <span className={compact ? "sr-only" : "text-sm tracking-wide"}>
+      <span className={compact ? "sr-only" : undefined}>
         {t("Nazad")}
       </span>
     </Link>

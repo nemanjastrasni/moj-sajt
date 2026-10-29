@@ -2,6 +2,10 @@ import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { getCategoryLabel } from "@/lib/categories"
 import { requireSongAdmin } from "@/lib/adminSongs/server"
+import { Plus, Search, Pencil, Merge } from "lucide-react"
+import Image from "next/image"
+import { revalidatePath } from "next/cache"
+import ConfirmSubmitButton from "../ConfirmSubmitButton"
 
 async function deleteArtist(id: string) {
 "use server"
@@ -9,6 +13,7 @@ await requireSongAdmin()
 await prisma.artist.delete({
 where: { id }
 })
+revalidatePath("/admin/artists")
 }
 
 export default async function AdminArtistsPage({
@@ -96,29 +101,27 @@ export default async function AdminArtistsPage({
   },
 },
 })
-function getRowColor(count: number) {
-  if (count === 0) return "bg-red-100"
-  if (count < 5) return "bg-yellow-100"
-  if (count > 50) return "bg-green-100"
-  return ""
-}
 
   return (
-    <div className="max-w-6xl">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
+    <section className="admin-page">
+      <div className="admin-heading">
+        <h1>
           Izvođači
         </h1>
 
-        <form method="GET" action="/admin/artists" className="flex gap-3 mb-6">
+        <Link href="/admin/artists/new" className="ui-button ui-button-primary"><Plus aria-hidden="true" />Novi izvođač</Link>
+      </div>
+        <form method="GET" action="/admin/artists" className="admin-filters">
+          <label>Pretraga
           <input
             type="text"
             name="search"
             placeholder="Pretraga izvođača..."
-            className="border p-2 rounded w-64"
+            className="ui-input"
             list="artists"
             defaultValue={search}
           />
+          </label>
 
           <datalist id="artists">
             {artists.map((artist) => (
@@ -126,7 +129,7 @@ function getRowColor(count: number) {
             ))}
           </datalist>
 
-          <select name="letter" defaultValue={letter} className="border p-2 rounded">
+          <label>Slovo<select name="letter" defaultValue={letter} className="ui-input">
             <option value="">Sva slova</option>
             {[
   "#",
@@ -138,33 +141,27 @@ function getRowColor(count: number) {
     {l}
   </option>
 ))}
-          </select>
+          </select></label>
 
-          <select name="category" defaultValue={category} className="border p-2 rounded">
+          <label>Kategorija<select name="category" defaultValue={category} className="ui-input">
             <option value="">Sve kategorije</option>
             <option value="domace">Zabavne</option>
             <option value="strane">Strane</option>
             <option value="narodne">Narodne</option>
-          </select>
+          </select></label>
 
-          <button className="bg-gray-800 text-white px-4 rounded">
-            Primeni
+          <button className="ui-button">
+            <Search aria-hidden="true" />Primeni
           </button>
         </form>
 
-        <Link
-          href="/admin/artists/new"
-          className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
-        >
-          + Novi izvođač
-        </Link>
-      </div>
+      <p className="admin-muted mb-4">Ukupno u pregledu: {artists.length}</p>
 
       {artists.length === 0 ? (
-        <p className="text-gray-500">Nema izvođača.</p>
+        <p className="admin-muted">Nema izvođača.</p>
       ) : (
-        <table className="w-full text-sm border border-gray-200 bg-white">
-          <thead className="bg-gray-100">
+        <div className="admin-table-scroll" role="region" aria-label="Izvođači" tabIndex={0}><table className="admin-table admin-artists">
+          <thead>
             <tr>
               <th className="p-3 text-left">Ime</th>
               <th className="p-3 text-left">Slug</th>
@@ -179,33 +176,25 @@ function getRowColor(count: number) {
   {artists.map((artist) => (
     <tr
       key={artist.id}
-      className={`border-t ${getRowColor(artist._count.songs)}`}
       
     >
                 <td className="p-3">
                   <Link
                    href={`/admin/artists/${artist.id}/edit?search=${search}&category=${category}&letter=${letter}`}
-                   className="text-blue-600 hover:underline"
                   >
                     {artist.name}
                   </Link>
 
-                  <Link
-                    href={`/admin/artists/${artist.id}/edit/merge`}
-                    className="text-purple-600 ml-2"
-                  >
-                    Merge
-                  </Link>
                 </td>
 
-                <td className="p-3 text-gray-500">{artist.slug}</td>
+                <td className="p-3 admin-muted">{artist.slug}</td>
                 <td className="p-3">{getCategoryLabel(artist.category) || "-"}</td>
                 <td className="p-3 text-center whitespace-nowrap">
                   {artist.image ? (
-                    <img
+                    <Image
                       src={artist.image}
                       alt={artist.name}
-                      className="w-12 h-12 object-cover rounded mx-auto"
+                      width={40} height={40} unoptimized className="admin-avatar"
                     />
                   ) : (
                     "—"
@@ -216,27 +205,25 @@ function getRowColor(count: number) {
   {artist._count.songs}
 </td>
 
-<td className="p-3 text-center">
+<td className="p-3"><div className="admin-row-actions">
   <Link
     href={`/admin/artists/${artist.id}/edit?search=${search}&category=${category}&letter=${letter}`}
-    className="text-blue-600 hover:underline font-semibold"
+    className="ui-button" title="Izmeni izvođača" aria-label={`Izmeni: ${artist.name}`}
   >
-    Edit
+    <Pencil aria-hidden="true" />
   </Link>
 
-  <span className="mx-2 text-gray-400">|</span>
+  <Link href={`/admin/artists/${artist.id}/edit/merge`} className="ui-button" title="Spoji izvođače" aria-label={`Spoji: ${artist.name}`}><Merge aria-hidden="true" /></Link>
 
   <form action={deleteArtist.bind(null, artist.id)} className="inline">
-    <button className="text-red-600 hover:underline">
-      Delete
-    </button>
+    <ConfirmSubmitButton name={artist.name} label="Obriši" description={`Ovo je trajno brisanje celog izvođača i njegovih ${artist._count.songs} pesama, ne samo biografije.`} />
   </form>
-</td>
+</div></td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       )}
-    </div>
+    </section>
   )
 }

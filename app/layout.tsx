@@ -1,5 +1,6 @@
 import "./globals.css"
 import "./theme.css"
+import "./controls.css"
 import Menu from "@/app/components/Menu"
 import { Poppins } from "next/font/google"
 import type { Metadata } from "next"

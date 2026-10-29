@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { requireSongAdmin } from "@/lib/adminSongs/server"
+import { Save } from "lucide-react"
 
 export default async function NewArtistPage() {
   await requireSongAdmin()
@@ -51,51 +52,33 @@ if (!slug) {
   }
 
   return (
-    <div className="max-w-2xl text-gray-900">
-      <h1 className="text-2xl font-bold mb-6">Novi izvođač</h1>
+    <section className="admin-page">
+      <h1>Novi izvođač</h1>
 
-      <form action={createArtist} className="space-y-4">
+      <form action={createArtist} className="admin-form">
 
-        <div>
-          <label className="block text-sm mb-1">Ime</label>
-          <input name="name" className="border p-2 w-full rounded"/>
-        </div>
+        <label>Ime<input name="name" required maxLength={200} className="ui-input"/></label>
 
-        <div>
-          <label className="block text-sm mb-1">Slug</label>
-          <input name="slug" className="border p-2 w-full rounded"/>
-        </div>
+        <label>Slug<input name="slug" className="ui-input"/></label>
 
-        <div>
-          <label className="block text-sm mb-1">Kategorija</label>
-          <select name="category" className="border p-2 w-full rounded">
+        <label>Kategorija
+          <select name="category" required className="ui-input">
             <option value="">-- izaberi --</option>
             <option value="domace">Zabavne</option>
             <option value="strane">Strane</option>
             <option value="narodne">Narodne</option>
           </select>
-        </div>
+        </label>
 
-        <div>
-          <label className="block text-sm mb-1">Slika (URL)</label>
-          <input name="image" className="border p-2 w-full rounded"/>
-        </div>
+        <label>Slika (URL)<input name="image" className="ui-input"/></label>
 
-        <div>
-          <label className="block text-sm mb-1">Biografija</label>
-          <textarea name="bio" rows={6} className="border p-2 w-full rounded"/>
-        </div>
+        <label>Biografija<textarea name="bio" rows={10} className="ui-input"/></label>
 
-        <div>
-          <label className="block text-sm mb-1">Diskografija</label>
-          <textarea name="discography" rows={6} className="border p-2 w-full rounded"/>
-        </div>
+        <label>Diskografija<textarea name="discography" rows={10} className="ui-input"/></label>
 
-        <button className="bg-black text-white px-4 py-2 rounded">
-          Sačuvaj
-        </button>
+        <div><button className="ui-button ui-button-primary"><Save aria-hidden="true" />Sačuvaj</button></div>
 
       </form>
-    </div>
+    </section>
   )
 }

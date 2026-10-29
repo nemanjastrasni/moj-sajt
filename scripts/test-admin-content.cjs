@@ -13,6 +13,7 @@ const prisma = {
   user: {
     findUnique: async ({ where }) => { if (down) throw Error("postgres://private-credentials"); return state.users.find(row => row.id === where.id) ?? null },
     update: async ({ where, data }) => { const row = Object.assign(state.users.find(row => row.id === where.id), data); return { id: row.id, role: row.role } },
+    updateMany: async ({ where, data }) => { const rows=state.users.filter(row=>row.id===where.id);rows.forEach(row=>Object.assign(row,data));return {count:rows.length} },
   },
   artist: {
     findUnique: async ({ where }) => structuredClone(state.artists.find(row => row.id === where.id) ?? null),
@@ -39,13 +40,14 @@ Module._load = function(request, parent, isMain) {
   if (request.startsWith("@/")) request = path.join(__dirname, "..", request.slice(2))
   return original.call(this, request, parent, isMain)
 }
-let server, artistRoute, roleRoute, legacy, PageActions
+let server, artistRoute, roleRoute, legacy, PageActions, banRoute
 try {
   server = require("../lib/adminContent/server.ts")
   artistRoute = require("../app/api/admin/artists/[id]/route.ts")
   roleRoute = require("../app/api/admin/users/[id]/role/route.ts")
   legacy = require("../app/api/admin/artists/route.ts")
   PageActions = require("../app/components/AdminPageActions.tsx").default
+  banRoute = require("../app/api/admin/users/ban/route.ts")
 } finally { Module._load = original }
 const req = (body, method = "PATCH", headers = {}) => new Request("https://site.test/api/admin/artists/artist", { method, headers: { origin: "https://site.test", "content-type": "application/json", ...headers }, body: JSON.stringify(body) })
 const ctx = id => ({ params: Promise.resolve({ id }) })
@@ -180,4 +182,25 @@ test("legacy artist server actions independently require a fresh admin, not only
     const source = fs.readFileSync(path.join(__dirname, "..", file), "utf8")
     for (const fragment of source.split('"use server"').slice(1)) assert.match(fragment.slice(0, 100), /await requireSongAdmin\(\)/)
   }
+})
+test("ban checks current database admin rights, not an old or forged session role",async()=>{
+  for(const identity of [null,{id:'user',role:'admin'},{id:'missing',role:'admin'}]){
+    session=identity?{user:identity}:null
+    const before=structuredClone(state)
+    assert.ok([401,403].includes((await banRoute.POST(req({userId:'user'},'POST'))).status))
+    assert.deepEqual(state,before)
+  }
+  session={user:{id:'admin',role:'admin'}};state.users[0].role='user'
+  assert.equal((await banRoute.POST(req({userId:'user'},'POST'))).status,403)
+  state.users[0].role='admin';state.users[0].banned=true
+  assert.equal((await banRoute.POST(req({userId:'user'},'POST'))).status,403)
+})
+test("ban rejects cross-site and self writes; valid admin changes only target's banned flag",async()=>{
+  const before=structuredClone(state)
+  assert.equal((await banRoute.POST(req({userId:'user'},'POST',{origin:'https://evil.test'}))).status,403)
+  assert.equal((await banRoute.POST(req({userId:'user'},'POST',{'sec-fetch-site':'cross-site'}))).status,403)
+  assert.equal((await banRoute.POST(req({userId:'admin'},'POST'))).status,400)
+  assert.deepEqual(state,before)
+  assert.equal((await banRoute.POST(req({userId:'user'},'POST'))).status,200)
+  assert.deepEqual(state,{...before,users:before.users.map(user=>user.id==='user'?{...user,banned:true}:user)})
 })

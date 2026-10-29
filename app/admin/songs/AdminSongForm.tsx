@@ -18,7 +18,7 @@ const emptySong = (key: number): Draft => ({ key, title: "", lyrics: "", chords:
 
 function SongPreview({ lyrics }: { lyrics: string }) {
   const lines = useMemo(() => parseSongSheet(lyrics), [lyrics])
-  return <div className={`${styles.preview} theme-dark-surface`}><SongSheet lines={lines} transpose={0} textSize={16} chordSize={16} /></div>
+  return <div className={styles.preview}><SongSheet lines={lines} transpose={0} textSize={16} chordSize={16} /></div>
 }
 
 export default function AdminSongForm({ initial, returnToSong = false, backHref = "/admin/songs" }: { initial?: EditableAdminSong; returnToSong?: boolean; backHref?: string }) {

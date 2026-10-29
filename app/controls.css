@@ -1,0 +1,42 @@
+:root {
+  --control-bg: var(--theme-panel, #171717);
+  --control-ink: var(--theme-ink, #e5e5e5);
+  --control-muted: var(--theme-muted, #a5adb4);
+  --control-line: var(--theme-line, #525b62);
+  --control-hover: var(--theme-hover, #252a2d);
+  --control-focus: var(--theme-link, #7ac5f4);
+  --control-accent: #087e8b;
+  --control-accent-ink: #fff;
+  --control-danger: var(--theme-red, #ff9494);
+  --control-success: var(--theme-green, #78d9a0);
+  --control-radius: 6px;
+}
+.ui-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; max-width: 100%; padding: 8px 12px;
+  border: 1px solid var(--control-line); border-radius: var(--control-radius);
+  background: var(--control-bg); color: var(--control-ink);
+  font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: 0;
+  text-align: center; overflow-wrap: anywhere; cursor: pointer; text-decoration: none;
+}
+.ui-button svg { width: 18px; height: 18px; flex-shrink: 0; }
+.ui-button:disabled { opacity: .5; cursor: not-allowed; }
+.ui-button:focus-visible, .ui-input:focus-visible { outline: 2px solid var(--control-focus); outline-offset: 2px; }
+.ui-button-primary { background: var(--control-accent); border-color: var(--control-accent); color: var(--control-accent-ink); }
+.ui-button-danger { color: var(--control-danger); }
+.ui-button-destructive { background: #a82e38; border-color: #a82e38; color: #fff; }
+.ui-input {
+  width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px;
+  border: 1px solid var(--control-line); border-radius: var(--control-radius);
+  background: var(--control-bg); color: var(--control-ink);
+  font-size: 16px; line-height: 1.5; letter-spacing: 0;
+}
+.ui-input::placeholder { color: var(--control-muted); opacity: 1; }
+.ui-dialog {
+  position: fixed; inset: 0; margin: auto; width: min(480px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px); overflow: auto; overscroll-behavior: contain;
+  padding: 24px; border: 1px solid var(--control-line); border-radius: 8px;
+  background: var(--control-bg); color: var(--control-ink); box-shadow: 0 20px 60px #0005;
+}
+.ui-dialog::backdrop { background: rgb(0 0 0 / 70%); }
+@media (hover: hover) { .ui-button:not(:disabled):not(.ui-button-primary):not(.ui-button-destructive):hover { background: var(--control-hover); } }

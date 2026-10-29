@@ -14,7 +14,7 @@ export default async function ReviewSongPage({ params }: { params: Promise<{ id:
     proposal = await prisma.songSubmission.findUnique({ where: { id }, include: { user: { select: { name: true, email: true } } } })
   } catch { return <p role="alert" className="text-red-700">Predlog trenutno nije dostupan. Proveri bazu i pokusaj ponovo.</p> }
   if (!proposal) notFound()
-  return <section className="mx-auto min-w-0 max-w-4xl bg-[#111] p-4 text-white sm:p-6">
+  return <section className="admin-page">
     <Link href="/admin/predlozi" className="text-sky-400 underline">Svi predlozi</Link>
     <h1 className="my-5 break-words text-2xl font-bold">Pregled predloga</h1>
     <p className="mb-6 break-words text-sm text-gray-400">Poslao: {proposal.user.name || proposal.user.email} · {submissionStatus[proposal.status]}</p>

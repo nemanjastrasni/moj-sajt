@@ -204,4 +204,10 @@ export const english: Record<string, string> = {
   "Metronom je zaustavljen": "Metronome is stopped",
   "Zvuk je prekinut. Pokreni metronom ponovo.": "Audio was interrupted. Start the metronome again.",
   "Zvuk nije dostupan. Pokusaj ponovo ili koristi drugi pregledac.": "Audio is unavailable. Try again or use another browser.",
+  "Administracija": "Administration",
+  "Pregled": "Overview",
+  "Prijave grešaka": "Error reports",
+  "Predlozi pesama": "Song submissions",
+  "Korisnici": "Users",
+  "Poslednja aktivnost": "Last activity",
 }

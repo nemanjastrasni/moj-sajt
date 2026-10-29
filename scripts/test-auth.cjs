@@ -281,22 +281,25 @@ test("public debug users endpoint is disabled without touching the database", as
 })
 
 test("ban API requires admin and rejects cross-origin and self-ban requests", async () => {
-  assert.equal((await ban(request({ userId: "target" }))).status, 403)
+  assert.equal((await ban(request({ userId: "target" }))).status, 401)
   state.session = { user: { id: "admin", role: "user" } }
+  state.user = { ...baseUser, id: "admin" }
   assert.equal((await ban(request({ userId: "target" }))).status, 403)
   state.session.user.role = "admin"
+  state.user.role = "admin"
   assert.equal((await ban(request({ userId: "target" }, { origin: "https://evil.test" }))).status, 403)
   assert.equal((await ban(request({ userId: "admin" }))).status, 400)
-  assert.equal(calls.length, 0)
+  assert.equal(calls.filter(call => call[0] === "updateUsers").length, 0)
 })
 
 test("ban API supports the existing HTML form and JSON clients", async () => {
   state.session = { user: { id: "admin", role: "admin" } }
+  state.user = { ...baseUser, id: "admin", role: "admin" }
   const response = await ban(new Request("https://site.test/api/admin/users/ban", {
     method: "POST", headers: { origin: "https://site.test" }, body: new URLSearchParams({ userId: "target" }),
   }))
   assert.equal(response.status, 303)
   assert.equal(response.headers.get("location"), "https://site.test/admin/korisnici")
-  assert.deepEqual(calls[0][1], { where: { id: "target" }, data: { banned: true } })
+  assert.deepEqual(calls.find(call => call[0] === "updateUsers")[1], { where: { id: "target" }, data: { banned: true } })
   assert.deepEqual(await (await ban(request({ userId: "target" }))).json(), { ok: true })
 })

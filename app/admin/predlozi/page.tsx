@@ -17,7 +17,7 @@ export default async function AdminSubmissionsPage({ searchParams }: { searchPar
         publishedSong: { select: { slug: true, artist: { select: { slug: true, category: true } } } } },
     })
   } catch { return <div role="alert" className="text-red-700">Predlozi nisu dostupni. Proveri bazu i da li je pokrenut SQL za SongSubmission.</div> }
-  return <section className="min-w-0 bg-[#111] p-4 text-white sm:p-6">
+  return <section className="admin-page">
     <h1 className="mb-5 text-2xl font-bold">Predlozi pesama</h1>
     <nav aria-label="Status predloga" className="mb-4 flex flex-wrap gap-4 border-b border-gray-700">
       {Object.entries(submissionStatus).map(([value, label]) => <Link key={value} href={`?status=${value}`} aria-current={status === value ? "page" : undefined} className={`border-b-2 py-3 ${status === value ? "border-sky-400 text-sky-400" : "border-transparent text-gray-300"}`}>{label}</Link>)}

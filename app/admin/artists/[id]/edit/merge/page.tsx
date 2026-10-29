@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { requireSongAdmin } from "@/lib/adminSongs/server"
+import { Merge } from "lucide-react"
 
 export default async function MergeArtist({
   params,
@@ -92,13 +93,13 @@ for (const song of songs) {
   }
 
   return (
-    <div className="max-w-xl">
+    <section className="admin-page">
 
       <h1 className="text-xl font-bold mb-4">
-        Merge {artist?.name}
+        Spoji izvođača: {artist?.name}
       </h1>
 
-      <p className="mb-4 text-sm text-gray-600">
+      <p className="mb-4 admin-muted">
         Ovaj izvođač ima <b>{songsCount}</b> pesama.
       </p>
        
@@ -107,14 +108,14 @@ for (const song of songs) {
     name="search"
     defaultValue={search}
     placeholder="Pretraži izvođača..."
-    className="border p-2 rounded w-full"
+    className="ui-input" aria-label="Pretraži izvođača"
   />
 </form>
 
       <form action={merge} className="flex gap-3 flex-col">
          <select
   name="targetId"
-  className="border p-2 rounded w-full"
+  className="ui-input" aria-label="Spoji sa izvođačem" required
 >
   <option value="">-- izaberi izvođača --</option> 
   {artists
@@ -128,12 +129,12 @@ for (const song of songs) {
 
 <button
   type="submit"
-  className="bg-black text-white px-4 rounded"
+  className="ui-button ui-button-primary"
 >
-  Merge
+  <Merge aria-hidden="true" />Spoji izvođače
 </button>
 
       </form>
-    </div>
+    </section>
   )
 }

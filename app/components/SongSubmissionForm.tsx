@@ -4,13 +4,14 @@ import { useI18n } from "@/app/components/UiText"
 import { useMemo, useState, type FormEvent } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { Check, Eye, Send, X } from "lucide-react"
 import SongSheet from "./SongSheet"
 import { parseSongSheet } from "@/lib/chords/songSheet"
 import { submissionCategories, submissionExample, validateSubmission, type SubmissionInput } from "@/lib/submissions/validation"
 
 type Props = { reviewId?: string; initial?: SubmissionInput }
 const empty: SubmissionInput = { category: "", artistName: "", title: "", lyrics: "" }
-const field = "block w-full min-w-0 rounded border border-gray-600 bg-black/30 px-3 py-3 text-base text-white focus:border-sky-400 focus:outline-none"
+const field = "ui-input block"
 
 export default function SongSubmissionForm({ reviewId, initial }: Props) {
   const { t, locale } = useI18n()
@@ -93,7 +94,7 @@ export default function SongSubmissionForm({ reviewId, initial }: Props) {
       </label>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <span id="submission-length" className="text-sm text-gray-400">{t("{count} / 40.000 znakova", { count: values.lyrics.length.toLocaleString(locale === "en" ? "en" : "sr-Latn") })}</span>
-        <button type="button" aria-expanded={preview} aria-controls="submission-preview" onClick={() => setPreview(value => !value)} className="min-h-11 rounded border border-gray-600 px-4">{preview ? t("Sakrij pregled") : t("Pregled rasporeda")}</button>
+        <button type="button" aria-expanded={preview} aria-controls="submission-preview" onClick={() => setPreview(value => !value)} className="ui-button"><Eye aria-hidden="true" />{preview ? t("Sakrij pregled") : t("Pregled rasporeda")}</button>
       </div>
       {preview && <section id="submission-preview" aria-label={t("Pregled pesme")} className="min-w-0 border-y border-gray-700 py-6">
         <h2 className="mb-2 break-words text-xl font-semibold">{values.title || t("Naziv pesme")}</h2>
@@ -107,8 +108,8 @@ export default function SongSubmissionForm({ reviewId, initial }: Props) {
       </label>}
       {error && <p role="alert" className="break-words text-red-300">{t(error)}</p>}
       <div className="flex flex-wrap gap-3">
-        <button type="submit" className="min-h-11 rounded bg-sky-600 px-5 py-3 font-semibold text-white hover:bg-sky-500">{busy ? t("Cuvam...") : reviewId ? t("Odobri i objavi") : t("Posalji na odobrenje")}</button>
-        {reviewId && <button type="button" onClick={() => void send("reject")} className="min-h-11 rounded border border-red-400 px-5 py-3 text-red-300">{t("Odbij predlog")}</button>}
+        <button type="submit" className="ui-button ui-button-primary">{reviewId ? <Check aria-hidden="true" /> : <Send aria-hidden="true" />}{busy ? t("Cuvam...") : reviewId ? t("Odobri i objavi") : t("Posalji na odobrenje")}</button>
+        {reviewId && <button type="button" onClick={() => void send("reject")} className="ui-button ui-button-danger"><X aria-hidden="true" />{t("Odbij predlog")}</button>}
       </div>
     </fieldset>
   </form>

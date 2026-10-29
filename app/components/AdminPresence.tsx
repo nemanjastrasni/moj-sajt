@@ -62,9 +62,9 @@ export function UserPresenceCells({ userId }: { userId: string }) {
   const { t, locale } = useI18n(), context = useContext(Context)
   const snapshot = context?.snapshot, user = snapshot?.users[userId]
   return <>
-    <td className="p-2"><span className={styles.status}><span aria-hidden="true" className={styles.dot + (user?.online ? " " + styles.online : "")} />{!snapshot ? "-" : user?.online ? "Online" : "Offline"}</span></td>
-    <td className="p-2">{user?.online ? user.countries.map(code => countryName(code, locale)).filter(Boolean).join(", ") || t("Nepoznato") : "-"}</td>
-    <td className="p-2 whitespace-nowrap">{ago(user?.lastSeen, context?.now ?? 0)}</td>
+    <td data-label="Online" className="p-2"><span className={styles.status}><span aria-hidden="true" className={styles.dot + (user?.online ? " " + styles.online : "")} />{!snapshot ? "-" : user?.online ? "Online" : "Offline"}</span></td>
+    <td data-label={t("Zemlja posete (priblizno)")} className="p-2">{user?.online ? user.countries.map(code => countryName(code, locale)).filter(Boolean).join(", ") || t("Nepoznato") : "-"}</td>
+    <td data-label={t("Poslednja aktivnost")} className="p-2 whitespace-nowrap">{ago(user?.lastSeen, context?.now ?? 0)}</td>
   </>
 }
 export function GuestPresenceList() {
