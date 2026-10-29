@@ -28,6 +28,7 @@
     "test:difficulty": "node --test scripts/test-difficulty.cjs",
     "test:favorite-transpose": "node --test scripts/test-favorite-transpose.cjs",
     "test:performance": "node --test scripts/test-performance.cjs",
+    "test:resume": "node --test scripts/test-resume.cjs",
     "test:metronome": "node --test scripts/test-metronome.cjs",
     "test:tuner": "node --test scripts/test-tuner.cjs",
     "test:theme": "node --test scripts/test-theme.cjs",

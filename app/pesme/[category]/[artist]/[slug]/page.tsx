@@ -76,8 +76,9 @@ export default async function SongPage({ params, searchParams }: Props) {
     <>
     {returnTo && <BackNavigationTarget pathname={pathname} href={returnTo} />}
     <SongClient
-      key={song.id + (fromFavorites ? ":favorite" : ":original")}
+      key={song.id + (fromFavorites ? ":favorite" : ":original") + (query.play === "1" ? ":play" : "")}
       fromFavorites={fromFavorites}
+      startPerformance={query.play === "1"}
       songVersion={contentVersion}
       performanceHref={playablePlaylist ? performanceHref(playablePlaylist, song.id) : undefined}
       adminTools={<AdminPageActions kind="song" id={song.id} name={song.title} songVersion={contentVersion} editHref={`/admin/songs/${encodeURIComponent(song.id)}/edit?from=song`} afterDelete={artistPageHref(song.artist)} />}

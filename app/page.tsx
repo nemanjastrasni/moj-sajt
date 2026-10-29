@@ -5,6 +5,7 @@ import LatestSongs from "./components/LatestSongs"
 
 import SongSearch from "./components/SongSearch"
 import UiText from "./components/UiText"
+import HomeRepertoire from "./components/HomeRepertoire"
 
 export default function HomePage() {
 
@@ -15,6 +16,8 @@ export default function HomePage() {
       <div className="relative z-20 mt-6 mb-4 flex w-full justify-center">
         <SongSearch />
       </div>
+
+      <HomeRepertoire />
 
       {/* HERO (NOVI) */}
       <Hero />

@@ -28,7 +28,7 @@ export default function PlaylistPerformance({ playlistId, initialSong, initialCa
     return () => controller.abort()
   }, [playlistId, selected, requestKey, status])
   const index = current ? current.songs.findIndex(song => song.id === current.current.id) : -1
-  return <PerformanceView song={current?.current ?? null} name={current?.name} controls={controls} initialCapo={initialSong && initialCapo !== undefined ? { id: initialSong, fret: initialCapo } : undefined} loading={loading} error={error} close={() => router.replace(`/plejliste/${encodeURIComponent(playlistId)}`)} retry={() => setRetry(value => value + 1)}
+  return <PerformanceView playlistId={playlistId} song={current?.current ?? null} name={current?.name} controls={controls} initialCapo={initialSong && initialCapo !== undefined ? { id: initialSong, fret: initialCapo } : undefined} loading={loading} error={error} close={() => router.replace(`/plejliste/${encodeURIComponent(playlistId)}`)} retry={() => setRetry(value => value + 1)}
     position={index >= 0 ? index : undefined} total={current?.songs.length ?? 0}
     previous={current && index > 0 ? () => setSelected(current.songs[index - 1].id) : undefined}
     next={current && index >= 0 && index < current.songs.length - 1 ? () => setSelected(current.songs[index + 1].id) : undefined}

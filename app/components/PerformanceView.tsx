@@ -11,12 +11,13 @@ import MetronomeButton from "./MetronomeButton"
 import TunerButton from "./TunerButton"
 import CapoControl from "./CapoControl"
 import useSongCapo, { type SongCapo } from "./useSongCapo"
+import useRememberPerformance from "./useRememberPerformance"
 import { useI18n } from "./UiText"
 import styles from "./PerformanceView.module.css"
 
 type KeyControls = Pick<ReturnType<typeof useFavoriteSong>, "transpose" | "phase" | "error" | "controlsDisabled" | "change" | "reload">
-type Props = { song: PerformanceSong | null; controls: KeyControls; capoControl?: SongCapo; initialCapo?: { id: string; fret: number }; close: () => void; loading?: boolean; error?: string; retry?: () => void; previous?: () => void; next?: () => void; position?: number; total?: number; name?: string }
-export default function PerformanceView({ song, controls, capoControl, initialCapo, close, loading = false, error = "", retry, previous, next, position, total, name }: Props) {
+type Props = { song: PerformanceSong | null; controls: KeyControls; capoControl?: SongCapo; initialCapo?: { id: string; fret: number }; playlistId?: string; close: () => void; loading?: boolean; error?: string; retry?: () => void; previous?: () => void; next?: () => void; position?: number; total?: number; name?: string }
+export default function PerformanceView({ song, controls, capoControl, initialCapo, playlistId, close, loading = false, error = "", retry, previous, next, position, total, name }: Props) {
   const { t } = useI18n(), dialog = useRef<HTMLDialogElement>(null), screen = useRef<HTMLDivElement>(null), scroll = useRef<HTMLDivElement>(null)
   const [fullscreen, setFullscreen] = useState(false), [notice, setNotice] = useState(""), [settings, setSettings] = useState(false)
   const [textSize, setTextSize] = useState(20), [chordSize, setChordSize] = useState(20), [speed, setSpeed] = useState(3)
@@ -28,6 +29,7 @@ export default function PerformanceView({ song, controls, capoControl, initialCa
   const sheet = useMemo(() => parseSongSheet(song?.lyrics ?? ""), [song?.lyrics])
   const ownCapo = useSongCapo(song?.id ?? "", sheet, controls.transpose, initialCapo)
   const capo = capoControl ?? ownCapo
+  useRememberPerformance(song?.id, playlistId, loading || Boolean(error))
   const saving = ["saving", "updating"].includes(controls.phase)
   const disabled = loading || !song || controls.controlsDisabled
   useEffect(() => {

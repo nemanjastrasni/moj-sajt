@@ -25,6 +25,7 @@ type Props = {
   fromFavorites?: boolean
   performanceHref?: string
   songVersion?: string
+  startPerformance?: boolean
   song: {
     id: string
     title: string
@@ -42,10 +43,10 @@ type Props = {
   } | null
 }
 
-export default function SongClient({ song, adminTools, fromFavorites = false, performanceHref, songVersion }: Props) {
+export default function SongClient({ song, adminTools, fromFavorites = false, performanceHref, songVersion, startPerformance = false }: Props) {
   const { t } = useI18n()
   const router = useRouter()
-  const [performance, setPerformance] = useState(false)
+  const [performance, setPerformance] = useState(startPerformance)
 
   const favorite = useFavoriteSong(song.id, fromFavorites)
   const { transpose, isFav } = favorite
