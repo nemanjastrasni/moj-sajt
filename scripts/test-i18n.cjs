@@ -55,6 +55,31 @@ test("unknown content and prototype keys never become translations", () => {
   for (const text of ["Zemlja", "Ekatarina Velika", "G   D\nOvo je zemlja za nas", "__proto__", "constructor"]) assert.equal(i18n.translate("en", text), text)
   assert.equal(i18n.translate("sr", "Pesme"), "Pesme"); assert.equal(i18n.translate("en", "Pesme"), "Songs")
 })
+
+test("playlist headings keep Serbian diacritics and their English translations", () => {
+  for (const [source, translated] of [["Po težini", "By difficulty"], ["Liste za slušanje", "Listening playlists"], ["Plejliste za slušanje", "Listening playlists"]]) {
+    assert.equal(i18n.translate("sr", source), source)
+    assert.equal(i18n.translate("en", source), translated)
+  }
+})
+
+test("translation dictionary never declares duplicate keys", () => {
+  const file = path.join(__dirname, "../lib/i18n/messages.ts")
+  const ast = ts.createSourceFile(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest, true)
+  const seen = new Set()
+  for (const statement of ast.statements) {
+    if (!ts.isVariableStatement(statement)) continue
+    for (const declaration of statement.declarationList.declarations) {
+      if (declaration.name.getText(ast) !== "english" || !ts.isObjectLiteralExpression(declaration.initializer)) continue
+      for (const property of declaration.initializer.properties) {
+        const key = property.name.text
+        assert.ok(!seen.has(key), "Duplicate translation: " + key)
+        seen.add(key)
+      }
+    }
+  }
+  assert.ok(seen.size > 0)
+})
 test("interpolation substitutes only named values without interpreting markup", () => {
   assert.equal(i18n.translate("en", "Pronadjeno {count} pesama.", { count: 4 }), "4 songs found.")
   assert.equal(i18n.translate("en", "{count}", { count: "<script>" }), "<script>")

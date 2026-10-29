@@ -5,9 +5,10 @@
 .button:focus-visible, .icon:focus-visible, .fret select:focus-visible { outline: 2px solid var(--theme-link, #69baff); outline-offset: 2px; }
 .icon { width: 44px; flex: 0 0 44px; padding: 0; }
 .panel { border-top: 1px solid var(--theme-line, #343b43); margin-top: 8px; padding-top: 10px; }
-.controls, .suggestion { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.fret { display: flex; align-items: center; gap: 8px; font-size: 13px; }
-.fret select { width: 120px; height: 44px; font-size: 16px; padding: 4px; border: 1px solid var(--theme-line, #47515b); border-radius: 4px; color: inherit; background: var(--background, #080808); }
+.controls { display: grid; grid-template-columns: 44px minmax(70px, 120px) 44px 44px; align-items: end; gap: 6px; }
+.suggestion { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.fret { display: flex; flex-direction: column; min-width: 0; gap: 4px; font-size: 12px; }
+.fret select { width: 100%; min-width: 0; height: 44px; font-size: 16px; padding: 4px; border: 1px solid var(--theme-line, #47515b); border-radius: 4px; color: inherit; background: var(--background, #080808); }
 .suggestion { margin-top: 8px; }
 .meta { color: var(--theme-muted, #a1a1aa); font-size: 13px; }
 .status { margin: 10px 0 6px; font-size: 13px; color: var(--theme-link, #69baff); }

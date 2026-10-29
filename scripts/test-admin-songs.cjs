@@ -6,7 +6,7 @@ const path = require("node:path")
 const { Prisma } = require("@prisma/client")
 const validation = require("../lib/adminSongs/validation.ts")
 const query = require("../lib/adminSongs/query.ts")
-let state, session, failCreate, failDelete, down, serialFailures, attempts, listArgs, cacheFailure
+let state, session, failCreate, failDelete, down, serialFailures, attempts, listArgs, cacheFailure, failReview, revokeOnWrite
 function matches(row, where = {}) {
   return Object.entries(where).every(([key, value]) => {
     if (key === "AND") return value.every(w => matches(row, w))
@@ -25,6 +25,8 @@ function matches(row, where = {}) {
 }
 const withArtist = song => song ? { ...song, artist: state.artists.find(a => a.id === song.artistId) } : null
 const tx = {
+  user: { findUnique: async ({ where }) => state.users.find(u => u.id === where.id) ?? null },
+  songReview: { create: async ({ data }) => { if (failReview) throw Error("review-write-failed"); state.reviews.push({ ...data }); return data } },
   artist: {
     findUnique: async ({ where }) => state.artists.find(a => a.id === where.id) ?? null,
     findMany: async ({ where, take }) => state.artists.filter(a => matches(a, where)).slice(0, take),
@@ -57,6 +59,7 @@ const prisma = {
     assert.equal(options.isolationLevel, "Serializable"); attempts++
     if (serialFailures-- > 0) throw new Prisma.PrismaClientKnownRequestError("conflict", { code: "P2034", clientVersion: "test" })
     const before = structuredClone(state)
+    if (revokeOnWrite) state.users[0].role = "user"
     try { return await work(tx) } catch (error) { state = before; throw error }
   },
 }
@@ -85,8 +88,9 @@ const seeded = () => {
   state.songs.push({ id: "target", artistId: "artist", title: "Moja pesma", slug: "legacy-song", category: "domace", lyrics: "Original lyrics", chords: "Original chords" })
 }
 beforeEach(() => {
-  state = { users: [{ id: "admin", role: "admin", banned: false }, { id: "user", role: "user", banned: false }], artists: [], songs: [], favorites: [], playlistSongs: [], proposals: [], playlists: [{ id: "playlist" }], listening: [{ id: "listening" }] }
+  state = { users: [{ id: "admin", role: "admin", banned: false }, { id: "user", role: "user", banned: false }], artists: [], songs: [], reviews: [], favorites: [], playlistSongs: [], proposals: [], playlists: [{ id: "playlist" }], listening: [{ id: "listening" }] }
   session = { user: { id: "admin", role: "admin" } }; failCreate = ""; failDelete = false; down = false; serialFailures = 0; attempts = 0; cacheFailure = false
+  failReview = false; revokeOnWrite = false
 })
 const nativeFetch = global.fetch
 afterEach(() => { global.fetch = nativeFetch })
@@ -125,11 +129,37 @@ test("batch commits every song, using diacritic-aware slugs and retaining text l
   const response = await routes.POST(request({ ...valid(), songs: [{ title: "Čudna noć", lyrics: "  G\nStih\n" }, { title: "Druga pesma", lyrics: "Text" }] }))
   assert.equal(response.status, 201); assert.equal((await response.json()).success, true)
   assert.equal(state.songs.length, 2); assert.equal(state.songs[0].slug, "cudna-noc"); assert.equal(state.songs[0].lyrics, "  G\nStih\n")
+  assert.deepEqual(state.reviews.map(row => [row.songId, row.status, row.reviewedById]), state.songs.map(song => [song.id, "manually_corrected", "admin"]))
+  assert.ok(state.reviews.every(row => row.updatedAt instanceof Date))
+})
+
+test("new admin songs receive only the manual mark; request fields cannot forge the reviewer or verified status", async () => {
+  seeded(); state.reviews.push({ songId: "target", status: "needs_fix", reviewedById: "other-admin" })
+  const previous = structuredClone(state.reviews)
+  const input = valid(); input.reviewedById = "forged"; input.status = "verified"; input.songs[0].review = { status: "verified", reviewedById: "forged" }
+  const response = await routes.POST(request(input))
+  assert.equal(response.status, 201)
+  assert.deepEqual(state.reviews.slice(0, 1), previous)
+  assert.equal(state.reviews[1].status, "manually_corrected"); assert.equal(state.reviews[1].reviewedById, "admin")
+})
+
+test("failure saving the initial review rolls back songs and the new artist", async () => {
+  failReview = true
+  const response = await routes.POST(request(valid()))
+  assert.equal(response.status, 503); assert.equal(state.songs.length, 0); assert.equal(state.artists.length, 0); assert.equal(state.reviews.length, 0)
+  assert.doesNotMatch(JSON.stringify(await response.json()), /review-write-failed/)
+})
+
+test("an admin revoked after the route check cannot create a manually reviewed song", async () => {
+  revokeOnWrite = true
+  assert.equal((await routes.POST(request(valid()))).status, 403)
+  assert.equal(state.songs.length, 0); assert.equal(state.artists.length, 0); assert.equal(state.reviews.length, 0)
 })
 test("a failure in the second song rolls back the first song and newly created artist", async () => {
   failCreate = "Druga"
   const response = await routes.POST(request({ ...valid(), songs: [...valid().songs, { title: "Druga", lyrics: "Text" }] }))
   assert.equal(response.status, 503); assert.equal(state.songs.length, 0); assert.equal(state.artists.length, 0)
+  assert.equal(state.reviews.length, 0)
   assert.doesNotMatch(JSON.stringify(await response.json()), /secret-db/)
 })
 test("existing artist metadata is never overwritten by blank or injected song-form fields", async () => {

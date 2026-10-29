@@ -12,9 +12,9 @@ export async function GET(request: Request) {
 }
 export async function POST(request: Request) {
   try {
-    await requireSongAdmin()
+    const actor = await requireSongAdmin()
     const input = validateSongBatch(await adminSongBody(request))
-    const result = await createAdminSongs(input)
+    const result = await createAdminSongs(input, actor.id)
     refreshAdminSongs()
     return NextResponse.json({ success: true, ...result }, { status: 201 })
   } catch (error) { return adminSongFailure(error) }

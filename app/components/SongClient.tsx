@@ -227,7 +227,7 @@ export default function SongClient({ song, adminTools, fromFavorites = false, pe
 </button>
           </div>
 
-       <div className="mb-4"><CapoControl capo={capo} disabled={favorite.controlsDisabled} /></div>
+       <div className="mb-4"><CapoControl key={song.id} capo={capo} disabled={favorite.controlsDisabled} /></div>
        <FavoriteTransposeStatus phase={favorite.phase} error={favorite.error} reload={favorite.reload} />
        {/* TITLE */}
       

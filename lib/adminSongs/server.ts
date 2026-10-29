@@ -47,8 +47,10 @@ async function chooseArtist(tx: Prisma.TransactionClient, input: ArtistChoice, a
 async function duplicateTitle(tx: Prisma.TransactionClient, artistId: string, title: string, except?: string) {
   if (await tx.song.findFirst({ where: { artistId, title: { equals: escapeAdminLike(title), mode: "insensitive" }, ...(except ? { id: { not: except } } : {}) } })) throw new SubmissionError(409, `Pesma "${title}" vec postoji kod ovog izvodjaca.`)
 }
-export async function createAdminSongs(input: SongBatch) {
+export async function createAdminSongs(input: SongBatch, actorId: string) {
   return transaction(async tx => {
+    const actor = await tx.user.findUnique({ where: { id: actorId }, select: { role: true, banned: true } })
+    if (!actor || actor.banned || actor.role !== "admin") throw new SubmissionError(403, "Nije dozvoljeno.")
     const artist = await chooseArtist(tx, input, true, input)
     const songs = []
     for (const draft of input.songs) {
@@ -59,7 +61,9 @@ export async function createAdminSongs(input: SongBatch) {
         if (suffix > 50) throw new SubmissionError(409, "Previse slicnih oznaka. Promeni naziv pesme.")
         slug = `${base}-${suffix++}`
       }
-      songs.push(await tx.song.create({ data: { ...draft, slug, category: input.category, artistId: artist.id }, select: { id: true, title: true, slug: true } }))
+      const song = await tx.song.create({ data: { ...draft, slug, category: input.category, artistId: artist.id }, select: { id: true, title: true, slug: true } })
+      await tx.songReview.create({ data: { songId: song.id, status: "manually_corrected", reviewedById: actorId, updatedAt: new Date() } })
+      songs.push(song)
     }
     return { songs, artist: { name: artist.name, slug: artist.slug }, category: input.category }
   })

@@ -9,6 +9,24 @@ const { transposeChordSymbol, parseChordSymbol } = require("../lib/chords/chordS
 const { printBlocks } = require("../lib/songbook/layout.ts")
 const sheet = source => parseSongSheet(source + "\nProbni stih pesme")
 
+test("an immediately available performance song honors a valid initial capo", () => {
+  const Module = require("node:module"), React = require("react"), { renderToStaticMarkup } = require("react-dom/server")
+  const originalLoad = Module._load
+  let useSongCapo
+  Module._load = function(request, parent, main) {
+    if (request.startsWith("@/")) request = path.join(__dirname, "..", request.slice(2))
+    return originalLoad.call(this, request, parent, main)
+  }
+  try { useSongCapo = require("../app/components/useSongCapo.ts").default } finally { Module._load = originalLoad }
+  for (const [initial, expected] of [[{ id: "first", fret: 2 }, 2], [{ id: "first", fret: 0 }, 0], [{ id: "other", fret: 2 }, null], [{ id: "first", fret: 13 }, null]]) {
+    let result
+    function Harness() { result = useSongCapo("first", sheet("F#m D A E"), 0, initial); return null }
+    renderToStaticMarkup(React.createElement(Harness))
+    assert.equal(result.selected, expected)
+    assert.equal(result.active, expected !== null)
+  }
+})
+
 test("capo frets accept only integers from zero through twelve", () => {
   for (const value of [0, 1, 5, 12]) assert.equal(isCapo(value), true)
   for (const value of [null, undefined, false, "2", -1, 13, 1.5, NaN, Infinity]) assert.equal(isCapo(value), false)
