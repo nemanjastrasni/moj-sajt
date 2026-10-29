@@ -1,92 +1,13 @@
-import UiText from "@/app/components/UiText"
-import { prisma } from "@/lib/prisma"
-import PlaylistPlayer from "@/app/components/PlaylistPlayer"
-import SharePlaylistButton from "@/app/components/SharePlaylistButton"
-
-export default async function Page({ params }: any) {
-
-  await prisma.listeningPlaylist.update({
-    where: { id: params.id },
-    data: {
-      views: {
-        increment: 1,
-      },
-    },
-  })
-
-  const playlist = await prisma.listeningPlaylist.findUnique({
-    where: { id: params.id },
-    select: {
-      id: true,
-      name: true,
-      category: true,
-      user: true,
-      items: {
-        orderBy: {
-          order: "asc",
-        },
-      },
-    },
-  })
-
-  if (!playlist) {
-    return <div className="p-10 text-white"><UiText text="Ne postoji" /></div>
-  }
-
-  return (
-    <div className="max-w-3xl mx-auto px-6 py-10 text-white">
-
-      <form
-  action={`/api/listening-playlist/${playlist.id}/rename`}
-  method="POST"
-  className="flex gap-2 mb-6"
->
-  <input
-    name="name"
-    defaultValue={playlist.name}
-    className="text-2xl font-bold bg-transparent border-b border-gray-600 outline-none"
-  />
-  <select
-  name="category"
-  defaultValue={playlist.category ?? "Mix"}
-  className="p-2 rounded bg-black border border-gray-700"
->
-  <option value="Domace"><UiText text="Zabavne" /></option>
-  <option value="Strane"><UiText text="Strane" /></option>
-  <option value="Narodne"><UiText text="Narodne" /></option>
-  <option value="Mix"><UiText text="Mix" /></option>
-</select>
-
-  <button className="text-sm text-green-400">
-    <UiText text="Sačuvaj" />
-  </button>
-  <SharePlaylistButton />
-</form>
-
-      {/* ADD ITEM */}
-      <form
-  action={`/api/listening-playlist/item`}
-  method="POST"
-  className="flex flex-col md:flex-row items-stretch md:items-center gap-3 mb-6"
->
-        <input type="hidden" name="playlistId" value={playlist.id} />
-
-        <input
-          name="url"
-          placeholder="YouTube link"
-          required
-          className="flex-1 p-3 rounded bg-black border border-gray-700 min-w-0"
-        />
-
-        <button className="bg-white text-black px-4 py-2 rounded">
-          <UiText text="+ Dodaj" />
-        </button>
-      </form>
-
-      {/* PLAYER + ITEMS */}
-      <PlaylistPlayer playlist={playlist} />
-      
-
-    </div>
-  )
+import { notFound } from "next/navigation"
+import MusicPlaylist from "@/app/components/MusicPlaylist"
+import { BackNavigationTarget } from "@/app/components/BackNavigation"
+import { musicViewerId,readableMusic } from "@/lib/music/server"
+import { MusicError } from "@/lib/music/model"
+export const dynamic="force-dynamic"
+export const metadata={title:"Muzicka lista",robots:{index:false,follow:false}}
+export default async function MusicPage({params}:{params:Promise<{id:string}>}){
+  const {id}=await params,viewerId=await musicViewerId()
+  let playlist
+  try{playlist=await readableMusic(id,viewerId)}catch(error){if(error instanceof MusicError&&error.status===404)notFound();throw error}
+  return <><BackNavigationTarget pathname={"/listening-playlist/"+encodeURIComponent(id)} href={playlist.editable?"/listening-playlist":"/public-listening-playlists"} /><MusicPlaylist initial={playlist} viewerId={viewerId} /></>
 }

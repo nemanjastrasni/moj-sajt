@@ -8,6 +8,8 @@ import Providers from "./providers"
 import { THEME_INIT_SCRIPT } from "@/lib/theme"
 import { LOCALE_INIT_SCRIPT } from "@/lib/i18n"
 import UiText from "@/app/components/UiText"
+import MusicWorkspace from "@/app/components/MusicWorkspace"
+import Link from "next/link"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -42,17 +44,17 @@ export default function RootLayout({
           </header>
 
           {/* CONTENT */}
-          <main className="w-full max-w-6xl mx-auto px-4 pb-24">
+          <MusicWorkspace><main className="w-full max-w-6xl mx-auto px-4 pb-24">
             {children}
-          </main>
+          </main></MusicWorkspace>
 
           <footer className="mx-auto max-w-6xl px-4 pb-8 text-xs text-gray-400">
-            <a href="/kontakt" className="underline underline-offset-2"><UiText text="Kontakt" /></a>
-            {" · "}<a href="/o-nama" className="underline underline-offset-2"><UiText text="O nama" /></a>
-            {" · "}<a href="/prijava-povrede" className="underline underline-offset-2"><UiText text="Prijava povrede prava" /></a>
+            <Link href="/kontakt" className="underline underline-offset-2"><UiText text="Kontakt" /></Link>
+            {" · "}<Link href="/o-nama" className="underline underline-offset-2"><UiText text="O nama" /></Link>
+            {" · "}<Link href="/prijava-povrede" className="underline underline-offset-2"><UiText text="Prijava povrede prava" /></Link>
             {" · "}
-            <a href="/foto-izvori" className="underline underline-offset-2">Fotografije / Photo Credits</a>
-            {" · "}<a href="/wiki-izvori" className="underline underline-offset-2">Wikipedia / Sources</a>
+            <Link href="/foto-izvori" className="underline underline-offset-2">Fotografije / Photo Credits</Link>
+            {" · "}<Link href="/wiki-izvori" className="underline underline-offset-2">Wikipedia / Sources</Link>
           </footer>
 
         </Providers>

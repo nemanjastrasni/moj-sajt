@@ -1,34 +1,18 @@
-import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { createMusic, musicBody, musicCatalog, musicFailure, musicViewerId, privateHeaders } from "@/lib/music/server"
+import { MusicError, musicCategories } from "@/lib/music/model"
 
-export async function POST(req: Request) {
+export async function GET(request:Request) {
   try {
-    const formData = await req.formData()
-    const name = formData.get("name") as string
-    const category =
-  (formData.get("category") as string) || "Mix"
-
-    if (!name) {
-      return NextResponse.json({ error: "Missing name" }, { status: 400 })
-    }
-    const session = await getServerSession(authOptions)
-    const playlist = await prisma.listeningPlaylist.create({
-  data: {
-  name,
-  category,
-  userId: (session?.user as any)?.id || null,
-},
-})
-
-    return NextResponse.redirect(
-      new URL(`/listening-playlist/${playlist.id}`, req.url),
-      303
-    )
-
-  } catch (error) {
-    console.error("CREATE ERROR:", error)
-    return NextResponse.json({ error: "Server error" }, { status: 500 })
-  }
+    const url=new URL(request.url),userId=await musicViewerId(),publicOnly=url.searchParams.get("scope")==="public"
+    if(!publicOnly&&!userId)throw new MusicError(401,"Prijavi se za svoju muziku.")
+    const category=url.searchParams.get("category")||undefined
+    if(category&&![...musicCategories,"admin"].includes(category))throw new MusicError(400,"Izaberi kategoriju.")
+    const page=Math.max(1,Math.min(10000,Number.parseInt(url.searchParams.get("page")||"1",10)||1))
+    return NextResponse.json({lists:await musicCatalog({userId:publicOnly?undefined:userId!,viewerId:userId,category,page,limit:publicOnly?50:100})},{headers:privateHeaders})
+  }catch(error){return musicFailure(error)}
+}
+export async function POST(request:Request) {
+  try { const playlist=await createMusic(await musicBody(request));return NextResponse.json({playlist},{status:201,headers:privateHeaders}) }
+  catch(error){return musicFailure(error)}
 }

@@ -24,8 +24,8 @@ export default function PlaylistsPage() {
       {["domace", "strane", "narodne"].map(slug => <Link className={styles.button} key={slug} href={`/top-50/${slug}`}><UiText text={{ domace: "Top 50 zabavnih", strane: "Top 50 stranih", narodne: "Top 50 narodnih" }[slug]!} /></Link>)}
     </div></section>
     <section className={styles.band}><h2><UiText text="Liste za slušanje" /></h2><div className={styles.actions}>
-      <Link className={styles.button} href="/listening-playlist"><UiText text="Moje plejliste za slušanje" /></Link>
-      <Link className={styles.button} href="/public-listening-playlists"><UiText text="Javne plejliste korisnika" /></Link>
+      <Link className={styles.button} href="/listening-playlist"><UiText text="Moja muzika" /></Link>
+      <Link className={styles.button} href="/public-listening-playlists"><UiText text="Javne muzicke liste" /></Link>
       {["domace", "strane", "narodne", "mix"].map(slug => <Link className={styles.button} key={slug} href={`/top-listening-playlists/${slug}`}><UiText text={{ domace: "20 najslušanijih zabavnih", strane: "20 najslušanijih stranih", narodne: "20 najslušanijih narodnih", mix: "20 najslušanijih Mix plejlisti" }[slug]!} /></Link>)}
     </div></section>
   </main>

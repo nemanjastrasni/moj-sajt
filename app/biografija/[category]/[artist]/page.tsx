@@ -13,6 +13,8 @@ import { BackNavigationTarget } from "@/app/components/BackNavigation"
 import { artistIndexHref } from "@/lib/navigation/parent"
 import { biographyText } from "@/lib/biographies/catalog"
 import UiText from "@/app/components/UiText"
+import Link from "next/link"
+import MusicButton from "@/app/components/MusicButton"
 
 function cirToLat(text: string) {
   const map: any = {
@@ -28,8 +30,8 @@ export const dynamic = "force-dynamic"
 export default async function BiographyPage({ params }: any) {
   const { artist: artistSlug, category } = await params
 
-  const artistData = await prisma.artist.findUnique({
-    where: { slug: artistSlug }
+  const artistData = await prisma.artist.findFirst({
+    where: { slug: artistSlug, category }
   })
 
   if (!artistData) notFound()
@@ -50,12 +52,12 @@ export default async function BiographyPage({ params }: any) {
       </h1>
       <AdminPageActions kind="artist" id={artistData.id} name={artistData.name} editHref={`/admin/artists/${encodeURIComponent(artistData.id)}/edit?from=bio`} biography={Boolean(artistData.bio || artistData.bioShort)} version={artistContentVersion(artistData)} />
 
-      <a
+      <div className="mb-6 flex flex-wrap items-center gap-3"><MusicButton /><Link
         href={`/pesme/${artistData.category}/${artistData.slug}`}
-        className="text-blue-500 underline block mb-6"
+        className="ui-button"
       >
         <UiText text="Idi na pesme izvođača" />
-      </a>
+      </Link></div>
 
       {/* BIOGRAFIJA */}
       <div style={{ marginBottom: "40px" }}>

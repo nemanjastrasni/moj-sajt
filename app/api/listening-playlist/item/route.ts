@@ -1,59 +1,17 @@
-import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
-
-export async function DELETE(req: Request) {
-  const { itemId } = await req.json()
-
-  await prisma.listeningItem.delete({
-    where: { id: itemId },
-  })
-
-  return Response.json({ ok: true })
+import { musicBody, musicFailure, mutateMusic, privateHeaders, removeMusicItem } from "@/lib/music/server"
+import { MusicError, musicId } from "@/lib/music/model"
+export async function POST(request:Request) {
+  try{
+    const input=await musicBody(request)
+    if(!musicId(input.playlistId))throw new MusicError(400,"Izaberi muzicku listu.")
+    return NextResponse.json({playlist:await mutateMusic(input.playlistId,input,"add")},{status:201,headers:privateHeaders})
+  }catch(error){return musicFailure(error)}
 }
-
-export async function POST(req: Request) {
-  try {
-    const formData = await req.formData()
-
-    const url = formData.get("url") as string
-    const playlistId = formData.get("playlistId") as string
-
-    if (!url || !playlistId) {
-      return NextResponse.json(
-        { error: "Missing data" },
-        { status: 400 }
-      )
-    }
-
-    // 🔥 DETEKCIJA PLATFORME
-    let type = "unknown"
-
-    if (url.includes("youtube") || url.includes("youtu.be")) {
-      type = "youtube"
-    }
-
-    if (url.includes("spotify")) {
-      type = "spotify"
-    }
-
-    await prisma.listeningItem.create({
-      data: {
-        url,
-        playlistId,
-        type,
-      },
-    })
-
-    return NextResponse.redirect(
-      new URL(`/listening-playlist/${playlistId}`, req.url)
-    )
-
-  } catch (error) {
-    console.error("ITEM ERROR:", error)
-
-    return NextResponse.json(
-      { error: "Server error" },
-      { status: 500 }
-    )
-  }
+export async function DELETE(request:Request) {
+  try{
+    const input=await musicBody(request)
+    if(!musicId(input.itemId))throw new MusicError(400,"Izaberi stavku.")
+    return NextResponse.json({playlist:await removeMusicItem(input.itemId,input)},{headers:privateHeaders})
+  }catch(error){return musicFailure(error)}
 }
