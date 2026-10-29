@@ -18,12 +18,14 @@ import { Maximize, Minus, Plus, RotateCcw, Star } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { getUsedChords, parseSongSheet } from "@/lib/chords/songSheet"
 import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
-import { withCapoHref } from "@/lib/chords/capo"
+import usePlaylistSongSettings from "./usePlaylistSongSettings"
+import PlaylistSettingsStatus from "./PlaylistSettingsStatus"
 
 type Props = {
   adminTools?: ReactNode
   fromFavorites?: boolean
   performanceHref?: string
+  playlistId?: string
   songVersion?: string
   startPerformance?: boolean
   song: {
@@ -43,13 +45,16 @@ type Props = {
   } | null
 }
 
-export default function SongClient({ song, adminTools, fromFavorites = false, performanceHref, songVersion, startPerformance = false }: Props) {
+export default function SongClient({ song, adminTools, fromFavorites = false, performanceHref, playlistId, songVersion, startPerformance = false }: Props) {
   const { t } = useI18n()
   const router = useRouter()
   const [performance, setPerformance] = useState(startPerformance)
 
   const favorite = useFavoriteSong(song.id, fromFavorites)
-  const { transpose, isFav } = favorite
+  const playlistSettings = usePlaylistSongSettings(playlistId, song.id)
+  const controls = playlistId ? playlistSettings : favorite
+  const { transpose } = controls
+  const { isFav } = favorite
   const [showVideo, setShowVideo] = useState(false)
   const [miniPlayer, setMiniPlayer] = useState(false)
   const [isAutoScrolling, setIsAutoScrolling] = useState(false)
@@ -67,7 +72,7 @@ export default function SongClient({ song, adminTools, fromFavorites = false, pe
 
  
   const sheetLines = useMemo(() => parseSongSheet(displayContent), [displayContent])
-  const capo = useSongCapo(song.id, sheetLines, transpose)
+  const capo = useSongCapo(song.id, sheetLines, transpose, undefined, playlistId ? { value: playlistSettings.capo, change: playlistSettings.changeCapo } : undefined)
   const usedChords = useMemo(() =>
     getUsedChords(capo.lines).map((chord) => transposeChordSymbol(chord, capo.shift)),
     [capo.lines, capo.shift])
@@ -130,10 +135,10 @@ export default function SongClient({ song, adminTools, fromFavorites = false, pe
 
             <div className="flex items-center gap-2">
               <span className="uppercase text-xs">{t("Ton")}</span>
-              <button type="button" disabled={favorite.controlsDisabled || transpose <= -11} aria-label={t("Smanji tonalitet")} title={t("Smanji tonalitet")} onClick={() => favorite.change(value => Math.max(-11, value - 1))} className="inline-flex h-11 w-11 items-center justify-center disabled:opacity-40"><Minus size={18} /></button>
+              <button type="button" disabled={controls.controlsDisabled || transpose <= -11} aria-label={t("Smanji tonalitet")} title={t("Smanji tonalitet")} onClick={() => controls.change(value => Math.max(-11, value - 1))} className="inline-flex h-11 w-11 items-center justify-center disabled:opacity-40"><Minus size={18} /></button>
               <output aria-label={t("Transpozicija")} className="text-white font-medium w-10 text-center">{transpose > 0 ? `+${transpose}` : transpose}</output>
-              <button type="button" disabled={favorite.controlsDisabled || transpose >= 11} aria-label={t("Povecaj tonalitet")} title={t("Povecaj tonalitet")} onClick={() => favorite.change(value => Math.min(11, value + 1))} className="inline-flex h-11 w-11 items-center justify-center disabled:opacity-40"><Plus size={18} /></button>
-              <button type="button" disabled={favorite.controlsDisabled} aria-label={t("Originalni tonalitet")} title={t("Originalni tonalitet")} onClick={() => favorite.change(0)} className="inline-flex h-11 w-11 items-center justify-center disabled:opacity-40"><RotateCcw size={18} /></button>
+              <button type="button" disabled={controls.controlsDisabled || transpose >= 11} aria-label={t("Povecaj tonalitet")} title={t("Povecaj tonalitet")} onClick={() => controls.change(value => Math.min(11, value + 1))} className="inline-flex h-11 w-11 items-center justify-center disabled:opacity-40"><Plus size={18} /></button>
+              <button type="button" disabled={controls.controlsDisabled} aria-label={t("Originalni tonalitet")} title={t("Originalni tonalitet")} onClick={() => controls.change(0)} className="inline-flex h-11 w-11 items-center justify-center disabled:opacity-40"><RotateCcw size={18} /></button>
             </div>
 
             {/* SCROLL */}
@@ -228,8 +233,8 @@ export default function SongClient({ song, adminTools, fromFavorites = false, pe
 </button>
           </div>
 
-       <div className="mb-4"><CapoControl key={song.id} capo={capo} disabled={favorite.controlsDisabled} /></div>
-       <FavoriteTransposeStatus phase={favorite.phase} error={favorite.error} reload={favorite.reload} />
+       <div className="mb-4"><CapoControl key={song.id} capo={capo} disabled={controls.controlsDisabled} /></div>
+       {playlistId ? <PlaylistSettingsStatus controls={playlistSettings} /> : <FavoriteTransposeStatus phase={favorite.phase} error={favorite.error} reload={favorite.reload} />}
        {/* TITLE */}
       
 <div className="flex flex-wrap items-center gap-4 mb-2 relative z-10">
@@ -237,19 +242,19 @@ export default function SongClient({ song, adminTools, fromFavorites = false, pe
     {title}
   </h1>
 
-  <SongPdfButton song={{ id: song.id, title, artist, lyrics: displayContent }} transpose={transpose} capo={capo.active ? capo.selected : null} textSize={textSize} chordSize={chordSize} />
-  <button type="button" disabled={["loading", "saving", "updating"].includes(favorite.phase)} title={t("Rezim za sviranje")} aria-label={t("Rezim za sviranje")} className="inline-flex h-11 w-11 items-center justify-center rounded border border-gray-600 disabled:opacity-40" onClick={() => { stopAutoScroll(); setShowVideo(false); if (performanceHref) router.push(withCapoHref(performanceHref, capo.active ? capo.selected : null)); else setPerformance(true) }}><Maximize size={18} /></button>
+  <SongPdfButton song={{ id: song.id, title, artist, lyrics: displayContent }} transpose={transpose} capo={capo.active ? capo.selected : null} disabled={controls.controlsDisabled} textSize={textSize} chordSize={chordSize} />
+  <button type="button" disabled={["loading", "saving", "updating"].includes(controls.phase)} title={t("Rezim za sviranje")} aria-label={t("Rezim za sviranje")} className="inline-flex h-11 w-11 items-center justify-center rounded border border-gray-600 disabled:opacity-40" onClick={() => { if (performanceHref && !playlistSettings.canLeave()) return; stopAutoScroll(); setShowVideo(false); if (performanceHref) router.push(performanceHref); else setPerformance(true) }}><Maximize size={18} /></button>
   <button type="button" title={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")} aria-label={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")} aria-pressed={isFav} disabled={favorite.favoriteDisabled} onClick={() => void favorite.toggle()} className={`inline-flex h-11 w-11 items-center justify-center transition disabled:opacity-40 ${isFav ? "text-yellow-400" : "text-gray-500 hover:text-yellow-300"}`}>
     <Star size={22} fill={isFav ? "currentColor" : "none"} />
   </button>
 
-  <SongPlaylistButton key={song.id} songId={song.id} />
+  <SongPlaylistButton key={song.id} songId={song.id} disabled={controls.controlsDisabled} settings={{ transpose, capo: capo.active ? capo.selected : null }} />
   {songVersion && <SongReportButton songId={song.id} songVersion={songVersion} title={title} artist={artist} transpose={transpose} />}
 
 </div>
 
 {adminTools}
-{performance && <PerformanceView song={{ id: song.id, title, artist, lyrics: displayContent }} controls={favorite} capoControl={capo} close={() => setPerformance(false)} />}
+{performance && <PerformanceView playlistId={playlistId} song={{ id: song.id, title, artist, lyrics: displayContent }} controls={controls} capoControl={capo} settingsTools={playlistId ? <PlaylistSettingsStatus controls={playlistSettings} /> : undefined} leaveGuard={playlistId ? playlistSettings.canLeave : undefined} close={() => setPerformance(false)} />}
 {song.artistSlug ? (
   <Link
   href={`/pesme/${song.category}/${song.artistSlug}`}
@@ -272,7 +277,7 @@ export default function SongClient({ song, adminTools, fromFavorites = false, pe
   </div>
 )}
           {/* CONTENT */}
-<SongSheet lines={capo.lines} transpose={capo.shift} textSize={textSize} chordSize={chordSize} />
+{playlistId && playlistSettings.phase === "loading" ? <p role="status">{t("Ucitavam podesavanja playliste...")}</p> : <SongSheet lines={capo.lines} transpose={capo.shift} textSize={textSize} chordSize={chordSize} />}
 </div>
 
 

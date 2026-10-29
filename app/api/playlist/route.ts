@@ -3,15 +3,22 @@ import { submissionUser } from "@/lib/submissions/server"
 import { SubmissionError } from "@/lib/submissions/validation"
 import { playlistCategory, playlistId, playlistName, playlistUpdate } from "@/lib/playlists/validation"
 import { ownedPlaylist, playlistBody, playlistFailure, playlistOrder, playlistTransaction, privateHeaders, refreshPlaylist } from "@/lib/playlists/server"
+import { playingValues } from "@/lib/playlists/settings"
+import { activeSettingsOwner, checkSourceCapo } from "@/lib/playlists/settingsServer"
 
 export async function POST(request: Request) {
   try {
     const user = await submissionUser(), body = await playlistBody(request)
     const name = playlistName(body?.name), category = playlistCategory(body?.category)
     const songId = body?.songId == null ? null : playlistId(body.songId)
+    const settings = body.settings === undefined ? null : playingValues(body.settings)
+    if (settings && !songId) throw new SubmissionError(400, "Proveri tonalitet i capo.")
     const playlist = await playlistTransaction(async tx => {
-      if (songId && !await tx.song.findUnique({ where: { id: songId }, select: { id: true } })) throw new SubmissionError(404, "Pesma nije dostupna.")
-      return tx.playlist.create({ data: { name, category, userId: user.id, isPublic: false, ...(songId ? { songs: { create: { songId, order: 0 } } } : {}) } })
+      if (settings) await activeSettingsOwner(tx, user.id)
+      const song = songId ? await tx.song.findUnique({ where: { id: songId }, select: { id: true, lyrics: true } }) : null
+      if (songId && !song) throw new SubmissionError(404, "Pesma nije dostupna.")
+      if (settings && song) checkSourceCapo(song.lyrics, settings)
+      return tx.playlist.create({ data: { name, category, userId: user.id, isPublic: false, ...(songId ? { songs: { create: { songId, order: 0, ...(settings ? { setting: { create: { userId: user.id, ...settings } } } : {}) } } } : {}) } })
     })
     refreshPlaylist(playlist.id)
     return NextResponse.json(playlist, { headers: privateHeaders })
@@ -22,12 +29,17 @@ export async function PUT(request: Request) {
   try {
     const user = await submissionUser(), body = await playlistBody(request)
     const id = playlistId(body?.playlistId), songId = playlistId(body?.songId)
+    const settings = body.settings === undefined ? null : playingValues(body.settings)
     const item = await playlistTransaction(async tx => {
+      if (settings) await activeSettingsOwner(tx, user.id)
       await ownedPlaylist(tx, id, user.id)
-      if (!await tx.song.findUnique({ where: { id: songId }, select: { id: true } })) throw new SubmissionError(404, "Pesma nije dostupna.")
+      const song = await tx.song.findUnique({ where: { id: songId }, select: { id: true, lyrics: true } })
+      if (!song) throw new SubmissionError(404, "Pesma nije dostupna.")
+      if (settings) checkSourceCapo(song.lyrics, settings)
       const already = await tx.playlistSong.findFirst({ where: { songId, playlist: { userId: user.id } }, select: { id: true } })
       const last = await tx.playlistSong.findFirst({ where: { playlistId: id, order: { not: null } }, orderBy: { order: "desc" }, select: { order: true } })
       const created = await tx.playlistSong.create({ data: { playlistId: id, songId, order: (last?.order ?? -1) + 1 } })
+      if (settings) await tx.playlistSongSetting.create({ data: { playlistSongId: created.id, userId: user.id, ...settings } })
       if (!already) await tx.song.update({ where: { id: songId }, data: { popularity: { increment: 1 } } })
       return created
     })

@@ -29,6 +29,8 @@
     "test:favorite-transpose": "node --test scripts/test-favorite-transpose.cjs",
     "test:performance": "node --test scripts/test-performance.cjs",
     "test:resume": "node --test scripts/test-resume.cjs",
+    "test:playlist-settings": "node --test scripts/test-playlist-settings.cjs",
+    "playlists:settings:setup": "node scripts/setup-playlist-settings.cjs",
     "test:metronome": "node --test scripts/test-metronome.cjs",
     "test:tuner": "node --test scripts/test-tuner.cjs",
     "test:theme": "node --test scripts/test-theme.cjs",

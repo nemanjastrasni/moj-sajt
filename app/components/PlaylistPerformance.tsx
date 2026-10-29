@@ -1,14 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { loadPerformance } from "@/lib/performance/client"
 import type { PerformanceSnapshot } from "@/lib/performance/model"
-import useFavoriteSong from "./useFavoriteSong"
+import usePlaylistSongSettings from "./usePlaylistSongSettings"
+import useSongCapo from "./useSongCapo"
+import PlaylistSettingsStatus from "./PlaylistSettingsStatus"
+import { parseSongSheet } from "@/lib/chords/songSheet"
 import PerformanceView from "./PerformanceView"
 
-export default function PlaylistPerformance({ playlistId, initialSong, initialCapo }: { playlistId: string; initialSong?: string; initialCapo?: number }) {
+export default function PlaylistPerformance({ playlistId, initialSong }: { playlistId: string; initialSong?: string }) {
   const router = useRouter(), { data: session, status } = useSession()
   const [snapshot, setSnapshot] = useState<{ key: string; data: PerformanceSnapshot | null; error: string } | null>(null)
   const [selected, setSelected] = useState(initialSong), [retry, setRetry] = useState(0)
@@ -16,7 +19,10 @@ export default function PlaylistPerformance({ playlistId, initialSong, initialCa
   const current = snapshot?.key === requestKey ? snapshot.data : null
   const loading = status === "loading" || snapshot?.key !== requestKey
   const error = snapshot?.key === requestKey ? snapshot.error : ""
-  const controls = useFavoriteSong(current?.current.id ?? "", true)
+  const controls = usePlaylistSongSettings(playlistId, current?.current.id ?? "")
+  const lyrics = current?.current.lyrics ?? ""
+  const lines = useMemo(() => parseSongSheet(lyrics), [lyrics])
+  const capo = useSongCapo(current?.current.id ?? "", lines, controls.transpose, undefined, { value: controls.capo, change: controls.changeCapo })
   useEffect(() => {
     if (status === "loading") return
     const controller = new AbortController()
@@ -28,7 +34,7 @@ export default function PlaylistPerformance({ playlistId, initialSong, initialCa
     return () => controller.abort()
   }, [playlistId, selected, requestKey, status])
   const index = current ? current.songs.findIndex(song => song.id === current.current.id) : -1
-  return <PerformanceView playlistId={playlistId} song={current?.current ?? null} name={current?.name} controls={controls} initialCapo={initialSong && initialCapo !== undefined ? { id: initialSong, fret: initialCapo } : undefined} loading={loading} error={error} close={() => router.replace(`/plejliste/${encodeURIComponent(playlistId)}`)} retry={() => setRetry(value => value + 1)}
+  return <PerformanceView playlistId={playlistId} song={current?.current ?? null} name={current?.name} controls={controls} capoControl={capo} settingsTools={<PlaylistSettingsStatus controls={controls} />} leaveGuard={controls.canLeave} loading={loading || controls.phase === "loading"} error={error} close={() => router.replace(`/plejliste/${encodeURIComponent(playlistId)}`)} retry={() => setRetry(value => value + 1)}
     position={index >= 0 ? index : undefined} total={current?.songs.length ?? 0}
     previous={current && index > 0 ? () => setSelected(current.songs[index - 1].id) : undefined}
     next={current && index >= 0 && index < current.songs.length - 1 ? () => setSelected(current.songs[index + 1].id) : undefined}

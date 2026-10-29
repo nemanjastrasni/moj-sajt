@@ -20,10 +20,13 @@ import { performanceHref } from "@/lib/performance/model"
 export type PlaylistSongItem = {
   id: string; songId: string; playlistId: string; order: number | null
   song: { title: string; slug: string; category: string; artist: { name: string; slug: string } }
+  settings?: { transpose: number; capo: number | null }
 }
 function SongLink({ item }: { item: PlaylistSongItem }) {
+  const { t } = useI18n()
   return <Link href={playlistSongHref(item.song, "/plejliste/" + encodeURIComponent(item.playlistId))} translate="no">
     <span className={styles.muted}>{item.song.artist.name}</span>{" - "}{item.song.title}
+    {item.settings && (item.settings.transpose !== 0 || item.settings.capo !== null) && <span className={styles.meta}>{t("Ton")}: {item.settings.transpose > 0 ? "+" : ""}{item.settings.transpose}{item.settings.capo !== null ? ` · Capo ${item.settings.capo}` : ""}</span>}
   </Link>
 }
 function SortableItem({ item, disabled, remove }: { item: PlaylistSongItem; disabled: boolean; remove: () => void }) {
@@ -45,7 +48,7 @@ export default function PlaylistClient({ playlistId, name, initialPublic, canEdi
   const [busy, setBusy] = useState<"pdf" | "save" | null>(null), [error, setError] = useState(""), [notice, setNotice] = useState("")
   const [progress, setProgress] = useState(0), [file, setFile] = useState<{ url: string; filename: string; key: string } | null>(null)
   const running = useRef(false), alive = useRef(true)
-  const key = JSON.stringify([title, songs.map(song => song.songId), locale])
+  const key = JSON.stringify([title, songs.map(song => [song.songId, song.settings]), locale])
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }))
   useEffect(() => { alive.current = true; return () => { alive.current = false } }, [])
   useEffect(() => () => { if (file) URL.revokeObjectURL(file.url) }, [file])

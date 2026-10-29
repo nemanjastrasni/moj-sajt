@@ -20,10 +20,11 @@ export async function readPlaylistChoices() {
   return data
 }
 import type { PdfSong } from "../songbook/model"
+import { isPlayingValues } from "./settings"
 
 
 export async function playlistPdfSongs(id: string, songIds: string[]) {
   const data = await playlistRequest<{ name: string; songs: PdfSong[] }>(`/api/playlist/${encodeURIComponent(id)}/pdf`, "POST", { songIds })
-  if (typeof data.name !== "string" || !Array.isArray(data.songs) || data.songs.length !== songIds.length || data.songs.some((song, index) => !song || song.id !== songIds[index] || song.transpose !== 0 || typeof song.title !== "string" || typeof song.artist !== "string" || typeof song.lyrics !== "string")) throw new Error("Spisak pesama nije ispravan. Osvezi playlistu.")
+  if (typeof data.name !== "string" || !Array.isArray(data.songs) || data.songs.length !== songIds.length || data.songs.some((song, index) => !song || song.id !== songIds[index] || !isPlayingValues({ transpose: song.transpose, capo: song.capo ?? null }) || typeof song.title !== "string" || typeof song.artist !== "string" || typeof song.lyrics !== "string")) throw new Error("Spisak pesama nije ispravan. Osvezi playlistu.")
   return data
 }

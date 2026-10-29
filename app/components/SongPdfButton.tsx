@@ -6,8 +6,8 @@ import { useI18n } from "./UiText"
 import { normalizeTranspose } from "@/lib/songbook/model"
 import { downloadPdf, pdfError, preparePdfDownload } from "@/lib/songbook/client"
 
-type Props = { song: { id: string; title: string; artist: string; lyrics: string }; transpose: number; capo?: number | null; textSize: number; chordSize: number }
-export default function SongPdfButton({ song, transpose, capo, textSize, chordSize }: Props) {
+type Props = { song: { id: string; title: string; artist: string; lyrics: string }; transpose: number; capo?: number | null; textSize: number; chordSize: number; disabled?: boolean }
+export default function SongPdfButton({ song, transpose, capo, textSize, chordSize, disabled = false }: Props) {
   const { t, locale } = useI18n()
   const running = useRef(false)
   const alive = useRef(true)
@@ -30,7 +30,7 @@ export default function SongPdfButton({ song, transpose, capo, textSize, chordSi
     finally { running.current = false; if (alive.current) setBusy(false) }
   }
   return <div className="flex min-w-0 flex-wrap items-center gap-2">
-    <button type="button" disabled={busy} title={t("Preuzmi pesmu kao PDF")} aria-label={t("Preuzmi pesmu kao PDF")} onClick={() => void exportSong()} className="inline-flex min-h-11 items-center gap-2 rounded border border-gray-600 px-3 text-sm disabled:opacity-50">
+    <button type="button" disabled={busy || disabled} title={t("Preuzmi pesmu kao PDF")} aria-label={t("Preuzmi pesmu kao PDF")} onClick={() => void exportSong()} className="inline-flex min-h-11 items-center gap-2 rounded border border-gray-600 px-3 text-sm disabled:opacity-50">
       {busy ? <LoaderCircle size={18} className="animate-spin" /> : <FileDown size={18} />}PDF
     </button>
     {busy && <span role="status" className="sr-only">{t("Pripremam PDF...")}</span>}

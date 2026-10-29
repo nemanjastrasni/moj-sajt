@@ -5,11 +5,10 @@ The song page and performance view offer a temporary capo setting from fret 0
 the selector and step buttons explore alternatives. Reset restores the source
 shapes at the current sounding transposition.
 
-Capo changes never write songs, reviews or favorite transpositions. The chosen
-position is not saved to an account. A song opened in playlist performance
-passes its current capo in the performance URL, scoped to that initial song.
-Subsequent songs do not inherit the previous song's position. Favorite key
-restoration continues to work independently.
+Capo changes never write songs, reviews or favorite transpositions. Standalone
+capo changes remain temporary. Owned playlists now support explicit per-entry
+key/capo saves; see `playlist-song-settings.md`. Playlist performance restores
+those settings rather than inheriting a previous song or favorite's key.
 
 ## Musical Behavior
 
@@ -42,9 +41,9 @@ embedded videos.
 ## PDF and Interface
 
 Single-song PDF export follows the selected capo, prints its fret and uses the
-same converted chord shapes as the screen. Existing playlist/songbook exports
-do not acquire an account-wide capo setting. Without a selected capo their
-behavior stays unchanged.
+same converted chord shapes as the screen. Owned playlist PDFs now use saved
+per-entry arrangements. Public readers do not receive those private settings;
+there is no account-wide capo setting for unrelated songbook exports.
 
 Controls are translated in Serbian/English, themed in dark/light, use 44px
 targets and fit on a 320px viewport. Expanding a panel belongs to its song;
@@ -65,5 +64,5 @@ database writes. Temporary preview routes were removed after verification.
 
 Physical-device/audio comparison and a full production build were not verified
 in this review. These checks do not validate every song's musical accuracy.
-Persistent per-song capo preferences and side-by-side ranked alternatives are
-possible follow-ups, not requirements of this first version.
+Persistent per-entry playlist preferences have since been added in
+`playlist-song-settings.md`. Side-by-side ranked alternatives remain optional.

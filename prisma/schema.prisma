@@ -206,8 +206,21 @@ model PlaylistSong {
   order      Int?     @default(0)
   playlist   Playlist @relation(fields: [playlistId], references: [id])
   song       Song     @relation(fields: [songId], references: [id])
+  setting    PlaylistSongSetting?
 
   @@unique([playlistId, songId])
+}
+
+model PlaylistSongSetting {
+  playlistSongId String       @id
+  userId         String
+  transpose      Int          @default(0)
+  capo           Int?
+  version        Int          @default(1)
+  updatedAt      DateTime     @default(now())
+  playlistSong   PlaylistSong @relation(fields: [playlistSongId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([userId])
 }
 
 model analytics {

@@ -1,10 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { ChevronLeft, ChevronRight, Maximize, Minimize, Minus, Pause, Play, Plus, RotateCcw, SlidersHorizontal, X } from "lucide-react"
 import { parseSongSheet } from "@/lib/chords/songSheet"
 import type { PerformanceSong } from "@/lib/performance/model"
-import type useFavoriteSong from "./useFavoriteSong"
 import SongSheet from "./SongSheet"
 import FavoriteTransposeStatus from "./FavoriteTransposeStatus"
 import MetronomeButton from "./MetronomeButton"
@@ -15,9 +14,9 @@ import useRememberPerformance from "./useRememberPerformance"
 import { useI18n } from "./UiText"
 import styles from "./PerformanceView.module.css"
 
-type KeyControls = Pick<ReturnType<typeof useFavoriteSong>, "transpose" | "phase" | "error" | "controlsDisabled" | "change" | "reload">
-type Props = { song: PerformanceSong | null; controls: KeyControls; capoControl?: SongCapo; initialCapo?: { id: string; fret: number }; playlistId?: string; close: () => void; loading?: boolean; error?: string; retry?: () => void; previous?: () => void; next?: () => void; position?: number; total?: number; name?: string }
-export default function PerformanceView({ song, controls, capoControl, initialCapo, playlistId, close, loading = false, error = "", retry, previous, next, position, total, name }: Props) {
+type KeyControls = { transpose: number; phase: string; error: string; controlsDisabled: boolean; change: (value: number | ((current: number) => number)) => void; reload: () => Promise<void> }
+type Props = { song: PerformanceSong | null; controls: KeyControls; capoControl?: SongCapo; initialCapo?: { id: string; fret: number }; playlistId?: string; settingsTools?: ReactNode; leaveGuard?: () => boolean; close: () => void; loading?: boolean; error?: string; retry?: () => void; previous?: () => void; next?: () => void; position?: number; total?: number; name?: string }
+export default function PerformanceView({ song, controls, capoControl, initialCapo, playlistId, settingsTools, leaveGuard, close, loading = false, error = "", retry, previous, next, position, total, name }: Props) {
   const { t } = useI18n(), dialog = useRef<HTMLDialogElement>(null), screen = useRef<HTMLDivElement>(null), scroll = useRef<HTMLDivElement>(null)
   const [fullscreen, setFullscreen] = useState(false), [notice, setNotice] = useState(""), [settings, setSettings] = useState(false)
   const [textSize, setTextSize] = useState(20), [chordSize, setChordSize] = useState(20), [speed, setSpeed] = useState(3)
@@ -63,7 +62,7 @@ export default function PerformanceView({ song, controls, capoControl, initialCa
     return () => cancelAnimationFrame(frame)
   }, [playing, speed, loading, song, setPlaying])
   function leave() {
-    if (saving) return
+    if (saving || leaveGuard && !leaveGuard()) return
     setPlaying(false)
     if (document.fullscreenElement === screen.current) void document.exitFullscreen().catch(() => {}).finally(close)
     else close()
@@ -96,7 +95,7 @@ export default function PerformanceView({ song, controls, capoControl, initialCa
           <button type="button" className={styles.icon} disabled={loading || !song} title={t(playing ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} aria-label={t(playing ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} aria-pressed={playing} onClick={() => setPlaying(!playing)}>{playing ? <Pause /> : <Play />}</button>
           <TunerButton /><MetronomeButton />
           <CapoControl key={song?.id} capo={capo} disabled={disabled} />
-          {song && <FavoriteTransposeStatus phase={controls.phase} error={controls.error} reload={controls.reload} />}
+          {song && (settingsTools ?? <FavoriteTransposeStatus phase={controls.phase} error={controls.error} reload={controls.reload} />)}
         </div>
         {settings && <div className={styles.settings}>
           <label>{t("Velicina teksta")}<input type="range" min={14} max={32} value={textSize} onChange={event => setTextSize(Number(event.target.value))} /></label>
@@ -109,9 +108,9 @@ export default function PerformanceView({ song, controls, capoControl, initialCa
         {loading ? <p role="status">{t("Ucitavam pesmu...")}</p> : error ? <div role="alert"><p>{t(error)}</p>{retry && <button type="button" className={styles.button} onClick={retry}>{t("Pokusaj ponovo")}</button>}</div> : song && <SongSheet lines={capo.lines} transpose={capo.shift} textSize={textSize} chordSize={chordSize} />}
       </div>
       {total !== undefined && <nav className={styles.navigation} aria-label={t("Pesme u playlisti")}>
-        <button type="button" className={styles.button} disabled={!previous || loading || saving} onClick={previous}><ChevronLeft />{t("Prethodna")}</button>
+        <button type="button" className={styles.button} disabled={!previous || loading || saving} onClick={() => { if (!leaveGuard || leaveGuard()) previous?.() }}><ChevronLeft />{t("Prethodna")}</button>
         <span aria-live="polite">{position === undefined ? "-" : position + 1} / {total}</span>
-        <button type="button" className={styles.button} disabled={!next || loading || saving} onClick={next}>{t("Sledeca")}<ChevronRight /></button>
+        <button type="button" className={styles.button} disabled={!next || loading || saving} onClick={() => { if (!leaveGuard || leaveGuard()) next?.() }}>{t("Sledeca")}<ChevronRight /></button>
       </nav>}
     </div>
   </dialog>

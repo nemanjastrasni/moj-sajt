@@ -81,6 +81,7 @@ export default async function SongPage({ params, searchParams }: Props) {
       startPerformance={query.play === "1"}
       songVersion={contentVersion}
       performanceHref={playablePlaylist ? performanceHref(playablePlaylist, song.id) : undefined}
+      playlistId={playablePlaylist ?? undefined}
       adminTools={<AdminPageActions kind="song" id={song.id} name={song.title} songVersion={contentVersion} editHref={`/admin/songs/${encodeURIComponent(song.id)}/edit?from=song`} afterDelete={artistPageHref(song.artist)} />}
       song={{
         id: song.id,

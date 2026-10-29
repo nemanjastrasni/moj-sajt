@@ -20,7 +20,9 @@ Storage failures leave normal playback and playlist access working.
 
 This does not synchronize history between browsers/devices and does not store
 scroll position or autoscroll state. Favorite transposition is restored by the
-existing favorites workflow. Unsaved key/capo choices are not restored.
+existing favorites workflow. Saved per-entry playlist keys/capos are loaded
+from the private settings API when continuing a playlist. Unsaved choices are
+not restored.
 
 ## Read-Only Resolution
 
