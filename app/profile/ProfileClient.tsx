@@ -2,6 +2,7 @@
 
 import { useI18n } from "@/app/components/UiText"
 import { useState } from "react"
+import Link from "next/link"
 
 const avatars = [
   "/avatars/hendrix.png",
@@ -11,7 +12,7 @@ const avatars = [
   "/avatars/knopfler.png",
 ]
 
-export default function ProfileClient({ user, favorites }: any) {
+export default function ProfileClient({ user }: any) {
   const { t } = useI18n()
 
   const [name, setName] = useState(user?.name || "")
@@ -260,41 +261,8 @@ setSuccess(true)
           {t("Sačuvaj izmene")}
         </button>
 
-        {/* FAVORITES */}
         <div className="mt-10">
-          <h2 className="text-xl font-bold mb-3">⭐ {t("Favoriti")}</h2>
-
-          {favorites?.length === 0 && (
-            <p className="text-gray-500">{t("Nema favorita")}</p>
-          )}
-
-          {favorites?.map((f: any) => (
-            <div key={f.id} className="mb-2 flex items-center justify-between">
-              
-              <a
-                href={`/pesme/${f.song.category}/${f.song.artistSlug}/${f.song.slug}`}
-                className="text-blue-600 hover:underline"
-              >
-                {f.song.title}
-              </a>
-
-              <button
-                onClick={async () => {
-                  await fetch("/api/favorite", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ songId: f.song.id }),
-                  })
-
-                  window.location.reload()
-                }}
-                className="text-red-500 ml-4"
-              >
-                ❌
-              </button>
-
-            </div>
-          ))}
+          <Link className="ui-button" href="/profile/plejliste">{t("Moje plejliste")}</Link>
         </div>
 
       </div>

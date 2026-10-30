@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { headers } from "next/headers"
 import { getPublicSong } from "@/lib/publicPages"
 import { countSongViewAfterResponse } from "@/lib/songViews"
@@ -15,6 +15,8 @@ import { isFavoriteView } from "@/lib/favorites/model"
 import { catalogEntry } from "@/lib/playlists/catalog"
 import { performanceHref } from "@/lib/performance/model"
 import { performerArtists, performerHref } from "@/lib/artists/performers"
+import { playlistViewerId } from "@/lib/playlists/server"
+import { omiljeneId } from "@/lib/playlists/omiljene"
 
 type Props = {
   params: Promise<{
@@ -39,6 +41,10 @@ export default async function SongPage({ params, searchParams }: Props) {
   const query = await searchParams ?? {}
   const playlist = playlistReturnHref(query.playlist)
   const fromFavorites = isFavoriteView(query, playlist)
+  if (fromFavorites) {
+    const userId = await playlistViewerId(), id = userId ? await omiljeneId(userId) : null
+    if (id) redirect(routePath("pesme", category, artist, slug) + "?playlist=" + encodeURIComponent("/plejliste/" + id) + (query.play === "1" ? "&play=1" : ""))
+  }
   const pathname = "/pesme/" + [category, artist, slug].map(encodeURIComponent).join("/")
   const playlistMatch = playlist?.match(/^\/plejliste\/([a-zA-Z0-9_-]+)$/)
   const playablePlaylist = playlistMatch && !catalogEntry(playlistMatch[1]) && !["pesme-koje-znam", "top-user", "generisane", "kategorija"].includes(playlistMatch[1]) ? playlistMatch[1] : null

@@ -18,6 +18,8 @@ const prisma = {
 }
 const original = Module._load
 Module._load = function(request, parent, main) {
+  if (request === "@/lib/playlists/server") return { playlistViewerId: async () => null }
+  if (request === "@/lib/playlists/omiljene") return { omiljeneId: async () => null }
   if (request === '@/lib/prisma') return { prisma }
   if (request === 'next/cache') return {
     unstable_cache: (fn, keys, options) => {

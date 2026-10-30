@@ -22,6 +22,7 @@ export function favoriteFailure(error: unknown) {
 export async function checkedFavoriteUser(tx: Prisma.TransactionClient, userId: string) {
   const user = await tx.user.findUnique({ where: { id: userId }, select: { banned: true } })
   if (!user || user.banned) throw new SubmissionError(403, "Nije dozvoljeno.")
+  if (await tx.favoritePlaylist.findUnique({ where: { userId }, select: { userId: true } })) throw new SubmissionError(409, "Favoriti su sada u plejlisti Omiljene. Osvezi stranicu.")
 }
 export async function addFavorite(userId: string, songId: string, transpose: number, toggle = false) {
   return playlistTransaction(async tx => {

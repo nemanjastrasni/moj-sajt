@@ -13,7 +13,7 @@ export async function playlistRequest<T = { ok: boolean }>(url: string, method: 
     throw error
   } finally { clearTimeout(timer) }
 }
-export type PlaylistChoice = { id: string; name: string; isPublic: boolean; category: string | null; songs: { songId: string }[] }
+export type PlaylistChoice = { id: string; name: string; isPublic: boolean; category: string | null; songs: { songId: string }[]; isFavorites?: boolean }
 export async function readPlaylistChoices() {
   const data = await playlistRequest<PlaylistChoice[]>("/api/playlist", "GET")
   if (!Array.isArray(data) || data.some(row => !row || typeof row.id !== "string" || typeof row.name !== "string" || typeof row.isPublic !== "boolean" || !Array.isArray(row.songs) || row.songs.some(item => !item || typeof item.songId !== "string"))) throw new Error("Spisak pesama nije ispravan. Osvezi playlistu.")

@@ -45,7 +45,7 @@ test("anonymous, user and admin menus retain role-aware links and all three song
     assert.equal($(".mobile-menu-content a[href='/admin']").length, role === "admin" ? 1 : 0)
     assert.equal($(".desktop-guitar-nav a[href='/admin']").length, role === "admin" ? 1 : 0)
     assert.equal($(".mobile-account a[href='/profile/plejliste']").length, role ? 1 : 0)
-    assert.equal($(".mobile-account a[href='/favorite']").length, role ? 1 : 0)
+    assert.equal($(".mobile-account a[href='/favorite']").length, 0)
     if (!role) assert.equal($(".mobile-account button").text(), "Prijavi se")
     assert.deepEqual($(".mobile-menu-categories a").toArray().map(node => $(node).attr("href")), ["/pesme/narodne", "/pesme/domace", "/pesme/strane"])
   }

@@ -9,7 +9,7 @@ import { useI18n } from "./UiText"
 import SongReviewBadge from "./SongReviewBadge"
 import styles from "./SongReview.module.css"
 
-export default function SongReviewControl({ songId, initial }: { songId: string; initial: ReviewState }) {
+export default function SongReviewControl({ songId, initial, compact = false }: { songId: string; initial: ReviewState; compact?: boolean }) {
   const { t } = useI18n(), router = useRouter(), id = useId(), running = useRef(false)
   const [status, setStatus] = useState(initial.status), [busy, setBusy] = useState(false), [error, setError] = useState(""), [saved, setSaved] = useState(false)
   async function change(next: ReviewStatus) {
@@ -22,12 +22,12 @@ export default function SongReviewControl({ songId, initial }: { songId: string;
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Oznaka nije sacuvana.") }
     finally { running.current = false; setBusy(false) }
   }
-  return <div className={styles.control}>
+  return <div className={styles.control + (compact ? " " + styles.compact : "")}>
     <label htmlFor={id}>{t("Provera pesme")}<select id={id} className={styles.select} value={status} disabled={busy} onChange={event => { if (isReviewStatus(event.target.value)) void change(event.target.value) }}>
       {reviewStatuses.map(value => <option key={value} value={value}>{t(reviewLabels[value])}</option>)}
     </select></label>
-    <SongReviewBadge status={status} />
-    {status === "manually_corrected" && <p className={styles.description}>{t("Raspored ili tekst su ispravljeni; muzicka tacnost jos nije potvrdjena.")}</p>}
+    {!compact && <SongReviewBadge status={status} />}
+    {status === "manually_corrected" && <p className={compact ? "sr-only" : styles.description}>{t("Raspored ili tekst su ispravljeni; muzicka tacnost jos nije potvrdjena.")}</p>}
     {busy && <span role="status" className={styles.saved}>{t("Cuvam...")}</span>}
     {saved && <span role="status" className={styles.saved}>{t("Oznaka je sacuvana.")}</span>}
     {error && <div role="alert" className={styles.error}><p>{t(error)}</p><button type="button" className={styles.refresh} onClick={() => router.refresh()}><RefreshCw />{t("Osvezi stranicu")}</button></div>}

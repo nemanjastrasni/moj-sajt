@@ -6,7 +6,7 @@ import Link from "next/link"
 import { signOut, useSession } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
 import type { Session } from "next-auth"
-import { BookOpen, ClipboardList, FilePlus2, Guitar, Headphones, Heart, House, ListMusic, LogIn, LogOut, Mail, Menu as MenuIcon, Music2, Shield, UserRound, X } from "lucide-react"
+import { BookOpen, ClipboardList, FilePlus2, Guitar, Headphones, House, ListMusic, LogIn, LogOut, Mail, Menu as MenuIcon, Music2, Shield, UserRound, X } from "lucide-react"
 import { useI18n } from "./UiText"
 import { PRESENCE_EVENT, validCounts, type PresenceCounts } from "@/lib/presence/model"
 import BackButton from "./BackButton"
@@ -32,7 +32,6 @@ const mobileIcons = { Home: House, Pesme: Music2, Plejliste: ListMusic, Akordi: 
 const accountLinks = [
   { href: "/profile", label: "Profil", icon: UserRound },
   { href: "/profile/plejliste", label: "Moje plejliste", icon: ListMusic },
-  { href: "/favorite", label: "Favoriti", icon: Heart },
   { href: "/listening-playlist", label: "Moja muzika", icon: Headphones },
   { href: "/predlozi-pesmu", label: "Predlozi pesmu", icon: FilePlus2 },
   { href: "/moji-predlozi", label: "Moji predlozi", icon: ClipboardList },
@@ -169,7 +168,6 @@ function HeaderNavigation({ session, status, pathname, online }: {
           <Link href="/moji-predlozi" prefetch={false} onClick={close} className="guitar-dropdown-link">{t("Moji predlozi")}</Link>
           <Link href="/profile/plejliste" prefetch={false} onClick={close} className="guitar-dropdown-link">{t("Moje plejliste")}</Link>
           <Link href="/listening-playlist" prefetch={false} onClick={close} className="guitar-dropdown-link">{t("Moja muzika")}</Link>
-          <Link href="/favorite" prefetch={false} onClick={close} className="guitar-dropdown-link">{t("Favoriti")}</Link>
           {session.user?.role === "admin" && <Link href="/admin" prefetch={false} onClick={close} className="guitar-dropdown-link">Admin</Link>}
           <button type="button" onClick={() => signOut({ callbackUrl: "/" })} className="guitar-dropdown-link w-full text-left text-red-300">{t("Odjavi se")}</button>
         </div>}

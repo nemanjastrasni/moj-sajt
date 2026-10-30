@@ -34,7 +34,7 @@ test('Contact and the global footer link to the public about page',()=>{
 
 test('About screenshots are local readable images, with translated captions and no live user data',async()=>{
   const sharp=require('sharp')
-  for(const file of ['plejlista.png','tonalitet-capo.png','moja-muzika.png']){
+  for(const file of ['plejlista.png','tonalitet-capo.png','moja-muzika.png','kontrole-pesme.png']){
     const image=await sharp(path.join(ROOT,'public/guide',file)).metadata()
     assert.equal(image.format,'png');assert.ok(image.width>=800&&image.height>=300)
   }

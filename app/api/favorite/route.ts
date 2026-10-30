@@ -22,8 +22,11 @@ export async function PATCH(request: Request) {
     const user = await submissionUser(), body = await playlistBody(request)
     const songId = playlistId(body.songId), id = playlistId(body.favoriteId)
     const transpose = favoriteTranspose(body.transpose), expected = favoriteTranspose(body.expectedTranspose)
-    const updated = await prisma.favorite.updateMany({
+    const updated = await playlistTransaction(async tx => {
+      await checkedFavoriteUser(tx, user.id)
+      return tx.favorite.updateMany({
       where: { id, userId: user.id, songId, transpose: expected, user: { banned: false } }, data: { transpose },
+      })
     })
     if (updated.count !== 1) {
       const current = await prisma.favorite.findUnique({ where: { userId_songId: { userId: user.id, songId } }, select: favoriteSelect })

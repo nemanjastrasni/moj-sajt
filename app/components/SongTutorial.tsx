@@ -8,12 +8,12 @@ import PlaylistDialog from "./PlaylistDialog"
 import { useI18n } from "./UiText"
 import styles from "./SongTutorial.module.css"
 
-export default function SongTutorial({ songId, onPlay }: { songId: string; onPlay?: () => void }) {
+export default function SongTutorial({ songId, onPlay, mode = "all" }: { songId: string; onPlay?: () => void; mode?: "all" | "user" | "admin" }) {
   const { data: session, status } = useSession()
   if (status === "loading") return null
-  return <TutorialControl key={JSON.stringify([songId, status, session?.user?.id])} songId={songId} onPlay={onPlay} />
+  return <TutorialControl key={JSON.stringify([songId, status, session?.user?.id])} songId={songId} onPlay={onPlay} mode={mode} />
 }
-function TutorialControl({ songId, onPlay }: { songId: string; onPlay?: () => void }) {
+function TutorialControl({ songId, onPlay, mode }: { songId: string; onPlay?: () => void; mode: "all" | "user" | "admin" }) {
   const { t } = useI18n()
   const [view, setView] = useState<TutorialSnapshot | null>(null), [error, setError] = useState(""), [busy, setBusy] = useState(false), [retry, setRetry] = useState(0)
   const [modal, setModal] = useState<"edit" | "remove" | "video" | null>(null), [url, setUrl] = useState(""), [title, setTitle] = useState("")
@@ -38,8 +38,8 @@ function TutorialControl({ songId, onPlay }: { songId: string; onPlay?: () => vo
   function reload() { if (busy) return; setModal(null); setError(""); setBusy(true); setRetry(value => value + 1) }
   if (!view) return error ? <span className={styles.error} role="alert">{t(error)}<button className="ui-button" type="button" onClick={reload} title={t("Pokusaj ponovo")} aria-label={t("Pokusaj ponovo")}><RefreshCw size={18} /></button></span> : null
   return <div className={styles.tools} data-song-tutorial>
-    {view.tutorial && <button type="button" className="ui-button" disabled={busy} onClick={() => { onPlay?.(); setError(""); setModal("video") }}><Video size={18} aria-hidden="true" />{t("Kako se svira")}</button>}
-    {view.editable && <button type="button" className="ui-button" disabled={busy} title={t(view.tutorial ? "Izmeni tutorijal" : "Dodaj tutorijal")} aria-label={t(view.tutorial ? "Izmeni tutorijal" : "Dodaj tutorijal")} onClick={edit}>{view.tutorial ? <Pencil size={18} /> : <Plus size={18} />}{!view.tutorial && t("Tutorijal")}</button>}
+    {view.tutorial && mode !== "admin" && <button type="button" className="ui-button" disabled={busy} onClick={() => { onPlay?.(); setError(""); setModal("video") }}><Video size={18} aria-hidden="true" />{t("Kako se svira")}</button>}
+    {view.editable && mode !== "user" && <button type="button" className="ui-button" disabled={busy} title={t(view.tutorial ? "Izmeni tutorijal" : "Dodaj tutorijal")} aria-label={t(view.tutorial ? "Izmeni tutorijal" : "Dodaj tutorijal")} onClick={edit}>{view.tutorial ? <Pencil size={18} /> : <Plus size={18} />}{!view.tutorial && t("Tutorijal")}</button>}
     {error && !modal && <span className={styles.error} role="alert">{t(error)}<button type="button" className="ui-button" disabled={busy} onClick={reload}><RefreshCw size={18} />{t("Pokusaj ponovo")}</button></span>}
     {modal === "video" && view.tutorial && <PlaylistDialog title="Kako se svira" close={() => setModal(null)}>
       {view.tutorial.title && <p className={styles.title} translate="no">{view.tutorial.title}</p>}

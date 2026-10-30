@@ -4,6 +4,7 @@ const { test, beforeEach, afterEach } = require("node:test")
 const assert = require("node:assert/strict"), Module = require("node:module"), path = require("node:path")
 let state, session, down, failPopularity, revoked, conflicts, attempts
 const tx = {
+  favoritePlaylist: { findUnique: async () => null },
   user: { findUnique: async ({ where }) => { if (down) throw Error("postgres://private"); return state.users.find(user => user.id === where.id) ?? null } },
   favorite: {
     findUnique: async ({ where }) => { if (down) throw Error("private"); const key = where.userId_songId; const row = state.favorites.find(row => key ? row.userId === key.userId && row.songId === key.songId : row.id === where.id); return row ? { id: row.id, transpose: row.transpose } : null },

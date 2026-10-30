@@ -40,6 +40,7 @@ export default function AboutPage() {
           {section.paragraphs.map(paragraph=><p key={paragraph}><UiText text={paragraph} /></p>)}
           {section.id === "repertoar" && <AboutScreenshot kind="playlist" />}
           {section.id === "tonalitet" && <AboutScreenshot kind="capo" />}
+          {section.id === "sviranje" && <AboutScreenshot kind="controls" />}
           {section.id === "biografije" && <AboutScreenshot kind="music" />}
           {section.links.length>0&&<ul className={styles.links}>{section.links.map(link=><li key={link.href}><Link href={link.href} prefetch={false}><UiText text={link.label} /><ArrowRight aria-hidden="true" /></Link></li>)}</ul>}
         </div>

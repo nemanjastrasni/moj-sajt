@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react"
 import { useSession } from "next-auth/react"
-import { ArrowRight, ListMusic, LoaderCircle, Play, RefreshCw, Star, X } from "lucide-react"
+import { ArrowRight, ListMusic, LoaderCircle, Play, RefreshCw, X } from "lucide-react"
 import { forgetPlayback, isResumeItem, parseRecentPlayback, playbackKey, PLAYBACK_EVENT, readRecentPlayback, resumeQuery, type ResumeItem } from "@/lib/performance/recent"
 import { useI18n } from "./UiText"
 import styles from "./HomeRepertoire.module.css"
@@ -54,7 +54,6 @@ function MemberRepertoire({ userId }: { userId: string }) {
       <nav className={styles.actions} aria-label={t("Tvoj repertoar")}>
         {item && <Link prefetch={false} className={styles.play} href={item.href}><Play aria-hidden="true" fill="currentColor" />{t("Nastavi sviranje")}</Link>}
         <Link className={styles.playlists} data-primary={!item} href="/profile/plejliste"><ListMusic aria-hidden="true" />{t("Moje plejliste")}<ArrowRight aria-hidden="true" /></Link>
-        <Link className={styles.icon} href="/favorite" title={t("Favoriti")} aria-label={t("Favoriti")}><Star /></Link>
         {recent && <button type="button" className={styles.icon} title={t("Ukloni iz nastavka")} aria-label={t("Ukloni iz nastavka")} onClick={() => forgetPlayback(userId)}><X /></button>}
       </nav>
     </div>

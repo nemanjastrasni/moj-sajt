@@ -43,6 +43,7 @@ model User {
 
   accounts           Account[]
   favorites          Favorite[]
+  favoritePlaylist   FavoritePlaylist?
   listeningPlaylists ListeningPlaylist[]     @relation("UserListeningPlaylists")
   playlistLikes      ListeningPlaylistLike[]
   playlists          Playlist[]
@@ -222,6 +223,16 @@ model Playlist {
   category  String?
   user      User           @relation(fields: [userId], references: [id])
   songs     PlaylistSong[]
+  favoriteSource FavoritePlaylist?
+}
+
+model FavoritePlaylist {
+  userId     String   @id
+  playlistId String?  @unique
+  migratedAt DateTime @default(now())
+  sourceHash String   @default("")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  playlist   Playlist? @relation(fields: [playlistId], references: [id], onDelete: SetNull)
 }
 
 model PlaylistSong {

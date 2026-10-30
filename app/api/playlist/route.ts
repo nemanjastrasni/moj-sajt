@@ -5,6 +5,7 @@ import { playlistCategory, playlistId, playlistName, playlistUpdate } from "@/li
 import { ownedPlaylist, playlistBody, playlistFailure, playlistOrder, playlistTransaction, privateHeaders, refreshPlaylist } from "@/lib/playlists/server"
 import { playingValues } from "@/lib/playlists/settings"
 import { activeSettingsOwner, checkSourceCapo } from "@/lib/playlists/settingsServer"
+import { omiljeneId } from "@/lib/playlists/omiljene"
 
 export async function POST(request: Request) {
   try {
@@ -66,7 +67,8 @@ export async function GET() {
   try {
     const user = await submissionUser()
     const playlists = await playlistTransaction(tx => tx.playlist.findMany({ where: { userId: user.id }, include: { songs: { orderBy: playlistOrder } }, orderBy: [{ createdAt: "desc" }, { id: "asc" }] }))
-    return NextResponse.json(playlists, { headers: privateHeaders })
+    const favoritesId = await omiljeneId(user.id)
+    return NextResponse.json(playlists.map(playlist => ({ ...playlist, isFavorites: playlist.id === favoritesId })), { headers: privateHeaders })
   } catch (error) { return playlistFailure(error) }
 }
 

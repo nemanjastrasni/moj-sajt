@@ -7,6 +7,8 @@
 .button svg, .icon svg, .privacy svg { width: 18px; height: 18px; flex-shrink: 0; }
 .icon { width: 44px; flex: 0 0 44px; border-radius: 4px; }
 .button:disabled, .icon:disabled, .privacy:disabled { opacity: .45; cursor: default; }
+.button[data-in-playlist="true"] { color: #facc15; border-color: #a38a20; }
+:global(:root[data-theme="light"]) .button[data-in-playlist="true"] { color: #886500; border-color: #a88719; }
 .button:focus-visible, .icon:focus-visible, .privacy:focus-visible { outline: 2px solid var(--theme-link, #69baff); outline-offset: 3px; }
 .privacy { padding: 4px 0; font-size: 14px; cursor: default; }
 button.privacy { cursor: pointer; }

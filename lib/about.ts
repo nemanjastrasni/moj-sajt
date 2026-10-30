@@ -1,5 +1,5 @@
 export const aboutIntro = "GitaraAkordi povezuje pesme sa akordima, li\u010dni repertoar i ve\u017ebanje gitare sa biografijama, diskografijama i muzikom za slu\u0161anje."
-export const aboutAccountNote = "Javni sadr\u017eaj mo\u017ee\u0161 da pregleda\u0161 bez naloga. Za favorite, li\u010dne plejliste, slanje predloga i prijavu gre\u0161ke potrebna je prijava. Podaci platne kartice nisu potrebni."
+export const aboutAccountNote = "Javni sadr\u017eaj mo\u017ee\u0161 da pregleda\u0161 bez naloga. Za li\u010dne plejliste, slanje predloga i prijavu gre\u0161ke potrebna je prijava. Podaci platne kartice nisu potrebni."
 export const aboutAppearance = "Dostupne su svetla i tamna tema i interfejs na srpskom i engleskom. Menja se jezik kontrola, ne originalni tekstovi pesama."
 export const aboutContactNote = "Za pitanja, predloge i zahteve u vezi sa sadr\u017eajem ili nalogom poseti Kontakt."
 export const aboutSections = [
@@ -45,7 +45,7 @@ export const aboutSections = [
     "id": "repertoar",
     "title": "Tvoj repertoar",
     "paragraphs": [
-      "Sa nalogom mo\u017ee\u0161 da izdvoji\u0161 favorite i napravi\u0161 svoje plejliste. Dodaj pesme, promeni njihov redosled i odaberi da li je lista javna ili privatna.",
+      "Pesme \u010duva\u0161 na svojim plejlistama. Dosada\u0161nji favoriti preneti su u privatnu listu Omiljene, uz sa\u010duvane tonalitete. Dodaj pesme, promeni njihov redosled i odaberi da li je lista javna ili privatna.",
       "Plejliste po kategoriji i te\u017eini olak\u0161avaju izbor repertoara. Procena te\u017eine je pomo\u0107 pri izboru, a ne potvrda da su svi akordi muzi\u010dki ta\u010dni."
     ],
     "links": [
@@ -56,10 +56,6 @@ export const aboutSections = [
       {
         "href": "/profile/plejliste",
         "label": "Moje plejliste"
-      },
-      {
-        "href": "/favorite",
-        "label": "Favoriti"
       }
     ]
   },
@@ -68,7 +64,7 @@ export const aboutSections = [
     "title": "Tonalitet i capo",
     "paragraphs": [
       "Promeni tonalitet pesme ili isprobaj capo preporuku za jednostavnije hvatove uz isti zvu\u010dni tonalitet. Mo\u017ee\u0161 i ru\u010dno da izabere\u0161 prag. Preporuka zavisi od prepoznatih akorda i nije zamena za proveru sluhom.",
-      "U tvojoj plejlisti tonalitet i capo automatski se \u010duvaju za svaku pesmu. Prelazak na slede\u0107u pesmu sa\u010deka potvrdu \u010duvanja. Favoriti imaju zasebno pam\u0107enje tonaliteta; izvorni zapis pesme se ne menja."
+      "U tvojoj plejlisti tonalitet i capo automatski se \u010duvaju za svaku pesmu, uklju\u010duju\u0107i listu Omiljene. Prelazak na slede\u0107u pesmu sa\u010deka potvrdu \u010duvanja. Van plejliste pesma se otvara u izvornom tonalitetu; originalni zapis se ne menja."
     ],
     "links": []
   },
@@ -76,7 +72,7 @@ export const aboutSections = [
     "id": "sviranje",
     "title": "Prikaz za sviranje",
     "paragraphs": [
-      "Otvori pregled namenjen sviranju, prilagodi veli\u010dinu teksta i akorda i uklju\u010di automatsko skrolovanje. Prikaz preko celog ekrana zavisi od podr\u0161ke pregleda\u010da.",
+      "Kontrole za prikaz, tonalitet, capo, skrolovanje, plejliste i PDF nalaze se iznad naslova pesme. Zup\u010danik otvara veli\u010dinu teksta i akorda, hvatove i brzinu skrolovanja. Meni sa tri ta\u010dke sadr\u017ei video i prijavu gre\u0161ke. Prikaz preko celog ekrana zavisi od podr\u0161ke pregleda\u010da.",
       "Iz plejliste prelazi direktno na prethodnu ili slede\u0107u pesmu. Opcija \u201eNastavi sviranje\u201c na po\u010detnoj strani vra\u0107a te na poslednje svirano na istom ure\u0111aju i u istom pregleda\u010du."
     ],
     "links": []
@@ -85,8 +81,8 @@ export const aboutSections = [
     "id": "pdf",
     "title": "PDF pesme i pesmarice",
     "paragraphs": [
-      "Preuzmi pojedina\u010dnu pesmu kao PDF ili napravi PDF pesmaricu iz plejliste odnosno izabranih favorita. Knjiga mo\u017ee sadr\u017eati do 100 pesama.",
-      "U knjizi iz favorita mo\u017ee\u0161 da odredi\u0161 naslov, redosled pesama i veli\u010dinu teksta. Preuzet PDF mo\u017ee\u0161 da otvori\u0161 i bez interneta; to ne zna\u010di da je ceo sajt dostupan bez veze."
+      "Preuzmi pojedina\u010dnu pesmu kao PDF ili napravi PDF pesmaricu iz svoje plejliste, uklju\u010duju\u0107i Omiljene. Knjiga mo\u017ee sadr\u017eati do 100 pesama.",
+      "PDF pesmarica prati redosled pesama iz plejliste i tvoje sa\u010duvane tonalitete i capo. Preuzet PDF mo\u017ee\u0161 da otvori\u0161 i bez interneta; to ne zna\u010di da je ceo sajt dostupan bez veze."
     ],
     "links": []
   },

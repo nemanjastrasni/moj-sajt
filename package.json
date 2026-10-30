@@ -9,6 +9,8 @@
     "lint": "eslint",
     "test:route-boundaries": "node --test scripts/test-route-boundaries.cjs",
     "test:seo": "node --test scripts/test-seo-performance.cjs",
+    "test:favorite-playlists": "node --test scripts/test-favorite-playlists.cjs",
+    "favorites:migrate": "node scripts/migrate-favorite-playlists.cjs",
     "images:optimize": "node scripts/optimize-site-images.cjs",
     "performance:measure": "node scripts/measure-site.cjs",
     "test:chords": "node --test scripts/test-song-sheet.cjs",

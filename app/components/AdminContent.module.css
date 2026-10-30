@@ -1,4 +1,6 @@
 .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0 20px; min-width: 0; }
+.songTools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 0 0 14px; margin: 0 0 16px; border-bottom: 1px solid var(--theme-line); }
+.songTools > div { margin: 0; }
 .button { composes: ui-button from global; }
 .button svg { width: 18px; height: 18px; flex-shrink: 0; }
 .button:disabled { opacity: .5; cursor: default; }

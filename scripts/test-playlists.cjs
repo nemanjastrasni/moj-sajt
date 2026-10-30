@@ -24,6 +24,7 @@ function sorted(rows, orderBy) {
   })
 }
 const tx = {
+  favoritePlaylist: { findUnique: async () => null },
   playlist: {
     findFirst: async args => {
       if (down) throw Error("postgres://secret-db")

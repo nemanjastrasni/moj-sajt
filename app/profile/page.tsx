@@ -29,19 +29,14 @@ export default async function ProfilePage() {
     birthYear: true,
     skillLevel: true,
     accounts: { where: { provider: "google" }, select: { id: true } },
-    favorites: {
-      include: {
-        song: true,
-      },
-    },
   },
 })
 if (!user) {
   return <div><UiText text="Korisnik nije pronađen" /></div>
 }
-  const { accounts, favorites, ...profile } = user
+  const { accounts, ...profile } = user
   return <>
     {getGoogleCredentials() && <div className="mx-auto max-w-xl px-10 pt-6"><GoogleAccountLink linked={accounts.length > 0} /></div>}
-    <ProfileClient user={profile} favorites={favorites} />
+    <ProfileClient user={profile} />
   </>
 }

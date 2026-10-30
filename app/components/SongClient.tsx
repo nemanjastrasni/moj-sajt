@@ -1,9 +1,10 @@
 "use client"
 
-import { useI18n } from "@/app/components/UiText"
-import { useState, useRef, useEffect, type ReactNode } from "react"
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import Link from "next/link"
-import { useMemo } from "react"
+import { useRouter } from "next/navigation"
+import { Maximize, Minus, MoreHorizontal, Pause, Play, Plus, RotateCcw, Settings2, Video } from "lucide-react"
+import { useI18n } from "./UiText"
 import UsedChordCard from "./UsedChordCard"
 import SongSheet from "./SongSheet"
 import SongPdfButton from "./SongPdfButton"
@@ -11,318 +12,103 @@ import SongPlaylistButton from "./SongPlaylistButton"
 import SongReportButton from "./SongReportButton"
 import CapoControl from "./CapoControl"
 import useSongCapo from "./useSongCapo"
-import useFavoriteSong from "./useFavoriteSong"
-import FavoriteTransposeStatus from "./FavoriteTransposeStatus"
+import useSongKey from "./useSongKey"
 import PerformanceView from "./PerformanceView"
-import { Maximize, Minus, Plus, RotateCcw, Star } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { getUsedChords, parseSongSheet } from "@/lib/chords/songSheet"
-import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
 import usePlaylistSongSettings from "./usePlaylistSongSettings"
 import PlaylistSettingsStatus from "./PlaylistSettingsStatus"
 import SongPerformers from "./SongPerformers"
-import type { SongPerformerView } from "@/lib/artists/performers"
 import PlaylistSongNavigation from "./PlaylistSongNavigation"
 import SongDisplayMode from "./SongDisplayMode"
 import SongTutorial from "./SongTutorial"
+import PlaylistDialog from "./PlaylistDialog"
+import { getUsedChords, parseSongSheet } from "@/lib/chords/songSheet"
+import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
+import type { SongPerformerView } from "@/lib/artists/performers"
+import styles from "./SongToolbar.module.css"
 
 type Props = {
-  adminTools?: ReactNode
-  fromFavorites?: boolean
-  performanceHref?: string
-  playlistId?: string
-  songVersion?: string
-  startPerformance?: boolean
-  song: {
-    id: string
-    title: string
-    artist: string
-    content?: string
-    lyrics?: string
-    chords?: string
-    category?: string
-    artistSlug?: string
-    artistName?: string
-    performers?: SongPerformerView[]
-  }
-  media?: {
-    platform: string
-    embedUrl: string
-  } | null
+  adminTools?: ReactNode; fromFavorites?: boolean; performanceHref?: string; playlistId?: string; songVersion?: string; startPerformance?: boolean
+  song: { id: string; title: string; artist: string; content?: string; lyrics?: string; chords?: string; category?: string; artistSlug?: string; artistName?: string; performers?: SongPerformerView[] }
+  media?: { platform: string; embedUrl: string } | null
 }
 
-export default function SongClient({ song, adminTools, fromFavorites = false, performanceHref, playlistId, songVersion, startPerformance = false }: Props) {
-  const { t } = useI18n()
-  const router = useRouter()
-  const [performance, setPerformance] = useState(startPerformance)
-  const [lyricsOnly, setLyricsOnly] = useState(false)
-
-  const favorite = useFavoriteSong(song.id, fromFavorites)
-  const playlistSettings = usePlaylistSongSettings(playlistId, song.id)
-  const controls = playlistId ? playlistSettings : favorite
-  const { transpose } = controls
-  const { isFav } = favorite
-  const [showVideo, setShowVideo] = useState(false)
-  const [miniPlayer, setMiniPlayer] = useState(false)
-  const [isAutoScrolling, setIsAutoScrolling] = useState(false)
-  const [scrollSpeed, setScrollSpeed] = useState(1)
-  const scrollRef = useRef<NodeJS.Timeout | null>(null)
-
-  const [videoUrl, setVideoUrl] = useState<string | null>(null)
-  const [loadingVideo, setLoadingVideo] = useState(false)
-  
-  const [showChordsPanel, setShowChordsPanel] = useState(false)
-  const [textSize, setTextSize] = useState(18)
-  const [chordSize, setChordSize] = useState(18)
-  const { title, artist, content, lyrics } = song
-  const displayContent = lyrics || content || ""
-
- 
-  const sheetLines = useMemo(() => parseSongSheet(displayContent), [displayContent])
+export default function SongClient({ song, adminTools, performanceHref, playlistId, songVersion, startPerformance = false }: Props) {
+  const { t } = useI18n(), router = useRouter()
+  const [performance, setPerformance] = useState(startPerformance), [lyricsOnly, setLyricsOnly] = useState(false)
+  const original = useSongKey(song.id), playlistSettings = usePlaylistSongSettings(playlistId, song.id)
+  const controls = playlistId ? playlistSettings : original, { transpose } = controls
+  const [panel, setPanel] = useState<"settings" | "more" | null>(null)
+  const [showVideo, setShowVideo] = useState(false), [videoUrl, setVideoUrl] = useState<string | null>(null)
+  const [loadingVideo, setLoadingVideo] = useState(false), [videoError, setVideoError] = useState("")
+  const [scrolling, setScrolling] = useState(false), [speed, setSpeed] = useState(1)
+  const [textSize, setTextSize] = useState(18), [chordSize, setChordSize] = useState(18), [showDiagrams, setShowDiagrams] = useState(false)
+  const videoRequest = useRef<AbortController | null>(null)
+  const { title, artist } = song, lyrics = song.lyrics || song.content || ""
+  const sheetLines = useMemo(() => parseSongSheet(lyrics), [lyrics])
   const capo = useSongCapo(song.id, sheetLines, transpose, undefined, playlistId ? { value: playlistSettings.capo, change: playlistSettings.changeCapo } : undefined)
-  const usedChords = useMemo(() =>
-    getUsedChords(capo.lines).map((chord) => transposeChordSymbol(chord, capo.shift)),
-    [capo.lines, capo.shift])
-  function startAutoScroll() {
-
-    if (scrollRef.current) return
-
-    setIsAutoScrolling(true)
-
-    scrollRef.current = setInterval(() => {
-      window.scrollBy(0, scrollSpeed * 0.2)
-    }, 60)
-  }
-
-  function stopAutoScroll() {
-
-    if (scrollRef.current) {
-      clearInterval(scrollRef.current)
-      scrollRef.current = null
-    }
-
-    setIsAutoScrolling(false)
-  }
-
+  const usedChords = useMemo(() => getUsedChords(capo.lines).map(chord => transposeChordSymbol(chord, capo.shift)), [capo.lines, capo.shift])
   useEffect(() => {
-
-    return () => {
-      if (scrollRef.current) clearInterval(scrollRef.current)
-    }
-
-  }, [])
-
-  useEffect(() => {
-  function handleScroll() {
-    if (window.scrollY > 350) setMiniPlayer(true)
-    else setMiniPlayer(false)
+    if (!scrolling) return
+    const timer = setInterval(() => window.scrollBy(0, speed * .2), 60)
+    return () => clearInterval(timer)
+  }, [scrolling, speed])
+  useEffect(() => () => { videoRequest.current?.abort(); videoRequest.current = null }, [])
+  async function toggleVideo() {
+    setPanel(null)
+    if (videoUrl) { setShowVideo(value => !value); return }
+    if (videoRequest.current) return
+    const controller = new AbortController(); videoRequest.current = controller
+    setLoadingVideo(true); setVideoError("")
+    const timer = setTimeout(() => controller.abort(), 15000)
+    try {
+      const response = await fetch(`/api/youtube?song=${encodeURIComponent(title)}&artist=${encodeURIComponent(artist)}`, { signal: controller.signal })
+      const data = await response.json()
+      if (!response.ok || typeof data?.embedUrl !== "string" || !/^https:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/[a-zA-Z0-9_-]+(?:\?.*)?$/.test(data.embedUrl)) throw Error("Video trenutno nije dostupan.")
+      setVideoUrl(data.embedUrl); setShowVideo(true)
+    } catch { if (videoRequest.current === controller) setVideoError("Video trenutno nije dostupan.") }
+    finally { clearTimeout(timer); if (videoRequest.current === controller) { videoRequest.current = null; setLoadingVideo(false) } }
   }
-
-  window.addEventListener("scroll", handleScroll)
-
-  return () => {
-    window.removeEventListener("scroll", handleScroll)
-  }
-}, [])
-
-
-
-
-
-  return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      {playlistId && <PlaylistSongNavigation playlistId={playlistId} songId={song.id} />}
-
-      <div className="grid min-w-0 lg:grid-cols-[minmax(0,1fr)_380px] gap-10">
-
-        {/* LEVA STRANA */}
-        <div className="min-w-0">
-
-          {/* TOOLBAR */}
-          <div className="mb-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-gray-400 border-b border-gray-800 pb-3">
-            <SongDisplayMode lyricsOnly={lyricsOnly} change={setLyricsOnly} />
-
-            {!lyricsOnly && <div className="flex items-center gap-2">
-              <span className="uppercase text-xs">{t("Ton")}</span>
-              <button type="button" disabled={controls.controlsDisabled || transpose <= -11} aria-label={t("Smanji tonalitet")} title={t("Smanji tonalitet")} onClick={() => controls.change(value => Math.max(-11, value - 1))} className="inline-flex h-11 w-11 items-center justify-center disabled:opacity-40"><Minus size={18} /></button>
-              <output aria-label={t("Transpozicija")} className="text-white font-medium w-10 text-center">{transpose > 0 ? `+${transpose}` : transpose}</output>
-              <button type="button" disabled={controls.controlsDisabled || transpose >= 11} aria-label={t("Povecaj tonalitet")} title={t("Povecaj tonalitet")} onClick={() => controls.change(value => Math.min(11, value + 1))} className="inline-flex h-11 w-11 items-center justify-center disabled:opacity-40"><Plus size={18} /></button>
-              <button type="button" disabled={controls.controlsDisabled} aria-label={t("Originalni tonalitet")} title={t("Originalni tonalitet")} onClick={() => controls.change(0)} className="inline-flex h-11 w-11 items-center justify-center disabled:opacity-40"><RotateCcw size={18} /></button>
-            </div>}
-
-            {/* SCROLL */}
-            <div className="flex items-center gap-2">
-
-              <span className="uppercase tracking-wide text-xs">{t("Scroll")}</span>
-
-              <button
-                aria-label={t(isAutoScrolling ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} onClick={isAutoScrolling ? stopAutoScroll : startAutoScroll}
-                className="px-2 hover:text-white"
-              >
-                {isAutoScrolling ? "⏸" : "▶"}
-              </button>
-
-              <input
-                type="range"
-                min="1"
-                max="10"
-                step="1"
-                value={scrollSpeed}
-                aria-label={t("Brzina skrolovanja")}
-                onChange={(e) => setScrollSpeed(Number(e.target.value))}
-                className="w-20"
-              />
-
-            </div>
-            
-            {/* TEKST */}
-            <div className="flex items-center gap-2">
-
-              <span className="uppercase tracking-wide text-xs">{t("Tekst")}</span>
-
-              <input
-                type="range"
-                min="14"
-                max="32"
-                value={textSize}
-                aria-label={t("Velicina teksta")}
-                onChange={(e) => setTextSize(Number(e.target.value))}
-                className="w-20"
-              />
-
-            </div>
-
-            {/* AKORDI */}
-            {!lyricsOnly && <><div className="flex items-center gap-2">
-
-              <span className="uppercase tracking-wide text-xs">{t("Akordi")}</span>
-
-              <input
-                type="range"
-                min="14"
-                max="32"
-                value={chordSize}
-                aria-label={t("Velicina akorda")}
-                onChange={(e) => setChordSize(Number(e.target.value))}
-                className="w-20"
-              />
-
-            </div>
-            {/* akordi */}
-            <button
-  onClick={() => setShowChordsPanel(!showChordsPanel)}
-  className="px-2 text-xs border border-gray-700 rounded hover:text-white"
->
-  {t("AKORDI")} {showChordsPanel ? "ON" : "OFF"}
-</button></>}
-            {/* YOUTUBE VIDEO */}
-            <button
-  onClick={async () => {
-    if (videoUrl) {
-      setShowVideo(!showVideo)
-      return
-    }
-
-    setLoadingVideo(true)
-    console.log("CLICK VIDEO:", song.title, song.artist)
-    const res = await fetch(
-  `/api/youtube?song=${encodeURIComponent(song.title)}&artist=${encodeURIComponent(song.artist)}`
-)
-
-    const data = await res.json()
-    console.log("YT RESPONSE:", data)
-
-    setVideoUrl(data?.embedUrl || null)
-    setShowVideo(true)
-    setLoadingVideo(false)
-  }}
-  className="px-2 text-xs border border-gray-700 rounded hover:text-white"
->
-  {loadingVideo ? t("LOADING...") : `VIDEO ${showVideo ? "ON" : "OFF"}`}
-</button>
-          </div>
-
-       {!lyricsOnly && <div className="mb-4"><CapoControl key={song.id} capo={capo} disabled={controls.controlsDisabled} /></div>}
-       {playlistId ? <PlaylistSettingsStatus controls={playlistSettings} /> : <FavoriteTransposeStatus phase={favorite.phase} error={favorite.error} reload={favorite.reload} />}
-       {/* TITLE */}
-      
-<div className="flex flex-wrap items-center gap-4 mb-2 relative z-10">
-  <h1 className="text-3xl font-bold" translate="no">
-    {title}
-  </h1>
-
-  <SongPdfButton song={{ id: song.id, title, artist, lyrics: displayContent }} transpose={transpose} capo={capo.active ? capo.selected : null} disabled={controls.controlsDisabled} textSize={textSize} chordSize={chordSize} />
-  <SongTutorial songId={song.id} onPlay={() => { stopAutoScroll(); setShowVideo(false) }} />
-  <button type="button" disabled={controls.phase === "loading" || controls.phase === "updating" || !playlistId && controls.phase === "saving"} title={t("Rezim za sviranje")} aria-label={t("Rezim za sviranje")} className="inline-flex h-11 w-11 items-center justify-center rounded border border-gray-600 disabled:opacity-40" onClick={async () => { if (performanceHref && !await playlistSettings.canLeave()) return; stopAutoScroll(); setShowVideo(false); if (performanceHref) router.push(performanceHref); else setPerformance(true) }}><Maximize size={18} /></button>
-  <button type="button" title={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")} aria-label={t(isFav ? "Ukloni iz favorita" : "Dodaj u favorite")} aria-pressed={isFav} disabled={favorite.favoriteDisabled} onClick={() => void favorite.toggle()} className={`inline-flex h-11 w-11 items-center justify-center transition disabled:opacity-40 ${isFav ? "text-yellow-400" : "text-gray-500 hover:text-yellow-300"}`}>
-    <Star size={22} fill={isFav ? "currentColor" : "none"} />
-  </button>
-
-  <SongPlaylistButton key={song.id} songId={song.id} disabled={controls.controlsDisabled} settings={{ transpose, capo: capo.active ? capo.selected : null }} />
-  {songVersion && <SongReportButton songId={song.id} songVersion={songVersion} title={title} artist={artist} transpose={transpose} />}
-
-</div>
-
-{adminTools}
-{performance && <PerformanceView displayMode={{ lyricsOnly, change: setLyricsOnly }} playlistId={playlistId} song={{ id: song.id, title, artist, lyrics: displayContent }} controls={controls} capoControl={capo} settingsTools={playlistId ? <PlaylistSettingsStatus controls={playlistSettings} /> : undefined} leaveGuard={playlistId ? playlistSettings.canLeave : undefined} close={() => setPerformance(false)} />}
-{song.performers && song.performers.length >= 2 ? <SongPerformers artists={song.performers} /> : song.artistSlug ? (
-  <Link
-  href={`/pesme/${song.category}/${song.artistSlug}`}
-  className="text-lg text-gray-500 mb-6 block hover:text-blue-400 transition"
->
-  🎤 {artist}
-</Link>
-) : (
-  <h2 className="text-lg text-gray-500 mb-6">
-    {artist}
-  </h2>
-)}
-
-{/* USED CHORDS */}
-{showChordsPanel && !lyricsOnly && (
-  <div className="flex flex-wrap gap-3 mb-6">
-    {usedChords.map((chord) => (
-      <UsedChordCard key={chord} chord={chord} />
-    ))}
-  </div>
-)}
-          {/* CONTENT */}
-{playlistId && playlistSettings.phase === "loading" ? <p role="status">{t("Ucitavam podesavanja playliste...")}</p> : <SongSheet lines={capo.lines} transpose={capo.shift} textSize={textSize} chordSize={chordSize} lyricsOnly={lyricsOnly} />}
-</div>
-
-
-        {/* DESNA STRANA - YOUTUBE */}
-        <div>
-
-           {showVideo && videoUrl && (
-
-  <div
-    className={
-      miniPlayer
-        ? "lg:sticky lg:top-20 h-fit scale-90 origin-top transition-all duration-300"
-        : "lg:sticky lg:top-28 h-fit transition-all duration-300"
-    }
-  >
-
-    <div className="relative w-full" style={{ paddingBottom: "56.25%", height: 0 }}>
-  <iframe
-    loading="lazy"
-    src={videoUrl}
-    title="YouTube player"
-    className="absolute top-0 left-0 w-full h-full"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowFullScreen
-  />
-</div>
-
-  </div>
-
-)}
-
-
-
-        </div>
-              </div>
+  return <div className={styles.page}>
+    {playlistId && <PlaylistSongNavigation playlistId={playlistId} songId={song.id} />}
+    <div className={styles.toolbar} aria-label={t("Kontrole pesme")} data-song-toolbar>
+      <SongDisplayMode lyricsOnly={lyricsOnly} change={setLyricsOnly} />
+      {!lyricsOnly && <div className={styles.key}>
+        <span>{t("Ton")}</span>
+        <button type="button" className={styles.icon} disabled={controls.controlsDisabled || transpose <= -11} aria-label={t("Smanji tonalitet")} title={t("Smanji tonalitet")} onClick={() => controls.change(value => Math.max(-11, value - 1))}><Minus /></button>
+        <output aria-label={t("Transpozicija")}>{transpose > 0 ? `+${transpose}` : transpose}</output>
+        <button type="button" className={styles.icon} disabled={controls.controlsDisabled || transpose >= 11} aria-label={t("Povecaj tonalitet")} title={t("Povecaj tonalitet")} onClick={() => controls.change(value => Math.min(11, value + 1))}><Plus /></button>
+        <button type="button" className={styles.icon} disabled={controls.controlsDisabled} aria-label={t("Originalni tonalitet")} title={t("Originalni tonalitet")} onClick={() => controls.change(0)}><RotateCcw /></button>
+      </div>}
+      {!lyricsOnly && <div className={styles.capo}><CapoControl dialog key={song.id} capo={capo} disabled={controls.controlsDisabled} /></div>}
+      <button type="button" className={styles.icon} aria-pressed={scrolling} aria-label={t(scrolling ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} title={t(scrolling ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} onClick={() => setScrolling(value => !value)}>{scrolling ? <Pause /> : <Play />}</button>
+      <button type="button" className={styles.icon} disabled={controls.controlsDisabled} title={t("Rezim za sviranje")} aria-label={t("Rezim za sviranje")} onClick={async () => { if (performanceHref && !await playlistSettings.canLeave()) return; setScrolling(false); setShowVideo(false); if (performanceHref) router.push(performanceHref); else setPerformance(true) }}><Maximize /></button>
+      <SongPlaylistButton key={song.id} songId={song.id} disabled={controls.controlsDisabled} settings={{ transpose, capo: capo.active ? capo.selected : null }} />
+      <SongPdfButton song={{ id: song.id, title, artist, lyrics }} transpose={transpose} capo={capo.active ? capo.selected : null} disabled={controls.controlsDisabled} textSize={textSize} chordSize={chordSize} />
+      <SongTutorial songId={song.id} mode="user" onPlay={() => { setScrolling(false); setShowVideo(false) }} />
+      <button type="button" className={styles.icon} title={t("Podesavanja prikaza")} aria-label={t("Podesavanja prikaza")} aria-haspopup="dialog" onClick={() => setPanel("settings")}><Settings2 /></button>
+      <button type="button" className={styles.icon} title={t("Jos opcija")} aria-label={t("Jos opcija")} aria-haspopup="dialog" onClick={() => setPanel("more")}><MoreHorizontal /></button>
     </div>
-  )
+    {playlistId && <PlaylistSettingsStatus controls={playlistSettings} />}
+    <div className={styles.heading}><h1 translate="no">{title}</h1></div>
+    {adminTools}
+    {song.performers && song.performers.length >= 2 ? <SongPerformers artists={song.performers} /> : song.artistSlug ? <Link href={`/pesme/${song.category}/${song.artistSlug}`} className={styles.artist} translate="no">{artist}</Link> : <p className={styles.artist}>{artist}</p>}
+    {videoError && <p role="status" className={styles.error}>{t(videoError)}</p>}
+    <div className={showVideo && videoUrl ? styles.withVideo : undefined}>
+      <div className={styles.content}>
+        {showDiagrams && !lyricsOnly && <div className={styles.diagrams}>{usedChords.map(chord => <UsedChordCard key={chord} chord={chord} />)}</div>}
+        {playlistId && playlistSettings.phase === "loading" ? <p role="status">{t("Ucitavam podesavanja playliste...")}</p> : <SongSheet lines={capo.lines} transpose={capo.shift} textSize={textSize} chordSize={chordSize} lyricsOnly={lyricsOnly} />}
+      </div>
+      {showVideo && videoUrl && <aside className={styles.video}><iframe loading="lazy" src={videoUrl} title="YouTube player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen /></aside>}
+    </div>
+    {panel === "settings" && <PlaylistDialog title="Podesavanja prikaza" close={() => setPanel(null)}><div className={styles.settings}>
+      <label>{t("Velicina teksta")}<input type="range" min="14" max="32" value={textSize} aria-label={t("Velicina teksta")} onChange={event => setTextSize(Number(event.target.value))} /></label>
+      {!lyricsOnly && <><label>{t("Velicina akorda")}<input type="range" min="14" max="32" value={chordSize} aria-label={t("Velicina akorda")} onChange={event => setChordSize(Number(event.target.value))} /></label><label className={styles.check}><input type="checkbox" checked={showDiagrams} onChange={event => setShowDiagrams(event.target.checked)} />{t("Prikazi hvatove akorda")}</label></>}
+      <label>{t("Brzina skrolovanja")}<input type="range" min="1" max="10" value={speed} aria-label={t("Brzina skrolovanja")} onChange={event => setSpeed(Number(event.target.value))} /></label>
+    </div></PlaylistDialog>}
+    {panel === "more" && <PlaylistDialog title="Jos opcija" close={() => setPanel(null)}><div className={styles.more}>
+      <button type="button" className="ui-button" disabled={loadingVideo} aria-pressed={showVideo} onClick={() => void toggleVideo()}><Video />{t(showVideo ? "Sakrij video" : "Prikazi video")}</button>
+      {songVersion && <SongReportButton songId={song.id} songVersion={songVersion} title={title} artist={artist} transpose={transpose} />}
+    </div></PlaylistDialog>}
+    {performance && <PerformanceView displayMode={{ lyricsOnly, change: setLyricsOnly }} playlistId={playlistId} song={{ id: song.id, title, artist, lyrics }} controls={controls} capoControl={capo} settingsTools={playlistId ? <PlaylistSettingsStatus controls={playlistSettings} /> : <></>} leaveGuard={playlistId ? playlistSettings.canLeave : undefined} close={() => setPerformance(false)} />}
+  </div>
 }

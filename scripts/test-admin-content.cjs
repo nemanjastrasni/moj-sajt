@@ -37,6 +37,8 @@ Module._load = function(request, parent, isMain) {
   if (request === "next/cache") return { revalidatePath() { if (cacheFailure) throw Error("cache") } }
   if (request === "./AdminContentButtons" || request === "@/app/components/AdminContentButtons") return { __esModule: true, default: () => null }
   if (request === "./SongReviewControl") return { __esModule: true, default: () => null }
+  if (request === "./SongTutorial") return { __esModule: true, default: () => null }
+  if (request.endsWith('.css')) return { __esModule: true, default: {} }
   if (request.startsWith("@/")) request = path.join(__dirname, "..", request.slice(2))
   return original.call(this, request, parent, isMain)
 }

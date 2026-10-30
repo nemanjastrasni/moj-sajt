@@ -6,17 +6,13 @@ import { MAX_CAPO } from "@/lib/chords/capo"
 import type { SongCapo } from "./useSongCapo"
 import { useI18n } from "./UiText"
 import styles from "./CapoControl.module.css"
+import PlaylistDialog from "./PlaylistDialog"
 
-export default function CapoControl({ capo, disabled = false }: { capo: SongCapo; disabled?: boolean }) {
+export default function CapoControl({ capo, disabled = false, dialog = false }: { capo: SongCapo; disabled?: boolean; dialog?: boolean }) {
   const { t } = useI18n(), id = useId(), [expanded, setExpanded] = useState(false)
   const recommended = capo.options[0], current = capo.options.find(option => option.fret === capo.fret)
   const available = !disabled && Boolean(recommended)
-  return <div className={styles.root}>
-    <button type="button" className={styles.button} aria-expanded={expanded} aria-controls={id} disabled={disabled} onClick={() => {
-      if (!expanded && !capo.active && recommended) capo.select(recommended.fret)
-      setExpanded(value => !value)
-    }}><Guitar aria-hidden="true" /><span>Capo</span>{capo.active && <strong>{capo.fret}</strong>}</button>
-    {expanded && <section id={id} className={styles.panel} aria-label={t("Capo hvatovi")}>
+  const details = <section id={id} className={styles.panel} aria-label={t("Capo hvatovi")}>
       <div className={styles.controls}>
         <button type="button" className={styles.icon} aria-label={t("Spusti capo")} title={t("Spusti capo")} disabled={!available || capo.fret <= 0} onClick={() => capo.select(capo.fret - 1)}><Minus /></button>
         <label className={styles.fret}>{t("Prag")}<select aria-label={t("Capo prag")} value={capo.fret} disabled={!available} onChange={event => capo.select(Number(event.target.value))}>{Array.from({ length: MAX_CAPO + 1 }, (_, fret) => <option key={fret} value={fret}>{fret === 0 ? t("Bez capoa") : fret}</option>)}</select></label>
@@ -33,6 +29,12 @@ export default function CapoControl({ capo, disabled = false }: { capo: SongCapo
       </>}
       {capo.source.ambiguous ? <p role="alert" className={styles.warning}>{t("Oznaka capoa u izvornom zapisu nije jasna. Preporuka nije dostupna.")}</p> : !recommended ? <p className={styles.meta}>{t("Nema prepoznatih akorda za capo preporuku.")}</p> : null}
       {capo.active && capo.source.hasTabs && <p className={styles.warning}>{t("Tabulatura ostaje u izvornom zapisu.")}</p>}
-    </section>}
+    </section>
+  return <div className={styles.root}>
+    <button type="button" className={styles.button} aria-expanded={expanded} aria-controls={id} aria-haspopup={dialog ? "dialog" : undefined} disabled={disabled} onClick={() => {
+      if (!expanded && !capo.active && recommended) capo.select(recommended.fret)
+      setExpanded(value => !value)
+    }}><Guitar aria-hidden="true" /><span>Capo</span>{capo.active && <strong>{capo.fret}</strong>}</button>
+    {expanded && (dialog ? <PlaylistDialog title="Capo hvatovi" close={() => setExpanded(false)}>{details}</PlaylistDialog> : details)}
   </div>
 }
