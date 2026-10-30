@@ -68,7 +68,7 @@ export const aboutSections = [
     "title": "Tonalitet i capo",
     "paragraphs": [
       "Promeni tonalitet pesme ili isprobaj capo preporuku za jednostavnije hvatove uz isti zvu\u010dni tonalitet. Mo\u017ee\u0161 i ru\u010dno da izabere\u0161 prag. Preporuka zavisi od prepoznatih akorda i nije zamena za proveru sluhom.",
-      "U svojoj plejlisti mo\u017ee\u0161 posebno da sa\u010duva\u0161 tonalitet i capo za svaku pesmu. Izmene potvrdi dugmetom \u201eSa\u010duvaj u ovoj plejlisti\u201c. Favoriti imaju zasebno pam\u0107enje tonaliteta; izvorni zapis pesme se ne menja."
+      "U tvojoj plejlisti tonalitet i capo automatski se \u010duvaju za svaku pesmu. Prelazak na slede\u0107u pesmu sa\u010deka potvrdu \u010duvanja. Favoriti imaju zasebno pam\u0107enje tonaliteta; izvorni zapis pesme se ne menja."
     ],
     "links": []
   },

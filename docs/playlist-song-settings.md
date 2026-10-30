@@ -9,13 +9,19 @@ not changed by these settings.
 
 - Adding a song through + Playlist captures the currently displayed sounding
   transpose and capo, both for existing target lists and a newly created list.
-- Opening that song from its playlist loads the stored values. Changes are
-  explicit: Save to this playlist persists them, with a confirmed save status.
+- Opening that song from its playlist loads the stored values. Key and capo
+  changes save automatically, with saving/saved status in both song views.
+  Rapid changes are serialized against acknowledged versions; a delayed response
+  never replaces a newer preview. Reverting to the original values while a write
+  is in flight also saves that reset after the first response.
 - Performance mode uses the same per-entry values, not favorite settings.
   Next/previous navigation and Continue playing load the selected entry again.
-- Leaving dirty settings via performance controls or ordinary page links asks
-  for confirmation; beforeunload also warns. Browser SPA history navigation is
-  not universally interceptable, so unsaved changes are not a stored draft.
+- Performance controls and ordinary same-tab page links await all queued saves
+  before navigating, without a discard prompt on success. A failed or uncertain
+  save preserves the preview and only then asks before discarding it. A page
+  reload/tab close still warns while a write is pending. Browser SPA history
+  navigation is not universally interceptable, so pending changes are not a
+  stored offline draft. Account/song/list switches abort the obsolete session.
 - Playlist PDFs use the owner's saved arrangements. Single-song PDF exports use
   the current screen preview. Source capo null is distinct from physical fret 0.
 - Private arrangements are not exposed to other viewers of a public playlist.
@@ -76,10 +82,15 @@ separate priority audit before assuming application-level privacy is sufficient.
 
 ## Verification
 
-`npm run test:playlist-settings` covers independent lists, defaults, ownership,
+`npm run test:playlist-settings` covers automatic writes, coalesced changes,
+queued versions, returning to original values during a write, uncertain results,
+session cleanup, read-only previews, independent lists, defaults, ownership,
 pinned ownership, public views, validation, concurrent/stale writes, revocation,
 rollback, add/create capture, private PDF output and bounded client failures.
-Browser fixtures exercised 16 theme/language/viewport combinations, save/reload,
+
+### Original Implementation Verification (2026-10-29)
+
+The original browser fixtures exercised 16 theme/language/viewport combinations, save/reload,
 normal original pages, two lists, conflict recovery, + Playlist capture,
 performance next/previous, unsaved-change confirmation and non-owner views.
 All API/session traffic in those browser checks was intercepted; no live user
@@ -96,3 +107,21 @@ The running local server could not be restarted (process control returned access
 denied); local database-backed checks may require a manual dev-server restart.
 No process-permission escalation was attempted. Production deployment starts a
 fresh process with the regenerated Prisma client.
+
+### Autosave Verification (2026-10-30)
+
+The autosave update passes all 536 regression tests, TypeScript and targeted
+ESLint checks. A fresh production Next.js build from the real source finishes
+successfully, including static generation and build traces. The build uses a
+separate copy so browser verification cannot affect its output.
+
+An isolated browser fixture uses the actual settings hook, song controls,
+playlist navigation and performance view. It passed 16 combinations of theme,
+language and viewport, covering rapid key changes followed immediately by Next,
+restoration on Previous/reload, header Back while saving, separate lists,
+original pages, capo persistence, entering performance while saving and
+performance Previous/Next. A simulated conflict retained the preview and
+required confirmation before discarding it; a non-owner view made no writes.
+Successful navigation displayed no discard confirmation. Screenshots were
+visually inspected. All API/session traffic was mocked and no live user
+arrangement was written; physical-device and live Vercel checks remain separate.
