@@ -105,5 +105,6 @@ export async function listAdminSongs(filters: AdminSongFilters) {
 export function refreshAdminSongs() {
   // Database work has committed; cache errors must not report a failed write.
   try { revalidateTag("playlist-catalog") } catch {}
+  try { revalidateTag("seo-sitemap"); revalidateTag("public-home-songs") } catch {}
   try { for (const path of ["/pesme", "/biografija", "/admin/songs", "/favorite", "/profile", "/plejliste", "/moji-predlozi"]) revalidatePath(path, "layout"); revalidatePath("/") } catch {}
 }

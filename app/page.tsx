@@ -5,11 +5,16 @@ import LatestSongs from "./components/LatestSongs"
 
 import UiText from "./components/UiText"
 import HomeRepertoire from "./components/HomeRepertoire"
+import SiteImage from "./components/SiteImage"
+import { publicPageMetadata } from "@/lib/seo/metadata"
+
+export const metadata = publicPageMetadata("GitaraAkordi – Akordi i tekstovi pesama", "Pesme sa akordima, lične plejliste, capo, PDF pesmarice, biografije i diskografije izvođača.", "/")
 
 export default function HomePage() {
 
   return (
-    <main className="w-full">
+    <div className="w-full">
+      <h1 className="sr-only">GitaraAkordi – <UiText text="Akordi i tekstovi" /></h1>
 
       <HomeRepertoire />
 
@@ -29,8 +34,9 @@ export default function HomePage() {
             href="/pesme/narodne"
             className="relative h-44 rounded-xl overflow-hidden group"
           >
-            <img
-              src="/images/narodne.jpg"
+            <SiteImage
+              name="categoryNarodne"
+              sizes="(min-width: 768px) 360px, calc(100vw - 80px)"
               alt=""
               className="absolute w-full h-full object-cover group-hover:scale-110 transition"
             />
@@ -45,8 +51,9 @@ export default function HomePage() {
             href="/pesme/domace"
             className="relative h-44 rounded-xl overflow-hidden group"
           >
-            <img
-              src="/images/domace.jpg"
+            <SiteImage
+              name="categoryDomace"
+              sizes="(min-width: 768px) 360px, calc(100vw - 80px)"
               alt=""
               className="absolute w-full h-full object-cover group-hover:scale-110 transition"
             />
@@ -61,8 +68,9 @@ export default function HomePage() {
             href="/pesme/strane"
             className="relative h-44 rounded-xl overflow-hidden group"
           >
-            <img
-              src="/images/strane.jpg"
+            <SiteImage
+              name="categoryStrane"
+              sizes="(min-width: 768px) 360px, calc(100vw - 80px)"
               alt=""
               className="absolute w-full h-full object-cover group-hover:scale-110 transition"
             />
@@ -79,6 +87,6 @@ export default function HomePage() {
       <PopularSongs />
       <LatestSongs />
 
-    </main>
+    </div>
   )
 }

@@ -11,6 +11,7 @@ import UiText from "@/app/components/UiText"
 import MusicWorkspace from "@/app/components/MusicWorkspace"
 import Link from "next/link"
 import HeaderSearch from "@/app/components/HeaderSearch"
+import { SITE_URL } from "@/lib/seo/site"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -20,13 +21,13 @@ const poppins = Poppins({
 
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://gitarakordi.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "GitaraAkordi – Akordi i tekstovi pesama",
     template: "%s | GitaraAkordi",
   },
   description:
-    "GitaraAkordi – najveća kolekcija akorda, tekstova pesama, biografija i diskografija izvođača.",
+    "Pesme sa akordima, lične plejliste, capo, PDF pesmarice, biografije i diskografije izvođača.",
 }
 export default function RootLayout({
   children,

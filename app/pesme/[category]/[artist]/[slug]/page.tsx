@@ -1,5 +1,9 @@
 import { notFound } from "next/navigation"
-import { prisma } from "@/lib/prisma"
+import { headers } from "next/headers"
+import { getPublicSong } from "@/lib/publicPages"
+import { countSongViewAfterResponse } from "@/lib/songViews"
+import { publicPageMetadata } from "@/lib/seo/metadata"
+import { routePath } from "@/lib/seo/site"
 import SongClient from "../../../../components/SongClient"
 import type { Metadata } from "next"
 import AdminPageActions from "@/app/components/AdminPageActions"
@@ -10,7 +14,7 @@ import { playlistReturnHref } from "@/lib/navigation/parent"
 import { isFavoriteView } from "@/lib/favorites/model"
 import { catalogEntry } from "@/lib/playlists/catalog"
 import { performanceHref } from "@/lib/performance/model"
-import { performerSelect, performerArtists, performerHref } from "@/lib/artists/performers"
+import { performerArtists, performerHref } from "@/lib/artists/performers"
 
 type Props = {
   params: Promise<{
@@ -24,15 +28,10 @@ type Props = {
 export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
-  const { artist, slug } = await params
-
-  const title = slug.replace(/-/g, " ")
-  const artistName = artist.replace(/-/g, " ")
-
-  return {
-    title: `${title} - ${artistName} akordi`,
-    description: `Akordi i tekst pesme ${title} od ${artistName}.`,
-  }
+  const { category, artist, slug } = await params
+  const song = await getPublicSong(category, artist, slug)
+  if (!song) notFound()
+  return publicPageMetadata(`${song.title} – ${song.artist.name}: akordi i tekst`, `Akordi i tekst pesme ${song.title} – ${song.artist.name}. Tonalitet, capo preporuke i prikaz za sviranje.`, routePath("pesme", category, song.artist.slug, song.slug))
 }
 
 export default async function SongPage({ params, searchParams }: Props) {
@@ -44,19 +43,7 @@ export default async function SongPage({ params, searchParams }: Props) {
   const playlistMatch = playlist?.match(/^\/plejliste\/([a-zA-Z0-9_-]+)$/)
   const playablePlaylist = playlistMatch && !catalogEntry(playlistMatch[1]) && !["pesme-koje-znam", "top-user", "generisane", "kategorija"].includes(playlistMatch[1]) ? playlistMatch[1] : null
 
-  const song = await prisma.song.findFirst({
-    where: {
-      slug,
-      artist: {
-        slug: artist,
-        category: category,
-      },
-    },
-    include: {
-      artist: true,
-      performers: performerSelect,
-    },
-  })
+  const song = await getPublicSong(category, artist, slug)
 
   if (!song) {
     notFound()
@@ -65,16 +52,7 @@ export default async function SongPage({ params, searchParams }: Props) {
   const fromArtist = typeof query.artist === "string" ? performers.find(artist => artist.id === query.artist) : undefined
   const returnTo = playlist ?? (fromFavorites ? "/favorite" : fromArtist ? performerHref(fromArtist) : performers[0] ? performerHref(performers[0]) : null)
   const contentVersion = songReviewVersion(song)
- await prisma.song.update({
-  where: {
-    id: song.id,
-  },
-  data: {
-    popularity: {
-      increment: 1,
-    },
-  },
-})
+  countSongViewAfterResponse(song.id, await headers())
 
   return (
     <>

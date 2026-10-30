@@ -12,37 +12,29 @@ import { BackNavigationTarget } from "@/app/components/BackNavigation"
 import { artistIndexHref } from "@/lib/navigation/parent"
 import { hasBiographyContent } from "@/lib/biographies/catalog"
 import { performerSelect } from "@/lib/artists/performers"
+import { getPublicArtist } from "@/lib/publicPages"
+import { publicPageMetadata } from "@/lib/seo/metadata"
+import { routePath } from "@/lib/seo/site"
 
 export const dynamic = "force-dynamic"
+type ArtistProps = { params: Promise<{ category: string; artist: string }> }
 
-export async function generateMetadata({ params }: any) {
+export async function generateMetadata({ params }: ArtistProps) {
   const { category, artist } = await params
  
-  const artistData = await prisma.artist.findFirst({
-    where: {
-      slug: artist,
-      category,
-    },
-  })
+  const artistData = await getPublicArtist(category, artist)
   
   if (!artistData) {
-    return { title: "Izvođač nije pronađen" }
+    notFound()
   }
   
-  return {
-    title: `${artistData.name} – Pesme`,
-  }
+  return publicPageMetadata(`${artistData.name} – Akordi i tekstovi pesama`, `Pesme izvođača ${artistData.name}: akordi, tekstovi, procena težine i repertoar za sviranje.`, routePath("pesme", category, artistData.slug))
 }
 
-export default async function ArtistPage({ params }: any) {
+export default async function ArtistPage({ params }: ArtistProps) {
   const { category, artist } = await params
 
-  const artistData = await prisma.artist.findFirst({
-    where: {
-      slug: artist,
-      category,
-    },
-  })
+  const artistData = await getPublicArtist(category, artist)
 
   if (!artistData) notFound()
   const songs = await prisma.song.findMany({

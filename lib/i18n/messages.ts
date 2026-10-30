@@ -1,5 +1,6 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "Pesme trenutno nisu dostupne. Poku\u0161aj ponovo.": "Songs are currently unavailable. Try again.",
   "Prebaci na Samo tekst kada \u017eeli\u0161 stihove bez akorda i tabulatura, uz sa\u010duvane strofe. Originalni zapis se ne menja. Dugme Kako se svira pojavljuje se tamo gde je admin dodao izabrani YouTube video-tutorijal ili Shorts.": "Choose Lyrics only to see verses without chords or tablature, keeping stanza breaks. The original notation is unchanged. How to play appears where an admin has added a selected YouTube tutorial video or Short.",
   "Prikaz pesme": "Song display",
   "Tekst i akordi": "Lyrics and chords",

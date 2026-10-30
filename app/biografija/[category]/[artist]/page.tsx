@@ -1,4 +1,6 @@
-import { prisma } from "@/lib/prisma"
+import { getPublicArtist } from "@/lib/publicPages"
+import { publicPageMetadata } from "@/lib/seo/metadata"
+import { routePath } from "@/lib/seo/site"
 import { notFound } from "next/navigation"
 import BioText from "@/app/biografija/components/BioText"
 import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
@@ -11,13 +13,13 @@ import AdminPageActions from "@/app/components/AdminPageActions"
 import { artistContentVersion } from "@/lib/adminContent/server"
 import { BackNavigationTarget } from "@/app/components/BackNavigation"
 import { artistIndexHref } from "@/lib/navigation/parent"
-import { biographyText } from "@/lib/biographies/catalog"
+import { biographyText, hasBiographyContent } from "@/lib/biographies/catalog"
 import UiText from "@/app/components/UiText"
 import Link from "next/link"
 import MusicButton from "@/app/components/MusicButton"
 
 function cirToLat(text: string) {
-  const map: any = {
+  const map: Record<string, string> = {
     "А":"A","Б":"B","В":"V","Г":"G","Д":"D","Ђ":"Đ","Е":"E","Ж":"Ž","З":"Z","И":"I","Ј":"J","К":"K","Л":"L","Љ":"Lj","М":"M","Н":"N","Њ":"Nj","О":"O","П":"P","Р":"R","С":"S","Т":"T","Ћ":"Ć","У":"U","Ф":"F","Х":"H","Ц":"C","Ч":"Č","Џ":"Dž","Ш":"Š",
     "а":"a","б":"b","в":"v","г":"g","д":"d","ђ":"đ","е":"e","ж":"ž","з":"z","и":"i","ј":"j","к":"k","л":"l","љ":"lj","м":"m","н":"n","њ":"nj","о":"o","п":"p","р":"r","с":"s","т":"t","ћ":"ć","у":"u","ф":"f","х":"h","ц":"c","ч":"č","џ":"dž","ш":"š"
   }
@@ -27,12 +29,16 @@ function cirToLat(text: string) {
 
 export const dynamic = "force-dynamic"
 
-export default async function BiographyPage({ params }: any) {
+export async function generateMetadata({ params }: { params: Promise<{ category: string; artist: string }> }) {
+  const { category, artist } = await params, data = await getPublicArtist(category, artist)
+  if (!data) notFound()
+  return { ...publicPageMetadata(`${data.name} – Biografija i diskografija`, `Biografija izvođača ${data.name}, diskografija, albumi i godine izdanja prema dostupnim izvorima.`, routePath("biografija", category, data.slug)), ...(!hasBiographyContent(data) ? { robots: { index: false, follow: true } } : {}) }
+}
+
+export default async function BiographyPage({ params }: { params: Promise<{ category: string; artist: string }> }) {
   const { artist: artistSlug, category } = await params
 
-  const artistData = await prisma.artist.findFirst({
-    where: { slug: artistSlug, category }
-  })
+  const artistData = await getPublicArtist(category, artistSlug)
 
   if (!artistData) notFound()
   const image = getArtistImage(artistData)

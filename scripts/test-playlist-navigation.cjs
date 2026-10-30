@@ -8,10 +8,12 @@ const { playlistSongHref } = require("../lib/navigation/parent.ts")
 const song = { id: "song", title: "Pesma", slug: "pesma", category: "domace", lyrics: "G\nStih", chords: null, artist: { name: "Bend", slug: "bend", category: "domace" } }
 const marker = () => null, SongClient = () => null
 const original = Module._load
-let reads = 0, updates = 0
+let reads = 0, updates = 0, queuedViews = 0
 Module._load = function(request, parent, isMain) {
   if (request === "@/lib/prisma") return { prisma: { song: { findFirst: async () => { reads++; return song }, update: async () => { updates++; return song } } } }
   if (request === "next/navigation") return { notFound: () => { throw Error("not found") } }
+  if (request === "next/headers") return { headers: async () => new Headers({ "user-agent": "Mozilla browser" }) }
+  if (request === "next/server") return { after: () => { queuedViews++ } }
   if (request === "../../../../components/SongClient") return { __esModule: true, default: SongClient }
   if (request === "@/app/components/AdminPageActions") return { __esModule: true, default: () => null }
   if (request === "@/app/components/BackNavigation") return { BackNavigationTarget: marker }
@@ -44,7 +46,8 @@ test("separate list links for the same song retain independent server-rendered t
     const tree = await SongPage(context("/plejliste/" + id))
     assert.equal(tree.props.children.find(child => child?.type === marker).props.href, "/plejliste/" + id)
   }
-  assert.equal(reads, updates, "navigation adds no queries and leaves existing visit-counter behavior unchanged")
+  assert.equal(reads, queuedViews, "each rendered page queues one view after its response")
+  assert.equal(updates, 0, "view-counter writes do not block playlist navigation rendering")
 })
 
 test("Favorites explicitly restore the personal view and return there, while catalog/playlist visits stay original", async () => {

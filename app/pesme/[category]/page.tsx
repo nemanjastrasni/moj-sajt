@@ -5,6 +5,9 @@ import { getCategoryLabel } from "@/lib/categories"
 import { CategoryLabel } from "@/app/components/UiText"
 import ArtistMosaic from "@/app/components/ArtistMosaic"
 import styles from "@/app/components/ArtistMedia.module.css"
+import { publicPageMetadata } from "@/lib/seo/metadata"
+import { isPublicCategory, routePath } from "@/lib/seo/site"
+import { notFound } from "next/navigation"
 
 export const dynamic = "force-dynamic"
 
@@ -12,12 +15,10 @@ export async function generateMetadata(
   { params }: { params: Promise<{ category: string }> }
 ): Promise<Metadata> {
   const { category } = await params
+  if (!isPublicCategory(category)) notFound()
   const pretty = getCategoryLabel(category)
 
-  return {
-    title: `${pretty} pesme – Akordi i tekstovi`,
-    description: `Lista izvođača i pesama u kategoriji ${pretty}.`,
-  }
+  return publicPageMetadata(`${pretty} pesme – Akordi i tekstovi`, `Lista izvođača i pesama u kategoriji ${pretty}.`, routePath("pesme", category))
 }
 
 
@@ -26,6 +27,7 @@ export default async function CategoryPage(
 ) {
 
   const { category } = await params
+  if (!isPublicCategory(category)) notFound()
 
   const artists = await prisma.artist.findMany({
   where: { category },
