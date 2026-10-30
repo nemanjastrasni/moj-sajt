@@ -63,3 +63,8 @@ tabele/
 /reports/song-performers/
 /reports/site-performance/
 /reports/favorite-playlists/
+/reports/release-checks/
+/reports/backups/
+*.gakbackup
+*.gakbackup.partial
+application-backup.key

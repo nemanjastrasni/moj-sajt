@@ -11,6 +11,8 @@
     "test:seo": "node --test scripts/test-seo-performance.cjs",
     "test:favorite-playlists": "node --test scripts/test-favorite-playlists.cjs",
     "favorites:migrate": "node scripts/migrate-favorite-playlists.cjs",
+    "backup:app": "node scripts/application-backup.cjs",
+    "test:backup": "node --test scripts/test-application-backup.cjs",
     "images:optimize": "node scripts/optimize-site-images.cjs",
     "performance:measure": "node scripts/measure-site.cjs",
     "test:chords": "node --test scripts/test-song-sheet.cjs",

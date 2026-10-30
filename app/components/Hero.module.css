@@ -1,0 +1,38 @@
+.hero { position: relative; width: 100%; height: clamp(220px, 52svh, 560px); overflow: hidden; background: #101214; color: #fff; touch-action: pan-y pinch-zoom; }
+.slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 400ms ease-in-out; }
+.active { opacity: 1; pointer-events: auto; }
+.image { width: 100%; height: 100%; object-fit: cover; }
+.shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgb(0 0 0 / 62%), rgb(0 0 0 / 8%) 80%), linear-gradient(0deg, rgb(0 0 0 / 65%), transparent 40%); }
+.caption { position: absolute; left: 48px; right: 48px; bottom: 104px; max-width: 760px; }
+.category { display: inline-flex; align-items: center; gap: 16px; max-width: 100%; color: #fff !important; text-decoration: none; }
+.category h2 { margin: 0; font-size: 44px; line-height: 1.15; font-weight: 700; overflow-wrap: anywhere; letter-spacing: 0; }
+.category svg { width: 28px; height: 28px; flex: 0 0 28px; transition: transform 160ms ease; }
+.category:hover svg { transform: translate(2px, -2px); }
+.caption p { margin: 12px 0 0; color: #eef0f2; font-size: 17px; line-height: 1.5; }
+.controls { position: absolute; bottom: 20px; left: 40px; right: 40px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.arrows, .dots { display: flex; align-items: center; gap: 4px; }
+.icon, .dot { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; color: #fff !important; cursor: pointer; }
+.icon { border: 1px solid rgb(255 255 255 / 45%); border-radius: 4px; background: rgb(0 0 0 / 25%); }
+.icon svg { width: 20px; height: 20px; }
+.icon:hover { background: rgb(255 255 255 / 16%); border-color: #fff; }
+.dot { background: transparent; border: 0; }
+.dot span { width: 7px; height: 7px; border-radius: 50%; background: rgb(255 255 255 / 55%); transition: background 160ms ease; }
+.dot[aria-pressed="true"] span { width: 22px; height: 4px; border-radius: 2px; background: #fff; }
+.dot:hover span { background: #fff; }
+.category:focus-visible, .icon:focus-visible, .dot:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+.error { position: absolute; top: 16px; left: 24px; right: 24px; margin: 0; padding: 8px 12px; color: #fff; background: #7d2020; font-size: 14px; }
+@media (max-width: 767px) {
+  .caption { left: 24px; right: 24px; bottom: 92px; }
+  .category { gap: 10px; }
+  .category h2 { font-size: 30px; }
+  .category svg { width: 22px; height: 22px; flex-basis: 22px; }
+  .caption p { margin-top: 10px; font-size: 16px; }
+  .controls { left: 20px; right: 20px; bottom: 16px; }
+  .rotation { display: none; }
+}
+@media (pointer: coarse) { .rotation { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .slide, .category svg, .dot span { transition: none; }
+  .category:hover svg { transform: none; }
+  .rotation { display: none; }
+}
