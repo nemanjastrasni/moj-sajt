@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- CommonJS fixtures use ts-node to test the shared TypeScript parser. */
 require("ts-node").register({
   transpileOnly: true,
   compilerOptions: { module: "CommonJS", moduleResolution: "Node" },
@@ -54,6 +55,39 @@ test("preserves real tablature and lyric punctuation", () => {
   }
   assert.equal(parseSheetLine("Da... jos uvek - za tobom").text, "Da... jos uvek - za tobom")
   assert.equal(parseSheetLine("| Am | G | F | E |").kind, "chords")
+})
+
+test("spaced European string labels and silent strings remain untouched tablature", () => {
+  for (const source of ['  e ------------------', '  h ---8--7--8-------', '  g -------9---------', '  d --9--------------', '  a -----------------', '  e -----------------', 'B|--|', '  B |--0--2h3----|', '  F# ---0----2---', '  1 ----0----2---']) {
+    assert.deepEqual(parseSheetLine(source), { kind: 'tab', text: source, tokens: [] }, source)
+  }
+  for (const source of ['a --- ovo je tekst', 'hvala za pesmu', 'E--------', 'A----', 'G-------------', 'E----Am', 'G----B', 'A----B7', 'B----Em7', 'Em.....C.....F#7.....H']) assert.notEqual(parseSheetLine(source).kind, 'tab', source)
+})
+
+test("chords above spaced tabs stay in one six-string block without false E/A chords", () => {
+  const { source, first, second } = require('./fixtures/spaced-tablature.cjs')
+  const lines = parseSongSheet(source), blocks = groupSheetLines(lines)
+  assert.deepEqual(getUsedChords(lines), ['Em', 'C', 'F#7', 'B', 'Am', 'B7'])
+  const tabs = blocks.filter(block => block.tabLines)
+  assert.equal(tabs.length, 2)
+  for (const [i, expected] of [first, second].entries()) {
+    assert.deepEqual(tabs[i].tabLines.map(line => line.text), expected)
+    assert.equal(tabs[i].chordLine.tokens.length, 4)
+    assert.deepEqual(wrapSheetBlock(tabs[i], 18), [{ start: 0, end: Math.max(...expected.map(line => line.length), tabs[i].chordLine.text.trimEnd().length) }])
+  }
+  assert.equal(blocks.at(-1).lyricLine.text, 'Probni stih za proveru prikaza.')
+  assert.equal(blocks.at(-1).chordLine.tokens.length, 5)
+})
+
+test("tab grouping is bounded and does not consume section breaks or following lyrics", () => {
+  const { first } = require('./fixtures/spaced-tablature.cjs')
+  const blocks = groupSheetLines(parseSongSheet([...first, ...first, '', 'Ref.', 'Am G', 'Probni stih'].join('\n')))
+  assert.deepEqual(blocks.filter(block => block.tabLines).map(block => block.tabLines.length), [6, 6])
+  assert.equal(blocks[2].lyricLine.kind, 'empty')
+  assert.equal(blocks[3].lyricLine.text, 'Ref.')
+  assert.equal(blocks[4].lyricLine.text, 'Probni stih')
+  const { lyricsOnlyLines } = require('../lib/chords/lyricsOnly.ts')
+  assert.deepEqual(lyricsOnlyLines(parseSongSheet([...first, '', 'Am G', 'Probni stih'].join('\n'))), ['Probni stih'])
 })
 
 test("explicit inline chords move above lyrics at the correct lyric column", () => {

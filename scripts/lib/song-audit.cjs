@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Standalone CommonJS audit loads the shared TypeScript parser through ts-node. */
 const { createHash } = require("node:crypto")
 require("ts-node").register({ transpileOnly: true, compilerOptions: { module: "CommonJS", moduleResolution: "Node" } })
 const { parseSongSheet, getUsedChords, groupSheetLines, wrapSheetBlock } = require("../../lib/chords/songSheet.ts")
@@ -111,7 +112,7 @@ function createAuditor(assetExists = () => true) {
     for (const [index, block] of blocks.entries()) {
       for (const columns of [18, 30, 50, 80]) {
         const ranges = wrapSheetBlock(block, columns)
-        const expected = Math.max(block.lyricLine?.text.length ?? 0, block.chordLine?.text.trimEnd().length ?? 0, ...block.chordLine?.tokens.map(token => token.end) ?? [0])
+        const expected = Math.max(block.lyricLine?.text.length ?? 0, block.chordLine?.text.trimEnd().length ?? 0, ...block.tabLines?.map(line => line.text.length) ?? [0], ...block.chordLine?.tokens.map(token => token.end) ?? [0])
         const contiguous = ranges[0].start === 0 && ranges.at(-1).end === expected && ranges.every((range, i) => range.end >= range.start && (!i || ranges[i - 1].end === range.start))
         const retained = (block.chordLine?.tokens ?? []).every(token => ranges.filter(range => token.start >= range.start && token.end <= range.end).length === 1)
         if (!contiguous || !retained) add("wrap_failure", null, `Blok ${index + 1}, ${columns} kolona`, "error")

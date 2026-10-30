@@ -10,10 +10,17 @@ export function printBlocks(lyrics: string | SheetLine[], columns: number): Prin
   for (let i = 0; i < blocks.length; i++) {
     const block = blocks[i]
     if (block.lyricLine?.kind === "tab") {
-      const lines = [block.lyricLine.text]
-      while (lines.length < 6 && blocks[i + 1]?.lyricLine?.kind === "tab") lines.push(blocks[++i].lyricLine!.text)
-      const length = Math.max(...lines.map(line => line.length))
-      for (let start = 0; start < length; start += columns) result.push({ section: false, rows: lines.map(text => ({ kind: "tab", text: text.slice(start, start + columns), tokens: [] })) })
+      const lines = block.tabLines ?? [block.lyricLine]
+      const length = wrapSheetBlock(block, columns)[0].end
+      for (let start = 0; start < length;) {
+        let end = Math.min(length, start + columns)
+        const crossing = block.chordLine?.tokens.find(token => token.start < end && token.end > end)
+        if (crossing) end = crossing.start > start ? crossing.start : crossing.end
+        const rows: PrintRow[] = []
+        if (block.chordLine) rows.push({ kind: "chords", text: block.chordLine.text.slice(start, end), tokens: block.chordLine.tokens.filter(token => token.start >= start && token.start < end).map(token => ({ ...token, start: token.start - start, end: token.end - start })) })
+        rows.push(...lines.map(line => ({ kind: "tab" as const, text: line.text.slice(start, end), tokens: [] })))
+        result.push({ section: false, rows }); start = end
+      }
       continue
     }
     const ranges = wrapSheetBlock(block, columns).flatMap(range => {

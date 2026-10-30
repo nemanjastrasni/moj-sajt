@@ -28,7 +28,12 @@ function expandTabs(line: string) {
 
 export function isTabLine(line: string) {
   if (!/[-|:\u2010-\u2015]/.test(line)) return false
-  const body = line.trim().replace(/^(?:[eBGDAE]|[1-6])(?=[|:\-\u2010-\u2015])/i, "")
+  const trimmed = line.trim()
+  const label = trimmed.match(/^(?:[a-h](?:#|b)?|[1-6])\s*(?=[|:\-\u2010-\u2015])/i)
+  const body = trimmed.slice(label?.[0].length ?? 0)
+  // Silent strings are still tab rows; do not turn their E/A labels into chords.
+  if (label && (/\s$/.test(label[0]) || /[|:]/.test(body)) && /^[\s|:\-\u2010-\u2015]+$/.test(body)
+    && (/[-\u2010-\u2015]{3,}/.test(body) || /[|:]/.test(body) && /[-\u2010-\u2015]/.test(body))) return true
   return /^[\s|:\-\u2010-\u2015]*(?:\d|x)[\d\s|:xhHpPbBrR/\\~().<>^=\-\u2010-\u2015]*$/i.test(body)
 }
 
@@ -169,12 +174,20 @@ export function getUsedChords(lines: SheetLine[]) {
   return Array.from(new Set(lines.flatMap((line) => line.tokens.filter((token) => !token.bass).map((token) => token.chord))))
 }
 
-export type SheetBlock = { chordLine?: SheetLine; lyricLine?: SheetLine }
+export type SheetBlock = { chordLine?: SheetLine; lyricLine?: SheetLine; tabLines?: SheetLine[] }
 
 export function groupSheetLines(lines: SheetLine[]): SheetBlock[] {
   const blocks: SheetBlock[] = []
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index]
+    if (line.kind === "tab" || line.kind === "chords" && lines[index + 1]?.kind === "tab") {
+      const chordLine = line.kind === "chords" ? line : undefined
+      const start = index + (chordLine ? 1 : 0), tabLines: SheetLine[] = []
+      while (tabLines.length < 6 && lines[start + tabLines.length]?.kind === "tab") tabLines.push(lines[start + tabLines.length])
+      blocks.push({ chordLine, lyricLine: tabLines[0], tabLines })
+      index = start + tabLines.length - 1
+      continue
+    }
     if (line.kind === "chords") {
       const next = lines[index + 1]
       if (next?.kind === "lyrics" && !sectionLabel.test(next.text)) {
@@ -191,7 +204,7 @@ export function groupSheetLines(lines: SheetLine[]): SheetBlock[] {
 export function wrapSheetBlock(block: SheetBlock, columns: number) {
   const lyric = block.lyricLine?.text ?? ""
   const chordText = block.chordLine?.text ?? ""
-  const length = Math.max(lyric.length, chordText.trimEnd().length, ...block.chordLine?.tokens.map((token) => token.end) ?? [0])
+  const length = Math.max(lyric.length, chordText.trimEnd().length, ...block.tabLines?.map(line => line.text.length) ?? [0], ...block.chordLine?.tokens.map((token) => token.end) ?? [0])
   const ranges: { start: number; end: number }[] = []
   if (block.lyricLine?.kind === "tab") return [{ start: 0, end: length }]
   let start = 0

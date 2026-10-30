@@ -101,6 +101,26 @@ test("tablature wraps in synchronized six-string chunks and never makes oversize
   assert.ok(printBlocks(Array(30).fill(lines[0]).join("\n"), 30).every(block => block.rows.length <= 6))
 })
 
+test("spaced tab systems retain silent strings and their chord header at matching PDF columns", () => {
+  const { source, first, second, headers } = require('./fixtures/spaced-tablature.cjs')
+  const blocks = printBlocks(source, 24), tabBlocks = blocks.filter(block => block.rows.some(row => row.kind === 'tab'))
+  assert.ok(tabBlocks.length > 2)
+  assert.ok(tabBlocks.every(block => block.rows.length === 7 && block.rows[0].kind === 'chords'))
+  const reconstructed = Array.from({ length: 2 }, () => Array(6).fill(''))
+  let system = 0, width = 0
+  const lengths = [Math.max(...first.map(line => line.length), headers[0].length), Math.max(...second.map(line => line.length), headers[1].length)]
+  for (const block of tabBlocks) {
+    const rows = block.rows.filter(row => row.kind === 'tab')
+    for (let string = 0; string < 6; string++) reconstructed[system][string] += rows[string].text
+    const chord = block.rows[0]
+    for (const token of chord.tokens) assert.equal(headers[system].slice(width + token.start, width + token.end).toLowerCase(), token.chord.toLowerCase() === 'b' ? 'h' : token.chord.toLowerCase())
+    width += Math.max(chord.text.length, ...rows.map(row => row.text.length))
+    if (width === lengths[system]) { system++; width = 0 }
+  }
+  assert.equal(system, 2)
+  assert.deepEqual(reconstructed, [first, second])
+})
+
 const fonts = { regular: fs.readFileSync(path.join(__dirname, "../public/fonts/songbook/DejaVuSansMono.ttf")), bold: fs.readFileSync(path.join(__dirname, "../public/fonts/songbook/DejaVuSansMono-Bold.ttf")) }
 const options = { title: "Moja pesmarica", fontSize: 11, book: true, contents: true, locale: "sr" }
 const pdfSong = { id: "one", title: "\u010cudna no\u0107", artist: "\u0110or\u0111e i bend", lyrics: "  G            D\n\u010cuvaj \u010d, \u0107, \u0161, \u0111, \u017e i sve razmake.\nE(#9) E(b9) Am A7\nTekst sa izmenjenim akordima.\n", transpose: 2 }
