@@ -12,6 +12,7 @@ function validatePlan(report){
     for(const [field,change] of Object.entries(artist.changes||{})){
       if(!['bio','discography'].includes(field)||!/^Q\d+$/.test(artist.proposal?.wikidataId||''))throw Error('INVALID_PLAN_CHANGE')
       if(!validSource(artist.proposal[field==='bio'?'bioSource':'discographySource']))throw Error('PINNED_SOURCE_REQUIRED')
+      if(hash(change.after)!==hash(artist.proposal[field]))throw Error('PROPOSAL_CONTENT_MISMATCH')
       if(field==='bio'&&(typeof change.after!=='string'||change.after.length<200||change.after.length>20000))throw Error('INVALID_BIOGRAPHY')
       if(field==='discography'&&!eligibleDiscography(change.after))throw Error('INVALID_ALBUM_LIST')
     }
@@ -56,7 +57,7 @@ async function applyReport(report,ca,baseUrl,{verify=verifyPublished,connect=dat
   return result
 }
 async function main(){
-  const {values}=parseArgs({options:{ca:{type:'string'},report:{type:'string',default:'reports/artist-wiki/completion-2026-10-31/report.json'},'base-url':{type:'string'},apply:{type:'boolean',default:false}}})
+  const {values}=parseArgs({options:{ca:{type:'string'},report:{type:'string',default:'reports/artist-wiki/completion-2026-10-31/refined-report.json'},'base-url':{type:'string'},apply:{type:'boolean',default:false}}})
   require('@next/env').loadEnvConfig(ROOT)
   const report=JSON.parse(await fs.readFile(path.resolve(ROOT,values.report),'utf8'));validatePlan(report)
   if(!values.apply){console.log(JSON.stringify({dryRun:true,...report.summary}));return}

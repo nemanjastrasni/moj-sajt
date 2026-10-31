@@ -78,3 +78,7 @@ test('bulk publication refuses an unpublished credit UI before connecting to the
   assert.throws(()=>validatePlan({...report,artists:[artist,artist]}),/INVALID_ARTIST_ID/)
   assert.throws(()=>validatePlan({...report,artists:[{...artist,proposal:{...proposal,bioSource:null}}]}),/PINNED_SOURCE_REQUIRED/)
 })
+test('strict publication excludes generic discography song tables and marked singles',()=>{
+  const html='<h2>Discography</h2><table><tr><th>Title</th><th>Year</th></tr><tr><td><i>Song A; Song B; Song C</i></td><td>2019</td></tr></table><h3>Albums</h3><ul><li>Real album (2020)</li><li>Later song [single] (2021)</li></ul><h3>Studio albums</h3><ul><li>Studio release (2022)</li></ul>'
+  assert.deepEqual(core.extractArticle(html,{strictAlbums:true}).albums.map(a=>a.title),['Real album','Studio release'])
+})

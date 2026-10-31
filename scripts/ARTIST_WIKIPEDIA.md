@@ -16,6 +16,11 @@ process existing records. No background process or cron is installed by this cod
 
 `npm run wiki:plan -- --ca <certificate>` resumes the local catalogue scan.
 Plans, caches and before/after reports stay in ignored `reports/artist-wiki/`.
+Run `npm run wiki:refine` after discovery. This re-parses the pinned, cached pages
+and excludes generic discography sections without an explicit album type,
+mixed yearly song tables and releases explicitly marked as singles. Apply uses
+this refined plan by default. A content/proposal hash check prevents a plan from
+accidentally citing the source for a different candidate value.
 The plan preserves release types and skips the reviewed questionable lists in
 `wiki-discography-holds.json`. Missing articles and ambiguous matches stay empty.
 It never imports tracks/singles as albums, translates album names, or uses an

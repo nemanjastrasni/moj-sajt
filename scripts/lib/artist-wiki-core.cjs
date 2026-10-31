@@ -43,7 +43,7 @@ function albumFromText(text, title, kind, yearNow) {
   return { title, year, kind }
 }
 
-function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullYear(), subjectKind = "musician" } = {}) {
+function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullYear(), subjectKind = "musician", strictAlbums = false } = {}) {
   const $ = cheerio.load(html)
   const root = $(".mw-parser-output").first().length ? $(".mw-parser-output").first() : $("body")
   root.find("script,style,.infobox,.sidebar,.navbox,.vertical-navbox,.reflist,.references,.hatnote,.ambox,.toc,.metadata,.shortdescription,.mw-editsection,figure,[role=navigation]").remove()
@@ -53,6 +53,12 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
   let excludedLevel = null, heading = "", discLevel = null, blockedDiscLevel = null, kind = "album", bioLength = 0
   const terminal = /^(?:diskograf|discograf|discograph|filmograf|filmograph|bibliograf|bibliograph|reference|referenc|izvori|sources|literatura|literature|napomene|notes|external links|spoljasnje veze|vanjske|spoljne|see also|vidi jos|nagrade|awards|priznanja|controvers|kontrover|politic|politick|scandal|skandal|optuz|legal issues)/
   const discHeading = text => /diskograf|discograf|discograph|^(?:kompila|compila)|^(?:solo |studio |studijski |live |koncertni |compilation |kompilacijski )?album/.test(text)
+  // A generic "Discography" section can contain singles, soundtracks or yearly
+  // song tables. Only an explicit album heading establishes a release type.
+  const releaseKind = text => {
+    const kind = albumKind(text)
+    return strictAlbums && kind === "album" && !/album/.test(key(text)) ? "skip" : kind
+  }
   root.find("h2,h3,h4,h5,h6,p,dt,b,strong,li,tr").each((_, node) => {
     const element = $(node), tag = node.tagName.toLowerCase()
     if (element.parents(".navbox,.reflist,.infobox,.references").length) return
@@ -62,7 +68,7 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
       if (discLevel !== null && level <= discLevel) discLevel = null
       if (blockedDiscLevel !== null && level <= blockedDiscLevel) blockedDiscLevel = null
       if (terminal.test(normalized)) excludedLevel = level
-      if (discHeading(normalized)) { if (discLevel === null) discLevel = level; kind = albumKind(text) }
+      if (discHeading(normalized)) { if (discLevel === null) discLevel = level; kind = releaseKind(text) }
       else if (discLevel !== null) { kind = "skip"; blockedDiscLevel = level }
       if (blockedDiscLevel !== null) kind = "skip"
       if (subjectKind === "musical-group" && /solo/.test(normalized)) kind = "skip"
@@ -77,7 +83,7 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
     }
     if (discLevel !== null && blockedDiscLevel === null && ["p", "dt", "b", "strong"].includes(tag) && !element.parents("li,h2,h3,h4,h5,h6").length) {
       const label = key(element.text())
-      if (label.length < 80 && /album|singl|single|kompila|compila|spotovi|ucesca|extended play|\beps?\b/.test(label)) kind = albumKind(label)
+      if (label.length < 80 && /album|singl|single|kompila|compila|spotovi|ucesca|extended play|\beps?\b/.test(label)) kind = releaseKind(label)
     }
     let itemKind = kind
     if (tag === "li" && element.parents("table").length) {
@@ -91,7 +97,7 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
       const column = cell.parent("tr").children("td,th").index(cell)
       const headerHeading = clean(table.find("tr").first().children("td,th").eq(column).find("h2,h3,h4,h5,h6").first().text())
       const context = localHeading || headerHeading
-      if (context && discHeading(key(context)) && blockedDiscLevel === null) itemKind = albumKind(context)
+      if (context && discHeading(key(context)) && blockedDiscLevel === null) itemKind = releaseKind(context)
     }
     if (discLevel === null || itemKind === "skip" || !["li", "tr"].includes(tag) || albums.length >= 200) return
     const table = element.closest("table")
@@ -122,6 +128,7 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
     }
     const album = albumFromText(text, title, itemKind, yearNow)
     if (!album) return
+    if (strictAlbums && (/;[^;]+;/.test(album.title) || /\[[^\]]*(?:singl|single|сингл)[^\]]*\]/i.test(album.title))) return
     const signature = key(album.title) + ":" + album.year
     if (!albumKeys.has(signature)) { albums.push(album); albumKeys.add(signature) }
   })
@@ -138,7 +145,7 @@ async function readArticle(client, lang, title, expectedId, subjectKind = "music
   if (!Number.isInteger(revision?.revid)) return null
   const parsed = await client.json(base + "/w/api.php?" + new URLSearchParams({ action: "parse", oldid: String(revision.revid), prop: "text|revid", format: "json", formatversion: "2" }))
   if (parsed.parse?.revid !== revision.revid || typeof parsed.parse?.text !== "string") return null
-  const content = extractArticle(parsed.parse.text, { subjectKind })
+  const content = extractArticle(parsed.parse.text, { subjectKind, strictAlbums: true })
   const $ = cheerio.load(parsed.parse.text)
   const related = [...new Set($("a[href]").toArray().filter(node => /discograph|diskograf|discograf/i.test($(node).text())).map(node => {
     const href = $(node).attr("href") || ""
