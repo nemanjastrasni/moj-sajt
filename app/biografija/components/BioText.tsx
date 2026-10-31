@@ -12,7 +12,7 @@ export default function BioText({ text }: { text: string }) {
       {open ? text : short + (text.length > 300 ? "..." : "")}
 
       {text.length > 300 && (
-        <div
+        <button type="button" aria-expanded={open}
           onClick={() => setOpen(!open)}
           style={{
             marginTop: "10px",
@@ -21,7 +21,7 @@ export default function BioText({ text }: { text: string }) {
           }}
         >
           {open ? "Sakrij" : "Pročitaj više"}
-        </div>
+        </button>
       )}
     </div>
   )

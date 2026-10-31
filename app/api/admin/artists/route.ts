@@ -5,6 +5,9 @@ import { escapeAdminLike } from "@/lib/adminSongs/query"
 import { adminSongId } from "@/lib/adminSongs/validation"
 import { validateArtistEdit } from "@/lib/adminContent/validation"
 import { refreshArtistContent, updateArtistContent } from "@/lib/adminContent/server"
+import { queueArtistWikipedia } from "@/lib/artists/wikipedia"
+
+export const maxDuration = 60
 
 export async function GET(req: Request) {
   try {
@@ -31,6 +34,7 @@ export async function POST(req: Request) {
     const input = validateArtistEdit({ ...body, version: "0".repeat(64), image: body?.image ?? "", bio: body?.bio ?? "", discography: typeof body?.discography === "string" ? body.discography : JSON.stringify(body?.discography ?? []) })
     const artist = await prisma.artist.create({ data: { name: input.name, slug: adminSongId(body?.slug), category: input.category, bio: input.bio, image: input.image, discography: input.discography } })
     refreshArtistContent(artist)
+    queueArtistWikipedia(artist.id)
     return NextResponse.json(artist)
   } catch (error) { return adminSongFailure(error) }
 }

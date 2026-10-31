@@ -60,6 +60,7 @@ export async function reviewSubmission(id: string, reviewerId: string, review: R
     if (proposal.status !== "pending") throw new SubmissionError(409, "Ovaj predlog je vec obradjen.")
     let publishedSongId: string | null = null
     let href: string | null = null
+    let artistId: string | null = null
     if (review.action === "approve" && review.input) {
       const input = review.input
       const artistSlug = slugify(input.artistName)
@@ -67,6 +68,7 @@ export async function reviewSubmission(id: string, reviewerId: string, review: R
       let artist = await tx.artist.findFirst({ where: { OR: [{ slug: artistSlug }, { name: input.artistName }] } })
       if (artist && artist.category !== input.category) throw new SubmissionError(409, "Izvodjac vec postoji u drugoj kategoriji. Uskladi kategoriju pre odobravanja.")
       if (!artist) artist = await tx.artist.create({ data: { name: input.artistName, slug: artistSlug, category: input.category } })
+      artistId = artist.id
       const slug = slugify(input.title)
       const exists = await tx.song.findFirst({ where: { artistId: artist.id, OR: [{ slug }, { title: input.title }] } })
       if (exists) throw new SubmissionError(409, "Ova pesma vec postoji kod izvodjaca. Proveri duplikat pre objave.")
@@ -78,6 +80,6 @@ export async function reviewSubmission(id: string, reviewerId: string, review: R
       ...(review.input ?? {}), status: review.action === "approve" ? "approved" : "rejected",
       reviewNote: review.reviewNote || null, reviewerId, reviewedAt: new Date(), publishedSongId,
     } })
-    return { href }
+    return { href, artistId }
   })
 }

@@ -65,6 +65,19 @@ model Artist {
   bioShort    String?
   songs       Song[]
   performances SongPerformer[]
+  wikipedia   ArtistWikiProfile?
+}
+
+model ArtistWikiProfile {
+  artistId          String   @id
+  artistName        String
+  slug              String
+  wikidataId        String?
+  state             String   @default("pending")
+  bioSource         Json?
+  discographySource Json?
+  checkedAt         DateTime @default(now())
+  artist            Artist   @relation(fields: [artistId], references: [id], onDelete: Cascade)
 }
 
 model Song {

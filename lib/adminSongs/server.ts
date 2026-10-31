@@ -65,7 +65,7 @@ export async function createAdminSongs(input: SongBatch, actorId: string) {
       await tx.songReview.create({ data: { songId: song.id, status: "manually_corrected", reviewedById: actorId, updatedAt: new Date() } })
       songs.push(song)
     }
-    return { songs, artist: { name: artist.name, slug: artist.slug }, category: input.category }
+    return { songs, artist: { id: artist.id, name: artist.name, slug: artist.slug }, category: input.category }
   })
 }
 export async function updateAdminSong(id: string, input: ReturnType<typeof validateSongEdit>) {

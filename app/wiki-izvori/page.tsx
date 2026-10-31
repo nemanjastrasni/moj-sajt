@@ -1,13 +1,16 @@
 import type { Metadata } from "next"
 import { artistWikiManifest, wikiValueHash, type WikiSource } from "@/lib/artistWiki"
+import { allArtistWikiCredits } from "@/lib/artistWikiServer"
 
 export const metadata: Metadata = { title: "Wikipedia - izvori i autori" }
-export default function WikiCreditsPage() {
+export const dynamic = "force-dynamic"
+export default async function WikiCreditsPage() {
+  const artists = await allArtistWikiCredits()
   return (
-    <section className="mx-auto max-w-3xl py-10" data-artist-wiki-manifest={wikiValueHash(artistWikiManifest)}>
+    <section className="mx-auto max-w-3xl py-10" data-artist-wiki-storage="database" data-artist-wiki-manifest={wikiValueHash(artistWikiManifest)}>
       <h1 className="mb-8 text-2xl font-bold">Wikipedia: izvori / Sources</h1>
       <div className="divide-y divide-gray-700">
-        {artistWikiManifest.artists.map(artist => (
+        {artists.map(artist => (
           <article id={artist.artistId} key={artist.artistId} className="py-6 scroll-mt-6 break-words">
             <h2 className="text-lg font-semibold">{artist.artistName}</h2>
             {(["bio", "discography"] as const).filter(field => artist[field]).map(field => {

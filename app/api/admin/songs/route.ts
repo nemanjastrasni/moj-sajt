@@ -2,6 +2,9 @@ import { NextResponse } from "next/server"
 import { adminSongBody, adminSongFailure, createAdminSongs, listAdminSongs, refreshAdminSongs, requireSongAdmin } from "@/lib/adminSongs/server"
 import { validateSongBatch } from "@/lib/adminSongs/validation"
 import { adminSongFilters } from "@/lib/adminSongs/query"
+import { queueArtistWikipedia } from "@/lib/artists/wikipedia"
+
+export const maxDuration = 60
 
 export async function GET(request: Request) {
   try {
@@ -16,6 +19,7 @@ export async function POST(request: Request) {
     const input = validateSongBatch(await adminSongBody(request))
     const result = await createAdminSongs(input, actor.id)
     refreshAdminSongs()
+    queueArtistWikipedia(result.artist.id)
     return NextResponse.json({ success: true, ...result }, { status: 201 })
   } catch (error) { return adminSongFailure(error) }
 }

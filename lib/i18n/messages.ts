@@ -1,5 +1,6 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "Biografija i diskografija": "Biography and discography",
   "Objedinjene kontrole iznad naslova pesme": "Unified controls above the song title",
   "Javni sadr\u017eaj mo\u017ee\u0161 da pregleda\u0161 bez naloga. Za li\u010dne plejliste, slanje predloga i prijavu gre\u0161ke potrebna je prijava. Podaci platne kartice nisu potrebni.": "Browse public content without an account. Sign in for personal playlists, song submissions and error reports. Payment card details are not required.",
   "Pesme \u010duva\u0161 na svojim plejlistama. Dosada\u0161nji favoriti preneti su u privatnu listu Omiljene, uz sa\u010duvane tonalitete. Dodaj pesme, promeni njihov redosled i odaberi da li je lista javna ili privatna.": "Save songs in your playlists. Previous favorites were transferred to a private Favorites playlist, keeping their saved keys. Add songs, reorder them and choose whether a playlist is public or private.",

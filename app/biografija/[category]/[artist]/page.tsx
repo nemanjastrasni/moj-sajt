@@ -48,14 +48,18 @@ export default async function BiographyPage({ params }: { params: Promise<{ cate
     <div className={styles.page}>
       <BackNavigationTarget pathname={`/biografija/${encodeURIComponent(category)}/${encodeURIComponent(artistSlug)}`} href={artistIndexHref("biografija", category, artistData.name)} />
 
-      {/* SLIKA */}
-      {image && <ArtistImage src={image} name={artistData.name} variant="portrait" priority />}
-
-      {/* IME */}
-      <ArtistPhotoCredit image={image} />
-      <h1 style={{ fontSize: "32px", marginBottom: "20px" }}>
-        {artistData.name}
-      </h1>
+      <header className={styles.biographyHero}>
+        <div className={styles.biographyPhoto}><ArtistImage src={image} name={artistData.name} variant="portrait" priority /><ArtistPhotoCredit image={image} /></div>
+        <div className={styles.biographyIntro}>
+          <p className={styles.eyebrow}><UiText text="Biografija i diskografija" /></p>
+          <h1>{artistData.name}</h1>
+          <nav aria-label={artistData.name} className={styles.biographyLinks}>
+            {biography && <a href="#biografija"><UiText text="Biografija" /></a>}
+            <a href={`#discography-${artistData.id}`}><UiText text="Diskografija" /></a>
+            <Link href={`/pesme/${artistData.category}/${artistData.slug}`}><UiText text="Pesme" /></Link>
+          </nav>
+        </div>
+      </header>
       <AdminPageActions kind="artist" id={artistData.id} name={artistData.name} editHref={`/admin/artists/${encodeURIComponent(artistData.id)}/edit?from=bio`} biography={Boolean(artistData.bio || artistData.bioShort)} version={artistContentVersion(artistData)} />
 
       <div className="mb-6 flex flex-wrap items-center gap-3"><MusicButton /><Link
@@ -66,10 +70,11 @@ export default async function BiographyPage({ params }: { params: Promise<{ cate
       </Link></div>
 
       {/* BIOGRAFIJA */}
-      <div style={{ marginBottom: "40px" }}>
+      <section id="biografija" className={styles.biographyText}>
+        <h2><UiText text="Biografija" /></h2>
         {biography ? <BioText text={cirToLat(biography)} /> : <p><UiText text="Biografija nije dostupna." /></p>}
         {biographyText(artistData.bio) && <ArtistWikiCredit artistId={artistData.id} field="bio" value={artistData.bio} />}
-      </div>
+      </section>
 
       {/* DISKOGRAFIJA */}
       <ArtistDiscography artistId={artistData.id} value={artistData.discography} />

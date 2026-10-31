@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Shared CommonJS Wikimedia client. */
 const fs = require("node:fs/promises")
 const path = require("node:path")
 const crypto = require("node:crypto")
@@ -29,13 +30,15 @@ function localImage(publicRoot, image) {
 class WikiClient {
   constructor({ cacheDir, interval = 350, request = fetch, extraHosts = [] } = {}) {
     this.cacheDir = cacheDir; this.interval = interval; this.request = request; this.last = 0; this.entities = new Map()
+    this.deadline = 0
     this.safeUrl = value => safeWikiUrl(value, extraHosts)
   }
   async bytes(value, maxBytes = 12000000) {
     let url = this.safeUrl(value)
     for (let hop = 0; hop < 4; hop++) {
+      if (this.deadline && Date.now() >= this.deadline) throw new Error("Wikipedia lookup deadline")
       await pause(Math.max(0, this.last + this.interval - Date.now())); this.last = Date.now()
-      const response = await this.request(url, { headers: { "User-Agent": USER_AGENT }, redirect: "manual", signal: AbortSignal.timeout(15000) })
+      const response = await this.request(url, { headers: { "User-Agent": USER_AGENT }, redirect: "manual", signal: AbortSignal.timeout(Math.max(1, Math.min(15000, this.deadline ? this.deadline-Date.now() : 15000))) })
       if ([301, 302, 303, 307, 308].includes(response.status)) {
         await response.body?.cancel()
         url = this.safeUrl(new URL(response.headers.get("location"), url).href); continue
@@ -111,7 +114,12 @@ function nameMatches(name, entity) {
   const labels = Object.values(entity.labels ?? {}).map(item => item.value)
   const aliases = Object.values(entity.aliases ?? {}).flat().map(item => item.value)
   const wanted = normalizeName(name)
-  return Boolean(wanted) && [...labels, ...aliases].some(value => normalizeName(value) === wanted)
+  const parts = wanted.split(" ")
+  const matches = value => {
+    const other = normalizeName(value)
+    return other === wanted || parts.length >= 2 && parts.length <= 4 && other.split(" ").sort().join(" ") === [...parts].sort().join(" ")
+  }
+  return Boolean(wanted) && [...labels, ...aliases].some(matches)
 }
 async function reaches(id, roots, client, depth = 0, seen = new Set()) {
   if (roots.has(id)) return true
@@ -155,6 +163,12 @@ function photoMetadata(info) {
 }
 
 async function resolveMusicIdentity(artist, client) {
+  if (/^Q\d+$/.test(artist.wikidataId || "")) {
+    const entity = await client.entity(artist.wikidataId)
+    const evidence = nameMatches(artist.name, entity) && await musicEvidence(entity, client)
+    if (evidence) return { state: "identified", entity, evidence }
+    return { state: "identity-changed", matches: [] }
+  }
   const ids = new Set()
   for (const language of ["en", "sr"]) {
     const data = await client.json("https://www.wikidata.org/w/api.php?" + new URLSearchParams({ action: "wbsearchentities", search: artist.name, language, uselang: "en", type: "item", limit: "8", format: "json" }))
@@ -165,6 +179,10 @@ async function resolveMusicIdentity(artist, client) {
       if (/^Q\d+$/.test(item.id) && (!clearlyOther || musical)) ids.add(item.id)
     }
   }
+  if (client.allowWikiSearch && ids.size === 0) for (const language of ["sr", "en"]) {
+    const data = await client.json(`https://${language}.wikipedia.org/w/api.php?` + new URLSearchParams({ action: "query", generator: "search", gsrsearch: artist.name, gsrlimit: "5", gsrnamespace: "0", prop: "pageprops", ppprop: "wikibase_item|disambiguation", format: "json", formatversion: "2" }))
+    for (const page of data.query?.pages || []) if (!Object.hasOwn(page.pageprops || {}, "disambiguation") && /^Q\d+$/.test(page.pageprops?.wikibase_item || "")) ids.add(page.pageprops.wikibase_item)
+  }
   const matches = []
   for (const id of ids) {
     const entity = await client.entity(id)
@@ -172,8 +190,16 @@ async function resolveMusicIdentity(artist, client) {
     const evidence = await musicEvidence(entity, client)
     if (evidence) matches.push({ entity, evidence })
   }
-  if (matches.length !== 1) return { state: matches.length ? "ambiguous" : "not-found", matches: matches.map(({ entity }) => ({ id: entity.id, description: entity.descriptions?.en?.value ?? "" })) }
-  return { state: "identified", ...matches[0] }
+  let candidates = matches
+  const exactLabels = candidates.filter(({entity}) => Object.values(entity.labels || {}).some(label => normalizeName(label.value) === normalizeName(artist.name)))
+  if (exactLabels.length) candidates = exactLabels
+  if (candidates.length > 1 && ["domace", "narodne"].includes(artist.category)) {
+    const countries = new Set(["Q403","Q224","Q225","Q221","Q236","Q215","Q367","Q726","Q1246"])
+    const regional = candidates.filter(({entity}) => [...claims(entity,"P27"),...claims(entity,"P495")].some(country=>countries.has(country.id)))
+    if (regional.length) candidates = regional
+  }
+  if (candidates.length !== 1) return { state: candidates.length ? "ambiguous" : "not-found", matches: candidates.map(({ entity }) => ({ id: entity.id, description: entity.descriptions?.en?.value ?? "" })) }
+  return { state: "identified", ...candidates[0] }
 }
 
 async function discoverPhoto(artist, client) {

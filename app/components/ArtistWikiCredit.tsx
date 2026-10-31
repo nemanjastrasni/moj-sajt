@@ -1,7 +1,8 @@
-import { artistWikiManifest, wikiValueHash } from "@/lib/artistWiki"
+import { wikiValueHash } from "@/lib/artistWiki"
+import { artistWikiCredit } from "@/lib/artistWikiServer"
 
-export default function ArtistWikiCredit({ artistId, field, value }: { artistId: string; field: "bio" | "discography"; value: unknown }) {
-  const source = artistWikiManifest.artists.find(artist => artist.artistId === artistId)?.[field]
+export default async function ArtistWikiCredit({ artistId, field, value }: { artistId: string; field: "bio" | "discography"; value: unknown }) {
+  const source = (await artistWikiCredit(artistId))?.[field]
   if (!source || source.hash !== wikiValueHash(value)) return null
   return (
     <p className="mt-3 mb-5 text-xs leading-relaxed text-gray-400 break-words">

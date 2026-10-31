@@ -52,6 +52,14 @@
 .artistHeader h1 { font-size: 32px; font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
 .artistRow { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 4px 0; }
 .artistRow > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.biographyHero { display: grid; grid-template-columns: minmax(200px, 340px) minmax(0, 1fr); gap: 32px; align-items: center; padding-bottom: 28px; margin-bottom: 28px; border-bottom: 1px solid var(--theme-line, #30343a); }
+.biographyPhoto { min-width: 0; }
+.biographyHero h1 { font-size: clamp(28px, 4vw, 44px); line-height: 1.2; font-weight: 700; overflow-wrap: anywhere; }
+.eyebrow { color: var(--theme-muted, #a1a1aa); font-size: 13px; margin-bottom: 12px; }
+.biographyLinks { display: flex; flex-wrap: wrap; gap: 12px 20px; margin-top: 24px; }
+.biographyLinks a { color: var(--theme-link, #69baff); text-decoration: underline; text-underline-offset: 4px; min-height: 44px; display: inline-flex; align-items: center; }
+.biographyText { margin-bottom: 40px; scroll-margin-top: 24px; font-size: 16px; line-height: 1.85; }
+.biographyText h2 { font-size: 24px; font-weight: 600; margin-bottom: 16px; }
 .tileLink:focus-visible, .letters a:focus-visible, .artistRow:focus-visible { outline: 2px solid var(--theme-link, #69baff); outline-offset: 4px; }
 @media (hover: hover) {
   .tileLink:hover .tileName, .artistRow:hover > span:last-child { text-decoration: underline; }
@@ -59,6 +67,8 @@
 }
 @media (max-width: 900px) { .mosaic { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 600px) {
+  .biographyHero { grid-template-columns: minmax(0,1fr); gap: 20px; }
+  .biographyPhoto { max-width: 400px; }
   .page { padding: 24px 16px 36px; }
   .letterBanner { min-height: 128px; margin-bottom: 20px; padding: 20px; }
   .letterBanner h1 { font-size: 24px; }

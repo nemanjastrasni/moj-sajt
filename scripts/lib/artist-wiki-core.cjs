@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Shared CommonJS Wikipedia parser. */
 const cheerio = require("cheerio")
 const { WikiClient, resolveMusicIdentity, normalizeName, digest } = require("./artist-image-core.cjs")
 
@@ -127,7 +128,7 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
   return { bio: paragraphs.join("\n\n"), albums: albums.sort((a, b) => a.year.localeCompare(b.year) || a.title.localeCompare(b.title)) }
 }
 
-function wikipediaClient(cacheDir) { return new WikiClient({ cacheDir, extraHosts: LANGUAGES.map(lang => `${lang}.wikipedia.org`) }) }
+function wikipediaClient(cacheDir) { const client = new WikiClient({ cacheDir, extraHosts: LANGUAGES.map(lang => `${lang}.wikipedia.org`) }); client.allowWikiSearch = true; return client }
 async function readArticle(client, lang, title, expectedId, subjectKind = "musician") {
   const base = `https://${lang}.wikipedia.org`
   const data = await client.json(base + "/w/api.php?" + new URLSearchParams({ action: "query", titles: title, redirects: "1", prop: "pageprops|revisions", ppprop: "wikibase_item|disambiguation", rvprop: "ids|timestamp", format: "json", formatversion: "2" }))
@@ -138,13 +139,30 @@ async function readArticle(client, lang, title, expectedId, subjectKind = "music
   const parsed = await client.json(base + "/w/api.php?" + new URLSearchParams({ action: "parse", oldid: String(revision.revid), prop: "text|revid", format: "json", formatversion: "2" }))
   if (parsed.parse?.revid !== revision.revid || typeof parsed.parse?.text !== "string") return null
   const content = extractArticle(parsed.parse.text, { subjectKind })
-  return { ...content, source: { language: lang, title: page.title, pageId: page.pageid, revisionId: revision.revid, timestamp: revision.timestamp,
+  const $ = cheerio.load(parsed.parse.text)
+  const related = [...new Set($("a[href]").toArray().filter(node => /discograph|diskograf|discograf/i.test($(node).text())).map(node => {
+    const href = $(node).attr("href") || ""
+    if (!/^(?:\/wiki\/|\.\/)/.test(href) || /[?#]/.test(href)) return null
+    try { return decodeURIComponent(href.replace(/^(?:\/wiki\/|\.\/)/, "")).replace(/_/g, " ") } catch { return null }
+  }).filter(Boolean))].slice(0, 3)
+  return { ...content, related, source: { language: lang, title: page.title, pageId: page.pageid, revisionId: revision.revid, timestamp: revision.timestamp,
     url: base + "/wiki/" + encodeURIComponent(page.title.replace(/ /g, "_")), revisionUrl: base + "/w/index.php?oldid=" + revision.revid,
     historyUrl: base + "/w/index.php?" + new URLSearchParams({ title: page.title, action: "history" }), license: LICENSE,
     changes: "Selected prose/album entries; citations/navigation omitted; Serbian Cyrillic biography transliterated to Latin; no translation." } }
 }
 
-async function discoverContent(artist, client) {
+async function readDiscography(client, language, title, artistId, subjectKind) {
+  const base = `https://${language}.wikipedia.org`
+  const data = await client.json(base + "/w/api.php?" + new URLSearchParams({ action: "query", titles: title, redirects: "1", prop: "pageprops", ppprop: "wikibase_item|disambiguation", format: "json", formatversion: "2" }))
+  const page = data.query?.pages?.[0], id = page?.pageprops?.wikibase_item
+  if (!page || page.missing || page.ns !== 0 || !/^Q\d+$/.test(id || "") || Object.hasOwn(page.pageprops || {}, "disambiguation")) return null
+  const entity = await client.entity(id)
+  const { claims } = require("./artist-image-core.cjs")
+  if (![...claims(entity, "P175"), ...claims(entity, "P921")].some(value => value.id === artistId)) return null
+  return readArticle(client, language, page.title, id, subjectKind)
+}
+
+async function discoverContent(artist, client, { includeOtherAlbums = false } = {}) {
   const resolved = await resolveMusicIdentity(artist, client)
   if (resolved.state !== "identified") return resolved
   const { entity, evidence } = resolved
@@ -160,8 +178,14 @@ async function discoverContent(artist, client) {
       if (article.bio.length >= 200 && (!biography || (biography.bio.length < 800 && article.bio.length > biography.bio.length && lang !== "en"))) biography = article
       // Automatic publication starts with explicitly labeled studio albums only.
       // Mixed single/live lists and untyped entries remain available for manual review.
-      const studioAlbums = discographyHold ? [] : article.albums.filter(album => album.kind === "studio")
+      const studioAlbums = discographyHold ? [] : article.albums.filter(album => includeOtherAlbums || album.kind === "studio")
       if (studioAlbums.length > (discography?.albums.length || 0)) discography = { ...article, albums: studioAlbums }
+      if (includeOtherAlbums && !discographyHold) for (const related of article.related) {
+        try {
+          const detailed = await readDiscography(client, lang, related, entity.id, evidence)
+          if (detailed?.albums.length > (discography?.albums.length || 0)) discography = detailed
+        } catch (error) { errors.push({ language: lang, state: error.status ? `http-${error.status}` : "discography-request-failed" }) }
+      }
       if (biography?.bio.length >= 800 && discography?.albums.length >= 3) break
     } catch (error) { errors.push({ language: lang, state: error.status ? `http-${error.status}` : "request-failed" }) }
   }
@@ -180,4 +204,4 @@ function planBio(before, candidate, reviewed = false) {
   return { action: "preserve", reason: next.startsWith(previous.slice(0, 200)) ? "Existing biography retained" : "Different text/subject needs review" }
 }
 
-module.exports = { LANGUAGES, LICENSE, toLatin, clean, isCalendarBio, extractArticle, readArticle, discoverContent, wikipediaClient, planBio, digest }
+module.exports = { LANGUAGES, LICENSE, toLatin, clean, isCalendarBio, extractArticle, readArticle, readDiscography, discoverContent, wikipediaClient, planBio, digest }

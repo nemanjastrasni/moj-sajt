@@ -2,6 +2,9 @@ import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { requireSongAdmin } from "@/lib/adminSongs/server"
 import { Save } from "lucide-react"
+import { queueArtistWikipedia } from "@/lib/artists/wikipedia"
+
+export const maxDuration = 60
 
 export default async function NewArtistPage() {
   await requireSongAdmin()
@@ -37,7 +40,7 @@ if (!slug) {
       if (exists) {
       throw new Error("Artist already exists")
   }
-    await prisma.artist.create({
+    const artist = await prisma.artist.create({
       data: {
         name,
         slug,
@@ -48,6 +51,7 @@ if (!slug) {
       },
     })
 
+    queueArtistWikipedia(artist.id)
     redirect("/admin/artists")
   }
 
@@ -72,6 +76,7 @@ if (!slug) {
 
         <label>Slika (URL)<input name="image" className="ui-input"/></label>
 
+        <p>Praznu biografiju i diskografiju dopunićemo sa Wikipedije kada pronađemo pouzdano poklapanje izvođača.</p>
         <label>Biografija<textarea name="bio" rows={10} className="ui-input"/></label>
 
         <label>Diskografija<textarea name="discography" rows={10} className="ui-input"/></label>
