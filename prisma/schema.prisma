@@ -301,6 +301,25 @@ model ListeningItem {
   playlist   ListeningPlaylist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
 }
 
+model YouTubeMetadata {
+  kind         String
+  sourceId     String
+  title        String?
+  channelTitle String?
+  fetchedAt    DateTime? @db.Timestamptz(6)
+  retryAfter   DateTime  @default(dbgenerated("to_timestamp(0)")) @db.Timestamptz(6)
+  leaseUntil   DateTime  @default(dbgenerated("to_timestamp(0)")) @db.Timestamptz(6)
+
+  @@id([kind, sourceId])
+}
+
+model YouTubeMetadataBudget {
+  id           String   @id
+  day          DateTime @db.Date
+  requests     Int      @default(0)
+  blockedUntil DateTime @default(dbgenerated("to_timestamp(0)")) @db.Timestamptz(6)
+}
+
 model ListeningPlaylistLike {
   id         String            @id @default(cuid())
   userId     String

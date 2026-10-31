@@ -28,6 +28,7 @@
 .rows { list-style: none; margin: 24px 0; padding: 0; }
 .row { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 12px 0; border-bottom: 1px solid var(--control-line); }
 .identity { flex: 1; min-width: 0; }
+.sourceTitle { display: block; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; margin-top: 3px; color: var(--control-muted); }
 .identity > a, .identity > strong { display: block; overflow-wrap: anywhere; font-size: 15px; line-height: 1.5; }
 .identity > a:hover { text-decoration: underline; }
 .identity small { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 4px; font-size: 12px; color: var(--control-muted); }

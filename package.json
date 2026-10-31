@@ -56,6 +56,7 @@
     "wiki:plan": "node scripts/complete-artist-wiki.cjs",
     "wiki:refine": "node scripts/refine-artist-wiki-plan.cjs",
     "wiki:apply": "node scripts/apply-completed-artist-wiki.cjs",
+    "music:metadata:setup": "node scripts/setup-youtube-metadata.cjs",
     "artists:bios:audit": "node scripts/audit-biography-sources.cjs",
     "test:biography-sources": "node --test scripts/test-biography-sources.cjs",
     "artists:discographies:recheck": "node scripts/recheck-discographies.cjs",

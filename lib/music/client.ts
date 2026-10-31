@@ -20,5 +20,6 @@ export function checkedMusic(value:unknown):MusicList {
   const row=value as MusicList
   if(!musicId(row.id)||typeof row.name!=="string"||typeof row.isPublic!=="boolean"||typeof row.editable!=="boolean"||typeof row.version!=="string"||!/^[a-f0-9]{64}$/.test(row.version)||!Array.isArray(row.items)||row.items.length>500||new Set(row.items.map(item=>item?.id)).size!==row.items.length)throw Error("Neispravni podaci muzicke liste.")
   if(row.items.some(item=>!item||!musicId(item.id)||typeof item.url!=="string"||typeof item.title!=="string"||typeof item.type!=="string"))throw Error("Neispravni podaci muzicke liste.")
+  if(row.items.some(item=>(item.youtubeTitle!==undefined&&(typeof item.youtubeTitle!=="string"||item.youtubeTitle.length>300))||(item.channelTitle!==undefined&&(typeof item.channelTitle!=="string"||item.channelTitle.length>200))))throw Error("Neispravni podaci muzicke liste.")
   return {...row,items:row.items.map(item=>({...item,source:youtubeSource(item.url)}))}
 }

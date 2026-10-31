@@ -6,6 +6,7 @@ import { submissionUser } from "@/lib/submissions/server"
 import { SubmissionError } from "@/lib/submissions/validation"
 import { NextResponse } from "next/server"
 import { canonicalYoutube, expectedVersion, MusicError, musicCategory, musicId, musicName, youtubeSource, type MusicList, type MusicSummary } from "./model"
+import { enrichMusicMetadata } from "./metadata"
 
 export { privateHeaders, playlistViewerId as musicViewerId }
 const itemOrder: Prisma.ListeningItemOrderByWithRelationInput[] = [{order:"asc"},{id:"asc"}]
@@ -21,7 +22,7 @@ export async function readableMusic(id: string, viewerId: string | null) {
   if(!musicId(id))throw new MusicError(404,"Muzicka lista nije dostupna.")
   const row=await prisma.listeningPlaylist.findFirst({where:{id,OR:[{isPublic:true},...(viewerId?[{userId:viewerId}]:[])]},select:musicSelect})
   if(!row)throw new MusicError(404,"Muzicka lista nije dostupna.")
-  return musicView(row,viewerId)
+  return enrichMusicMetadata(musicView(row,viewerId))
 }
 export async function musicCatalog({userId,viewerId,category,page=1,limit=50}:{userId?:string;viewerId?:string|null;category?:string;page?:number;limit?:number}={}):Promise<MusicSummary[]> {
   const rows=await prisma.listeningPlaylist.findMany({where:{...(userId?{userId}:{isPublic:true}),...(category&&category!=="admin"?{category}:{}),...(category==="admin"?{user:{is:{role:"admin",banned:false}}}: {})},orderBy:userId?[{createdAt:"desc"},{id:"asc"}]:[{views:"desc"},{id:"asc"}],skip:(page-1)*limit,take:limit,
@@ -57,7 +58,7 @@ export async function mutateMusic(id:string,input:Record<string,unknown>,operati
   const actor=await submissionUser()
   if(!musicId(id))throw new MusicError(404,"Muzicka lista nije dostupna.")
   const version=expectedVersion(input.version)
-  return playlistTransaction(async tx=>{
+  const result = await playlistTransaction(async tx=>{
     const row=await owner(tx,id,actor.id,version)
     if(operation==="delete") {
       await tx.listeningPlaylistLike.deleteMany({where:{playlistId:id}})
@@ -92,6 +93,7 @@ export async function mutateMusic(id:string,input:Record<string,unknown>,operati
     if(!after)throw new MusicError(404,"Muzicka lista nije dostupna.")
     return musicView(after,actor.id)
   })
+  return result ? enrichMusicMetadata(result) : result
 }
 export async function removeMusicItem(itemId:string,input:Record<string,unknown>) {
   await submissionUser()

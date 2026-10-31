@@ -57,7 +57,9 @@ export default function MusicPlaylist({initial,viewerId}:{initial:MusicList;view
       const external=externalMusicUrl(item.url)
       return <li key={item.id} className={styles.row} data-playing={music.queue?.list.id===list.id&&music.queue.currentId===item.id}>
         {item.source?<button type="button" className={styles.icon} title={t("Pokreni muziku")+": "+item.title} aria-label={t("Pokreni muziku")+": "+item.title} onClick={()=>void music.start(list.id,item.id)}><Play /></button>:<span className={styles.muted}>{index+1}.</span>}
-        <div className={styles.identity}><strong translate="no">{item.title||item.type}</strong><small>{item.source?<span>YouTube{item.source.kind==="playlist"?" playlist":""}</span>:external?<a href={external} target="_blank" rel="noopener"><ExternalLink size={14} aria-hidden="true" />{t("Otvori izvor")}</a>:<span>{t("Ovaj stari link nije podrzan u plejeru.")}</span>}</small></div>
+        <div className={styles.identity}><strong translate="no">{item.title||item.type}</strong>
+          {item.youtubeTitle&&item.youtubeTitle!==item.title&&<span className={styles.sourceTitle} translate="no">{item.youtubeTitle}</span>}
+          <small>{item.channelTitle&&<span translate="no">{t("Kanal")}: {item.channelTitle}</span>}{item.source?<span>YouTube{item.source.kind==="playlist"?" playlist":""}</span>:external?<a href={external} target="_blank" rel="noopener"><ExternalLink size={14} aria-hidden="true" />{t("Otvori izvor")}</a>:<span>{t("Ovaj stari link nije podrzan u plejeru.")}</span>}</small></div>
         {editable&&<div className={styles.commands}>
           {[[-1,ArrowUp,"Pomeri stavku gore"],[1,ArrowDown,"Pomeri stavku dole"]].map(([direction,Icon,label])=>{
             const amount=direction as number,Symbol=Icon as typeof ArrowUp

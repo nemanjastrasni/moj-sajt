@@ -1,9 +1,15 @@
 export const musicCategories = ["Domace", "Strane", "Narodne", "Mix"] as const
 export type MusicCategory = typeof musicCategories[number]
 export type YouTubeSource = { kind: "video"; id: string } | { kind: "playlist"; id: string }
-export type MusicItem = { id: string; title: string; url: string; type: string; order: number; source: YouTubeSource | null }
+export type MusicItem = { id: string; title: string; url: string; type: string; order: number; source: YouTubeSource | null; youtubeTitle?: string; channelTitle?: string }
 export type MusicList = { id: string; name: string; category: string | null; isPublic: boolean; editable: boolean; version: string; items: MusicItem[] }
 export type MusicSummary = { id: string; name: string; category: string | null; isPublic: boolean; count: number; views: number; likes: number; liked: boolean; author: string | null }
+export function withYouTubeMetadata(item: MusicItem, info: { title: string; channelTitle: string }): MusicItem {
+  const source=item.source
+  if(!source)return item
+  const automatic=!item.title.trim() || item.title==="YouTube" || item.title===`YouTube ${source.kind==="playlist"?"playlist ":""}${source.id}` || item.title===item.url
+  return {...item,title:automatic?info.title:item.title,youtubeTitle:info.title,channelTitle:info.channelTitle}
+}
 export const musicId = (value: unknown): value is string => typeof value === "string" && /^[a-zA-Z0-9_-]{1,128}$/.test(value)
 export class MusicError extends Error { constructor(public status: number, message: string) { super(message) } }
 export function youtubeSource(value: unknown): YouTubeSource | null {

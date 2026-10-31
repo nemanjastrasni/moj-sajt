@@ -1,5 +1,6 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "Kanal": "Channel",
   "Biografija i diskografija": "Biography and discography",
   "Objedinjene kontrole iznad naslova pesme": "Unified controls above the song title",
   "Javni sadr\u017eaj mo\u017ee\u0161 da pregleda\u0161 bez naloga. Za li\u010dne plejliste, slanje predloga i prijavu gre\u0161ke potrebna je prijava. Podaci platne kartice nisu potrebni.": "Browse public content without an account. Sign in for personal playlists, song submissions and error reports. Payment card details are not required.",
