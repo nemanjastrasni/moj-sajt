@@ -15,7 +15,7 @@ export default function SongReportButton(props: Props) {
   const { t } = useI18n(), { data: session, status } = useSession(), router = useRouter()
   const [openedAt, setOpenedAt] = useState<number | null>(null), [notice, setNotice] = useState(false)
   return <>
-    <button type="button" className={styles.button} disabled={status === "loading"} aria-haspopup="dialog" onClick={() => {
+    <button type="button" className={`${styles.button} ${styles.reportTrigger}`} data-song-report disabled={status === "loading"} aria-haspopup="dialog" onClick={() => {
       if (!session) { router.push("/login?callbackUrl=" + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)); return }
       setNotice(false); setOpenedAt(props.transpose)
     }}><Flag aria-hidden="true" />{t("Prijavi gresku")}</button>

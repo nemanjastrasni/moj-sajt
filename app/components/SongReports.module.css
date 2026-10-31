@@ -1,5 +1,6 @@
 .button { composes: ui-button from global; }
 .button svg { width: 18px; height: 18px; flex-shrink: 0; }
+.reportTrigger > svg { color: var(--theme-yellow, #facc72); }
 .button:disabled { opacity: .5; cursor: default; }
 .button:focus-visible { outline: 2px solid var(--theme-link, #69baff); outline-offset: 2px; }
 .context { overflow-wrap: anywhere; margin-bottom: 16px; font-size: 14px; line-height: 1.6; }

@@ -11,6 +11,8 @@ export const english: Record<string, string> = {
   "Jos opcija": "More options",
   "Prikazi hvatove akorda": "Show chord diagrams",
   "Prikazi video": "Show video",
+  "Video": "Video",
+  "Ucitavam video...": "Loading video...",
   "Sakrij video": "Hide video",
   "Video trenutno nije dostupan.": "Video is currently unavailable.",
   "Omiljene": "Favorites",

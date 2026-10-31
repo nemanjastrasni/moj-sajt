@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { Maximize, Minus, MoreHorizontal, Pause, Play, Plus, RotateCcw, Settings2, Video } from "lucide-react"
+import { LoaderCircle, Maximize, Minus, Pause, Play, Plus, RotateCcw, Settings2 } from "lucide-react"
 import { useI18n } from "./UiText"
 import UsedChordCard from "./UsedChordCard"
 import SongSheet from "./SongSheet"
@@ -37,7 +38,7 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
   const [performance, setPerformance] = useState(startPerformance), [lyricsOnly, setLyricsOnly] = useState(false)
   const original = useSongKey(song.id), playlistSettings = usePlaylistSongSettings(playlistId, song.id)
   const controls = playlistId ? playlistSettings : original, { transpose } = controls
-  const [panel, setPanel] = useState<"settings" | "more" | null>(null)
+  const [panel, setPanel] = useState<"settings" | null>(null)
   const [showVideo, setShowVideo] = useState(false), [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [loadingVideo, setLoadingVideo] = useState(false), [videoError, setVideoError] = useState("")
   const [scrolling, setScrolling] = useState(false), [speed, setSpeed] = useState(1)
@@ -85,8 +86,14 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
       <SongPlaylistButton key={song.id} songId={song.id} disabled={controls.controlsDisabled} settings={{ transpose, capo: capo.active ? capo.selected : null }} />
       <SongPdfButton song={{ id: song.id, title, artist, lyrics }} transpose={transpose} capo={capo.active ? capo.selected : null} disabled={controls.controlsDisabled} textSize={textSize} chordSize={chordSize} />
       <SongTutorial songId={song.id} mode="user" onPlay={() => { setScrolling(false); setShowVideo(false) }} />
+      <button type="button" className={styles.videoToggle} data-song-video-toggle disabled={loadingVideo} aria-pressed={showVideo} aria-busy={loadingVideo}
+        title={`${t(showVideo ? "Sakrij video" : "Prikazi video")} (YouTube)`}
+        aria-label={loadingVideo ? t("Ucitavam video...") : `${t(showVideo ? "Sakrij video" : "Prikazi video")} (YouTube)`} onClick={() => void toggleVideo()}>
+        <Image src="/brand/youtube-icon-red.png" width={44} height={38} alt="" unoptimized className={styles.videoMark} />
+        <span className={styles.videoLabel}>{loadingVideo ? <LoaderCircle className={styles.videoLoading} aria-hidden="true" /> : t("Video")}</span>
+      </button>
+      {songVersion && <SongReportButton songId={song.id} songVersion={songVersion} title={title} artist={artist} transpose={transpose} />}
       <button type="button" className={styles.icon} title={t("Podesavanja prikaza")} aria-label={t("Podesavanja prikaza")} aria-haspopup="dialog" onClick={() => setPanel("settings")}><Settings2 /></button>
-      <button type="button" className={styles.icon} title={t("Jos opcija")} aria-label={t("Jos opcija")} aria-haspopup="dialog" onClick={() => setPanel("more")}><MoreHorizontal /></button>
     </div>
     {playlistId && <PlaylistSettingsStatus controls={playlistSettings} />}
     <div className={styles.heading}><h1 translate="no">{title}</h1></div>
@@ -104,10 +111,6 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
       <label>{t("Velicina teksta")}<input type="range" min="14" max="32" value={textSize} aria-label={t("Velicina teksta")} onChange={event => setTextSize(Number(event.target.value))} /></label>
       {!lyricsOnly && <><label>{t("Velicina akorda")}<input type="range" min="14" max="32" value={chordSize} aria-label={t("Velicina akorda")} onChange={event => setChordSize(Number(event.target.value))} /></label><label className={styles.check}><input type="checkbox" checked={showDiagrams} onChange={event => setShowDiagrams(event.target.checked)} />{t("Prikazi hvatove akorda")}</label></>}
       <label>{t("Brzina skrolovanja")}<input type="range" min="1" max="10" value={speed} aria-label={t("Brzina skrolovanja")} onChange={event => setSpeed(Number(event.target.value))} /></label>
-    </div></PlaylistDialog>}
-    {panel === "more" && <PlaylistDialog title="Jos opcija" close={() => setPanel(null)}><div className={styles.more}>
-      <button type="button" className="ui-button" disabled={loadingVideo} aria-pressed={showVideo} onClick={() => void toggleVideo()}><Video />{t(showVideo ? "Sakrij video" : "Prikazi video")}</button>
-      {songVersion && <SongReportButton songId={song.id} songVersion={songVersion} title={title} artist={artist} transpose={transpose} />}
     </div></PlaylistDialog>}
     {performance && <PerformanceView displayMode={{ lyricsOnly, change: setLyricsOnly }} playlistId={playlistId} song={{ id: song.id, title, artist, lyrics }} controls={controls} capoControl={capo} settingsTools={playlistId ? <PlaylistSettingsStatus controls={playlistSettings} /> : <></>} leaveGuard={playlistId ? playlistSettings.canLeave : undefined} close={() => setPerformance(false)} />}
   </div>
