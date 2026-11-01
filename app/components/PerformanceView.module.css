@@ -13,13 +13,35 @@
 .icon svg, .button svg { width: 20px; height: 20px; flex-shrink: 0; }
 .icon:disabled, .button:disabled { opacity: .4; cursor: default; }
 .icon:focus-visible, .button:focus-visible, .content:focus-visible { outline: 2px solid var(--theme-link, #69baff); outline-offset: -2px; }
+.keyControls, .audioControls { display: flex; align-items: center; gap: 4px; }
 .key { width: 40px; text-align: center; font-variant-numeric: tabular-nums; }
 .small { font-size: 13px; color: var(--theme-muted, #a1a1aa); overflow-wrap: anywhere; }
-.settings { display: flex; flex-wrap: wrap; gap: 12px 24px; padding: 8px 0; }
+.settings { display: none; flex-wrap: wrap; gap: 12px 24px; padding: 8px 0; }
+.settings[data-expanded="true"] { display: flex; }
+.mobileMenu, .mobileFullscreen { display: none; }
 .settings label { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .settings input { width: 90px; min-height: 32px; }
-.content { overflow: auto; min-height: 0; min-width: 0; padding: 20px max(16px, env(safe-area-inset-right)) 40px max(16px, env(safe-area-inset-left)); overscroll-behavior: contain; }
+.content { isolation: isolate; overflow: auto; min-height: 0; min-width: 0; padding: 20px max(16px, env(safe-area-inset-right)) 40px max(16px, env(safe-area-inset-left)); overscroll-behavior: contain; }
 .navigation { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px max(12px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); border-top: 1px solid var(--theme-line, #343b43); font-size: 14px; }
 .button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--theme-line, #56616c); border-radius: 6px; }
 @media (max-width: 400px) { .identity h1 { font-size: 16px; } .top { gap: 4px; } .navigation .button { padding-inline: 6px; } }
 @media (max-height: 500px) { .identity h1 { -webkit-line-clamp: 1; } .content { padding-top: 10px; } .header { padding-top: 4px; padding-bottom: 4px; } .toolbar { margin-top: 0; } }
+
+@media (max-width: 767px), (max-width: 1024px) and (max-height: 500px) {
+  .header { position: relative; z-index: 1; overflow: visible; max-height: none; padding-top: max(6px, env(safe-area-inset-top)); padding-bottom: 6px; }
+  .top { gap: 8px; }
+  .identity h1 { font-size: 18px; line-height: 1.2; }
+  .identity p { font-size: 12px; margin-top: 2px; }
+  .actions { gap: 0; }
+  .desktopAction { display: none; }
+  .mobileMenu, .mobileFullscreen { display: inline-flex; }
+  .mobileMenu[aria-expanded="true"] { background: var(--control-hover, #30363e); }
+  .controls { display: none; position: absolute; inset: 100% 0 auto; max-height: calc(100dvh - 140px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain; padding: 12px max(12px, env(safe-area-inset-right)) 12px max(12px, env(safe-area-inset-left)); background: var(--background, #080808); border-bottom: 1px solid var(--theme-line, #343b43); box-shadow: 0 12px 24px #0004; }
+  .controls[data-open="true"] { display: block; }
+  .toolbar { margin-top: 0; gap: 6px; }
+  .toolbar > [role="group"] { flex-basis: 100%; }
+  .settings, .settings[data-expanded="true"] { display: grid; gap: 8px; padding-top: 12px; }
+  .settings label { justify-content: space-between; gap: 12px; }
+  .settings input { width: 45%; min-height: 44px; }
+  .content { padding-top: 8px; }
+}
