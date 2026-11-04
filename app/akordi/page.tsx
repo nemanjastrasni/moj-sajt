@@ -1,9 +1,11 @@
+import { publicPageMetadata } from "@/lib/seo/metadata"
+import { CHORD_ROOTS } from "@/lib/seo/catalog"
 import UiText from "@/app/components/UiText"
 
+export const metadata = publicPageMetadata("Akordi za gitaru – Dijagrami i hvatovi", "Pregled akorda za gitaru po osnovnom tonu. Pronađi durske, molske i druge hvatove sa dijagramima.", "/akordi")
+
 export default function AkordiPage() {
-  const roots = [
-    "A","A#","B","C","C#","D","D#","E","F","F#","G","G#"
-  ]
+  const roots = CHORD_ROOTS
 
   return (
     <div className="p-6">

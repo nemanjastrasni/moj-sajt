@@ -1,5 +1,8 @@
 import { notFound } from "next/navigation"
-import { prisma } from "@/lib/prisma"
+import { getPublicArtist } from "@/lib/publicPages"
+import { publicPageMetadata } from "@/lib/seo/metadata"
+import { routePath } from "@/lib/seo/site"
+import { hasBiographyContent } from "@/lib/biographies/catalog"
 import Link from "next/link"
 import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
 import ArtistWikiCredit from "@/app/components/ArtistWikiCredit"
@@ -16,14 +19,17 @@ type Props = {
   }>
 }
 
-export default async function ArtistInfoPage({ params }: Props) {
-  const { artist } = await params
+export async function generateMetadata({ params }: Props) {
+  const { category, artist } = await params
+  const data = await getPublicArtist(category, artist)
+  if (!data) notFound()
+  return publicPageMetadata(`${data.name} – Biografija i diskografija`, `Biografija i diskografija izvođača ${data.name}.`, routePath(hasBiographyContent(data) ? "biografija" : "pesme", category, data.slug), { image: getArtistImage(data) })
+}
 
-  const artistData = await prisma.artist.findFirst({
-    where: {
-      slug: artist,
-    },
-  })
+export default async function ArtistInfoPage({ params }: Props) {
+  const { category, artist } = await params
+
+  const artistData = await getPublicArtist(category, artist)
 
   if (!artistData) notFound()
 

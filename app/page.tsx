@@ -1,4 +1,6 @@
 import Link from "next/link"
+import StructuredData from "./components/StructuredData"
+import { websiteData } from "@/lib/seo/structured-data"
 import Hero from "./components/Hero"
 import PopularSongs from "./components/PopularSongs"
 import LatestSongs from "./components/LatestSongs"
@@ -8,12 +10,15 @@ import HomeRepertoire from "./components/HomeRepertoire"
 import SiteImage from "./components/SiteImage"
 import { publicPageMetadata } from "@/lib/seo/metadata"
 
-export const metadata = publicPageMetadata("GitaraAkordi – Akordi i tekstovi pesama", "Pesme sa akordima, lične plejliste, capo, PDF pesmarice, biografije i diskografije izvođača.", "/")
+const homeMetadata = publicPageMetadata("GitaraAkordi – Akordi i tekstovi pesama", "Pesme sa akordima, lične plejliste, capo, PDF pesmarice, biografije i diskografije izvođača.", "/")
+
+export const metadata = { ...homeMetadata, title: { absolute: "GitaraAkordi – Akordi i tekstovi pesama" } }
 
 export default function HomePage() {
 
   return (
     <div className="w-full">
+      <StructuredData data={websiteData()} />
       <h1 className="sr-only">GitaraAkordi – <UiText text="Akordi i tekstovi" /></h1>
 
       <HomeRepertoire />

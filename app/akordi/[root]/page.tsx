@@ -1,3 +1,8 @@
+import { notFound, permanentRedirect } from "next/navigation"
+import { publicPageMetadata } from "@/lib/seo/metadata"
+import { routePath } from "@/lib/seo/site"
+import { chordRoot, decodeCatalogSegment } from "@/lib/seo/catalog"
+import Breadcrumbs from "@/app/components/Breadcrumbs"
 import fs from "fs"
 import path from "path"
 
@@ -25,13 +30,28 @@ function formatChordName(ch: string) {
     .replace(/-/g, "")
 }
 
-export default function RootPage({ params }: any) {
-  const root = decodeURIComponent(params.root)
+type Props = { params: Promise<{ root: string }> }
+
+async function readRoot(params: Props["params"]) {
+  const { root: raw } = await params
+  const root = chordRoot(raw)
+  if (!root) notFound()
+  if (decodeCatalogSegment(raw) !== root) permanentRedirect(routePath("akordi", root))
+  return root
+}
+
+export async function generateMetadata({ params }: Props) {
+  const root = await readRoot(params)
+  return publicPageMetadata(`${root} akordi za gitaru – Dijagrami i hvatovi`, `Dijagrami ${root} akorda za gitaru: durski, molski i drugi hvatovi. Pregledaj oblike i nazive akorda.`, routePath("akordi", root))
+}
+
+export default async function RootPage({ params }: Props) {
+  const root = await readRoot(params)
 
   const dir = path.join(process.cwd(), "public/chords_final")
   const files = fs.readdirSync(dir)
 
-  const chords = files
+  const chords = files.filter(file => file.endsWith("_v1.png"))
   .filter(f => {
     const name = f.toLowerCase()
     const r = root.toLowerCase()
@@ -90,15 +110,17 @@ export default function RootPage({ params }: any) {
 
   return (
     <div className="p-6">
+      <Breadcrumbs items={[{ name: "Početna", path: "/" }, { name: "Akordi za gitaru", path: "/akordi" }, { name: `${root} akordi`, path: routePath("akordi", root) }]} />
       <h1 className="text-3xl font-bold mb-6">{root} akordi</h1>
 
-      <div className="grid grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
         {chords.map((ch, i) => (
           <div key={i} className="flex flex-col items-center gap-2">
             <img
               src={`/chords_final/${encodeURIComponent(ch)}_v1.png`}
               width={100}
-              alt={ch}
+              alt={`${formatChordName(ch)} – hvat za gitaru`}
+              loading="lazy"
             />
             <span className="text-xs text-gray-400">
               {formatChordName(ch)}

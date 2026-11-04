@@ -1,3 +1,9 @@
+import { cache } from "react"
+import { notFound, permanentRedirect } from "next/navigation"
+import { catalogLetter } from "@/lib/seo/catalog"
+import { isPublicCategory, routePath } from "@/lib/seo/site"
+import { publicPageMetadata } from "@/lib/seo/metadata"
+import { getCategoryLabel } from "@/lib/categories"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { CategoryLabel } from "@/app/components/UiText"
@@ -15,15 +21,6 @@ const categoryImages: Partial<Record<string, SiteImageName>> = {
   strane: "categoryStrane",
 }
 
-function normalizeLetter(letter: string) {
-  const decoded = decodeURIComponent(letter).toUpperCase()
-
-  if (decoded === "DŽ") return "DŽ"
-  if (decoded === "LJ") return "LJ"
-  if (decoded === "NJ") return "NJ"
-
-  return decoded
-}
 
 function getFirstLetter(name?: string) {
 
@@ -38,17 +35,22 @@ function getFirstLetter(name?: string) {
   return upper[0]
 }
 
-export default async function LetterPage({ params }: { params: Promise<{ category: string; letter: string }> }) {
-  const { category, letter: rawLetter } = await params
+type Props = { params: Promise<{ category: string; letter: string }> }
 
-  const letter = normalizeLetter(rawLetter)
-  const isSpecial = letter === "#" || letter === "NUM"
-  const bannerImage = categoryImages[category]
+async function letterRoute(params: Props["params"]) {
+  const { category, letter: raw } = await params
+  const letter = catalogLetter(raw)
+  if (!isPublicCategory(category) || !letter) notFound()
+  if (letter.input !== letter.slug) permanentRedirect(routePath("pesme", category, "slovo", letter.slug))
+  return { category, ...letter }
+}
 
+const letterArtists = cache(async (category: string, letter: string) => {
+  const isSpecial = letter === "#"
   const artists = await prisma.artist.findMany({
   where: { category },
   orderBy: { name: "asc" },
-  include: {
+  select: { id: true, name: true, slug: true, category: true, image: true,
     songs: { select: { id: true, performers: { select: { artistId: true } } } },
     performances: { select: { songId: true } },
   },
@@ -64,6 +66,22 @@ export default async function LetterPage({ params }: { params: Promise<{ categor
 
   return first === letter
 })
+  return filtered
+})
+
+export async function generateMetadata({ params }: Props) {
+  const { category, label, slug } = await letterRoute(params)
+  const artists = await letterArtists(category, label)
+  return {
+    ...publicPageMetadata(`${getCategoryLabel(category)} pesme – Izvođači na slovo ${label}`, `Izvođači na slovo ${label} u kategoriji ${getCategoryLabel(category)}. Pronađi pesme, akorde i tekstove.`, routePath("pesme", category, "slovo", slug)),
+    ...(!artists.length ? { robots: { index: false, follow: true } } : {}),
+  }
+}
+
+export default async function LetterPage({ params }: Props) {
+  const { category, label: letter } = await letterRoute(params)
+  const bannerImage = categoryImages[category]
+  const filtered = await letterArtists(category, letter)
 
   return (
     <div className={styles.page}>

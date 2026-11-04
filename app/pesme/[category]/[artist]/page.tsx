@@ -15,6 +15,8 @@ import { performerSelect } from "@/lib/artists/performers"
 import { getPublicArtist } from "@/lib/publicPages"
 import { publicPageMetadata } from "@/lib/seo/metadata"
 import { routePath } from "@/lib/seo/site"
+import Breadcrumbs from "@/app/components/Breadcrumbs"
+import { getCategoryLabel } from "@/lib/categories"
 
 export const dynamic = "force-dynamic"
 type ArtistProps = { params: Promise<{ category: string; artist: string }> }
@@ -28,7 +30,7 @@ export async function generateMetadata({ params }: ArtistProps) {
     notFound()
   }
   
-  return publicPageMetadata(`${artistData.name} – Akordi i tekstovi pesama`, `Pesme izvođača ${artistData.name}: akordi, tekstovi, procena težine i repertoar za sviranje.`, routePath("pesme", category, artistData.slug))
+  return publicPageMetadata(`${artistData.name} – Akordi i tekstovi pesama`, `Pesme izvođača ${artistData.name}: akordi, tekstovi, procena težine i repertoar za sviranje.`, routePath("pesme", category, artistData.slug), { image: getArtistImage(artistData) })
 }
 
 export default async function ArtistPage({ params }: ArtistProps) {
@@ -47,6 +49,7 @@ export default async function ArtistPage({ params }: ArtistProps) {
 
   return (
     <div className={styles.page}>
+      <Breadcrumbs items={[{ name: "Početna", path: "/" }, { name: "Pesme", path: "/pesme" }, { name: getCategoryLabel(category), path: routePath("pesme", category) }, { name: artistData.name, path: routePath("pesme", category, artistData.slug) }]} />
       <BackNavigationTarget pathname={`/pesme/${encodeURIComponent(category)}/${encodeURIComponent(artist)}`} href={artistIndexHref("pesme", category, artistData.name)} />
       <ArtistHeader name={artistData.name} image={image} />
       <AdminPageActions kind="artist" id={artistData.id} name={artistData.name} editHref={`/admin/artists/${encodeURIComponent(artistData.id)}/edit?from=artist`} biography={Boolean(artistData.bio || artistData.bioShort)} version={artistContentVersion(artistData)} />

@@ -1,9 +1,12 @@
+import { publicPageMetadata } from "@/lib/seo/metadata"
 import Link from "next/link"
 import UiText from "@/app/components/UiText"
 import { catalogEntries } from "@/lib/playlists/catalog"
 import { difficultyExplanation } from "@/lib/music/difficulty"
 import styles from "@/app/components/PlaylistClient.module.css"
 import difficultyStyles from "@/app/components/SongDifficulty.module.css"
+
+export const metadata = publicPageMetadata("Plejliste za gitaru – Pesme po težini i akordima", "Izaberi pesme prema težini sviranja, broju akorda i kategoriji. Pronađi repertoar za vežbanje i svoje plejliste.", "/plejliste")
 
 export default function PlaylistsPage() {
   return <main className={styles.page}>

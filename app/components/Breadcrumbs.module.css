@@ -1,0 +1,5 @@
+.nav { margin: 16px 0; color: var(--theme-muted, #a4acb9); font-size: 13px; line-height: 1.6; }
+.nav ol { display: flex; flex-wrap: wrap; gap: 4px 8px; list-style: none; margin: 0; padding: 0; }
+.nav li { display: inline-flex; align-items: baseline; gap: 8px; min-width: 0; overflow-wrap: anywhere; }
+.nav a { color: var(--theme-link, #69baff); text-decoration: underline; text-underline-offset: 3px; }
+.separator { color: var(--theme-muted, #a4acb9); }

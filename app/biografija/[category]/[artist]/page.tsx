@@ -1,6 +1,8 @@
 import { getPublicArtist } from "@/lib/publicPages"
 import { publicPageMetadata } from "@/lib/seo/metadata"
 import { routePath } from "@/lib/seo/site"
+import Breadcrumbs from "@/app/components/Breadcrumbs"
+import { getCategoryLabel } from "@/lib/categories"
 import { notFound } from "next/navigation"
 import BioText from "@/app/biografija/components/BioText"
 import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
@@ -32,7 +34,7 @@ export const dynamic = "force-dynamic"
 export async function generateMetadata({ params }: { params: Promise<{ category: string; artist: string }> }) {
   const { category, artist } = await params, data = await getPublicArtist(category, artist)
   if (!data) notFound()
-  return { ...publicPageMetadata(`${data.name} – Biografija i diskografija`, `Biografija izvođača ${data.name}, diskografija, albumi i godine izdanja prema dostupnim izvorima.`, routePath("biografija", category, data.slug)), ...(!hasBiographyContent(data) ? { robots: { index: false, follow: true } } : {}) }
+  return { ...publicPageMetadata(`${data.name} – Biografija i diskografija`, `Biografija izvođača ${data.name}, diskografija, albumi i godine izdanja prema dostupnim izvorima.`, routePath("biografija", category, data.slug), { image: getArtistImage(data) }), ...(!hasBiographyContent(data) ? { robots: { index: false, follow: true } } : {}) }
 }
 
 export default async function BiographyPage({ params }: { params: Promise<{ category: string; artist: string }> }) {
@@ -46,6 +48,7 @@ export default async function BiographyPage({ params }: { params: Promise<{ cate
 
   return (
     <div className={styles.page}>
+      <Breadcrumbs items={[{ name: "Početna", path: "/" }, { name: "Biografije", path: "/biografija" }, { name: getCategoryLabel(category), path: routePath("biografija", category) }, { name: artistData.name, path: routePath("biografija", category, artistData.slug) }]} />
       <BackNavigationTarget pathname={`/biografija/${encodeURIComponent(category)}/${encodeURIComponent(artistSlug)}`} href={artistIndexHref("biografija", category, artistData.name)} />
 
       <header className={styles.biographyHero}>

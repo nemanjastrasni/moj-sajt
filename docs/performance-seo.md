@@ -1,5 +1,62 @@
 # Public performance and technical SEO
 
+## Catalog SEO follow-up (2026-11-05)
+
+Public song/biography indexes, chord indexes and root diagrams, curated playlist
+catalogs, top-50 pages and supporting pages now have specific titles,
+descriptions, canonical URLs and social metadata. Artist and biography shares
+use the reviewed artist photograph when one is available; unknown dimensions
+are not fabricated. The home title is explicitly absolute.
+
+Song, artist, biography and chord-root pages include visible breadcrumb links
+and matching server-rendered BreadcrumbList JSON-LD. The homepage identifies
+the WebSite. No inferred songwriter credits, band/person types, fabricated
+ratings or nonexistent search endpoints are emitted. Script serialization
+escapes HTML-significant characters and Unicode line separators while
+preserving the original JSON data.
+
+Unknown categories, alphabet filters and chord roots return 404. Empty valid
+alphabet results and empty public playlist filters use noindex/follow. Case
+aliases redirect permanently to a consistent address. Next.js 15 page parameters
+can retain percent-encoding on this installation, so catalog parameters are
+decoded once with malformed escapes rejected. Both encoded and decoded inputs
+are covered by regression tests and HTTP checks, including C%23 and Serbian Č.
+
+Public playlist pagination retains its actual current page and validated
+category in the canonical URL and drops personal navigation parameters. User
+playlist IDs keep noindex metadata and never reveal user playlist names through
+metadata generation. Personal skill recommendations and the unfinished user
+ranking also carry noindex headers. The legacy artist info view is scoped to
+the requested category and points to its matching biography or artist page.
+
+The static sitemap now also includes the twelve chord roots, eleven public
+playlist catalog entry points, three top-50 routes and the rights-report page.
+Private recommendations and personal lists remain excluded.
+
+Verification: 114 focused automated tests passed, including ten new SEO
+regressions; TypeScript and a clean production build of the current application
+source passed. The build used an isolated checkout with the actual application
+code, rather than replacing its database implementation. Runtime database reads
+on this Windows machine still fail with the previously documented Prisma TLS
+credential error. Database-dependent HTTP and browser checks therefore use
+invented fixtures in a separate checkout: 32 HTTP checks and 18 browser layouts
+at 320, 390 and 1366 pixels passed, with no horizontal overflow or JavaScript
+page errors. Song text remains present with JavaScript disabled. Unrelated
+interactive API features are outside the fixture coverage. Production HTTP checks for encoded
+chord roots and redirects pass without fixtures. No production data, DNS,
+Search Console settings, Git commits or deployments are changed by this work.
+
+After deployment, verify representative live titles, canonical links,
+structured data, sitemap and crawl responses again. Google Rich Results Test
+and Search Console checks require the deployed version; local validation does
+not promise indexing, rich results or a ranking improvement. Domain setup
+remains a separate step described below.
+
+References:
+- https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls
+- https://developers.google.com/search/docs/appearance/structured-data/breadcrumb
+- https://nextjs.org/docs/app/guides/json-ld
+
 Implemented and checked on 2026-10-30. No deployment, DNS changes, database
 migrations, song corrections or private-user-data changes are part of this work.
 

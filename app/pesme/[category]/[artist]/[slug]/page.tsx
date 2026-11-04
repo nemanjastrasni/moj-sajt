@@ -4,6 +4,8 @@ import { getPublicSong } from "@/lib/publicPages"
 import { countSongViewAfterResponse } from "@/lib/songViews"
 import { publicPageMetadata } from "@/lib/seo/metadata"
 import { routePath } from "@/lib/seo/site"
+import Breadcrumbs from "@/app/components/Breadcrumbs"
+import { getCategoryLabel } from "@/lib/categories"
 import SongClient from "../../../../components/SongClient"
 import type { Metadata } from "next"
 import AdminPageActions from "@/app/components/AdminPageActions"
@@ -62,6 +64,7 @@ export default async function SongPage({ params, searchParams }: Props) {
 
   return (
     <>
+    <Breadcrumbs items={[{ name: "Početna", path: "/" }, { name: "Pesme", path: "/pesme" }, { name: getCategoryLabel(category), path: routePath("pesme", category) }, { name: song.artist.name, path: routePath("pesme", category, song.artist.slug) }, { name: song.title, path: routePath("pesme", category, song.artist.slug, song.slug) }]} />
     {returnTo && <BackNavigationTarget pathname={pathname} href={returnTo} />}
     <SongClient
       key={song.id + (fromFavorites ? ":favorite" : ":original") + (query.play === "1" ? ":play" : "")}

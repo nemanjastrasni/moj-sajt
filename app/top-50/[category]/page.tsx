@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation"
+import { isPublicCategory } from "@/lib/seo/site"
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { playlistSongHref } from "@/lib/navigation/parent"
@@ -8,6 +10,7 @@ export default async function Top50Page({
   params: Promise<{ category: string }>
 }) {
   const { category } = await params
+  if (!isPublicCategory(category)) notFound()
 
   const titleMap: Record<string, string> = {
     domace: "Top 50 Zabavnih",

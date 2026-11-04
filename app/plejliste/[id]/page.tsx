@@ -4,11 +4,29 @@ import PlaylistCatalog from "@/app/components/PlaylistCatalog"
 import { notFound } from "next/navigation"
 import { playlistOrder, playlistViewerId, readablePlaylistWhere } from "@/lib/playlists/server"
 import { catalogEntry } from "@/lib/playlists/catalog"
+import { catalogPage, catalogPageNumber } from "@/lib/playlists/catalog-server"
+import { isPublicCategory, routePath } from "@/lib/seo/site"
+import { publicPageMetadata } from "@/lib/seo/metadata"
+import { getCategoryLabel } from "@/lib/categories"
 
 export const dynamic = "force-dynamic"
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+type Props = { params: Promise<{ id: string }>; searchParams?: Promise<Record<string, string | string[] | undefined>> }
+
+export async function generateMetadata({ params, searchParams }: Props) {
   const { id } = await params
-  return catalogEntry(id) ? {} : { robots: { index: false, follow: false } }
+  const entry = catalogEntry(id)
+  if (!entry) return { title: "Plejlista", robots: { index: false, follow: false } }
+  const query = await searchParams ?? {}
+  const category = typeof query.category === "string" && isPublicCategory(query.category) ? query.category : null
+  const { current, total } = await catalogPage(id, category, catalogPageNumber(query.page))
+  const canonicalQuery: Record<string, string> = {}
+  if (current > 1) canonicalQuery.page = String(current)
+  if (category) canonicalQuery.category = category
+  const label = entry.title + (category ? " – " + getCategoryLabel(category) : "")
+  return {
+    ...publicPageMetadata(label + " – Pesme za gitaru" + (current > 1 ? " – Strana " + current : ""), `Izbor pesama za gitaru: ${label}. Akordi, tekstovi i procena težine sviranja.`, routePath("plejliste", id), { canonicalQuery }),
+    ...(!total ? { robots: { index: false, follow: true } } : {}),
+  }
 }
 export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams?: Promise<Record<string, string | string[] | undefined>> }) {
   const { id } = await params

@@ -1,11 +1,10 @@
+import { publicPageMetadata } from "@/lib/seo/metadata"
 import UiText from "@/app/components/UiText"
 import Link from "next/link"
 
 
-const letters = [
-"A","B","C","Č","Ć","D","DŽ","Đ","E","F","G","H","I","J",
-"K","L","LJ","M","N","NJ","O","P","R","S","Š","T","U","V","Z","Ž"
-]
+
+export const metadata = publicPageMetadata("Pesme sa akordima za gitaru", "Akordi i tekstovi zabavnih, narodnih i stranih pesama. Pronađi izvođača i izaberi pesmu za sviranje.", "/pesme")
 
 export default function PesmePage() {
   return (

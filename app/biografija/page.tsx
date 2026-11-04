@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "@/lib/seo/metadata"
 import Link from "next/link"
 import UiText, { CategoryLabel } from "@/app/components/UiText"
 import MusicButton from "@/app/components/MusicButton"
@@ -7,6 +8,8 @@ const categories = [
   { key: "strane", label: "Strane" },
   { key: "narodne", label: "Narodne" },
 ]
+
+export const metadata = publicPageMetadata("Biografije i diskografije izvođača", "Biografije muzičara i bendova, diskografije i albumi. Pregledaj izvođače po kategoriji i početnom slovu.", "/biografija")
 
 export default function BiografijePage() {
   return (

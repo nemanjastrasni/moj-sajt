@@ -1,8 +1,8 @@
-import type { Metadata } from "next"
+import { publicPageMetadata } from "@/lib/seo/metadata"
 import { artistWikiManifest, wikiValueHash, type WikiSource } from "@/lib/artistWiki"
 import { allArtistWikiCredits } from "@/lib/artistWikiServer"
 
-export const metadata: Metadata = { title: "Wikipedia - izvori i autori" }
+export const metadata = publicPageMetadata("Wikipedia – Izvori biografija i diskografija", "Izvori, autori i revizije Wikipedia članaka korišćenih za biografije i diskografije izvođača.", "/wiki-izvori")
 export const dynamic = "force-dynamic"
 export default async function WikiCreditsPage() {
   const artists = await allArtistWikiCredits()

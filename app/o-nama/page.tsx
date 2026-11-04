@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import { publicPageMetadata } from "@/lib/seo/metadata"
 import Link from "next/link"
 import { ArrowRight, AudioLines, BookOpen, FileDown, Flag, Guitar, ListMusic, Maximize, Music2, Palette, type LucideIcon } from "lucide-react"
 import UiText from "@/app/components/UiText"
@@ -7,10 +7,7 @@ import { PUBLIC_OPERATOR_NAME } from "@/lib/site-contact"
 import styles from "./page.module.css"
 import AboutScreenshot from "@/app/components/AboutScreenshot"
 
-export const metadata: Metadata = {
-  title: "O nama",
-  description: "GitaraAkordi: pesme sa akordima, plejliste, tonalitet i capo, PDF pesmarice, prikaz za sviranje, \u0161timer i metronom.",
-}
+export const metadata = publicPageMetadata("O nama", "Pesme sa akordima, plejliste, tonalitet i capo, PDF pesmarice, prikaz za sviranje, štimer i metronom.", "/o-nama")
 
 const icons: Record<typeof aboutSections[number]["id"], LucideIcon> = {
   pesme: Music2, repertoar: ListMusic, tonalitet: Guitar, sviranje: Maximize,

@@ -1,10 +1,10 @@
-import type { Metadata } from "next"
+import { publicPageMetadata } from "@/lib/seo/metadata"
 import Link from "next/link"
 import { Mail } from "lucide-react"
 import UiText from "@/app/components/UiText"
 import { PUBLIC_CONTACT_EMAIL, RIGHTS_REPORT_MAILTO } from "@/lib/site-contact"
 
-export const metadata: Metadata = { title: "Prijava povrede prava" }
+export const metadata = publicPageMetadata("Prijava povrede prava", "Kako prijaviti sadržaj koji povređuje autorska prava ili privatnost na sajtu GitaraAkordi.", "/prijava-povrede")
 
 export default function RightsReportPage() {
   return (

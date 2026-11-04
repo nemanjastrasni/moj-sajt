@@ -9,6 +9,8 @@ import SongDifficulty from "@/app/components/SongDifficulty"
 import styles from "@/app/components/PlaylistClient.module.css"
 
 export const dynamic = "force-dynamic"
+export const metadata = { robots: { index: false, follow: false } }
+
 export default async function Page({ searchParams }: { searchParams?: Promise<Record<string, string | string[] | undefined>> }) {
   const userId = await playlistViewerId()
   if (!userId) return <p><UiText text="Nisi ulogovan" /></p>

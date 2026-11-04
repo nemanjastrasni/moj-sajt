@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:route-boundaries": "node --test scripts/test-route-boundaries.cjs",
-    "test:seo": "node --test scripts/test-seo-performance.cjs",
+    "test:seo": "node --test scripts/test-seo-performance.cjs scripts/test-seo-catalog.cjs",
     "test:favorite-playlists": "node --test scripts/test-favorite-playlists.cjs",
     "favorites:migrate": "node scripts/migrate-favorite-playlists.cjs",
     "backup:app": "node scripts/application-backup.cjs",
