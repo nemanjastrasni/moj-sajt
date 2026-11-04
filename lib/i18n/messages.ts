@@ -1,5 +1,17 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "Prevuci stavku za rucicu ili klikni na njen broj da izaberes poziciju. Redosled se cuva automatski.": "Drag an item by its handle or click its number to choose a position. The order is saved automatically.",
+  "Pomeri na poziciju": "Move to position",
+  "Pozicija od 1 do {count}": "Position from 1 to {count}",
+  "Unesi vazecu poziciju.": "Enter a valid position.",
+  "Redosled je sacuvan.": "Order saved.",
+  "Pomeri": "Move",
+  "Pomeri stavku gore": "Move item up",
+  "Pomeri stavku dole": "Move item down",
+  "Za pomeranje pritisni razmak, promeni poziciju strelicama i ponovo pritisni razmak. Escape otkazuje pomeranje.": "Press space to pick up an item, use the arrow keys to choose a position, then press space again to drop it. Escape cancels the move.",
+  "Pomeranje stavke je zapoceto.": "Item picked up.",
+  "Izabrana pozicija: {position}.": "Selected position: {position}.",
+  "Pomeranje je otkazano.": "Move cancelled.",
   "Kanal": "Channel",
   "Biografija i diskografija": "Biography and discography",
   "Objedinjene kontrole iznad naslova pesme": "Unified controls above the song title",

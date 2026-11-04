@@ -142,6 +142,25 @@ test('partial reorder failure rolls back earlier writes and revoked accounts are
   failItem=null;before=structuredClone(state);revoked=true
   assert.equal((await detail.PATCH(req(edit(),'PATCH'),ctx())).status,403);assert.deepEqual(state,before)
 })
+
+test('a newly appended link can move straight to second position and a fresh read keeps the saved order',async()=>{
+  const added=await item.POST(req({playlistId:'mine',version:version(),url:'https://youtu.be/12345678901',title:'New link'}))
+  assert.equal(added.status,201)
+  const appended=(await added.json()).playlist
+  const ids=appended.items.map(item=>item.id)
+  assert.deepEqual(ids.slice(0,2),['a','b'])
+  const moved=[ids[0],ids[2],ids[1]]
+  const saved=await reorder.PUT(req({playlistId:'mine',version:appended.version,items:moved},'PUT'))
+  assert.equal(saved.status,200)
+  const refreshed=(await (await detail.GET(req({},'GET'),ctx())).json()).playlist
+  assert.deepEqual(refreshed.items.map(item=>item.id),moved)
+  assert.deepEqual(refreshed.items.map(item=>item.order),[0,1,2])
+  assert.notEqual(refreshed.version,appended.version)
+  assert.equal(refreshed.items[1].url,'https://www.youtube.com/watch?v=12345678901')
+  const before=structuredClone(state)
+  assert.equal((await reorder.PUT(req({playlistId:'mine',version:appended.version,items:ids},'PUT'))).status,409)
+  assert.deepEqual(state,before)
+})
 test('deleting an item or a whole music list leaves chord songs, favourites and other lists unchanged',async()=>{
   const unrelated=structuredClone({songs:state.songs,favorites:state.favorites,chordPlaylists:state.chordPlaylists})
   assert.equal((await itemDetail.DELETE(req({version:version()},'DELETE'),ctx('a'))).status,200)

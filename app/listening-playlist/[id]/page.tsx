@@ -9,5 +9,5 @@ export default async function MusicPage({params}:{params:Promise<{id:string}>}){
   const {id}=await params,viewerId=await musicViewerId()
   let playlist
   try{playlist=await readableMusic(id,viewerId)}catch(error){if(error instanceof MusicError&&error.status===404)notFound();throw error}
-  return <><BackNavigationTarget pathname={"/listening-playlist/"+encodeURIComponent(id)} href={playlist.editable?"/listening-playlist":"/public-listening-playlists"} /><MusicPlaylist initial={playlist} viewerId={viewerId} /></>
+  return <><BackNavigationTarget pathname={"/listening-playlist/"+encodeURIComponent(id)} href={playlist.editable?"/listening-playlist":"/public-listening-playlists"} /><MusicPlaylist key={playlist.id} initial={playlist} viewerId={viewerId} /></>
 }
