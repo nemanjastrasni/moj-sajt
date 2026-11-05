@@ -38,7 +38,10 @@
 .admin-artists { min-width: 620px; }
 .admin-avatar { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; }
 .admin-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--control-line); }
-.admin-stats a { padding: 8px 0; font-size: 13px; color: var(--control-muted); }
+.admin-stats > a, .admin-stats > div { min-width: 0; padding: 8px 0; font-size: 13px; color: var(--control-muted); overflow-wrap: anywhere; }
+.admin-stats small { display: block; margin-top: 6px; font-size: 12px; line-height: 1.5; }
+.admin-stat-details { margin-top: 16px; font-size: 13px; }
+.admin-stat-time { margin-top: 8px; font-size: 12px; }
 .admin-stats strong { display: block; font-size: 28px; line-height: 1.3; color: var(--control-ink); margin-bottom: 8px; }
 .admin-tasks { margin-top: 24px; }
 .admin-tasks a { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 12px 0; border-bottom: 1px solid var(--control-line); font-size: 14px; }
@@ -55,7 +58,7 @@
 }
 @media (max-width: 480px) {
   .admin-filters label { flex-basis: 100%; }
-  .admin-stats { gap: 12px; }
+  .admin-stats { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
   .admin-stats strong { font-size: 24px; }
   .admin-tasks a { flex-wrap: wrap; }
   .admin-tasks small { padding-left: 32px; width: 100%; }

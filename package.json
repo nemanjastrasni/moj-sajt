@@ -27,6 +27,7 @@
     "test:submissions": "node --test scripts/test-submissions.cjs",
     "test:admin-songs": "node --test scripts/test-admin-songs.cjs",
     "test:admin-content": "node --test scripts/test-admin-content.cjs",
+    "test:admin-stats": "node --test scripts/test-admin-stats.cjs",
     "test:song-review": "node --test scripts/test-song-review.cjs",
     "test:navigation": "node --test scripts/test-navigation.cjs",
     "test:song-audit": "node --test scripts/test-song-audit.cjs",
