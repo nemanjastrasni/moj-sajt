@@ -2,7 +2,7 @@ import { createHash } from "node:crypto"
 import { publicPageMetadata } from "@/lib/seo/metadata"
 import manifest from "@/public/artist-photos/manifest.json"
 
-export const metadata = publicPageMetadata("Izvori fotografija i autori", "Autori, izvori i licence fotografija izvođača objavljenih na sajtu GitaraAkordi.", "/foto-izvori")
+export const metadata = publicPageMetadata("Izvori fotografija i autori", "Autori, izvori i licence fotografija izvođača objavljenih na sajtu GitarAkordi.", "/foto-izvori")
 
 export default function PhotoCreditsPage() {
   const checksum = createHash("sha256").update(JSON.stringify(manifest)).digest("hex")

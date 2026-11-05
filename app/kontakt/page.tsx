@@ -4,7 +4,7 @@ import { ArrowRight, Mail } from "lucide-react"
 import UiText from "@/app/components/UiText"
 import { CONTACT_MAILTO, PUBLIC_CONTACT_EMAIL, PUBLIC_OPERATOR_NAME } from "@/lib/site-contact"
 
-export const metadata = publicPageMetadata("Kontakt", "Kontakt sa urednikom sajta GitaraAkordi: pitanja, ispravke sadržaja i zahtevi u vezi sa nalogom.", "/kontakt")
+export const metadata = publicPageMetadata("Kontakt", "Kontakt sa urednikom sajta GitarAkordi: pitanja, ispravke sadržaja i zahtevi u vezi sa nalogom.", "/kontakt")
 
 export default function KontaktPage() {
   return (

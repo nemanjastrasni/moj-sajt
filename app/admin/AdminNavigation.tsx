@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Flag, LayoutDashboard, ListMusic, Mic2, Music2, ShieldCheck, Users } from "lucide-react"
+import { Flag, LayoutDashboard, ListMusic, Mic2, Music2, Palette, ShieldCheck, Users } from "lucide-react"
 import { useI18n } from "@/app/components/UiText"
 
 const items = [
@@ -13,6 +13,7 @@ const items = [
   { href: "/admin/predlozi", label: "Predlozi pesama", icon: ListMusic },
   { href: "/admin/korisnici", label: "Korisnici", icon: Users },
   { href: "/admin/nadzor", label: "Nadzor sajta", icon: ShieldCheck },
+  { href: "/admin/izgled", label: "Izgled i slogani", icon: Palette },
 ]
 export default function AdminNavigation() {
   const pathname = usePathname()

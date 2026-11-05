@@ -11,7 +11,7 @@ export async function fetchMonitorHistory(fetcher: typeof fetch = fetch, now = n
   const empty = { checkedAt: now.toISOString(), runs: [] }
   try {
     const response = await fetcher(`https://api.github.com/repos/${MONITOR_REPOSITORY}/actions/workflows/site-monitor.yml/runs?per_page=30`, {
-      headers: { Accept: "application/vnd.github+json", "User-Agent": "GitaraAkordiAdminMonitor" },
+      headers: { Accept: "application/vnd.github+json", "User-Agent": "GitarAkordiAdminMonitor" },
       redirect: "error", cache: "no-store", signal: AbortSignal.timeout(8000),
     })
     if (response.status === 404) return { ...empty, state: "not-configured" }

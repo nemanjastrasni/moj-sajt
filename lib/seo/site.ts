@@ -1,5 +1,5 @@
 export const PUBLIC_CATEGORIES = ["narodne", "domace", "strane"] as const
-export const SITE_NAME = "GitaraAkordi"
+export { SITE_NAME } from "../brand"
 export const DEFAULT_SITE_URL = "https://moj-sajt-rho.vercel.app"
 
 export function resolveSiteOrigin(env: Record<string, string | undefined>) {

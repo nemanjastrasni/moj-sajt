@@ -6,7 +6,7 @@ import { playlistSongHref } from "@/lib/navigation/parent"
 
 export const dynamic = "force-dynamic"
 
-export const metadata = publicPageMetadata("Top 50 zabavnih pesama sa akordima", "Izbor 50 zabavnih pesama prema broju pregleda na sajtu GitaraAkordi. Akordi i tekstovi za gitaru.", "/top-50/domace")
+export const metadata = publicPageMetadata("Top 50 zabavnih pesama sa akordima", "Izbor 50 zabavnih pesama prema broju pregleda na sajtu GitarAkordi. Akordi i tekstovi za gitaru.", "/top-50/domace")
 
 export default async function Page() {
   const songs = await prisma.song.findMany({

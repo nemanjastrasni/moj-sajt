@@ -1,4 +1,4 @@
-name: GitaraAkordi daily monitor
+name: GitarAkordi daily monitor
 
 on:
   schedule:

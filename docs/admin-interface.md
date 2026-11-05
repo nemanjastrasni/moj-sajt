@@ -1,7 +1,7 @@
 # Admin Interface
 
 Admin routes keep their server-side current-role guard. The presentation uses
-`AdminFrame`, seven section links with a current-page marker, and one shared control
+`AdminFrame`, eight section links with a current-page marker, and one shared control
 stylesheet, `app/controls.css`. The legacy `/admin/edit` redirect remains available
 but is no longer a duplicate menu item.
 

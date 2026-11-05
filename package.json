@@ -29,6 +29,8 @@
     "test:admin-content": "node --test scripts/test-admin-content.cjs",
     "test:admin-stats": "node --test scripts/test-admin-stats.cjs",
     "test:site-monitor": "node --test scripts/test-site-monitor.cjs",
+    "test:site-branding": "node --test scripts/test-site-branding.cjs",
+    "branding:setup": "node scripts/setup-site-branding.cjs",
     "monitor:site": "node scripts/site-monitor.cjs",
     "test:song-review": "node --test scripts/test-song-review.cjs",
     "test:navigation": "node --test scripts/test-navigation.cjs",

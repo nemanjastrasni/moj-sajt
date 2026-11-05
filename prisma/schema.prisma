@@ -8,6 +8,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model SiteBranding {
+  id          String @id @default("home")
+  config      Json
+  version     String
+  updatedById String?
+  updatedAt   DateTime @default(now())
+  changes     SiteBrandingChange[]
+}
+
+model SiteBrandingChange {
+  id            String @id
+  brandingId    String @default("home")
+  before        Json?
+  after         Json
+  beforeVersion String?
+  afterVersion  String
+  actorId       String
+  createdAt     DateTime @default(now())
+  branding      SiteBranding @relation(fields: [brandingId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  @@index([brandingId, createdAt])
+}
+
 
 /// =========koliko ljudi posecuje=================
 model Visit {

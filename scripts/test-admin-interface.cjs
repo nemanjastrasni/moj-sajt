@@ -19,7 +19,7 @@ test('only the current admin section is highlighted, including nested editors',(
 test('legacy edit alias does not create a duplicate navigation item',()=>{
   pathname='/admin'
   const links=Navigation().props.children
-  assert.equal(links.length,7)
+  assert.equal(links.length,8)
   assert.equal(links.filter(link=>link.props.href==='/admin/edit').length,0)
   assert.ok(links.every(link=>link.props.children[0].props['aria-hidden']==='true'))
 })

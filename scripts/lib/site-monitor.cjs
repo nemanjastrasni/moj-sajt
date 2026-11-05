@@ -2,7 +2,7 @@
 const { load } = require('cheerio')
 const { createHash } = require('node:crypto')
 
-const USER_AGENT = 'GitaraAkordiMonitor/1.0 HeadlessChrome (read-only health checks)'
+const USER_AGENT = 'GitarAkordiMonitor/1.0 HeadlessChrome (read-only health checks)'
 const MAX_BODY = 4 * 1024 * 1024
 const PRIVATE_PATH = /^\/(?:admin|api|profile|favorite|login|signin|signup|predlozi-pesmu|moji-predlozi|listening-playlist)(?:\/|$)/
 const PUBLIC_PATH = /^\/(?:pesme|biografija|akordi|plejliste|top-50|o-nama|kontakt|foto-izvori|wiki-izvori|prijava-povrede)(?:\/|$)/
@@ -158,7 +158,7 @@ async function inspectSite({ origin: input, now = new Date(), fetcher = fetch, s
 const markdownText = value => String(value).replace(/[\\`*_[\]<>|#]/g, character => '\\' + character).replace(/[\r\n]+/g, ' ')
 function markdownReport(report) {
   const labels = { healthy: 'Provere su prošle', warning: 'Potrebna je provera nalaza', critical: 'Otkriven je ozbiljan problem' }
-  return `# GitaraAkordi — dnevni nadzor\n\n${labels[report.status]}\n\nVreme: ${report.startedAt}\n\nRežim: samo nadzor. Upisi u bazu i kod: **0**.\n\nSitemap: ${report.coverage.sitemapFiles} datoteka, ${report.coverage.sitemapUrls} adresa (${report.coverage.songUrls} pesama). Pregledano stranica: ${report.coverage.pagesChecked}. Ovo je uzorak javnih stranica, bez potvrde Google indeksiranja.\n\n| Nivo | Provera | Putanja | Nalaz |\n| --- | --- | --- | --- |\n${report.checks.map(check => `| ${check.level} | ${check.code} | ${markdownText(check.path)} | ${markdownText(check.message)} |`).join('\n')}\n\nAI: ${markdownText(report.ai.status)}.\n${report.ai.analysis ? '\nAI predlog zahteva proveru i odobrenje; ništa nije izvršeno.\n\n' + markdownText(report.ai.analysis.summary) + '\n\n' + report.ai.analysis.findings.map(f => `- ${markdownText(f.checkId)}: ${markdownText(f.explanation)} Predlog: ${markdownText(f.recommendation)}`).join('\n') : ''}\n`
+  return `# GitarAkordi — dnevni nadzor\n\n${labels[report.status]}\n\nVreme: ${report.startedAt}\n\nRežim: samo nadzor. Upisi u bazu i kod: **0**.\n\nSitemap: ${report.coverage.sitemapFiles} datoteka, ${report.coverage.sitemapUrls} adresa (${report.coverage.songUrls} pesama). Pregledano stranica: ${report.coverage.pagesChecked}. Ovo je uzorak javnih stranica, bez potvrde Google indeksiranja.\n\n| Nivo | Provera | Putanja | Nalaz |\n| --- | --- | --- | --- |\n${report.checks.map(check => `| ${check.level} | ${check.code} | ${markdownText(check.path)} | ${markdownText(check.message)} |`).join('\n')}\n\nAI: ${markdownText(report.ai.status)}.\n${report.ai.analysis ? '\nAI predlog zahteva proveru i odobrenje; ništa nije izvršeno.\n\n' + markdownText(report.ai.analysis.summary) + '\n\n' + report.ai.analysis.findings.map(f => `- ${markdownText(f.checkId)}: ${markdownText(f.explanation)} Predlog: ${markdownText(f.recommendation)}`).join('\n') : ''}\n`
 }
 
 module.exports = { originUrl, publicPath, robotsAllows, fetchText, samples, inspectSite, markdownReport, USER_AGENT }

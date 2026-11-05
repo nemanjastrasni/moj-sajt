@@ -23,7 +23,7 @@ async function aiEligibility(env, now, fetcher) {
   if (!/^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/.test(env.GITHUB_REPOSITORY || '') || !/^\d+$/.test(env.GITHUB_RUN_ID || '') || !/^\d+$/.test(env.GITHUB_RUN_NUMBER || '')) return 'invalid-run-context'
   try {
     const response = await fetcher(`https://api.github.com/repos/${env.GITHUB_REPOSITORY}/actions/workflows/site-monitor.yml/runs?event=schedule&per_page=30`, {
-      redirect: 'error', headers: { Accept: 'application/vnd.github+json', ...(env.GITHUB_TOKEN ? { Authorization: 'Bearer ' + env.GITHUB_TOKEN } : {}), 'User-Agent': 'GitaraAkordiMonitor' }, signal: AbortSignal.timeout(10000),
+      redirect: 'error', headers: { Accept: 'application/vnd.github+json', ...(env.GITHUB_TOKEN ? { Authorization: 'Bearer ' + env.GITHUB_TOKEN } : {}), 'User-Agent': 'GitarAkordiMonitor' }, signal: AbortSignal.timeout(10000),
     })
     if (!response.ok) return 'budget-check-unavailable'
     const data = await response.json(), day = now.toISOString().slice(0, 10)

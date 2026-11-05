@@ -1,4 +1,4 @@
-export const aboutIntro = "GitaraAkordi povezuje pesme sa akordima, li\u010dni repertoar i ve\u017ebanje gitare sa biografijama, diskografijama i muzikom za slu\u0161anje."
+export const aboutIntro = "GitarAkordi povezuje pesme sa akordima, li\u010dni repertoar i ve\u017ebanje gitare sa biografijama, diskografijama i muzikom za slu\u0161anje."
 export const aboutAccountNote = "Javni sadr\u017eaj mo\u017ee\u0161 da pregleda\u0161 bez naloga. Za li\u010dne plejliste, slanje predloga i prijavu gre\u0161ke potrebna je prijava. Podaci platne kartice nisu potrebni."
 export const aboutAppearance = "Dostupne su svetla i tamna tema i interfejs na srpskom i engleskom. Menja se jezik kontrola, ne originalni tekstovi pesama."
 export const aboutContactNote = "Za pitanja, predloge i zahteve u vezi sa sadr\u017eajem ili nalogom poseti Kontakt."
