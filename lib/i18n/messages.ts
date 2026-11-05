@@ -1,5 +1,6 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "Nadzor sajta": "Site monitoring",
   "Prevuci stavku za rucicu ili klikni na njen broj da izaberes poziciju. Redosled se cuva automatski.": "Drag an item by its handle or click its number to choose a position. The order is saved automatically.",
   "Pomeri na poziciju": "Move to position",
   "Pozicija od 1 do {count}": "Position from 1 to {count}",

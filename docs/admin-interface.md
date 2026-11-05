@@ -1,9 +1,13 @@
 # Admin Interface
 
 Admin routes keep their server-side current-role guard. The presentation uses
-`AdminFrame`, six section links with a current-page marker, and one shared control
+`AdminFrame`, seven section links with a current-page marker, and one shared control
 stylesheet, `app/controls.css`. The legacy `/admin/edit` redirect remains available
 but is no longer a duplicate menu item.
+
+The read-only `/admin/nadzor` section displays public GitHub workflow history and
+links to daily check reports. See `docs/site-monitor.md` for activation, coverage,
+optional AI advice and retention limits.
 
 Songs, artist forms, reports, users, playlist dialogs and public admin action
 dialogs share the same button/input/dialog sizing and theme tokens. The guitar
