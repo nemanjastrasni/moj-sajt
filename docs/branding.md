@@ -2,11 +2,11 @@
 
 Naziv se piše **GitarAkordi**: jedno veliko **A** povezuje „gitarA“ i „Akordi“. To slovo je zajedničko, ne ponavlja se i ne dodaje mu se malo „a“ ispred.
 
-`lib/brand.ts` sadrži naziv i vektorski oblik zajedničkog slova. `BrandLogo` sklapa Gitar + A + kordi kao oštar tekstualni logotip sa vektorskim slovom A. Čitači ekrana dobijaju ceo naziv, a ukrasni SVG je skriven od njih.
+`lib/brand.ts` sadrži naziv, vektorski oblik zajedničkog slova i obris trzalice. Odabrana varijanta B koristi malu trzalicu sa A uz naziv Gitar + A + kordi. U nazivu je obojeno samo zajedničko A. Čitači ekrana dobijaju ceo naziv, a ukrasni SVG je skriven od njih.
 
 Osnova koristi postojeći Poppins 700. Zajedničko A je zeleno: `#4ade80` u tamnoj temi i `#167238` u svetloj. Zaglavlje ima diskretnu jednobojnu podlogu radi čitljivosti preko gitarskih žica. Uvodni slogan je „Za znalce, neznalice i ostale muzikalice!“.
 
-Ikonice koriste isto A: `app/icon.svg`, favicon sa veličinama 16/32/48/64 px i Apple ikonica od 180 px. `public/brand/gitarakordi-symbol.svg` je znak sa providnom pozadinom za izvoz.
+Ikonice koriste trzalicu sa istim A: `app/icon.svg`, favicon sa veličinama 16/32/48/64 px i Apple ikonica od 180 px. `public/brand/gitarakordi-symbol.svg` je znak sa providnom pozadinom za izvoz. Veliki blok sa ponovljenim logotipom uklonjen je sa početne; njen H1 ostaje dostupan čitačima ekrana i pretraživačima. Slogani se na početnoj prikazuju u traci ispod vrata gitare, uz postojeće kontrole na računaru i ispod sažetog zaglavlja na telefonu. Ostale stranice ne dobijaju dodatnu traku sa sloganima.
 
 Promena naziva obuhvata korisnički interfejs, SEO/WebSite/OpenGraph naziv, PDF oznake i trenutne izveštaje nadzora. Postojeći tehnički ključevi, URL adrese i istorijski izveštaji zadržavaju identitet i kontinuitet podataka.
 

@@ -15,6 +15,7 @@ import LanguageSelect from "./LanguageSelect"
 import TunerButton from "./TunerButton"
 import MetronomeButton from "./MetronomeButton"
 import BrandLogo from "./BrandLogo"
+import BrandSlogan from "./BrandSlogan"
 
 const categories = [
   { href: "/pesme/narodne", label: "Narodne" },
@@ -118,7 +119,7 @@ function HeaderNavigation({ session, status, pathname, online }: {
   const items = session?.user?.role === "admin" ? [...links, { href: "/admin", label: "admin" }] : links
   const current = (href: string) => href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/")
 
-  return <div ref={navigation} className="responsive-header">
+  return <div ref={navigation} className="responsive-header" data-home={pathname === "/"}>
     <div className="guitar-nav mobile-guitar-bar">
       <BackButton compact />
       <Link href="/" className="mobile-header-brand" onClick={close}><BrandLogo /></Link>
@@ -175,6 +176,7 @@ function HeaderNavigation({ session, status, pathname, online }: {
       </div>}
     </div>
     </nav>
+    <div className="header-slogan-strip"><div className="desktop-header-back"><BackButton /></div>{pathname === "/" && <BrandSlogan />}</div>
     {/* Keep one controls tree mounted when the mobile disclosure collapses. */}
     <div id={id + "-mobile"} className="header-panel" data-open={mobileOpen}>
       <div className="mobile-menu-content">
@@ -201,7 +203,6 @@ function HeaderNavigation({ session, status, pathname, online }: {
         <p className="mobile-presence">online {online?.total ?? "-"} · {t("ulogovani")} {online?.loggedIn ?? "-"} · {t("Gosti")} {online?.guests ?? "-"}</p>
       </div>
       <div className="header-controls flex min-h-12 flex-wrap items-center justify-between gap-x-3 px-3 pb-1 sm:px-6">
-        <div className="desktop-header-back"><BackButton /></div>
         <h2 className="mobile-tools-heading">{t("Alati i podesavanja")}</h2>
         <div className="header-tool-buttons ml-auto flex flex-wrap items-center justify-end gap-1"><TunerButton /><MetronomeButton onPlayingChange={setMetronomePlaying} /><ThemeToggle /><LanguageSelect /></div>
       </div>

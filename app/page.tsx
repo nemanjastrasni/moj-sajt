@@ -9,9 +9,7 @@ import UiText from "./components/UiText"
 import HomeRepertoire from "./components/HomeRepertoire"
 import SiteImage from "./components/SiteImage"
 import { publicPageMetadata } from "@/lib/seo/metadata"
-import BrandLogo from "./components/BrandLogo"
 import { SITE_NAME } from "@/lib/brand"
-import BrandSlogan from "./components/BrandSlogan"
 
 const homeMetadata = publicPageMetadata(`${SITE_NAME} – Akordi i tekstovi pesama`, "Pesme sa akordima, lične plejliste, capo, PDF pesmarice, biografije i diskografije izvođača.", "/")
 
@@ -20,13 +18,9 @@ export const metadata = { ...homeMetadata, title: { absolute: `${SITE_NAME} – 
 export default function HomePage() {
 
   return (
-    <div className="w-full">
+    <div className="w-full home-page">
       <StructuredData data={websiteData()} />
-      <section className="home-brand-intro" aria-labelledby="home-brand-title">
-        <h1 id="home-brand-title"><BrandLogo /><span className="sr-only"> – <UiText text="Akordi i tekstovi" /></span></h1>
-        <BrandSlogan />
-        <p className="home-brand-description"><UiText text="Akordi za gitaru · Pesme · Biografije · Plejliste" /></p>
-      </section>
+      <h1 className="sr-only">{SITE_NAME} – <UiText text="Akordi i tekstovi" /></h1>
 
       <HomeRepertoire />
 
