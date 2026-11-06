@@ -44,9 +44,10 @@ Module._load = function(request, parent, main) {
   if (request.startsWith('@/')) request = path.join(root, request.slice(2))
   return original.call(this, request, parent, main)
 }
-let site, maps, songViews, home, homeModel, pages, routes, config
+let site, maps, songViews, home, homeModel, pages, routes, config, biographyIndex
 try {
   site = require('../lib/seo/site.ts'); maps = require('../lib/seo/sitemaps.ts'); songViews = require('../lib/songViews.ts'); home = require('../lib/homeSongsServer.ts'); homeModel = require('../lib/homeSongs.ts')
+  biographyIndex = require('../lib/biographies/server.ts')
   pages = { song: require('../app/pesme/[category]/[artist]/[slug]/page.tsx'), artist: require('../app/pesme/[category]/[artist]/page.tsx'), bio: require('../app/biografija/[category]/[artist]/page.tsx') }
   routes = { index: require('../app/sitemap.xml/route.ts'), map: require('../app/sitemaps/[file]/route.ts'), popular: require('../app/api/popular/route.ts'), latest: require('../app/api/latest/route.ts'), robots: require('../app/robots.ts') }
   config = require('../next.config.ts').default
@@ -145,7 +146,9 @@ test('malformed legacy slugs are skipped without dropping a whole sitemap batch'
 })
 test('static sitemap excludes personal/admin screens and safely serializes XML', async () => {
   const text = await (await mapRequest('pages.xml')).text()
-  assert.match(text, /\/o-nama/); assert.doesNotMatch(text, /\/admin|\/profile|\/favorite|\/login|listening-playlist/)
+  assert.match(text, /\/o-nama/)
+  assert.match(text, /\/public-listening-playlists<\/loc>/)
+  assert.doesNotMatch(text, /\/(?:admin|profile|favorite|login|listening-playlist)(?:\/|<\/loc>)/)
   assert.equal(calls.length, 0)
   const xml = maps.xmlUrlset(['https://site.test/?a=1&b=<script>', 'https://site.test/?a=1&b=<script>'])
   assert.match(xml, /&amp;/); assert.doesNotMatch(xml, /<script>/); assert.equal((xml.match(/<url>/g) || []).length, 1)
@@ -190,6 +193,30 @@ test('immutable image caching is restricted to the content-hashed derivative dir
   assert.ok(headers.find(rule => rule.source === '/api/:path*').headers.some(header => header.key === 'X-Robots-Tag'))
   assert.equal(headers.some(rule => rule.source === '/:path*'), false)
 })
+test('public biography indexes share category results and cache only small public cards', async () => {
+  const first = await biographyIndex.readBiographyArtists('domace')
+  await biographyIndex.readBiographyArtists('domace')
+  assert.equal(calls.filter(call => call[0] === 'artist' && call[1] === 'many').length, 1)
+  assert.deepEqual(first.map(artist => artist.slug), ['zeljko', 'discography'])
+  assert.deepEqual(Object.keys(first[0]).sort(), ['category', 'id', 'image', 'name', 'slug'])
+  await biographyIndex.readBiographyArtists('strane')
+  assert.equal(calls.filter(call => call[0] === 'artist' && call[1] === 'many').length, 2)
+  const definition = definitions.find(item => item.keys[0] === 'public-biography-index-v1')
+  assert.equal(definition.options.revalidate, 300)
+  assert.ok(definition.options.tags.includes('seo-sitemap'), 'existing artist/admin invalidation must expire this index')
+})
+
+test('biography index errors are retried and an invalidated index observes new content', async () => {
+  down = true
+  await assert.rejects(biographyIndex.readBiographyArtists('domace'))
+  down = false
+  data.artists = []
+  assert.deepEqual(await biographyIndex.readBiographyArtists('domace'), [])
+  data.artists = [data.artist]
+  cacheStore.clear()
+  assert.equal((await biographyIndex.readBiographyArtists('domace')).length, 1)
+})
+
 test('responsive derivatives exist, retain aspect ratio, and meet the mobile first-image budget', async () => {
   const images = require('../lib/site-image-manifest.json')
   assert.equal(Object.keys(images).length, 8)

@@ -15,17 +15,25 @@ async function main() {
   try {
     for (const profile of ['desktop', 'mobile']) for (const [name, url] of (values['home-only'] ? [['home', base.href]] : [['home', base.href], ['song', song.href]])) {
       const context = await browser.createBrowserContext(), page = await context.newPage(), cdp = await page.createCDPSession()
-      const requests = new Map(), completed = [], failures = [], scriptErrors = []
+      const requests = new Map(), completed = [], failures = [], scriptErrors = [], blockedWrites = []
       page.on('pageerror', error => scriptErrors.push(error.message))
+      await page.setRequestInterception(true)
+      page.on('request', request => {
+        if (!['GET', 'HEAD'].includes(request.method())) {
+          blockedWrites.push(new URL(request.url()).pathname)
+          return request.abort()
+        }
+        return request.continue()
+      })
       await page.setViewport(profile === 'mobile' ? { width: 390, height: 844, deviceScaleFactor: 1, isMobile: true, hasTouch: true } : { width: 1366, height: 900, deviceScaleFactor: 1 })
       await cdp.send('Network.enable'); await cdp.send('Network.setCacheDisabled', { cacheDisabled: true })
       if (profile === 'mobile') {
         await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 150, downloadThroughput: 1600000 / 8, uploadThroughput: 750000 / 8, connectionType: 'cellular4g' })
         await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 })
       }
-      cdp.on('Network.requestWillBeSent', event => requests.set(event.requestId, { url: event.request.url, type: event.type }))
+      cdp.on('Network.requestWillBeSent', event => requests.set(event.requestId, { url: event.request.url, type: event.type, method: event.request.method }))
       cdp.on('Network.loadingFinished', event => { const request = requests.get(event.requestId); if (request) completed.push({ ...request, bytes: event.encodedDataLength }) })
-      cdp.on('Network.loadingFailed', event => { const request = requests.get(event.requestId); if (request && !event.canceled) failures.push({ ...request, error: event.errorText }) })
+      cdp.on('Network.loadingFailed', event => { const request = requests.get(event.requestId); if (request && ['GET', 'HEAD'].includes(request.method) && !event.canceled) failures.push({ ...request, error: event.errorText }) })
       await page.evaluateOnNewDocument(() => {
         window.__pageAudit = { lcp: [], cls: 0, longTasks: 0 }
         new PerformanceObserver(list => { for (const entry of list.getEntries()) window.__pageAudit.lcp.push({ ms: entry.startTime, url: entry.url || '', size: entry.size }) }).observe({ type: 'largest-contentful-paint', buffered: true })
@@ -40,15 +48,17 @@ async function main() {
       const metrics = await page.evaluate(() => {
         const nav = performance.getEntriesByType('navigation')[0], paints = performance.getEntriesByType('paint')
         return { title: document.title, canonical: document.querySelector('link[rel="canonical"]')?.href || null, robots: document.querySelector('meta[name="robots"]')?.content || null, description: document.querySelector('meta[name="description"]')?.content || null,
-          h1Count: document.querySelectorAll('h1').length, ttfbMs: nav?.responseStart, domReadyMs: nav?.domContentLoadedEventEnd, loadMs: nav?.loadEventEnd, fcpMs: paints.find(paint => paint.name === 'first-contentful-paint')?.startTime,
+          h1Count: document.querySelectorAll('h1').length, ttfbMs: nav?.responseStart, dnsMs: nav ? nav.domainLookupEnd - nav.domainLookupStart : null,
+          connectMs: nav ? nav.connectEnd - nav.connectStart : null, requestWaitMs: nav ? nav.responseStart - nav.requestStart : null,
+          domReadyMs: nav?.domContentLoadedEventEnd, loadMs: nav?.loadEventEnd, fcpMs: paints.find(paint => paint.name === 'first-contentful-paint')?.startTime,
           ...window.__pageAudit, viewport: { width: innerWidth, height: innerHeight }, overflow: document.documentElement.scrollWidth > innerWidth,
           images: [...document.images].filter(image => image.currentSrc).map(image => ({ src: image.currentSrc, loaded: image.complete && image.naturalWidth > 0, width: image.naturalWidth, height: image.naturalHeight })) }
       })
-      const run = { profile, page: name, url, status: response?.status(), navigationError, metrics, transferBytes: completed.reduce((sum, request) => sum + request.bytes, 0), imageBytes: completed.filter(request => request.type === 'Image').reduce((sum, request) => sum + request.bytes, 0), requests: completed.length, largestResources: completed.sort((a, b) => b.bytes - a.bytes).slice(0, 12), failures, scriptErrors }
+      const run = { profile, page: name, url, status: response?.status(), navigationError, metrics, transferBytes: completed.reduce((sum, request) => sum + request.bytes, 0), imageBytes: completed.filter(request => request.type === 'Image').reduce((sum, request) => sum + request.bytes, 0), requests: completed.length, largestResources: completed.sort((a, b) => b.bytes - a.bytes).slice(0, 12), failures, scriptErrors, blockedWrites }
       runs.push(run)
       await page.screenshot({ path: path.join(out, `${stamp}-${profile}-${name}.png`), fullPage: true })
       console.log(JSON.stringify({ profile, page: name, status: run.status, ttfbMs: metrics.ttfbMs, lcpMs: metrics.lcp.at(-1)?.ms, cls: metrics.cls, imageBytes: run.imageBytes, transferBytes: run.transferBytes, navigationError }))
-      await fs.writeFile(path.join(out, `${stamp}.json`), JSON.stringify({ note: 'Cold-cache synthetic browser measurements, not Lighthouse scores, field Core Web Vitals or measured INP. Mobile: 1.6 Mbps / 150 ms / 4x CPU. No login and no private playlist URLs.', runs }, null, 2))
+      await fs.writeFile(path.join(out, `${stamp}.json`), JSON.stringify({ note: 'Cold-cache synthetic browser measurements, not Lighthouse scores, field Core Web Vitals or measured INP. Mobile: 1.6 Mbps / 150 ms / 4x CPU. No login or private playlist URLs. Only GET/HEAD allowed; presence writes are blocked. TTFB/LCP include local DNS and connection time; inspect dnsMs before attributing delay to the server.', runs }, null, 2))
       await context.close()
     }
   } finally { await browser.close() }

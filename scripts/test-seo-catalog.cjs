@@ -150,5 +150,6 @@ test("sitemap exposes chord roots and public catalog entry points without privat
   assert.ok(maps.sitemapStaticPaths.includes("/akordi/C%23"))
   assert.ok(maps.sitemapStaticPaths.includes("/plejliste/4-akorda"))
   assert.ok(maps.sitemapStaticPaths.includes("/top-50/domace"))
+  assert.ok(maps.sitemapStaticPaths.includes("/public-listening-playlists"))
   assert.equal(maps.sitemapStaticPaths.some(url => /pesme-koje-znam|top-user|profile|[?]/.test(url)), false)
 })

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Node fixtures isolate the public catalog from database and Next data cache. */
 require("ts-node").register({ transpileOnly: true, compilerOptions: { module: "CommonJS", moduleResolution: "Node" } })
 const { test } = require("node:test")
 const assert = require("node:assert/strict")
@@ -13,6 +14,7 @@ const fixtures = [
 ]
 const load = Module._load
 Module._load = function(request, parent, isMain) {
+  if (request === "next/cache") return { unstable_cache: fn => fn }
   if (request === "@/lib/prisma") return { prisma: { artist: { findMany: async args => { readArgs = args; return fixtures } } } }
   return load.call(this, request, parent, isMain)
 }

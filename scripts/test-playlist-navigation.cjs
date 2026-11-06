@@ -10,6 +10,7 @@ const marker = () => null, SongClient = () => null
 const original = Module._load
 let reads = 0, updates = 0, queuedViews = 0
 Module._load = function(request, parent, isMain) {
+  if (request.endsWith(".css")) return { __esModule: true, default: {} }
   if (request === "@/lib/playlists/server") return { playlistViewerId: async () => null }
   if (request === "@/lib/playlists/omiljene") return { omiljeneId: async () => null }
   if (request === "@/lib/prisma") return { prisma: { song: { findFirst: async () => { reads++; return song }, update: async () => { updates++; return song } } } }

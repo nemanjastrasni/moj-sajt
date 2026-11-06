@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma"
+import { unstable_cache } from "next/cache"
 import { hasBiographyContent, type BiographyArtist } from "./catalog"
 
-export async function readBiographyArtists(category: string): Promise<BiographyArtist[]> {
+export const readBiographyArtists = unstable_cache(async (category: string): Promise<BiographyArtist[]> => {
   const artists = await prisma.artist.findMany({
     where: { category },
     orderBy: [{ name: "asc" }, { id: "asc" }],
@@ -9,4 +10,4 @@ export async function readBiographyArtists(category: string): Promise<BiographyA
   })
   return artists.filter(artist => artist.slug && hasBiographyContent(artist))
     .map(({ id, name, slug, category, image }) => ({ id, name, slug, category, image }))
-}
+}, ["public-biography-index-v1"], { revalidate: 300, tags: ["seo-sitemap"] })

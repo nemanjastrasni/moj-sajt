@@ -1,5 +1,17 @@
 # Public performance and technical SEO
 
+## Follow-up (2026-11-06)
+
+See [the detailed review](performance-seo-review-2026-11-06.md) for measurements,
+bounded public biography-index caching, short-lived browser search caching,
+unchanged-song rendering optimization, and empty public music catalog noindex
+metadata. The public music catalog is now included in the static sitemap.
+The measurement script blocks non-GET/HEAD requests and reports DNS/connection
+time separately. These changes do not establish a field LCP/INP improvement.
+
+The review separately records one completed missing-discography addition,
+prepared Paul Simon source credits/photo, and data defects left for owner review.
+
 ## Catalog SEO follow-up (2026-11-05)
 
 Public song/biography indexes, chord indexes and root diagrams, curated playlist

@@ -1123,6 +1123,25 @@
       "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
     },
     {
+      "artistId": "cmvvgkdvp0000js07o8ee6sk2",
+      "artistName": "Paul Simon",
+      "slug": "paul-simon",
+      "category": "strane",
+      "image": "/artist-photos/Q4028-e53ff66b48028a30.webp",
+      "sha256": "e53ff66b48028a304b5441df2fe1d8b56d6e867fbad78769221fb65489baf41e",
+      "width": 960,
+      "height": 959,
+      "wikidataId": "Q4028",
+      "entityUrl": "https://www.wikidata.org/wiki/Q4028",
+      "title": "Paul Simon at the 9-30 Club (b).jpg",
+      "author": "Matthew Straubmuller (imatty35)",
+      "credit": "https://www.flickr.com/photos/imatty35/5766935439/",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Paul_Simon_at_the_9-30_Club_(b).jpg",
+      "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
+    },
+    {
       "artistId": "cmmxt66m309axob3gh5x2omkz",
       "artistName": "Pink Floyd",
       "slug": "pink-floyd",

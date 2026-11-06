@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Node fixtures exercise the TypeScript API and browser loader. */
 require("ts-node").register({
   transpileOnly: true,
   compilerOptions: { module: "CommonJS", moduleResolution: "Node" },
@@ -7,7 +8,7 @@ const assert = require("node:assert/strict")
 const path = require("node:path")
 const Module = require("node:module")
 const { prepareSongQuery, songSearchWhere, exactSongWhere, rankSearchResults, songSearchHref, SEARCH_LIMIT, foldSearchText } = require("../lib/songSearch.ts")
-const { loadSongSearch } = require("../lib/songSearchClient.ts")
+const { loadSongSearch, createSongSearchLoader } = require("../lib/songSearchClient.ts")
 const { slugify } = require("../lib/until/slug.ts")
 
 const artist = (name, slug = slugify(name)) => ({ name, slug })
@@ -205,4 +206,70 @@ test("client cancellation propagates without showing an error for a replaced que
     await assert.rejects(pending, error => error.name === "AbortError")
     await assert.rejects(loadSongSearch("new query", controller.signal), error => error.name === "AbortError")
   } finally { global.fetch = saved }
+})
+
+test("repeating a search reuses a successful result briefly, then refreshes it", async () => {
+  let time = 0, requests = 0
+  const load = createSongSearchLoader(async () => {
+    requests++
+    return Response.json([{ id: "s", title: "Naslov " + requests, slug: "pesma", category: "domace", artist: { name: "Bend", slug: "bend" } }])
+  }, () => time)
+  const signal = new AbortController().signal
+  const first = await load("pesma", signal)
+  first[0].artist.name = "Caller changed its copy"
+  time = 14999
+  const repeated = await load("pesma", signal)
+  assert.equal(requests, 1)
+  assert.equal(repeated[0].artist.name, "Bend")
+  time = 15000
+  assert.equal((await load("pesma", signal))[0].title, "Naslov 2")
+  assert.equal(requests, 2)
+})
+
+test("search memory stays bounded and retains recently used queries", async () => {
+  let requests = 0
+  const load = createSongSearchLoader(async () => { requests++; return Response.json([]) }, () => 0)
+  const signal = new AbortController().signal
+  for (let i = 0; i < 20; i++) await load("query " + i, signal)
+  await load("query 0", signal)
+  await load("new query", signal)
+  await load("query 0", signal)
+  assert.equal(requests, 21)
+  await load("query 1", signal)
+  assert.equal(requests, 22)
+})
+
+test("a failed search can be retried and cancellation still rejects cached results", async () => {
+  let requests = 0
+  const load = createSongSearchLoader(async () => {
+    requests++
+    return requests === 1 ? new Response("unavailable", { status: 503 }) : Response.json([])
+  })
+  const signal = new AbortController().signal
+  await assert.rejects(load("retry", signal), /Pretraga trenutno nije dostupna/)
+  assert.deepEqual(await load("retry", signal), [])
+  assert.equal(requests, 2)
+  const cancelled = new AbortController(); cancelled.abort()
+  await assert.rejects(load("retry", cancelled.signal), error => error.name === "AbortError")
+  assert.equal(requests, 2)
+})
+
+test("cancelling one concurrent search does not cancel another or populate its cache", async () => {
+  let requests = 0
+  const pending = []
+  const load = createSongSearchLoader((_url, options) => {
+    requests++
+    return new Promise((resolve, reject) => {
+      options.signal.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")))
+      pending.push(() => resolve(Response.json([])))
+    })
+  })
+  const cancelled = new AbortController(), active = new AbortController()
+  const first = load("same query", cancelled.signal), second = load("same query", active.signal)
+  cancelled.abort()
+  await assert.rejects(first, error => error.name === "AbortError")
+  pending[1]()
+  assert.deepEqual(await second, [])
+  assert.deepEqual(await load("same query", active.signal), [])
+  assert.equal(requests, 2)
 })

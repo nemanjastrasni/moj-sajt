@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { memo, useEffect, useRef, useState } from "react"
 import Chord from "./Chord"
 import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
 import { groupSheetLines, wrapSheetBlock, type SheetLine } from "@/lib/chords/songSheet"
@@ -15,7 +15,7 @@ type Props = {
   lyricsOnly?: boolean
 }
 
-export default function SongSheet({ lines, transpose, textSize, chordSize, lyricsOnly = false }: Props) {
+function SongSheet({ lines, transpose, textSize, chordSize, lyricsOnly = false }: Props) {
   const { t } = useI18n()
   const sheetRef = useRef<HTMLDivElement>(null)
   const measureRef = useRef<HTMLSpanElement>(null)
@@ -108,3 +108,5 @@ export default function SongSheet({ lines, transpose, textSize, chordSize, lyric
     </div>
   )
 }
+
+export default memo(SongSheet)

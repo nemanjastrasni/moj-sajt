@@ -82,7 +82,12 @@ Module._load = function(request, parent, isMain) {
   if (request === "next-auth") return { getServerSession: async () => session }
   if (request === "@/lib/auth") return { authOptions: {} }
   if (request === "@/lib/prisma") return { prisma }
-  if (request === "next/cache") return { revalidatePath() { if (cacheFailure) throw Error("cache") } }
+  if (request === "@/lib/playlists/catalog-server") return {
+    catalogPage: async () => ({ total: state.songs.length, pages: 1, current: 1, songs: state.songs }),
+    catalogPageNumber: () => 1,
+  }
+  if (request === "next/cache") return { unstable_cache: fn => fn, revalidatePath() { if (cacheFailure) throw Error("cache") } }
+  if (request.endsWith(".css")) return { __esModule: true, default: {} }
   if (request === "next/navigation") return { notFound() { throw Error("NEXT_NOT_FOUND") } }
   if (request === "@/app/components/PlaylistClient") return { __esModule: true, default: () => null }
   if (request === "@/app/components/PlaylistCatalog") return { __esModule: true, default: () => null }
@@ -265,9 +270,12 @@ test("server-rendered playlist page uses the same access rules, ordered metadata
   const visitor = await page.default(context("p"))
   assert.equal(visitor.props.canEdit, false); assert.equal(visitor.props.initialPublic, true)
 })
-test("personal playlist pages are noindex without changing generated playlist metadata", async () => {
-  assert.deepEqual(await page.generateMetadata(context("p")), { robots: { index: false, follow: false } })
-  assert.deepEqual(await page.generateMetadata(context("4-akorda")), {})
+test("personal playlist metadata stays generic/noindex while public catalogs have their canonical URL", async () => {
+  assert.deepEqual(await page.generateMetadata(context("p")), { title: "Plejlista", robots: { index: false, follow: false } })
+  const generated = await page.generateMetadata(context("4-akorda"))
+  assert.ok(generated.title)
+  assert.equal(generated.robots, undefined)
+  assert.equal(new URL(generated.alternates.canonical).pathname, "/plejliste/4-akorda")
 })
 test("client rejects HTML, errors, reordered/incomplete PDF contents and validates successful operations", async () => {
   global.fetch = async () => new Response("<html>Error</html>", { status: 500 })
