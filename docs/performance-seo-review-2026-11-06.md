@@ -1,5 +1,10 @@
 # GitarAkordi: pregled brzine i SEO-a, 6. novembar 2026.
 
+**Dopuna 7. novembra:** Paul Simon sadržaj iz pripremljenog plana sada je upisan
+i provereno objavljen. Detalji, backup i nastavak optimizacije su u
+[novom izveštaju](performance-seo-followup-2026-11-07.md). Deo ispod opisuje
+stanje pripreme 6. novembra; njegov apply korak je u međuvremenu završen.
+
 Rad je započet sa čistog commita `fad1e8e`. Izmene koda su lokalne i čekaju
 Git/deploy vlasnika. Izgled, navigacija, akordi, transpozicija i postojeći tekstovi
 nisu prepravljani. Nisu menjani šema baze, indeksi, kredencijali ni konfiguracija

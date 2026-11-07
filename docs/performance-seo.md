@@ -1,5 +1,14 @@
 # Public performance and technical SEO
 
+## Follow-up (2026-11-07)
+
+The [catalog performance follow-up](performance-seo-followup-2026-11-07.md)
+documents shared public assessment caching, request deduplication, unchanged
+catalog output and measured tradeoffs. Paul Simon's previously prepared missing
+biography/discography have now been applied and checked on the public site.
+The [data review](data-review-2026-11-07.md) lists confirmed duplicates and
+proposed existing-record corrections awaiting owner approval.
+
 ## Follow-up (2026-11-06)
 
 See [the detailed review](performance-seo-review-2026-11-06.md) for measurements,
