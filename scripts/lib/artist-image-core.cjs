@@ -17,6 +17,13 @@ function safeWikiUrl(value, extraHosts = []) {
   return url
 }
 
+function safePhotoSourceUrl(value) {
+  const url = safeWikiUrl(value, ["en.wikipedia.org", "sr.wikipedia.org"])
+  if (url.hostname.endsWith(".wikipedia.org") &&
+    (url.search || url.hash || !/^\/wiki\/(?:File|Datoteka|Датотека):[^/]+$/u.test(decodeURIComponent(url.pathname)))) throw new Error("Use a reviewed Wikipedia file page")
+  return url
+}
+
 function localImage(publicRoot, image) {
   if (!image.startsWith("/") || image.startsWith("//")) return null
   const clean = decodeURIComponent(image.split(/[?#]/)[0])
@@ -147,18 +154,30 @@ function isArtistPhoto(photo) {
 function photoMetadata(info) {
   const meta = info.extmetadata ?? {}
   const field = name => plain(meta[name]?.value ?? "")
-  const license = field("LicenseShortName"), author = field("Artist")
+  const sourceLicense = field("LicenseShortName")
+  const license = sourceLicense.replace(/^CC-BY-SA-/i, "CC BY-SA ").replace(/^CC-BY-/i, "CC BY ").replace(/-(RS|SI|NL)$/i, " $1").replace(/^PD$/i, "Public domain")
+  const author = field("Artist")
   let licenseUrl = field("LicenseUrl")
   const nonFree = field("NonFree").toLowerCase()
-  const freeLicense = /^(?:CC BY(?:-SA)? [1-4]\.0|CC BY(?:-SA)? 2\.5|CC0(?: 1\.0)?|Public domain)$/i.test(license)
+  const standard = license.match(/^CC (BY(?:-SA)?) ([1-4]\.0|2\.5)$/i)
+  const ported = license.match(/^CC (BY(?:-SA)?) (2\.5|3\.0) (rs|si|nl)$/i)
+  const reviewedPorts = new Set(["by-sa/2.5/si", "by-sa/3.0/rs", "by/3.0/rs", "by-sa/3.0/nl"])
+  const licensePath = standard ? `licenses/${standard[1].toLowerCase()}/${standard[2]}` :
+    ported && reviewedPorts.has(`${ported[1].toLowerCase()}/${ported[2]}/${ported[3].toLowerCase()}`) ?
+      `licenses/${ported[1].toLowerCase()}/${ported[2]}/${ported[3].toLowerCase()}` :
+      /^CC0(?: 1\.0)?$/i.test(license) ? "publicdomain/zero/1.0" : /^Public domain$/i.test(license) ? "publicdomain/mark/1.0" : null
+  const freeLicense = Boolean(licensePath)
   let validLicenseUrl = false
   try {
     const url = new URL(licenseUrl)
     if (url.protocol === "http:" && url.hostname === "creativecommons.org") url.protocol = "https:"
-    validLicenseUrl = url.protocol === "https:" && url.hostname === "creativecommons.org" && !url.username && !url.password && !url.port && /^\/(?:licenses\/by(?:-sa)?\/[1-4](?:\.0|\.5)|publicdomain\/(?:zero|mark)\/1\.0)(?:\/deed\.[a-z-]+)?\/?$/i.test(url.pathname)
+    const canonicalPath = url.pathname.replace(/\/deed\.[a-z-]+\/?$/i, "").replace(/\/$/, "").toLowerCase()
+    validLicenseUrl = url.protocol === "https:" && url.hostname === "creativecommons.org" && !url.username && !url.password && !url.port && !url.search && !url.hash && canonicalPath === "/" + licensePath
     if (validLicenseUrl) licenseUrl = url.href
   } catch {}
-  const allowed = freeLicense && !["true", "1"].includes(nonFree) && Boolean(author) && (validLicenseUrl || /^Public domain$/i.test(license)) && ["image/jpeg", "image/png", "image/webp"].includes(info.mime) && info.width >= 320 && info.height >= 240 && isArtistPhoto({ description: field("ImageDescription"), filePage: info.descriptionurl })
+  // A public-domain record may omit a deed; never publish an untrusted link in its place.
+  if (/^Public domain$/i.test(license) && !validLicenseUrl) licenseUrl = ""
+  const allowed = freeLicense && !["true", "1"].includes(nonFree) && Boolean(author) && (validLicenseUrl || /^Public domain$/i.test(license)) && ["image/jpeg", "image/png", "image/webp"].includes(info.mime) && info.width >= 240 && info.height >= 240 && isArtistPhoto({ description: field("ImageDescription"), filePage: info.descriptionurl })
   return { allowed, license, licenseUrl, author, credit: field("Credit"), restrictions: field("Restrictions"), description: field("ImageDescription"), filePage: info.descriptionurl, downloadUrl: info.thumburl || info.url, width: info.width, height: info.height }
 }
 
@@ -232,4 +251,4 @@ async function stagePhoto(candidate, directory, client) {
   return filename
 }
 
-module.exports = { WikiClient, localImage, auditArtist, normalizeName, nameMatches, claims, musicEvidence, photoMetadata, discoverPhoto, stagePhoto, safeWikiUrl, digest, isArtistPhoto, resolveMusicIdentity }
+module.exports = { WikiClient, localImage, auditArtist, normalizeName, nameMatches, claims, musicEvidence, photoMetadata, discoverPhoto, stagePhoto, safeWikiUrl, safePhotoSourceUrl, digest, isArtistPhoto, resolveMusicIdentity }

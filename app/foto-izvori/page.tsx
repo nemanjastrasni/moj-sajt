@@ -17,7 +17,7 @@ export default function PhotoCreditsPage() {
             <p>Photo: {photo.author}</p>
             {photo.credit && <p className="text-sm">{photo.credit}</p>}
             <p className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
-              <a href={photo.source} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">Wikimedia Commons</a>
+              <a href={photo.source} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">{new URL(photo.source).hostname.endsWith(".wikipedia.org") ? "Wikipedia" : "Wikimedia Commons"}</a>
               {photo.licenseUrl ? (
                 <a href={photo.licenseUrl} target="_blank" rel="license noopener noreferrer" className="text-blue-500 underline">{photo.license}</a>
               ) : <span>{photo.license}</span>}

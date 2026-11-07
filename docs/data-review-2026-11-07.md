@@ -8,6 +8,28 @@ Rus duplikata i prazan drugi Artist profil, uz novu rezervnu kopiju.
 Miroslav Rus i njegovih 27 originalnih pesama sačuvani su. Detalji, dnevnik i povratak izmena nalaze se u
 [izveštaju o korekcijama](catalog-repairs-2026-11-07.md).
 
+## Novo: biografije uočene tokom pregleda fotografija
+
+**Ove stavke nisu ispravljene i čekaju odluku vlasnika.** Ovo su konkretni
+primeri iz foto-provere, ne završen audit svih biografija. Fotografskim
+paketom nisu menjani biografije, diskografije, imena ili kategorije.
+
+| Profil | Uočeno postojeće stanje |
+| --- | --- |
+| Kenny Rodgers | Bio opisuje fudbalera Luisa Suareza; profil ima Lady. Slika country pevača nije vezana za nepodudaran jazz Wikidata kandidat. |
+| A.C.A.B | Bio opisuje muzički neoklasicizam; profil ima Skinheads for Life. |
+| Area | Bio opisuje diksilend; profil ima Odvedi me. Italijanski bend istog imena nije prihvaćen za fotografiju. |
+| Ok Band | Bio opisuje renesansnu muziku, umesto izvođača pesama A u međuvremenu i Ljiljan i trn. |
+| Crni | Bio je opšti pregled jugoslovenske pop/rok scene, bez identifikacije ovog narodnog izvođača. |
+| Balkan | Bio opisuje balkansku muziku kao regionalnu oblast, umesto konkretnog izvođača. |
+| Smak | Bio opisuje prvi album, umesto benda. |
+| Rani Mraz | Bio opisuje Balaševićev kasniji album istog naziva, umesto grupe. |
+
+Predlog za posebno odobren korak: utvrditi tačan identitet, sačuvati stare
+vrednosti i ispraviti samo potvrđene izvore/zapise. Isti naziv ili prvi
+rezultat pretrage nisu dovoljan dokaz. Detalji su u
+[proširenom foto-izveštaju](artist-photos-expanded-2026-11-07.md).
+
 Ispod je sačuvan **prvobitni read-only pregled**, uključujući tadašnje predloge
 i status čekanja odobrenja. Paul Simon dopuna je zasebno dokumentovana u
 [izveštaju o optimizaciji](performance-seo-followup-2026-11-07.md).

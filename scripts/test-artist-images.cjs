@@ -102,10 +102,46 @@ test("license metadata keeps authorship, recognizes CC deeds and fails closed", 
   assert.equal(core.photoMetadata({ ...info, mime: "image/svg+xml" }).allowed, false)
   assert.equal(core.photoMetadata({ ...info, width: 80 }).allowed, false)
   assert.equal(core.photoMetadata({ ...info, extmetadata: {} }).allowed, false)
+  const publicDomain = core.photoMetadata({ ...info, extmetadata: { ...info.extmetadata, LicenseShortName: { value: "Public domain" }, LicenseUrl: { value: "javascript:alert(1)" } } })
+  assert.equal(publicDomain.allowed, true)
+  assert.equal(publicDomain.licenseUrl, "")
 })
 test("only trusted Wikimedia hosts are used for discovery and staging", () => {
   assert.ok(core.safeWikiUrl("https://thumb.wikimedia.org/photo.jpg"))
+  assert.ok(core.safePhotoSourceUrl("https://en.wikipedia.org/wiki/File:Concert.jpg"))
+  assert.ok(core.safePhotoSourceUrl("https://sr.wikipedia.org/wiki/Datoteka:Concert.jpg"))
+  for (const url of ["https://en.wikipedia.org/wiki/Singer", "https://en.wikipedia.org/w/api.php", "https://sr.wikipedia.org/wiki/Datoteka:A.jpg?redirect=evil", "https://en.wikipedia.org/wiki/File:A.jpg#bad", "https://en.wikipedia.org/wiki/File:%2Fetc"]) assert.throws(() => core.safePhotoSourceUrl(url))
   for (const url of ["http://upload.wikimedia.org/a", "https://evil.test/a", "https://upload.wikimedia.org.evil.test/a", "https://u:p@upload.wikimedia.org/a", "https://upload.wikimedia.org:444/a"]) assert.throws(() => core.safeWikiUrl(url))
+})
+
+test("reviewed regional CC licenses retain their exact jurisdiction and match the deed", () => {
+  for (const [label, suffix] of [["CC BY-SA 2.5 si", "by-sa/2.5/si"], ["CC BY-SA 3.0 rs", "by-sa/3.0/rs"], ["CC BY 3.0 rs", "by/3.0/rs"], ["CC BY-SA 3.0 nl", "by-sa/3.0/nl"]]) {
+    const metadata = { ...info.extmetadata, LicenseShortName: { value: label }, LicenseUrl: { value: `https://creativecommons.org/licenses/${suffix}/deed.en` } }
+    const result = core.photoMetadata({ ...info, extmetadata: metadata })
+    assert.equal(result.allowed, true)
+    assert.equal(result.license, label)
+    for (const url of ["https://creativecommons.org/licenses/by-nc/3.0/", "https://creativecommons.org/licenses/by/4.0/", `https://creativecommons.org/licenses/${suffix}/deed.en?redirect=evil`, "https://creativecommons.org.evil.test/licenses/" + suffix]) {
+      assert.equal(core.photoMetadata({ ...info, extmetadata: { ...metadata, LicenseUrl: { value: url } } }).allowed, false)
+    }
+  }
+  assert.equal(core.photoMetadata({ ...info, extmetadata: { ...info.extmetadata, LicenseShortName: { value: "CC BY-NC-SA 3.0 rs" } } }).allowed, false)
+})
+
+test("portrait sources must be at least 240 pixels in both dimensions", () => {
+  assert.equal(core.photoMetadata({ ...info, width: 247, height: 320 }).allowed, true)
+  assert.equal(core.photoMetadata({ ...info, width: 239, height: 320 }).allowed, false)
+  assert.equal(core.photoMetadata({ ...info, width: 320, height: 239 }).allowed, false)
+})
+
+test("local Wikipedia license labels normalize without accepting noncommercial or no-derivative licenses", () => {
+  for (const [sourceLabel, label, url] of [["CC-BY-SA-3.0-RS", "CC BY-SA 3.0 RS", "https://creativecommons.org/licenses/by-sa/3.0/rs/"], ["CC-BY-SA-4.0", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0/"], ["PD", "Public domain", ""]]) {
+    const result = core.photoMetadata({ ...info, extmetadata: { ...info.extmetadata, LicenseShortName: { value: sourceLabel }, LicenseUrl: { value: url } } })
+    assert.equal(result.allowed, true)
+    assert.equal(result.license, label)
+  }
+  for (const sourceLabel of ["CC-BY-NC-4.0", "CC-BY-ND-4.0", "Fair use", "CC-BY-SA-3.0-unknown"]) {
+    assert.equal(core.photoMetadata({ ...info, extmetadata: { ...info.extmetadata, LicenseShortName: { value: sourceLabel } } }).allowed, false)
+  }
 })
 test("image network checks reject private, reserved and mapped addresses", async () => {
   for (const ip of ["127.0.0.1", "10.0.0.1", "169.254.169.254", "192.168.0.1", "100.64.0.1", "::1", "::ffff:127.0.0.1", "fd00::1", "2001:db8::1", "2001:0000::1", "2002:7f00::1"]) assert.equal(isPublicAddress(ip), false, ip)
@@ -150,7 +186,7 @@ test("publication eligibility requires a current blank field and matching musica
   const record = { ...current, candidate }
   assert.equal(publisher.eligible(record, current, 5), true)
   for (const change of [{ image: "https://example.com/manual.jpg" }, { name: "Other" }, { slug: "other" }, { category: "domace" }, { songCount: 1 }]) assert.equal(publisher.eligible(record, { ...current, ...change }, 5), false)
-  for (const change of [{ state: "ambiguous" }, { evidence: "animal" }, { label: "Other" }, { stagedFile: "../private.webp" }, { photo: { ...candidate.photo, restrictions: "Check additional rights" } }, { photo: { ...candidate.photo, author: "Unknown authorUnknown author" } }]) assert.equal(publisher.eligible({ ...record, candidate: { ...candidate, ...change } }, current, 5), false)
+  for (const change of [{ state: "ambiguous" }, { evidence: "animal" }, { label: "Other" }, { stagedFile: "../private.webp" }, { photo: { ...candidate.photo, restrictions: "Check additional rights" } }, { photo: { ...candidate.photo, author: "Unknown authorUnknown author" } }, { photo: { ...candidate.photo, author: "No machine-readable author provided. Example assumed (based on copyright claims)." } }]) assert.equal(publisher.eligible({ ...record, candidate: { ...candidate, ...change } }, current, 5), false)
 })
 
 test("discovery records a verified alias without replacing the entity's actual label", async () => {

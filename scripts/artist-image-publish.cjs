@@ -4,7 +4,7 @@ const path = require("node:path")
 const sharp = require("sharp")
 const { parseArgs } = require("node:util")
 const { databaseClient, readDatabase } = require("./lib/artist-image-source.cjs")
-const { digest, normalizeName, nameMatches, safeWikiUrl, isArtistPhoto } = require("./lib/artist-image-core.cjs")
+const { digest, normalizeName, nameMatches, safeWikiUrl, safePhotoSourceUrl, isArtistPhoto } = require("./lib/artist-image-core.cjs")
 
 const ROOT = path.resolve(__dirname, "..")
 const ASSETS = path.join(ROOT, "public", "artist-photos")
@@ -32,7 +32,7 @@ function eligible(item, current, minSongs) {
     identityName &&
     /^Q\d{1,15}$/.test(candidate.wikidataId) && candidate.photo?.allowed &&
     candidate.photo.author?.trim() && !candidate.photo.restrictions?.trim() &&
-    !/unknown author|anonymous|nepoznat/i.test(candidate.photo.author) &&
+    !/unknown author|anonymous|nepoznat|no machine-readable author|assumed \(based on copyright claims\)/i.test(candidate.photo.author) &&
     isArtistPhoto(candidate.photo) &&
     /^staged\/Q\d+-[a-f0-9]{16}\.webp$/.test(candidate.stagedFile || ""))
 }
@@ -52,7 +52,7 @@ async function prepare(reportFiles, ca, minSongs, skipNames = []) {
     for (const item of report.artists) {
       if (known.has(item.id) || skippedNames.has(normalizeName(item.name)) || !eligible(item, live.get(item.id), minSongs)) continue
       const candidate = item.candidate, photo = candidate.photo
-      safeWikiUrl(photo.filePage)
+      safePhotoSourceUrl(photo.filePage)
       safeWikiUrl(candidate.entityUrl)
       const staged = path.resolve(path.dirname(reportFile), candidate.stagedFile)
       const realDirectory = await fs.realpath(path.join(path.dirname(reportFile), "staged"))
@@ -71,7 +71,7 @@ async function prepare(reportFiles, ca, minSongs, skipNames = []) {
         artistId: item.id, artistName: item.name, slug: item.slug, category: item.category,
         image: "/artist-photos/" + filename, sha256, width: metadata.width, height: metadata.height,
         wikidataId: candidate.wikidataId, entityUrl: candidate.entityUrl,
-        title: decodeURIComponent(new URL(photo.filePage).pathname.split("/wiki/File:")[1] || filename).replace(/_/g, " "),
+        title: decodeURIComponent(new URL(photo.filePage).pathname.split("/wiki/")[1] || filename).replace(/^[^:]+:/, "").replace(/_/g, " "),
         author: photo.author, credit: photo.credit, license: photo.license, licenseUrl: photo.licenseUrl,
         source: photo.filePage, changes: CHANGES,
       }
@@ -158,7 +158,7 @@ async function main(args = process.argv.slice(2)) {
   if (positionals.length !== 1) throw new Error("Use prepare or publish")
   if (positionals[0] === "prepare") {
     const minSongs = Number(values["min-songs"])
-    if (!Number.isInteger(minSongs) || minSongs < 1) throw new Error("Invalid minimum song count")
+    if (!Number.isInteger(minSongs) || minSongs < 0) throw new Error("Invalid minimum song count")
     return prepare((values.report || []).map(file => path.resolve(file)), values.ca, minSongs, values["skip-name"])
   }
   if (positionals[0] !== "publish" || !values["base-url"]) throw new Error("Publish requires --base-url")

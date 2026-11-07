@@ -1,11 +1,29 @@
 # Artist photo audit and review
 
-## Photo batch, 2026-11-07
+## Expanded photo batch, 2026-11-07
+
+The [expanded report](artist-photos-expanded-2026-11-07.md) records a complete
+pass over 905 missing profiles and 188 additional reviewed assignments.
+There are now 459 managed entries and 514 profiles with a configured public
+image source out of 1,231 (41.8%). The 75% target was not reached;
+[717 remaining profiles and reasons](artist-photos-remaining-2026-11-07.md)
+are listed. Existing photos and database values were preserved. Eight new
+sources are verified local Wikipedia file pages; the rest are Commons.
+
+License labels must match the exact deed URL. Four reviewed regional CC
+variants and equivalent Wikipedia labels are supported. Other unclear
+licenses/authors/restrictions remain for review. Sources must be at least
+240 pixels in both dimensions and are never enlarged. A separate file-page
+URL validator admits en/sr Wikipedia credits without broadening default
+photo-client network access. Explicit --min-songs 0 includes existing
+listening profiles without songs. The publisher remains bounded at 500.
+
+## Earlier photo batch, 2026-11-07
 
 The [new photo report](artist-photos-2026-11-07.md) records 176 additional
 artist-profile images, fresh identity/license checks, 166 new optimized files,
 preserved existing photos and no database writes. The prepared manifest now
-contains 271 entries. Verified alias evidence supports stage names and reversed
+contained 271 entries at that point. Verified alias evidence supports stage names and reversed
 names without changing artist records; the publisher remains bounded at 500.
 Boa and Valentino source conflicts are on hold. Assets and visible credits
 must be deployed together; the existing public fallback then displays the new images.
@@ -33,7 +51,7 @@ Reports go under reports/artist-images and are gitignored. Each contains report.
 - Discovery selects missing fields only; --limit bounds a batch to at most 100. Default is 12. --balanced rotates among Zabavne/Narodne/Strane, prioritizing more represented artists within each category. --category and repeated --name flags narrow the selection.
 - Candidate identity needs an exact normalized label/alias match and structured Wikidata evidence: a musical group, or a human with a musician/singer occupation or bounded subclass. Serbian Cyrillic and Latin accents are normalized; spelling errors and incomplete names are not guessed.
 - Multiple musical matches stay ambiguous. Albums, species and other subjects are not accepted merely because their name matches. There is no first-search-result import.
-- P18 supplies the proposed portrait/group image. Logos/signatures/SVGs are excluded. Commons metadata retains source, author, license URL and restrictions. Only a conservative set of known free-photo licenses and adequate JPEG/PNG/WebP dimensions can be staged. Jurisdiction-specific or unclear licenses stay for manual review. This filter is not legal clearance; inspect the source page and respect attribution, share-alike and any other applicable rights before publication.
+- P18 supplies the default proposed portrait/group image. The expanded reviewed batch also checked Commons alternatives and verified Wikipedia article/file sources. Logos/signatures/SVGs are excluded. Metadata retains source, author, license URL and restrictions. Only a conservative set of known free-photo licenses and adequate JPEG/PNG/WebP dimensions can be staged. The four reviewed regional variants are supported; other jurisdiction-specific or unclear licenses stay for manual review. This filter is not legal clearance; inspect the source page and respect attribution, share-alike and any other applicable rights before publication.
 - Search results are a shortlist, not proof of exhaustive identity resolution. Review the selected source/identity metadata before publication. The site owner has authorized filling missing photos for clearly identified, popular musicians; uncertain cases must be skipped, not guessed.
 - Do not publish files from staged/ without appropriate visible author/license/source credits. A production import should be a separate reviewed step, rechecking the current image field and using conditional updates only for still-empty fields. The 56 currently assigned images remain untouched.
 
