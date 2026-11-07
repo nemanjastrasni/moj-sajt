@@ -2,9 +2,10 @@
 
 **Status posle odobrenja vlasnika:** odobrene korekcije kategorija, prikazanog
 naziva Van der Graaf Generator i praznog Metallica zapisa sprovedene su uz
-rezervnu kopiju. Svih 29 kanonskih linkova sada vraća 200. Pripremljena su
-trajna preusmerenja, a 27 Rus duplikata još nije obrisano jer preusmerenja
-prvo moraju biti objavljena. Detalji, dnevnik i povratak izmena nalaze se u
+rezervnu kopiju. Svih 29 kanonskih linkova sada vraća 200. Nakon objavljenog
+deploya provereno je svih 36 trajnih preusmerenja i uklonjeno 27 identičnih
+Rus duplikata i prazan drugi Artist profil, uz novu rezervnu kopiju.
+Miroslav Rus i njegovih 27 originalnih pesama sačuvani su. Detalji, dnevnik i povratak izmena nalaze se u
 [izveštaju o korekcijama](catalog-repairs-2026-11-07.md).
 
 Ispod je sačuvan **prvobitni read-only pregled**, uključujući tadašnje predloge

@@ -1,8 +1,9 @@
 # Odobrene korekcije kataloga i nova pozicija logotipa
 
 Vlasnik je u četu 7. novembra 2026. odobrio popravku 29 linkova i ostale
-korekcije iz prethodnog pregleda. Nova pozicija logotipa pripremljena je za
-vizuelni pregled; nije samostalno commitovana, pushovana ili objavljena.
+korekcije iz prethodnog pregleda. Vlasnik je objavio novu poziciju logotipa i
+preusmerenja kroz commit `9075598`. Posle potvrde produkcionih preusmerenja
+završen je i prethodno odobren završni korak uklanjanja identičnih duplikata.
 
 ## Šta je završeno u produkcionoj bazi
 
@@ -20,37 +21,45 @@ To je 29 pojedinačnih SQL operacija: 21 Artist izmena, šest Song izmena,
 jedan SongReview i jedan Song delete. Tekstovi, akordi, biografije,
 diskografije i slike postojećih zapisa nisu prepisivani.
 
-Svež nezavisan pregled nakon transakcije: **9.420 pesama, 1.232 izvođača,
+Svež nezavisan pregled nakon prvog koraka: **9.420 pesama, 1.232 izvođača,
 nula neslaganja Song/Artist kategorija**. Svih 29 popravljenih kanonskih
 adresa provereno je na produkciji: HTTP 200. Od tih pesama, za 23 je
 oživela ista ranije neispravna adresa; za ostalih šest katalog sada gradi
-već postojeću radeću adresu. Njihovih šest starih pogrešnih adresa dobiće
-308 tek posle objavljivanja pripremljenih redirect pravila.
+već postojeću radeću adresu. Njihovih šest starih pogrešnih adresa sada
+dobija 308, nakon potvrđenog objavljivanja redirect pravila.
 
 Mogući dodatni alias profili The Cranberries/Cranberries i The White
 Stripes/White Stripes nisu spajani ili brisani. Njihov pregled nije dokazao
 jednakost sadržaja; popunjena je samo odobrena nedostajuća kategorija.
 
-## Šta je spremno, ali čeka deploy
+## Objavljena preusmerenja i završeno uklanjanje duplikata
 
 `lib/seo/legacy-redirects.json` sadrži 36 tačnih trajnih preusmerenja:
 27 Rus song adresa, tri artist/info/bio adrese i šest pogrešnih kategorija.
 Next ih učitava kroz `next.config.ts`. Sva pravila proverena su u stvarnom
-lokalnom produkcionom Next buildu: HTTP 308, očekivana destinacija,
-očuvani `playlist` i `play` parametri, bez petlji.
+lokalnom produkcionom Next buildu i na produkciji pre brisanja: HTTP 308,
+očekivana destinacija, očuvani `playlist` i `play` parametri i HTTP 200 odredišta.
 
-**Svih 27 Rus Miroslav duplikata i njihov Artist još postoje u produkciji.**
-Posle deploya treba izvršiti završni korak, za koji je odobrenje već dato.
-Brisanje pre deploya napravilo bi mrtve stare linkove. Skripta je stvarno
-proverila trenutnu produkciju i odbila taj korak pre povezivanja na bazu,
-jer još nema 308 preusmerenja.
+**Svih 27 Rus Miroslav duplikata i njihov prazan Artist profil uklonjeni su.**
+Zadržani su Miroslav Rus i svih njegovih 27 originalnih Song ID-jeva.
+Ranija proba je ispravno odbila brisanje dok preusmerenja nisu bila objavljena;
+završna primena je usledila tek nakon uspešne provere svih 36 pravila.
 
-Završni korak ponovo proverava originalnu jednakost naslova, teksta i akorda,
+Završni korak ponovo je proverio originalnu jednakost naslova, teksta i akorda,
 sve stvarne strane ključeve iz PostgreSQL kataloga, nove izvore ili sadržaj
-Artist profila i 27 jednoznačnih parova. Bilo kakva nova referenca ili
-ručna izmena zaustavlja brisanje. Čuva se Miroslav Rus i svih njegovih 27
-postojećih Song ID-jeva. Nazivi sa v2 nisu potrebni za identične parove.
-Ako se stanje ne promeni, rezultat će biti 9.393 pesme i 1.231 izvođač.
+Artist profila i 27 jednoznačnih parova. Nova referenca ili ručna izmena
+zaustavila bi brisanje; u svežem planu nijedna nije pronađena.
+Nazivi sa v2 nisu potrebni za identične parove. Rezultat je **9.393 pesme i
+1.231 izvođač**, bez neslaganja Song/Artist kategorija. Ova primena je promenila
+isključivo 27 duplih Song redova i jedan prazan Artist red; poređenje svih
+Artist/Song redova unutar transakcije potvrdilo je da ostali nisu menjani.
+
+Nezavisna read-only provera posle COMMIT-a potvrdila je ove brojače,
+odsustvo obrisanih ID-jeva, nula neslaganja kategorija i nepromenjene hash-eve
+naslova/teksta/akorda svih 27 zadržanih pesama. Ponovo je provereno svih
+30 starih Rus artist/song/info/bio adresa: 308 na očekivanu istu domenu,
+očuvani parametri plejliste i HTTP 200 na odredištu. Početna na produkciji
+takođe vraća 200 i sadrži novi logo u traci sa pretragom.
 
 ## Dnevnik i vraćanje izmena
 
@@ -58,6 +67,17 @@ Lokalni privatni dnevnici su pod ignorisanim `reports/song-repairs/`;
 nisu u Gitu i ne prikazuju se javno. Sadrže ceo izvorni red za svaku
 izmenu/brisanje, odobreni opseg, hash plana, nameru i ishod transakcije.
 Ne sadrže pristupne ključeve. Nije dodavana nova tabela ili DB konfiguracija.
+
+Završeni dedupe korak (7. novembar 2026):
+
+`reports/song-repairs/catalog-apply-2026-11-07T19-00-38-627Z/`
+
+`before.json` sadrži svih 28 originalnih redova, format vremena `postgres-text`,
+vezu sa svežim planom i rezultat provere 36 produkcionih preusmerenja.
+`intent.json` i `result.json` čuvaju nameru i potvrđen COMMIT.
+Za eventualni povratak ovog koraka koristiti ovaj `before.json`, a za prvi
+korak koristiti posebnu, dole navedenu rezervnu kopiju. Kopije su lokalne;
+Git commit čuva izveštaj i kod, ne čuva privatne rezervne kopije.
 
 Prvi primenjeni korak:
 
@@ -89,8 +109,9 @@ na stvarnom HTTPS produkcionom originu vraćaju 308 na očekivanu istu domenu,
 sa očuvanim query parametrima, i da odredišta vraćaju 200. `--origin` je
 opcion; koristi se SITE_URL ili postojeća produkciona domena.
 
-Posle deploya napraviti **nov** dedupe plan i upotrebiti putanju koju komanda
-ispiše. Ako plan zastari ili nastane nova veza, ne forsirati brisanje.
+Postupak je sada završen; komande ispod su referenca i ne treba ih ponavljati
+nad već očišćenim zapisima. Pri budućem odobrenom održavanju napraviti nov plan;
+ako plan zastari ili nastane nova veza, ne forsirati brisanje.
 
 ```powershell
 node scripts/catalog-maintenance.cjs --mode plan --phase dedupe --ca <CA-putanja>
