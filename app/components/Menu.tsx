@@ -14,7 +14,6 @@ import ThemeToggle from "./ThemeToggle"
 import LanguageSelect from "./LanguageSelect"
 import TunerButton from "./TunerButton"
 import MetronomeButton from "./MetronomeButton"
-import BrandLogo from "./BrandLogo"
 import BrandSlogan from "./BrandSlogan"
 
 const categories = [
@@ -122,14 +121,14 @@ function HeaderNavigation({ session, status, pathname, online }: {
   return <div ref={navigation} className="responsive-header" data-home={pathname === "/"}>
     <div className="guitar-nav mobile-guitar-bar">
       <BackButton compact />
-      <Link href="/" className="mobile-header-brand" onClick={close}><BrandLogo /></Link>
+      <span className="mobile-header-spacer" aria-hidden="true" />
       <div className="mobile-header-buttons">
         <button ref={mobileButton} type="button" className="mobile-header-icon" data-playing={metronomePlaying} title={t(mobileOpen ? "Zatvori meni" : "Otvori meni") + (metronomePlaying ? ` · ${t("Metronom radi")}` : "")} aria-label={t(mobileOpen ? "Zatvori meni" : "Otvori meni") + (metronomePlaying ? ` · ${t("Metronom radi")}` : "")} aria-expanded={mobileOpen} aria-controls={id + "-mobile"} onClick={() => { setMobileOpen(value => !value); setOpen(false); setOpenPesme(false) }}>{mobileOpen ? <X aria-hidden="true" /> : <MenuIcon aria-hidden="true" />}</button>
       </div>
     </div>
     <nav aria-label={t("Glavni meni")} className="guitar-nav desktop-guitar-nav">
     <div className="guitar-links">
-      {items.map((item, index) => <div key={item.href} className="guitar-item" style={{ "--step": index } as CSSProperties}>
+      {items.filter(item => item.href !== "/").map((item, index) => <div key={item.href} className="guitar-item" style={{ "--step": index } as CSSProperties}>
         {item.href === "/pesme" ? <>
           <button ref={songsButton} type="button" className="guitar-link" data-active={current(item.href) || undefined}
             aria-expanded={openPesme} aria-controls={openPesme ? id + "-categories" : undefined}
@@ -142,8 +141,8 @@ function HeaderNavigation({ session, status, pathname, online }: {
               {t(category.label)}
             </Link>)}
           </div>}
-        </> : <Link href={item.href} onClick={close} aria-current={current(item.href) ? "page" : undefined} className={`guitar-link${item.href === "/" ? " desktop-header-brand" : ""}`}>
-          {item.href === "/" ? <BrandLogo /> : t(item.label)}
+        </> : <Link href={item.href} onClick={close} aria-current={current(item.href) ? "page" : undefined} className="guitar-link">
+          {t(item.label)}
         </Link>}
       </div>)}
     </div>

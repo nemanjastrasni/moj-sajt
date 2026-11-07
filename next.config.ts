@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
+import legacyRedirects from "./lib/seo/legacy-redirects.json";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return legacyRedirects;
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },

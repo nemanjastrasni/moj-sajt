@@ -1,0 +1,517 @@
+{
+  "version": 1,
+  "approval": "Owner approved category repairs, exact Rus duplicates, blank Metallica record and display-name correction in chat on 2026-11-07.",
+  "missingArtists": [
+    {
+      "id": "cmnab8qew0022obz4g23yn74g",
+      "name": "Cage the Elephant",
+      "slug": "cage-the-elephant",
+      "category": null
+    },
+    {
+      "id": "cmnab8to3002hobz4an3c2jr1",
+      "name": "Foster the People",
+      "slug": "foster-the-people",
+      "category": null
+    },
+    {
+      "id": "cmnab8hha000wobz4r5ucrqy3",
+      "name": "Franz Ferdinand",
+      "slug": "franz-ferdinand",
+      "category": null
+    },
+    {
+      "id": "cmnab8qzi0025obz4q4jbd15e",
+      "name": "Glass Animals",
+      "slug": "glass-animals",
+      "category": null
+    },
+    {
+      "id": "cmnab8mhc001iobz4ygh6czmu",
+      "name": "Imagine Dragons",
+      "slug": "imagine-dragons",
+      "category": null
+    },
+    {
+      "id": "cmnab8kpz001bobz4dsxjo0cj",
+      "name": "John Mayer",
+      "slug": "john-mayer",
+      "category": null
+    },
+    {
+      "id": "cmnab8ju40018obz4ui6rlf7n",
+      "name": "Keane",
+      "slug": "keane",
+      "category": null
+    },
+    {
+      "id": "cmnab8ptb001zobz49tuof5rh",
+      "name": "Mac DeMarco",
+      "slug": "mac-demarco",
+      "category": null
+    },
+    {
+      "id": "cmnab8sud002eobz4slb6umt8",
+      "name": "MGMT",
+      "slug": "mgmt",
+      "category": null
+    },
+    {
+      "id": "cmnab8iod0012obz4pdj13edi",
+      "name": "Muse",
+      "slug": "muse",
+      "category": null
+    },
+    {
+      "id": "cmnab8rm60028obz4o9znwg36",
+      "name": "Nothing But Thieves",
+      "slug": "nothing-but-thieves",
+      "category": null
+    },
+    {
+      "id": "cmnab8n1v001lobz4sh0frh24",
+      "name": "OneRepublic",
+      "slug": "onerepublic",
+      "category": null
+    },
+    {
+      "id": "cmnab8j8r0015obz4x16ktsp1",
+      "name": "Snow Patrol",
+      "slug": "snow-patrol",
+      "category": null
+    },
+    {
+      "id": "cmnab8p8e001wobz4a5u5ilpu",
+      "name": "Tame Impala",
+      "slug": "tame-impala",
+      "category": null
+    },
+    {
+      "id": "cmnab8o2h001qobz4oeh2qr2o",
+      "name": "Taylor Swift",
+      "slug": "taylor-swift",
+      "category": null
+    },
+    {
+      "id": "cmnab8eoa000lobz4toq2bn7q",
+      "name": "The Cranberries",
+      "slug": "the-cranberries",
+      "category": null
+    },
+    {
+      "id": "cmnab85qe0009obz4ejyyda50",
+      "name": "The Rolling Stones",
+      "slug": "the-rolling-stones",
+      "category": null
+    },
+    {
+      "id": "cmnab8g5b000robz4lo87hp51",
+      "name": "The Strokes",
+      "slug": "the-strokes",
+      "category": null
+    },
+    {
+      "id": "cmnab8fkb000oobz47osnou2o",
+      "name": "The White Stripes",
+      "slug": "the-white-stripes",
+      "category": null
+    },
+    {
+      "id": "cmnab8s8i002bobz487nhb72z",
+      "name": "Vampire Weekend",
+      "slug": "vampire-weekend",
+      "category": null
+    }
+  ],
+  "categorySongs": [
+    {
+      "id": "cmmxsvzpn0001ob3g9fmr8lwb",
+      "title": "123",
+      "slug": "123",
+      "songCategory": "domace",
+      "artistId": "cmmxt173l04szob3gzpqpyu3d",
+      "artist": "Alegro bend",
+      "artistSlug": "alegro-bend",
+      "artistCategory": "narodne"
+    },
+    {
+      "id": "cmmxt41fv07egob3gvn9c13fd",
+      "title": "Za nas kasno je",
+      "slug": "za-nas-kasno-je-2",
+      "songCategory": "narodne",
+      "artistId": "cmmxssxr20019obh8cyurvyfj",
+      "artist": "Aleksandra Prijović",
+      "artistSlug": "aleksandra-prijovic",
+      "artistCategory": "domace"
+    },
+    {
+      "id": "cmmxsw39c0035ob3gmz7a7yge",
+      "title": "Lopov",
+      "slug": "lopov",
+      "songCategory": "domace",
+      "artistId": "cmmxssyyj003gobh858g7pxk7",
+      "artist": "Alen Islamović & Indira",
+      "artistSlug": "alen-islamovic-i-indira",
+      "artistCategory": "narodne"
+    },
+    {
+      "id": "cmn0ouire000fjy045d3riw3n",
+      "title": "Down By The River",
+      "slug": "down-by-the-river",
+      "songCategory": "narodne",
+      "artistId": "cmn0ouim6000djy043ko4yg3j",
+      "artist": "Neil Young & Crazy Horse",
+      "artistSlug": "neil-young--crazy-horse",
+      "artistCategory": "strane"
+    },
+    {
+      "id": "cmmxsyf410286ob3ggrvon0b7",
+      "title": "Ostalo mi srce u gradu mog detinjstva",
+      "slug": "ostalo-mi-srce-u-gradu-mog-detinjstva",
+      "songCategory": "domace",
+      "artistId": "cmmxsyf2z0284ob3gcmm0af7u",
+      "artist": "Neško Kejdž",
+      "artistSlug": "nesko-kejdz",
+      "artistCategory": "narodne"
+    },
+    {
+      "id": "cmn0ovemu000ijy04qvey2wkh",
+      "title": "O Children",
+      "slug": "o-children",
+      "songCategory": "narodne",
+      "artistId": "cmn0ovek6000gjy041jdrs9ku",
+      "artist": "Nick Cave & The Bad Seeds",
+      "artistSlug": "nick-cave--the-bad-seeds",
+      "artistCategory": "strane"
+    }
+  ],
+  "emptySong": "cmqnov33q0008k0049eywvauo",
+  "rename": {
+    "id": "cmvzppxk80000ju08qbzemet4",
+    "before": "Van der Graaf Generatora",
+    "after": "Van der Graaf Generator"
+  },
+  "retainArtist": {
+    "id": "cmn7xy79b033pobjwwgtbchbm",
+    "name": "Miroslav Rus",
+    "slug": "miroslav-rus",
+    "category": "domace",
+    "bioLength": null,
+    "image": null,
+    "songs": 27,
+    "bioShortLength": null,
+    "discographyPresent": false,
+    "membersPresent": false
+  },
+  "removeArtist": {
+    "id": "cmn7y9g7704flobjwrzch3x3m",
+    "name": "Rus Miroslav",
+    "slug": "rus-miroslav",
+    "category": "domace",
+    "bioLength": null,
+    "image": null,
+    "songs": 27,
+    "bioShortLength": null,
+    "discographyPresent": false,
+    "membersPresent": false
+  },
+  "pairs": [
+    {
+      "keep": {
+        "id": "cmn7xy7ez033robjwshy32zyi",
+        "slug": "miroslav-rus-dim-za-mamu-dim-za-tatu"
+      },
+      "remove": {
+        "id": "cmn7y9gc604fnobjwesdut03m",
+        "slug": "rus-miroslav-dim-za-mamu-dim-za-tatu"
+      },
+      "contentHash": "eaac0dcba645ad27f42187c5f693250a7ff14b89e262d024499b579fb0a9de1f"
+    },
+    {
+      "keep": {
+        "id": "cmn7xy7xi033tobjwpsores12",
+        "slug": "miroslav-rus-drazesna-meri"
+      },
+      "remove": {
+        "id": "cmn7y9gr304fpobjwclxwnvip",
+        "slug": "rus-miroslav-drazesna-meri"
+      },
+      "contentHash": "e2f27fbfea3453ea761bb5d3b38836aa78ab492adf985f7a66379a034a830898"
+    },
+    {
+      "keep": {
+        "id": "cmn7xy8i3033vobjw3v9cboyh",
+        "slug": "miroslav-rus-dusa-iste-siziliste"
+      },
+      "remove": {
+        "id": "cmn7y9h6004frobjwaaf9f5sx",
+        "slug": "rus-miroslav-dusa-iste-siziliste"
+      },
+      "contentHash": "0fb93a4950254f5c83023a11472c2ebcde6ffb3d4f0a49d8d3b96cbc163b1ba0"
+    },
+    {
+      "keep": {
+        "id": "cmn7xy8y7033xobjwi9fzk63k",
+        "slug": "miroslav-rus-elena"
+      },
+      "remove": {
+        "id": "cmn7y9hkb04ftobjwqig8xha5",
+        "slug": "rus-miroslav-elena"
+      },
+      "contentHash": "09e56deade5ede65c9d7688505adcb6ef39ffc293d7530db095b113e2af35d12"
+    },
+    {
+      "keep": {
+        "id": "cmn7xy9e9033zobjw33puugbz",
+        "slug": "miroslav-rus-gledam-kroz-prozor"
+      },
+      "remove": {
+        "id": "cmn7y9hzw04fvobjw2hkx7gx5",
+        "slug": "rus-miroslav-gledam-kroz-prozor"
+      },
+      "contentHash": "af576428bd26d43943fd605a0422543c411ab2852b6b64bb88e0f28c6e8c1790"
+    },
+    {
+      "keep": {
+        "id": "cmn7xy9ve0341objw8017coqv",
+        "slug": "miroslav-rus-gradske-cure"
+      },
+      "remove": {
+        "id": "cmn7y9ifh04fxobjwq84nbfz7",
+        "slug": "rus-miroslav-gradske-cure"
+      },
+      "contentHash": "1c5847ce342d46645d671f1da44e00792eef681bfc136113c0a284368f2322f0"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyasz0343objwo8xu0jwa",
+        "slug": "miroslav-rus-ja-sam-svoje-tjerao-do-kraja"
+      },
+      "remove": {
+        "id": "cmn7y9iun04fzobjwsetwge5r",
+        "slug": "rus-miroslav-ja-sam-svoje-tjerao-do-kraja"
+      },
+      "contentHash": "2db7f998bdfbf748299df03f901e013aa16ebd5d669b4b1715c35ddc757f666c"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyba00345objw3qsh0z0i",
+        "slug": "miroslav-rus-kud-idemo-tud-pjevamo"
+      },
+      "remove": {
+        "id": "cmn7y9j9r04g1objwf92juxek",
+        "slug": "rus-miroslav-kud-idemo-tud-pjevamo"
+      },
+      "contentHash": "8bf5e342490d785e5363b798ff0cfd24fb4e4f989c2f92c57f1edefafd24e8e8"
+    },
+    {
+      "keep": {
+        "id": "cmn7xybqa0347objwveae1pk7",
+        "slug": "miroslav-rus-lagano-umirem"
+      },
+      "remove": {
+        "id": "cmn7y9jqa04g3objwdr0z360d",
+        "slug": "rus-miroslav-lagano-umirem"
+      },
+      "contentHash": "6a9e7e54b2f87f4727d2e729c4b2d6e5fedd0d3b8fa1615ae9a2856d3020ba52"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyc7q0349objw2a6m61ar",
+        "slug": "miroslav-rus-majko-zemljo"
+      },
+      "remove": {
+        "id": "cmn7y9kng04g5objw1feeo3iu",
+        "slug": "rus-miroslav-majko-zemljo"
+      },
+      "contentHash": "7278650d8a4c36f810a3fc15925d1f5ec140fcf09ecde4ecad55deca22dc369f"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyczu034bobjwu53cvy1s",
+        "slug": "miroslav-rus-natasa"
+      },
+      "remove": {
+        "id": "cmn7y9l2a04g7objw8nj7ikzx",
+        "slug": "rus-miroslav-natasa"
+      },
+      "contentHash": "66ee1a227ec3b33b4b21f576d26368bf9f8508b249c6b9eef707b31d0c58f0c5"
+    },
+    {
+      "keep": {
+        "id": "cmn7xydn3034dobjwi7l8qagf",
+        "slug": "miroslav-rus-nova-godina"
+      },
+      "remove": {
+        "id": "cmn7y9lgy04g9objwbgrli57r",
+        "slug": "rus-miroslav-nova-godina"
+      },
+      "contentHash": "9ba3695106c9a7f6ffc3cecdb666c59d24d3c781e0588378173bb85f2d94c223"
+    },
+    {
+      "keep": {
+        "id": "cmn7xye2m034fobjwjyd7e1ee",
+        "slug": "miroslav-rus-petak-13"
+      },
+      "remove": {
+        "id": "cmn7y9m0h04gbobjw3boxnz7p",
+        "slug": "rus-miroslav-petak-13"
+      },
+      "contentHash": "3454ec7dac1cef80a84b138cc8f843d08762a35f17789069da34488c03f4ea05"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyej0034hobjw7nhglkwc",
+        "slug": "miroslav-rus-ponocne-vijesti"
+      },
+      "remove": {
+        "id": "cmn7y9mgv04gdobjwl6dj9r4w",
+        "slug": "rus-miroslav-ponocne-vijesti"
+      },
+      "contentHash": "a12610d83e34986be6c01ad51dfe646a1f52e2c7046734220bcd1d7a55faa939"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyf2h034jobjw8uolt0cj",
+        "slug": "miroslav-rus-promijeni-nesto"
+      },
+      "remove": {
+        "id": "cmn7y9mx004gfobjw87vaf63q",
+        "slug": "rus-miroslav-promijeni-nesto"
+      },
+      "contentHash": "23df129e06989b0d5016821f6d1b1896942a1abd6a2fd31656df81d7c6f9ad5b"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyfjj034lobjweh31xnhe",
+        "slug": "miroslav-rus-rodjen-u-zagrebu"
+      },
+      "remove": {
+        "id": "cmn7y9nbk04ghobjw4e6schtx",
+        "slug": "rus-miroslav-rodjen-u-zagrebu"
+      },
+      "contentHash": "2bdbef8aedf45fdac04511f820a326fce7c0a234b40bf4f2a3de0b8c91ad6034"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyg1f034nobjwz6tz0efs",
+        "slug": "miroslav-rus-rodjendan"
+      },
+      "remove": {
+        "id": "cmn7y9nq704gjobjwdbt2f2w5",
+        "slug": "rus-miroslav-rodjendan"
+      },
+      "contentHash": "d03d01662d6c70124b88edc37de8e4c09b40f7c4f01c372fd69d49c36c9e2842"
+    },
+    {
+      "keep": {
+        "id": "cmn7xygho034pobjw1z1qn6ot",
+        "slug": "miroslav-rus-s-ove-strane-ljubavi"
+      },
+      "remove": {
+        "id": "cmn7y9o4p04globjwswqoypc7",
+        "slug": "rus-miroslav-s-ove-strane-ljubavi"
+      },
+      "contentHash": "619df731f7c6e8180dbd99395d6e6c3e3fb88ba212922121a9e3a9f18eebf7f7"
+    },
+    {
+      "keep": {
+        "id": "cmn7xygxe034robjwr7p6ypua",
+        "slug": "miroslav-rus-s-pricom-da-je-jedan-bog"
+      },
+      "remove": {
+        "id": "cmn7y9ojw04gnobjw2k7bs3qs",
+        "slug": "rus-miroslav-s-pricom-da-je-jedan-bog"
+      },
+      "contentHash": "7940411ac72dd07648b96ba4327a6dd5ea8d73d9630eca78690309efcf7755be"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyhe1034tobjwqssy36f4",
+        "slug": "miroslav-rus-sara"
+      },
+      "remove": {
+        "id": "cmn7y9oz604gpobjwr6v0kxm7",
+        "slug": "rus-miroslav-sara"
+      },
+      "contentHash": "8e205c8e37fb6cd41ebf26f0ab5baf4a4f3b3f7f500f0c0e247adcdaa0a63d6b"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyhug034vobjw0tbm86dx",
+        "slug": "miroslav-rus-slavenska-rapsodija"
+      },
+      "remove": {
+        "id": "cmn7y9pft04grobjwuwedadfk",
+        "slug": "rus-miroslav-slavenska-rapsodija"
+      },
+      "contentHash": "bed5aecda2cb8bbad051c8f6eebca591720a63c726bb1cc4e1f3b9874fb76328"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyiac034xobjw72rf72es",
+        "slug": "miroslav-rus-sonja"
+      },
+      "remove": {
+        "id": "cmn7y9pvd04gtobjwddg359wa",
+        "slug": "rus-miroslav-sonja"
+      },
+      "contentHash": "7b6c6d1296cc820d4e1a05454fd6e3a78620748a8477edc6c85e1e336c88413d"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyis6034zobjwyzwjj5hl",
+        "slug": "miroslav-rus-tekila-sila"
+      },
+      "remove": {
+        "id": "cmn7y9qae04gvobjwxy5s5pz9",
+        "slug": "rus-miroslav-tekila-sila"
+      },
+      "contentHash": "9f6f885d52c356a15051d529f7b93ce887c22ef55bf6a301185fc8abef758aa0"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyj870351objw690ryoiy",
+        "slug": "miroslav-rus-veza-202"
+      },
+      "remove": {
+        "id": "cmn7y9qqn04gxobjwv4q3b0i9",
+        "slug": "rus-miroslav-veza-202"
+      },
+      "contentHash": "5ed0bce0265bfec52ec7535f5d629804f9d3cdab57f2c53f02849a07e4be4c0a"
+    },
+    {
+      "keep": {
+        "id": "cmn7xyjop0353objwzk31xpk4",
+        "slug": "miroslav-rus-vjerujem-jos-samo-bogu"
+      },
+      "remove": {
+        "id": "cmn7y9r5q04gzobjwp7mwnerw",
+        "slug": "rus-miroslav-vjerujem-jos-samo-bogu"
+      },
+      "contentHash": "566ece58a71b47611673e725114a40a93952ec14b50b3c85875eb0197105d249"
+    },
+    {
+      "keep": {
+        "id": "cmn7xykis0355objwsl4dqxju",
+        "slug": "miroslav-rus-vojnicka"
+      },
+      "remove": {
+        "id": "cmn7y9rm004h1objwllgwg0ik",
+        "slug": "rus-miroslav-vojnicka"
+      },
+      "contentHash": "ac648b0ca8f4046eaa4e5e1c0d68c867ebd5bf859c05b14382d39eac5de50944"
+    },
+    {
+      "keep": {
+        "id": "cmn7xykyd0357objwl3f8aj0f",
+        "slug": "miroslav-rus-zivot-zivot"
+      },
+      "remove": {
+        "id": "cmn7y9s0u04h3objw09h6u6gd",
+        "slug": "rus-miroslav-zivot-zivot"
+      },
+      "contentHash": "e1e98711a719d3815265f07e47fa82a8b79ac1ab33b0589ab11e4d9a383350f3"
+    }
+  ]
+}

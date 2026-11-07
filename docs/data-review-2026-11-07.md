@@ -1,7 +1,14 @@
 # Podaci za odluku vlasnika — 7. novembar 2026.
 
-Ovaj pregled je read-only. Nijedan ovde navedeni zapis nije obrisan, spojen ili
-preimenovan. Odobrena Paul Simon dopuna je zasebno završena i dokumentovana u
+**Status posle odobrenja vlasnika:** odobrene korekcije kategorija, prikazanog
+naziva Van der Graaf Generator i praznog Metallica zapisa sprovedene su uz
+rezervnu kopiju. Svih 29 kanonskih linkova sada vraća 200. Pripremljena su
+trajna preusmerenja, a 27 Rus duplikata još nije obrisano jer preusmerenja
+prvo moraju biti objavljena. Detalji, dnevnik i povratak izmena nalaze se u
+[izveštaju o korekcijama](catalog-repairs-2026-11-07.md).
+
+Ispod je sačuvan **prvobitni read-only pregled**, uključujući tadašnje predloge
+i status čekanja odobrenja. Paul Simon dopuna je zasebno dokumentovana u
 [izveštaju o optimizaciji](performance-seo-followup-2026-11-07.md).
 
 ## Prazan zapis Metallice

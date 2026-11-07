@@ -35,7 +35,7 @@ test("mobile navigation stays collapsed while search has moved to the shared per
   assert.equal(buttons.last().attr("aria-label"), "Otvori meni")
   assert.equal($(".header-panel").attr("id"), buttons.last().attr("aria-controls"))
   assert.equal($(".header-panel").attr("data-open"), "false")
-  assert.equal($(".mobile-header-brand").attr("href"), "/")
+  assert.equal($(".site-brand").length, 0)
 })
 
 test("anonymous, user and admin menus retain role-aware links and all three song categories", () => {
@@ -75,6 +75,8 @@ test("permanent search strip is server-renderable, labeled and closed until a qu
   assert.equal($("input").attr("aria-expanded"), "false")
   assert.equal($("label").attr("for"), $("input").attr("id"))
   assert.equal($("dialog").length, 0)
+  assert.equal($(".search-header-brand").attr("href"), "/")
+  assert.equal($(".search-header-brand img").attr("alt"), "GitarAkordi")
 })
 
 test("mobile account text is escaped, not injected as markup", () => {
