@@ -133,16 +133,10 @@ html { scroll-padding-top: var(--site-search-height); }
 .home-page { padding-top: 16px; }
 .header-slogan-strip { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 52px; padding: 2px 8px 2px 24px; }
 
-/* Text wordmark stays sharp without loading an image or another font. */
-.site-brand { display: inline-flex; align-items: center; gap: .32em; color: var(--foreground); font-weight: 700; line-height: 1.15; white-space: nowrap; }
-.site-brand-wordmark { display: inline-flex; align-items: baseline; letter-spacing: -.055em; }
-.site-brand-symbol { display: block; width: .97em; height: 1.2em; flex: 0 0 .97em; }
-.site-brand-joint { position: relative; display: inline-flex; width: .71em; flex: 0 0 .71em; margin-inline: -.015em; }
-.site-brand-joint svg { display: block; width: 100%; height: .76em; overflow: visible; }
-.site-brand-accent { color: #4ade80; }
-:root[data-theme="light"] .site-brand-accent { color: #167238; }
-.desktop-header-brand .site-brand, .mobile-header-brand .site-brand { padding: 3px 8px; border-radius: 4px; background: rgb(9 14 11 / 94%); color: #f4f7f5; font-size: 20px; text-shadow: none; }
-:root[data-theme="light"] .desktop-header-brand .site-brand, :root[data-theme="light"] .mobile-header-brand .site-brand { color: #17261e; background: rgb(255 250 237 / 96%); }
+/* Outlined SVG lettering stays sharp without loading another font. */
+.site-brand { display: inline-flex; align-items: center; flex: 0 0 auto; padding: 0 8px; border-radius: 4px; background: #0c0d0e; line-height: 0; text-shadow: none; }
+.site-brand-image { display: block; width: 150px; height: 60px; object-fit: contain; }
+.desktop-guitar-nav .guitar-item:first-child, .guitar-link.desktop-header-brand { height: 64px; }
 .brand-slogans { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; min-height: 48px; }
 .brand-slogans .home-brand-slogan { display: grid; align-items: center; flex: 1; min-width: 0; min-height: 40px; margin: 0; color: var(--foreground); font-size: 13px; font-weight: 400; line-height: 1.6; overflow-wrap: anywhere; text-wrap: balance; }
 .brand-slogan-text { grid-area: 1 / 1; visibility: hidden; }
@@ -175,9 +169,11 @@ html { scroll-padding-top: var(--site-search-height); }
   }
   :root[data-theme="light"] .mobile-guitar-bar { --neck-ink: #17364b; --neck-control: rgb(249 235 203 / 94%); }
   .mobile-header-brand {
+    display: flex;
+    align-items: center;
     flex: 1;
     min-width: 0;
-    padding: 4px;
+    padding: 0 4px;
     font-size: 15px;
     line-height: 20px;
     font-weight: 700;
@@ -186,6 +182,8 @@ html { scroll-padding-top: var(--site-search-height); }
     white-space: nowrap;
   }
   :root[data-theme="light"] .mobile-header-brand { text-shadow: 0 1px 2px #fff4d9, 0 0 5px #fff4d9; }
+  .mobile-header-brand .site-brand { padding-inline: 4px; }
+  .mobile-header-brand .site-brand-image { width: 120px; height: 48px; }
   .mobile-header-buttons { display: flex; flex: 0 0 auto; gap: 4px; }
   .mobile-header-icon {
     position: relative;

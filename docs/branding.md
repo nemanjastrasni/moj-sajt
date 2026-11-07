@@ -2,9 +2,11 @@
 
 Naziv se piše **GitarAkordi**: jedno veliko **A** povezuje „gitarA“ i „Akordi“. To slovo je zajedničko, ne ponavlja se i ne dodaje mu se malo „a“ ispred.
 
-`lib/brand.ts` sadrži naziv, vektorski oblik zajedničkog slova i obris trzalice. Odabrana varijanta B koristi malu trzalicu sa A uz naziv Gitar + A + kordi. U nazivu je obojeno samo zajedničko A. Čitači ekrana dobijaju ceo naziv, a ukrasni SVG je skriven od njih.
+Logo u zaglavlju je `public/brand/gitarakordi-guitar.svg`, prema vlasnikovom predlogu od 7. novembra 2026: beli obris gitare, beli kosi „Gitar“, narandžasti „Akordi“ i narandžasti potez ispod naziva. Sufiks `.com` nije deo logotipa. Slova su vektorske putanje, pa nisu potrebni dodatni fontovi. `BrandLogo` koristi lokalni SVG sa eksplicitnim dimenzijama i alternativnim tekstom iz `SITE_NAME`; nema generisanja slike u pregledaču.
 
-Osnova koristi postojeći Poppins 700. Zajedničko A je zeleno: `#4ade80` u tamnoj temi i `#167238` u svetloj. Zaglavlje ima diskretnu jednobojnu podlogu radi čitljivosti preko gitarskih žica. Uvodni slogan je „Za znalce, neznalice i ostale muzikalice!“.
+Boje su bela i narandžasta `#ff8509`. Tamna podloga ispod logotipa čuva čitljivost preko gitarskih žica u obe teme. Prvi red menija na računaru zauzima dva postojeća razmaka između žica (64 px), kako bi gitara iznad natpisa ostala čitljiva; mobilna traka zadržava visinu od 56 px. Slogani i njihove admin kontrole ostaju zasebni od logotipa. Uvodni slogan je „Za znalce, neznalice i ostale muzikalice!“.
+
+SVG je ručno rekonstruisan prema referenci, sa slovima Arial Bold Italic pretvorenim u putanje; nije automatski isečak slike. Veličina je 3.883 bajta, bez ugrađenih bitmapa, skripti i spoljnih resursa. Provera od 7. novembra: TypeScript, ESLint komponente, 15 postojećih testova menija/slogana i izolovani Next produkcioni build sa test podacima prolaze. Pregledač je proverio početnu i kontakt stranu na širinama 320, 390, 768, 820 i 1366 px u obe teme: bez prelivanja, logo je učitan i staje u link, mobilna traka ostaje 56 px, meni i ručno menjanje slogana rade, bez JavaScript grešaka. Baza i produkcija nisu menjani ovom zamenom logotipa.
 
 Ikonice koriste trzalicu sa istim A: `app/icon.svg`, favicon sa veličinama 16/32/48/64 px i Apple ikonica od 180 px. `public/brand/gitarakordi-symbol.svg` je znak sa providnom pozadinom za izvoz. Veliki blok sa ponovljenim logotipom uklonjen je sa početne; njen H1 ostaje dostupan čitačima ekrana i pretraživačima. Slogani se na početnoj prikazuju u traci ispod vrata gitare, uz postojeće kontrole na računaru i ispod sažetog zaglavlja na telefonu. Ostale stranice ne dobijaju dodatnu traku sa sloganima.
 
