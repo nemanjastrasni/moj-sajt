@@ -18,6 +18,7 @@ const wordCharacter = /[\p{L}\p{N}_#\u266f\u266d]/u
 const connector = /[-.\u2010-\u2015]/
 
 function expandTabs(line: string) {
+  if (!line.includes("\t")) return line
   let column = 0
   return line.replace(/\t|[^\t]/g, (character) => {
     const count = character === "\t" ? 8 - column % 8 : 1

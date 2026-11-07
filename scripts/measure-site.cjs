@@ -26,10 +26,11 @@ async function main() {
         return request.continue()
       })
       await page.setViewport(profile === 'mobile' ? { width: 390, height: 844, deviceScaleFactor: 1, isMobile: true, hasTouch: true } : { width: 1366, height: 900, deviceScaleFactor: 1 })
-      await cdp.send('Network.enable'); await cdp.send('Network.setCacheDisabled', { cacheDisabled: true })
+      await cdp.send('Network.enable'); await page.setCacheEnabled(false)
       if (profile === 'mobile') {
-        await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 150, downloadThroughput: 1600000 / 8, uploadThroughput: 750000 / 8, connectionType: 'cellular4g' })
-        await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 })
+        // Keep throttling/cache state in Puppeteer's API and use CDP for observation.
+        await page.emulateNetworkConditions({ latency: 150, download: 1600000 / 8, upload: 750000 / 8 })
+        await page.emulateCPUThrottling(4)
       }
       cdp.on('Network.requestWillBeSent', event => requests.set(event.requestId, { url: event.request.url, type: event.type, method: event.request.method }))
       cdp.on('Network.loadingFinished', event => { const request = requests.get(event.requestId); if (request) completed.push({ ...request, bytes: event.encodedDataLength }) })
@@ -50,7 +51,7 @@ async function main() {
         return { title: document.title, canonical: document.querySelector('link[rel="canonical"]')?.href || null, robots: document.querySelector('meta[name="robots"]')?.content || null, description: document.querySelector('meta[name="description"]')?.content || null,
           h1Count: document.querySelectorAll('h1').length, ttfbMs: nav?.responseStart, dnsMs: nav ? nav.domainLookupEnd - nav.domainLookupStart : null,
           connectMs: nav ? nav.connectEnd - nav.connectStart : null, requestWaitMs: nav ? nav.responseStart - nav.requestStart : null,
-          domReadyMs: nav?.domContentLoadedEventEnd, loadMs: nav?.loadEventEnd, fcpMs: paints.find(paint => paint.name === 'first-contentful-paint')?.startTime,
+          responseEndMs: nav?.responseEnd, domReadyMs: nav?.domContentLoadedEventEnd, loadMs: nav?.loadEventEnd, fcpMs: paints.find(paint => paint.name === 'first-contentful-paint')?.startTime,
           ...window.__pageAudit, viewport: { width: innerWidth, height: innerHeight }, overflow: document.documentElement.scrollWidth > innerWidth,
           images: [...document.images].filter(image => image.currentSrc).map(image => ({ src: image.currentSrc, loaded: image.complete && image.naturalWidth > 0, width: image.naturalWidth, height: image.naturalHeight })) }
       })

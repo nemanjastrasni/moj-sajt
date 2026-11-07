@@ -1,13 +1,23 @@
 # Public performance and technical SEO
 
+## Mobile processing follow-up (2026-11-07)
+
+The [mobile performance report](mobile-performance-2026-11-07.md) records
+production timings, DNS limitations, calibrated network throttling and a
+42% reduction in local catalog CPU processing over the same 9,393 songs.
+Parser/difficulty/transposition results and 32 visual comparisons remain
+identical. Database records, layout and functionality are unchanged.
+All 684 tests and the production build passed; deployment remains with the owner.
+
 ## Follow-up (2026-11-07)
 
 The [catalog performance follow-up](performance-seo-followup-2026-11-07.md)
 documents shared public assessment caching, request deduplication, unchanged
 catalog output and measured tradeoffs. Paul Simon's previously prepared missing
 biography/discography have now been applied and checked on the public site.
-The [data review](data-review-2026-11-07.md) lists confirmed duplicates and
-proposed existing-record corrections awaiting owner approval.
+The [data review](data-review-2026-11-07.md) and
+[completed cleanup report](catalog-repairs-2026-11-07.md) record the subsequently
+approved category corrections, exact duplicate removal, backups and live redirects.
 
 ## Follow-up (2026-11-06)
 

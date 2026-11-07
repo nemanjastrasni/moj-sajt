@@ -29,14 +29,16 @@ export default async function ArtistSongList({ category, artist, songs, artistId
 
 export function ArtistSongRows({ category, artist, songs, statuses, artistId }: Props & { statuses?: Map<string, ReviewStatus> }) {
   return <><ul className={styles.list}>
-    {songs.map(song => <li key={song.id} className={styles.row}>
+    {songs.map(song => {
+      const assessment = estimateDifficulty(song)
+      return <li key={song.id} className={styles.row}>
       <Link href={`/pesme/${encodeURIComponent(song.artist?.category ?? category)}/${encodeURIComponent(song.artist?.slug ?? artist)}/${encodeURIComponent(song.slug)}${artistId ? "?artist=" + encodeURIComponent(artistId) : ""}`} className={styles.link}>
-        {estimateDifficulty(song).chords.length ? "\uD83C\uDFB8 " : "\uD83C\uDFB5 "}
+        {assessment.chords.length ? "\uD83C\uDFB8 " : "\uD83C\uDFB5 "}
         {song.title}
-        <span className={styles.difficulty}>{" \u2022 "}<SongDifficulty level={estimateDifficulty(song).level} /></span>
+        <span className={styles.difficulty}>{" \u2022 "}<SongDifficulty level={assessment.level} /></span>
       </Link>
       {statuses && <span className={styles.status}><SongReviewBadge status={statuses.get(song.id) ?? "unreviewed"} /></span>}
       <SongPerformers artists={performerArtists(song.performers)} compact />
-    </li>)}
+    </li>})}
   </ul>{songs.length > 0 && <p className={styles.note}><UiText text={difficultyExplanation} /></p>}</>
 }

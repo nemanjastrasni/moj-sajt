@@ -2,7 +2,9 @@ import { chordParserFactory, chordRendererFactory } from "chord-symbol/lib/chord
 import type { Chord as ParsedChord } from "chord-symbol"
 
 const parse = chordParserFactory({ notationSystems: ["english"] })
-const parsedSymbols = new Map<string, ParsedChord | null>()
+const parsedSymbols = new Map<string, ParsedChord>()
+const rejectedSymbols = new Set<string>()
+const MAX_CACHED_SYMBOL_LENGTH = 128
 
 function prepareSymbol(symbol: string) {
   return symbol.trim()
@@ -16,10 +18,21 @@ function prepareSymbol(symbol: string) {
 export function parseChordSymbol(symbol: string): ParsedChord | null {
   const prepared = prepareSymbol(symbol)
   if (parsedSymbols.has(prepared)) return parsedSymbols.get(prepared)!
+  if (rejectedSymbols.has(prepared)) return null
   const result = parse(prepared)
   const chord = "error" in result ? null : result
-  if (parsedSymbols.size >= 2048) parsedSymbols.clear()
-  parsedSymbols.set(prepared, chord)
+  // Lyrics contain many non-chord candidates. Keep their bounded cache separate
+  // so they cannot repeatedly flush the frequently reused parsed chord objects.
+  // Long inputs still use the same parser, but do not occupy either cache.
+  if (prepared.length <= MAX_CACHED_SYMBOL_LENGTH) {
+    if (chord) {
+      if (parsedSymbols.size >= 1024) parsedSymbols.delete(parsedSymbols.keys().next().value!)
+      parsedSymbols.set(prepared, chord)
+    } else {
+      if (rejectedSymbols.size >= 8192) rejectedSymbols.delete(rejectedSymbols.values().next().value!)
+      rejectedSymbols.add(prepared)
+    }
+  }
   return chord
 }
 

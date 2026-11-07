@@ -1,6 +1,6 @@
 "use client"
 
-import { difficultyExplanation, difficultyLabels, type Difficulty } from "@/lib/music/difficulty"
+import { difficultyExplanation, difficultyLabels, type Difficulty } from "@/lib/music/difficultyModel"
 import { useI18n } from "./UiText"
 import styles from "./SongDifficulty.module.css"
 
