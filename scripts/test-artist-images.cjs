@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- CommonJS tests for the photo workflow. */
 const { test, after } = require("node:test")
 const assert = require("node:assert/strict")
 const fs = require("node:fs/promises")
@@ -150,6 +151,37 @@ test("publication eligibility requires a current blank field and matching musica
   assert.equal(publisher.eligible(record, current, 5), true)
   for (const change of [{ image: "https://example.com/manual.jpg" }, { name: "Other" }, { slug: "other" }, { category: "domace" }, { songCount: 1 }]) assert.equal(publisher.eligible(record, { ...current, ...change }, 5), false)
   for (const change of [{ state: "ambiguous" }, { evidence: "animal" }, { label: "Other" }, { stagedFile: "../private.webp" }, { photo: { ...candidate.photo, restrictions: "Check additional rights" } }, { photo: { ...candidate.photo, author: "Unknown authorUnknown author" } }]) assert.equal(publisher.eligible({ ...record, candidate: { ...candidate, ...change } }, current, 5), false)
+})
+
+test("discovery records a verified alias without replacing the entity's actual label", async () => {
+  const singer = entity("Q207134", "Zlatan Stipisic Gibonni", { P31: [snak(item("Q5"))], P106: [snak(item("Q639669"))], P18: [snak("Gibonni.jpg")] })
+  singer.aliases = { en: [{ value: "Gibonni" }] }
+  const candidate = await core.discoverPhoto({ name: "Gibonni", wikidataId: "Q207134" }, wiki([singer]))
+  assert.equal(candidate.state, "review-ready")
+  assert.equal(candidate.label, "Zlatan Stipisic Gibonni")
+  assert.deepEqual(candidate.nameEvidence, { artistName: "Gibonni", wikidataId: "Q207134", names: ["Gibonni"] })
+})
+
+test("publication accepts source-backed aliases and reversed names only for the bound artist/entity", () => {
+  const current = { id: "a", name: "Gibonni", slug: "gibonni", category: "domace", image: null, songCount: 61 }
+  const candidate = { state: "review-ready", evidence: "musician", label: "Zlatan Stipisic Gibonni", wikidataId: "Q207134", nameEvidence: { artistName: "Gibonni", wikidataId: "Q207134", names: ["Gibonni"] }, photo: { allowed: true, author: "Photographer", restrictions: "" }, stagedFile: "staged/Q207134-1234567890abcdef.webp" }
+  assert.equal(publisher.eligible({ ...current, candidate }, current, 1), true)
+  for (const nameEvidence of [undefined, { ...candidate.nameEvidence, artistName: "Other" }, { ...candidate.nameEvidence, wikidataId: "Q999" }, { ...candidate.nameEvidence, names: ["Other"] }, { ...candidate.nameEvidence, names: Array(25).fill("Gibonni") }]) {
+    assert.equal(publisher.eligible({ ...current, candidate: { ...candidate, nameEvidence } }, current, 1), false)
+  }
+  const reversed = { ...current, name: "Belan Neno", slug: "belan-neno" }
+  const proof = { artistName: reversed.name, wikidataId: "Q100", names: ["Neno Belan"] }
+  const other = { ...candidate, label: "Neno Belan", wikidataId: "Q100", nameEvidence: proof, stagedFile: "staged/Q100-1234567890abcdef.webp" }
+  assert.equal(publisher.eligible({ ...reversed, candidate: other }, reversed, 1), true)
+})
+
+test("large photo collections remain bounded before any verification or database connection", async () => {
+  let called = false
+  const options = { verify: async () => { called = true; throw Error("verification reached") }, connect: async () => { throw Error("must not connect") } }
+  await assert.rejects(publisher.publish({ version: 1, photos: Array.from({ length: 501 }, (_, i) => ({ artistId: "a" + i })) }, null, "https://test.vercel.app", options), /oversized/)
+  assert.equal(called, false)
+  await assert.rejects(publisher.publish({ version: 1, photos: Array.from({ length: 201 }, (_, i) => ({ artistId: "a" + i })) }, null, "https://test.vercel.app", options), /verification reached/)
+  assert.equal(called, true)
 })
 
 test("artist image selection excludes statues, gravestones and signatures", () => {

@@ -207,7 +207,10 @@ async function discoverPhoto(artist, client) {
   if (resolved.state !== "identified") return resolved
   const { entity, evidence } = resolved
   const filename = claims(entity, "P18").find(value => typeof value === "string" && !/logo|signature|coat.of.arms|flag|\.svg$/i.test(value))
-  const identity = { wikidataId: entity.id, entityUrl: `https://www.wikidata.org/wiki/${entity.id}`, evidence, label: entity.labels?.en?.value ?? artist.name, description: entity.descriptions?.en?.value ?? "" }
+  const names = [...Object.values(entity.labels ?? {}).map(item => item.value), ...Object.values(entity.aliases ?? {}).flat().map(item => item.value)]
+  const matchedNames = [...new Set(names.filter(value => nameMatches(artist.name, { labels: { match: { value } } })))].slice(0, 24)
+  const identity = { wikidataId: entity.id, entityUrl: `https://www.wikidata.org/wiki/${entity.id}`, evidence, label: entity.labels?.en?.value ?? artist.name, description: entity.descriptions?.en?.value ?? "",
+    nameEvidence: { artistName: artist.name, wikidataId: entity.id, names: matchedNames } }
   if (!filename) return { state: "no-photo", ...identity }
   const data = await client.json("https://commons.wikimedia.org/w/api.php?" + new URLSearchParams({ action: "query", titles: "File:" + filename, prop: "imageinfo", iiprop: "url|size|mime|extmetadata", iiurlwidth: "960", iiextmetadatafilter: "LicenseShortName|LicenseUrl|Artist|Credit|Restrictions|NonFree|ImageDescription", format: "json", formatversion: "2" }))
   const info = data.query?.pages?.[0]?.imageinfo?.[0]

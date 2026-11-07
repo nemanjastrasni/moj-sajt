@@ -2,5 +2,13 @@
   {
     "name": "\u0160emsa Suljakovi\u0107",
     "reason": "Commons file title and description name different people; skip until source metadata is clarified."
+  },
+  {
+    "name": "Boa",
+    "reason": "Prior photo candidate Q232449 is Korean singer BoA; this profile is the Croatian band (Q4272071). Skip until a matching band photograph is reviewed."
+  },
+  {
+    "name": "Valentino",
+    "reason": "Prior photo candidate Q129709789 is a solo musician; this profile and songs belong to the Sarajevo pop-rock band. Skip until the band's identity and photograph are reviewed."
   }
 ]

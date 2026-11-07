@@ -1,5 +1,15 @@
 # Artist photo audit and review
 
+## Photo batch, 2026-11-07
+
+The [new photo report](artist-photos-2026-11-07.md) records 176 additional
+artist-profile images, fresh identity/license checks, 166 new optimized files,
+preserved existing photos and no database writes. The prepared manifest now
+contains 271 entries. Verified alias evidence supports stage names and reversed
+names without changing artist records; the publisher remains bounded at 500.
+Boa and Valentino source conflicts are on hold. Assets and visible credits
+must be deployed together; the existing public fallback then displays the new images.
+
 The audit/discovery tool reads artist identity/image fields and song counts without writing to the database. A separate, explicitly authorized publication tool can fill missing image fields after checking deployed assets and credits. Neither tool overwrites manual photos, imports biographies/discographies or modifies the existing wiki_full_import.js script.
 
 ## Commands

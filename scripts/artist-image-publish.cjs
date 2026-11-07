@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Explicit photo preparation and publication CLI. */
 const fs = require("node:fs/promises")
 const path = require("node:path")
 const sharp = require("sharp")
 const { parseArgs } = require("node:util")
 const { databaseClient, readDatabase } = require("./lib/artist-image-source.cjs")
-const { digest, normalizeName, safeWikiUrl, isArtistPhoto } = require("./lib/artist-image-core.cjs")
+const { digest, normalizeName, nameMatches, safeWikiUrl, isArtistPhoto } = require("./lib/artist-image-core.cjs")
 
 const ROOT = path.resolve(__dirname, "..")
 const ASSETS = path.join(ROOT, "public", "artist-photos")
@@ -19,11 +20,16 @@ async function saveJson(file, value) {
 
 function eligible(item, current, minSongs) {
   const candidate = item.candidate
+  const proof = candidate?.nameEvidence
+  const identityName = normalizeName(candidate?.label || "") === normalizeName(current?.name || "") ||
+    Boolean(proof && current && proof.artistName === current.name && proof.wikidataId === candidate.wikidataId &&
+      Array.isArray(proof.names) && proof.names.length <= 24 && proof.names.some(value =>
+        typeof value === "string" && nameMatches(current.name, { labels: { match: { value } } })))
   return Boolean(current && !current.image?.trim() && current.id === item.id &&
     current.name === item.name && current.slug === item.slug && current.category === item.category &&
     (current.songCount ?? 0) >= minSongs && candidate?.state === "review-ready" &&
     ["musician", "musical-group"].includes(candidate.evidence) &&
-    normalizeName(candidate.label || "") === normalizeName(current.name) &&
+    identityName &&
     /^Q\d{1,15}$/.test(candidate.wikidataId) && candidate.photo?.allowed &&
     candidate.photo.author?.trim() && !candidate.photo.restrictions?.trim() &&
     !/unknown author|anonymous|nepoznat/i.test(candidate.photo.author) &&
@@ -117,7 +123,7 @@ async function checkedUpdate(client, photo) {
 }
 
 async function publish(manifest, ca, baseUrl, { verify = verifyDeployment, connect = databaseClient, save = saveJson, root = ROOT, log = console.log } = {}) {
-  if (manifest.version !== 1 || !manifest.photos.length || manifest.photos.length > 200) throw new Error("Invalid or oversized publication manifest")
+  if (manifest.version !== 1 || !manifest.photos.length || manifest.photos.length > 500) throw new Error("Invalid or oversized publication manifest")
   if (new Set(manifest.photos.map(item => item.artistId)).size !== manifest.photos.length) throw new Error("Duplicate artist identities")
   // Validate public availability and visible attribution before the first database write.
   await verify(manifest, baseUrl)
