@@ -32,6 +32,30 @@ model SiteBrandingChange {
 
 
 /// =========koliko ljudi posecuje=================
+model AdminContentProposal {
+  id String @id
+  findingId String
+  subjectId String
+  field String
+  operation String
+  status String
+  data Json
+  actorId String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @db.Timestamptz(6)
+  events AdminContentEvent[]
+  @@index([findingId,createdAt(sort: Desc)],map: "AdminContentProposal_finding")
+  @@index([actorId,createdAt(sort: Desc)],map: "AdminContentProposal_actor")
+}
+model AdminContentEvent {
+  id String @id
+  proposalId String
+  action String
+  actorId String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  proposal AdminContentProposal @relation(fields:[proposalId],references:[id],onDelete:Restrict,onUpdate:NoAction)
+  @@unique([proposalId,action])
+}
 model Visit {
   id        String    @id @default(cuid())
   createdAt DateTime? @default(now())

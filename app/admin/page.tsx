@@ -21,6 +21,7 @@ export default async function AdminHome() {
     <p className="admin-muted admin-stat-details">Sa prepoznatim akordima: <strong>{number(stats.withChords)}</strong> · Samo tablatura ili bas zapis: <strong>{number(stats.notationOnly)}</strong> · Prazni zapisi: <strong>{number(stats.empty)}</strong></p>
     <p className="admin-muted admin-stat-time">Poslednji obračun: <time dateTime={stats.calculatedAt}>{calculatedAt}</time>. Podaci mogu kasniti nekoliko minuta. Za aktuelno stanje izaberi „Osveži statistiku“.</p>
     <nav className="admin-tasks" aria-label="Admin zadaci">
+      <Link href="/admin/nadzor#content-backlog"><Music2 aria-hidden="true" /><span>Biografije, diskografije i fotografije koje nedostaju</span><small>Kompletan spisak i CSV izvoz</small><ArrowRight aria-hidden="true" /></Link>
       <Link href="/admin/prijave"><Flag aria-hidden="true" /><span>Prijave grešaka</span><small>Pregled i obrada</small><ArrowRight aria-hidden="true" /></Link>
       <Link href="/admin/predlozi"><Music2 aria-hidden="true" /><span>Predlozi pesama</span><small>Pregled i odobravanje</small><ArrowRight aria-hidden="true" /></Link>
       <Link href="/admin/korisnici"><Users aria-hidden="true" /><span>Korisnici i prisustvo</span><small>Nalozi i dozvole</small><ArrowRight aria-hidden="true" /></Link>

@@ -5,7 +5,8 @@ const { renderToStaticMarkup } = require('react-dom/server')
 let allowed, authCalls, stored
 const original = Module._load, realFetch = global.fetch
 Module._load = function(request, parent, main) {
-  if (request === '@/lib/prisma') return { prisma: { artist:{findMany:async()=>[]},song:{findMany:async()=>[]} } }
+  if (request === 'next/navigation') return { useRouter:()=>({refresh:()=>{}}) }
+  if (request === '@/lib/prisma') return { prisma: { artist:{findMany:async()=>[]},song:{findMany:async()=>[]},$queryRawUnsafe:async()=>[] } }
   if (request === '@/lib/adminSongs/server') return { requireSongAdmin: async () => { authCalls++; if (!allowed) throw Error('forbidden') } }
   if (request === 'next/cache') return { unstable_cache: (work, keys) => async (...args) => {
     stored ||= new Map()
@@ -56,8 +57,8 @@ test('a recent manual check cannot hide an overdue scheduled check or an unfinis
 })
 test('admin page explains actual AI status, limited retention, sample coverage and approval boundary', async () => {
   const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({}) }))
-  for (const value of ['Nadzor sajta', '30 dana', 'Bez API ključa', 'nema automatskih upisa', 'tvoju proveru i odobrenje', 'zeleno', 'Google indeksiranje']) assert.ok(html.includes(value), value)
-  assert.doesNotMatch(html, /<form|OPENAI_API_KEY|api\.openai/)
+  for (const value of ['Nadzor sajta', '30 dana', 'Bez API ključa', 'Priprema ne objavljuje sadržaj', 'tvoje odobrenje', 'zeleno', 'Google indeksiranje','Kompletan spisak','Preuzmi CSV']) assert.ok(html.includes(value), value)
+  assert.doesNotMatch(html, /sk-proj-|api\.openai/)
 })
 
 test('public check annotations expose concrete findings only for the exact workflow run and attempt', async () => {

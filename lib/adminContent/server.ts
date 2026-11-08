@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto"
 import { Prisma } from "@prisma/client"
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { stableStringify } from "@/lib/wiki-values.cjs"
 import { requireSongAdmin, refreshAdminSongs } from "@/lib/adminSongs/server"
@@ -62,6 +62,7 @@ export async function updateUserRole(id: string, actorId: string, input: ReturnT
 }
 export function refreshArtistContent(...artists: { category: string | null; slug: string }[]) {
   refreshAdminSongs()
+  try { revalidateTag("admin-content-backlog") } catch {}
   try {
     revalidatePath("/admin/artists", "layout")
     for (const artist of artists) {

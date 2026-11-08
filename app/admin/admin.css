@@ -75,6 +75,22 @@
 .admin-review-filters a[aria-current="page"] { color: var(--control-focus); background: var(--control-hover); }
 .admin-finding details { font-size: 12px; margin-top: 12px; }
 .admin-finding summary { cursor: pointer; color: var(--control-muted); }
+.admin-content-actions { margin-top: 16px; }
+.admin-content-actions .ui-button { max-width: 100%; white-space: normal; overflow-wrap: anywhere; height: auto; }
+.admin-action-panel { padding: 16px 0; border-top: 1px solid var(--control-line); margin-top: 12px; overflow-wrap: anywhere; }
+.admin-proposal-form { display: grid; gap: 12px; min-width: 0; border: 0; padding: 12px 0; }
+.admin-proposal-form label { display: grid; gap: 6px; font-size: 14px; }
+.admin-proposal-form input:not([type=checkbox]) { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--control-line); background: var(--control-bg); color: var(--control-ink); padding: 8px; }
+.admin-proposal-form .admin-inline-check { display: flex; align-items: start; gap: 10px; }
+.admin-inline-check input { width: 18px; height: 18px; flex-shrink: 0; margin-top: 3px; }
+.admin-content-compare { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; margin-block: 16px; }
+.admin-content-compare > div { min-width: 0; }
+.admin-content-compare pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 420px; overflow-y: auto; font: inherit; font-size: 13px; line-height: 1.7; padding: 12px; background: var(--control-hover); border: 1px solid var(--control-line); }
+.admin-proposal-preview { margin-block: 20px; }
+#content-backlog { margin-block: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--control-line); }
+#content-backlog .admin-review-summary a { padding: 12px; border: 1px solid var(--control-line); }
+#content-backlog small { display: block; margin-top: 8px; }
+@media (max-width: 700px) { .admin-content-compare { grid-template-columns: minmax(0,1fr); } }
 @media (max-width: 600px) { .admin-finding dl { grid-template-columns: minmax(0,1fr); gap: 4px; } .admin-finding dd { margin-bottom: 10px; } }
 .admin-stats strong { display: block; font-size: 28px; line-height: 1.3; color: var(--control-ink); margin-bottom: 8px; }
 .admin-tasks { margin-top: 24px; }

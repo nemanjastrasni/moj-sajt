@@ -1,0 +1,3 @@
+import { readContentBacklog,selectBacklog,backlogSelection,backlogCsv } from "@/lib/monitoring/backlog"
+import { adminSongFailure } from "@/lib/adminSongs/server"
+export async function GET(request:Request){try{const data=await readContentBacklog(),selection=backlogSelection(Object.fromEntries(new URL(request.url).searchParams));if(!data)return Response.json({error:"Baza trenutno nije dostupna. Spisak nije potvrđen."},{status:503,headers:{"Cache-Control":"private, no-store"}});return new Response(backlogCsv(selectBacklog(data.rows,selection)),{headers:{"Content-Type":"text/csv; charset=utf-8","Content-Disposition":'attachment; filename="gitarakordi-nedostaje.csv"',"Cache-Control":"private, no-store"}})}catch(error){return adminSongFailure(error)}}
