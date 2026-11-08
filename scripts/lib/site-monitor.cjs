@@ -86,7 +86,7 @@ async function inspectSite({ origin: input, now = new Date(), fetcher = fetch, s
     coverage: { sitemapFiles: 0, sitemapUrls: 0, songUrls: 0, pagesChecked: 0, requests: 0, responseBytes: 0 }, checks,
     ai: { status: 'not-requested' }, databaseWrites: 0, sourceWrites: 0,
   }
-  const add = (level, code, path, message) => checks.push({ id: `check-${checks.length + 1}`, level, code, path, message })
+  const add = (level, code, path, message, evidence = {}) => checks.push({ id: `check-${checks.length + 1}`, level, code, path, message, ...evidence })
   const request = async path => {
     if (report.coverage.requests >= 100 || report.coverage.responseBytes > 32 * 1024 * 1024) throw Error('monitor-budget-exceeded')
     report.coverage.requests++
@@ -95,10 +95,10 @@ async function inspectSite({ origin: input, now = new Date(), fetcher = fetch, s
   }
   try {
     const robots = await request('/robots.txt')
-    if (robots.status !== 200) add('critical', 'robots_http', '/robots.txt', 'Robots datoteka nije dostupna.')
+    if (robots.status !== 200) add('critical', 'robots_http', '/robots.txt', 'Robots datoteka nije dostupna.', {httpStatus:robots.status})
     else if (!robots.text.split(/\r?\n/).some(line => /^sitemap:/i.test(line) && line.slice(line.indexOf(':') + 1).trim() === origin + '/sitemap.xml')) add('warning', 'robots_sitemap', '/robots.txt', 'Robots ne navodi sitemap na izabranom domenu.')
     const index = await request('/sitemap.xml')
-    if (index.status !== 200) add('critical', 'sitemap_http', '/sitemap.xml', 'Sitemap indeks nije dostupan.')
+    if (index.status !== 200) add('critical', 'sitemap_http', '/sitemap.xml', 'Sitemap indeks nije dostupan.', {httpStatus:index.status})
     else {
       const $ = load(index.text, { xmlMode: true }), files = $('sitemapindex > sitemap > loc').map((_, node) => $(node).text().trim()).get()
       if (!files.length || files.length > 64 || new Set(files).size !== files.length) add('critical', 'sitemap_index', '/sitemap.xml', 'Sitemap indeks je prazan, prevelik ili ponavlja datoteke.')
@@ -107,7 +107,7 @@ async function inspectSite({ origin: input, now = new Date(), fetcher = fetch, s
         try { url = new URL(file) } catch { /* Invalid URLs are reported without fetching them. */ }
         if (!url || url.origin !== origin || url.search || url.hash || !/^\/sitemaps\/(?:pages|songs-\d+|artists-\d+)\.xml$/.test(url.pathname)) { add('critical', 'sitemap_origin', '/sitemap.xml', 'Sitemap sadrži neočekivanu adresu datoteke.'); continue }
         const result = await request(url.pathname); report.coverage.sitemapFiles++
-        if (result.status !== 200) { add('critical', 'sitemap_partition_http', url.pathname, 'Deo sitemapa nije dostupan.'); continue }
+        if (result.status !== 200) { add('critical', 'sitemap_partition_http', url.pathname, 'Deo sitemapa nije dostupan.', {httpStatus:result.status}); continue }
         const xml = load(result.text, { xmlMode: true }), urls = xml('urlset > url > loc').map((_, node) => xml(node).text().trim()).get()
         if (!urls.length) add('warning', 'empty_sitemap', url.pathname, 'Deo sitemapa nema javne adrese.')
         if (urls.length > 50000) { add('critical', 'oversized_sitemap', url.pathname, 'Deo sitemapa ima previše adresa.'); continue }
@@ -129,13 +129,13 @@ async function inspectSite({ origin: input, now = new Date(), fetcher = fetch, s
     for (const path of selected) {
       if (robots.status === 200 && !robotsAllows(robots.text, path)) { add('critical', 'robots_blocks_public', path, 'Robots blokira javnu stranicu.'); continue }
       const result = await request(path); report.coverage.pagesChecked++
-      if (result.status !== 200) { add('critical', 'page_http', path, 'Javna stranica ne vraća HTTP 200.'); continue }
+      if (result.status !== 200) { add('critical', 'page_http', path, 'Javna stranica ne vraća HTTP 200.', {httpStatus:result.status}); continue }
       const $ = load(result.text), canonicals = $('link[rel="canonical"]'), raw = canonicals.attr('href')
       let canonical; try { canonical = new URL(raw).href } catch { /* no canonical */ }
-      if (canonicals.length !== 1 || canonical !== new URL(path, origin).href) add('warning', 'canonical', path, 'Canonical nedostaje, ponavlja se ili ne odgovara stranici.')
+      if (canonicals.length !== 1 || canonical !== new URL(path, origin).href) add('warning', 'canonical', path, 'Canonical nedostaje, ponavlja se ili ne odgovara stranici.', {reason:canonicals.length===0?'missing':canonicals.length>1?'multiple':'mismatch',observedCount:canonicals.length})
       if (!$('title').text().trim()) add('warning', 'title', path, 'Nedostaje naslov stranice.')
       if (!$('meta[name="description"]').attr('content')?.trim()) add('warning', 'description', path, 'Nedostaje opis stranice.')
-      if ($('h1').length !== 1) add('warning', 'heading', path, 'Stranica nema tačno jedan glavni naslov.')
+      if ($('h1').length !== 1) add('warning', 'heading', path, 'Stranica nema tačno jedan glavni naslov.', {observedCount:$('h1').length})
       const robotsMeta = [$('meta[name="robots"]').attr('content'), $('meta[name="googlebot"]').attr('content'), result.headers.get('x-robots-tag')].join(',')
       if (/(?:^|[\s,])(?:noindex|none)(?:[\s,]|$)/i.test(robotsMeta) && !/\/slovo\//.test(path)) add('warning', 'public_noindex', path, 'Javna stranica je označena da se ne indeksira; proveriti da li je to namerno.')
       const types = []
@@ -145,7 +145,7 @@ async function inspectSite({ origin: input, now = new Date(), fetcher = fetch, s
     }
     for (const path of ['/api/admin/songs', '/api/admin/artists']) {
       const result = await request(path)
-      if (![401, 403].includes(result.status)) add('critical', 'admin_access', path, 'Anonimni zahtev ne vraća očekivanu zabranu pristupa.')
+      if (![401, 403].includes(result.status)) add('critical', 'admin_access', path, 'Anonimni zahtev ne vraća očekivanu zabranu pristupa.', {httpStatus:result.status})
     }
     if (!checks.length) add('info', 'checks_passed', '/', 'Sve obuhvaćene provere su prošle.')
   } catch { add('critical', 'monitor_incomplete', '/', 'Provera nije završena u dozvoljenom obimu; rezultat nije potvrda ispravnosti sajta.') }

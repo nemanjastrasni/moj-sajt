@@ -1,5 +1,11 @@
 # Wikipedia artist maintenance
 
+## Reviewed additions, 2026-11-08
+
+Added six missing biographies and six previously empty discographies (61 releases), with atomic database source credits and backups of both Artist and ArtistWikiProfile. The eight earlier confirmed wrong-subject biographies are preserved for the owner's decision. Existing populated fields and all song content/review statuses are unchanged. See the [Serbian review report](content-admin-review-2026-11-08.md) for exact artists, holds, public paths and recovery notes.
+
+Table extraction now distinguishes years within titles from release metadata, accepts repeated identical release years, rejects conflicting year/date cells and excludes video headings. The optional `thoroughDiscography: true` maintenance lookup compares all available language sources rather than stopping after three entries; the default faster behavior is preserved. This parser change does not reapply earlier stored lists. Regression fixtures cover these cases and preserve the regional biography preference.
+
 The old `scripts/wiki_full_import.js` first-result importer is replaced by a compatibility entry point to `scripts/artist-wiki.cjs`. Running it without a subcommand performs a read-only audit. It no longer downloads images, guesses an article from `name + muzika`, references an undefined Discogs token, truncates all bios blindly at 1200 characters or overwrites artist photos/members.
 
 ## Audit and plans

@@ -1,5 +1,9 @@
 # Artist photo audit and review
 
+## Reviewed additions, 2026-11-08
+
+Added reviewed Commons photographs for Adam Lambert and Alice Cooper, with matching musician identities, named authors, source/license links and SHA-256 metadata. The local manifest now contains 461 photos, and the combined database/local fallback covers 516 of 1,231 artist profiles. Artist.image was not written. Alphaville's candidate was held because the metadata attributes the upload to a bot/assumed author rather than a confirmed photographer. The Negative and Nola candidates have no accepted Wikidata-linked photo. See the [content/admin report](content-admin-review-2026-11-08.md).
+
 ## Expanded photo batch, 2026-11-07
 
 The [expanded report](artist-photos-expanded-2026-11-07.md) records a complete

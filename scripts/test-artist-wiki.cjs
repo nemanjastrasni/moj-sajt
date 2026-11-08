@@ -4,6 +4,35 @@ const core = require("./lib/artist-wiki-core.cjs")
 const tool = require("./artist-wiki.cjs")
 const prose = "The band was founded by musicians and is known for its albums and concerts. ".repeat(5)
 
+test("a thorough maintenance lookup compares fuller discographies without changing the preferred biography", async () => {
+  const entity={id:'Q100',labels:{en:{value:'Test Band'}},claims:{P31:[{rank:'normal',mainsnak:{snaktype:'value',datavalue:{value:{id:'Q215380'}}}}]},sitelinks:{srwiki:{title:'Test Band'},enwiki:{title:'Test Band'}}}
+  const client={entity:async()=>entity,json:async url=>{const parsed=new URL(url),regional=parsed.hostname.startsWith('sr.'),revision=regional?100:101;if(parsed.searchParams.get('action')==='query')return{query:{pages:[{ns:0,pageid:revision,pageprops:{wikibase_item:'Q100'},title:'Test Band',revisions:[{revid:revision,timestamp:'2026-11-08T00:00:00Z'}]}]}};return{parse:{revid:revision,text:'<p>'+prose.repeat(3)+'</p><h2>Discography</h2><h3>Studio albums</h3><ul>'+Array.from({length:regional?3:5},(_,i)=>'<li><i>Album '+i+'</i> ('+(2000+i)+')</li>').join('')+'</ul>'}}}}
+  const quick=await core.discoverContent({name:'Test Band',wikidataId:'Q100'},client)
+  const full=await core.discoverContent({name:'Test Band',wikidataId:'Q100'},client,{thoroughDiscography:true})
+  assert.equal(quick.discography.length,3);assert.equal(full.discography.length,5)
+  assert.equal(full.bioSource.language,'sr');assert.equal(full.discographySource.language,'en')
+})
+
+test("discography tables retain repeated release years and ignore years inside album titles", () => {
+  const html = `<h2>Albums</h2><h3>Studio albums</h3><table><tr><th>Year</th><th>Album details</th></tr>
+    <tr><th rowspan="2">1970</th><td><i>First record</i><ul><li>Release date: February 1970</li><li>Label: Example</li></ul></td></tr>
+    <tr><td><i>Second record</i><ul><li>Release date: December 1970</li></ul></td></tr></table>
+    <h3>Compilation albums</h3><table><tr><th>Year</th><th>Album details</th></tr><tr><th>1987</th><td><i>Archive (Scenes from 1969 to 1971)</i><ul><li>Release date: February 1987</li></ul></td></tr></table>`
+  assert.deepEqual(core.extractArticle(html,{strictAlbums:true}).albums,[{title:'First record',year:'1970',kind:'studio'},{title:'Second record',year:'1970',kind:'studio'},{title:'Archive (Scenes from 1969 to 1971)',year:'1987',kind:'compilation'}])
+})
+
+test("recording years and video albums are not silently imported as audio release dates", () => {
+  const html = `<h2>Discography</h2><h3>Studio albums</h3><table><tr><th>Year</th><th>Album details</th></tr>
+    <tr><th>2020</th><td><i>Later release</i> Recorded: 2018. Released: 2020</td></tr>
+    <tr><th>2019</th><td><i>Conflicting dates</i> Release date: 2020</td></tr></table><h3>Video albums</h3><ul><li><i>Concert DVD</i> (2021)</li></ul>`
+  assert.deepEqual(core.extractArticle(html,{strictAlbums:true}).albums,[{title:'Later release',year:'2020',kind:'studio'}])
+})
+
+test("a numeric album title is not mistaken for a year column", () => {
+  const html='<h2>Studio albums</h2><table><tr><th>Title</th><th>Details</th></tr><tr><th scope="row"><i>1989</i></th><td>Released: 2014</td></tr></table>'
+  assert.deepEqual(core.extractArticle(html,{strictAlbums:true}).albums,[{title:'1989',year:'2014',kind:'studio'}])
+})
+
 test("Serbian transliteration does not translate English or remove paragraph breaks", () => {
   assert.equal(core.toLatin("\u0402\u043e\u0440\u0452\u0435\n\u0411\u0430\u043b\u0430\u0448\u0435\u0432\u0438\u045b English"), "\u0110or\u0111e\nBala\u0161evi\u0107 English")
 })

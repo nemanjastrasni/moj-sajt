@@ -1,16 +1,23 @@
 import { ExternalLink, ShieldCheck } from "lucide-react"
-import { MONITOR_WORKFLOW_URL, monitorScheduleNotice, readMonitorHistory } from "@/lib/monitoring/server"
+import { MONITOR_WORKFLOW_URL, monitorScheduleNotice, readMonitorHistory, readMonitorDetails } from "@/lib/monitoring/server"
+import MonitorFindings from "./MonitorFindings"
+import CatalogFindings from "./CatalogFindings"
+import { readCatalogReview, reviewSelection } from "@/lib/monitoring/catalog-review"
 
 export const dynamic = "force-dynamic"
 const date = (value: string) => new Intl.DateTimeFormat("sr-Latn", { dateStyle: "short", timeStyle: "short", timeZone: "Europe/Belgrade" }).format(new Date(value))
 const eventName = (value: string) => ({ schedule: "Dnevna provera", workflow_dispatch: "Ručno pokretanje", push: "Provera posle izmene" })[value] || "Pokretanje"
 const runStatus = (status: string, conclusion: string | null) => status !== "completed" ? "U toku / na čekanju" : conclusion === "success" ? "Završeno — proveri nalaze" : conclusion === "failure" ? "Problem — otvori izveštaj" : "Prekinuto ili nije završeno"
 
-export default async function MonitorPage() {
-  const history = await readMonitorHistory()
+export default async function MonitorPage({ searchParams }: { searchParams: Promise<{ oblast?: string | string[]; strana?: string | string[] }> }) {
+  const [history,review,params] = await Promise.all([readMonitorHistory(),readCatalogReview(),searchParams])
+  const latest = history.runs[0]
+  const details = latest ? await readMonitorDetails(latest) : null
   return <section className="admin-page admin-monitor">
     <div className="admin-heading"><h1>Nadzor sajta</h1><a className="ui-button" href={MONITOR_WORKFLOW_URL} target="_blank" rel="noopener noreferrer"><ExternalLink aria-hidden="true" />GitHub Actions</a></div>
     <p className="admin-monitor-notice"><ShieldCheck aria-hidden="true" /><span>{monitorScheduleNotice(history)}</span></p>
+    {latest && details && <MonitorFindings run={latest} details={details} />}
+    <CatalogFindings review={review} selection={reviewSelection(params.oblast,params.strana)} />
     <h2>Šta nadzor radi</h2>
     <p>Proverava dostupnost javnih stranica, sitemap, SEO oznake i zabranu anonimnog pristupa admin podacima. Svakog dana proverava drugi uzorak pesama. Radi na GitHub serveru i kada je tvoj računar isključen.</p>
     <p>Raspored: 04:23 UTC, odnosno 05:23 zimi i 06:23 leti po našem vremenu. GitHub može odložiti pokretanje. Istorija u panelu može kasniti do pet minuta.</p>

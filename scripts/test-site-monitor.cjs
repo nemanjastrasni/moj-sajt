@@ -67,9 +67,11 @@ test('missing canonical is a finding, whereas a public admin data response is cr
   let fixture = siteFixture({ [song]: html(song).replace(/<link[^>]+>/, '') })
   let result = await inspectSite({ origin, fetcher: fixture.fetcher, now })
   assert.equal(result.status, 'warning'); assert.ok(result.checks.some(check => check.code === 'canonical' && check.path === song))
+  assert.equal(result.checks.find(check=>check.code==='canonical').reason,'missing')
   fixture = siteFixture({ '/api/admin/songs': new Response('{}', { status: 200 }) })
   result = await inspectSite({ origin, fetcher: fixture.fetcher, now })
   assert.equal(result.status, 'critical'); assert.ok(result.checks.some(check => check.code === 'admin_access'))
+  assert.equal(result.checks.find(check=>check.code==='admin_access').httpStatus,200)
 })
 test('foreign XML URLs are reported without being fetched and blocked song pages are not fetched', async () => {
   let fixture = siteFixture({ '/sitemap.xml': xml('sitemapindex', ['<sitemap><loc>https://evil.example/sitemaps/pages.xml</loc></sitemap>']) })

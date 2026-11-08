@@ -12,20 +12,25 @@ function key(value) { return normalizeName(toLatin(value)) }
 function isCalendarBio(value) { return /^\s*\d{4}\.\s+je bila (?:prosta|prestupna) godina\b/i.test(toLatin(value || "")) }
 function albumKind(heading) {
   const text = key(heading)
-  if (/singl|single|extended play|\beps?\b|videograf|videograph|pesme|pjesme|songs|track list|dueti|duets|hitovi|spotovi|ucesca|appearances|various artists|soundtrack|filmska muzika/.test(text)) return "skip"
+  if (/singl|single|extended play|\beps?\b|\bvideos?\b|videograf|videograph|pesme|pjesme|songs|track list|dueti|duets|hitovi|spotovi|ucesca|appearances|various artists|soundtrack|filmska muzika/.test(text)) return "skip"
   if (/studio|studij/.test(text)) return "studio"
   if (/live|koncert|uzivo/.test(text)) return "live"
   if (/kompila|compila/.test(text)) return "compilation"
   return "album"
 }
-function albumFromText(text, title, kind, yearNow) {
+function albumFromText(text, title, kind, yearNow, explicitYear = null) {
   text = clean(text)
   if (text.length > 1500) return null
-  const leading = text.match(/^((?:19|20)\d{2})\.?\s*[-–—:]/)
-  const datedParentheses = [...text.matchAll(/\([^()]*\b(?:19|20)\d{2}\b[^()]*\)/g)].at(-1)
-  const trailing = text.match(/(?:[,–—-]\s*)((?:19|20)\d{2})\.?\s*$/)
-  const metadataYears = title ? [...text.replace(title, " ").matchAll(/\b(?:19|20)\d{2}\b/g)] : []
-  const year = leading?.[1] || datedParentheses?.[0].match(/\b(?:19|20)\d{2}\b/g)?.at(-1) || trailing?.[1] || (metadataYears.length === 1 ? metadataYears[0][0] : null)
+  // Years within an album title describe the title, not necessarily its release.
+  // Tables may repeat the same release year in a year column and date metadata.
+  const metadata = title ? text.replace(title, " ") : text
+  const leading = metadata.match(/^\s*((?:19|20)\d{2})\.?\s*[-–—:]/)
+  const datedParentheses = [...metadata.matchAll(/\([^()]*\b(?:19|20)\d{2}\b[^()]*\)/g)].at(-1)
+  const trailing = metadata.match(/(?:[,–—-]\s*)((?:19|20)\d{2})\.?\s*$/)
+  const released = title && metadata.match(/\b(?:released|release date|datum izdavanja)\s*:\s*[^:]{0,60}?\b((?:19|20)\d{2})\b/i)
+  if (explicitYear && released?.[1] && explicitYear !== released[1]) return null
+  const metadataYears = title ? [...new Set([...metadata.matchAll(/\b(?:19|20)\d{2}\b/g)].map(match=>match[0]))] : []
+  const year = explicitYear || released?.[1] || leading?.[1] || datedParentheses?.[0].match(/\b(?:19|20)\d{2}\b/g)?.at(-1) || trailing?.[1] || (metadataYears.length === 1 ? metadataYears[0] : null)
   if (!year || Number(year) > yearNow) return null
   if (!title) {
     if (leading) title = text.slice(leading[0].length)
@@ -104,7 +109,7 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
     const layoutTable = table.length && (table.find("h2,h3,h4,h5,h6").length ||
       !table.find("th").length && table.find("td > ul,td > ol").length)
     if (tag === "li" && (element.parents("li").length || table.length && !layoutTable)) return
-    let text, title
+    let text, title, explicitYear = null
     if (tag === "li") {
       const clone = element.clone(); clone.find("ul,ol").remove()
       text = clean(clone.text())
@@ -113,6 +118,9 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
     } else {
       if (layoutTable || element.find("table").length) return
       const cells = element.children("td,th")
+      const firstCell = clean(cells.first().text())
+      const firstHeader = key(element.closest("table").find("tr").first().children("td,th").first().text())
+      if (/^(?:year|release year|godina|godina izdanja|godina izdavanja)$/.test(firstHeader) && /^(?:19|20)\d{2}$/.test(firstCell) && !cells.first().find("i").length) explicitYear = firstCell
       const trackHeader = element.closest("table").hasClass("tracklist") ? cells.filter("th[colspan].mbox-text") : null
       if (element.closest("table").hasClass("tracklist") && !trackHeader?.length) return
       if (!cells.filter("td").length && !trackHeader?.length) return
@@ -126,7 +134,7 @@ function extractArticle(html, { maxBio = 14000, yearNow = new Date().getUTCFullY
         else return
       }
     }
-    const album = albumFromText(text, title, itemKind, yearNow)
+    const album = albumFromText(text, title, itemKind, yearNow, explicitYear)
     if (!album) return
     if (strictAlbums && (/;[^;]+;/.test(album.title) || /\[[^\]]*(?:singl|single|сингл)[^\]]*\]/i.test(album.title))) return
     const signature = key(album.title) + ":" + album.year
@@ -169,7 +177,7 @@ async function readDiscography(client, language, title, artistId, subjectKind) {
   return readArticle(client, language, page.title, id, subjectKind)
 }
 
-async function discoverContent(artist, client, { includeOtherAlbums = false } = {}) {
+async function discoverContent(artist, client, { includeOtherAlbums = false, thoroughDiscography = false } = {}) {
   const resolved = await resolveMusicIdentity(artist, client)
   if (resolved.state !== "identified") return resolved
   const { entity, evidence } = resolved
@@ -193,7 +201,9 @@ async function discoverContent(artist, client, { includeOtherAlbums = false } = 
           if (detailed?.albums.length > (discography?.albums.length || 0)) discography = detailed
         } catch (error) { errors.push({ language: lang, state: error.status ? `http-${error.status}` : "discography-request-failed" }) }
       }
-      if (biography?.bio.length >= 800 && discography?.albums.length >= 3) break
+      // A maintenance review may compare all language sources. Three regional
+      // entries are not evidence that a fuller discography does not exist.
+      if (!thoroughDiscography && biography?.bio.length >= 800 && discography?.albums.length >= 3) break
     } catch (error) { errors.push({ language: lang, state: error.status ? `http-${error.status}` : "request-failed" }) }
   }
   return { state: biography || discography ? "identified-content" : "no-content", wikidataId: entity.id, label: entity.labels?.en?.value || artist.name, evidence,

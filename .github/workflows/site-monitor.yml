@@ -11,6 +11,7 @@ on:
       - 'scripts/site-monitor*.cjs'
       - 'scripts/lib/site-monitor*.cjs'
       - 'scripts/test-site-monitor.cjs'
+      - 'scripts/test-site-monitor-report.cjs'
       - 'package-lock.json'
   pull_request:
     paths:
@@ -18,6 +19,7 @@ on:
       - 'scripts/site-monitor*.cjs'
       - 'scripts/lib/site-monitor*.cjs'
       - 'scripts/test-site-monitor.cjs'
+      - 'scripts/test-site-monitor-report.cjs'
 
 permissions:
   contents: read
@@ -42,7 +44,7 @@ jobs:
       - name: Install monitor dependencies without lifecycle scripts
         run: npm ci --omit=dev --ignore-scripts --no-audit --no-fund
       - name: Verify monitor safeguards
-        run: node --test scripts/test-site-monitor.cjs
+        run: node --test scripts/test-site-monitor.cjs scripts/test-site-monitor-report.cjs
       - name: Inspect public production pages
         id: monitor
         if: github.event_name != 'pull_request'
@@ -55,6 +57,9 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/site-monitor-ai.cjs
+      - name: Publish validated details for the admin panel
+        if: always() && steps.monitor.outcome != 'skipped' && steps.monitor.outcome != '' && github.event_name != 'pull_request'
+        run: node scripts/site-monitor-publish.cjs
       - name: Write run summary
         if: always() && github.event_name != 'pull_request'
         shell: bash

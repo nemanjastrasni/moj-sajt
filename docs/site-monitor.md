@@ -22,6 +22,10 @@ Monitor ne učitava `.env` i ne zahteva Supabase pristup. Njegov User-Agent prep
 
 ## Izveštaji i admin panel
 
+Od 8. novembra 2026. admin prikazuje i detalje novog pokretanja direktno: naslov nalaza, konkretnu putanju, zabeleženi HTTP status ili problem canonical/H1 oznake, sledeći korak i validiran AI predlog. Workflow objavljuje ograničen sažetak kroz standardnu notice anotaciju; čita se javni GitHub Checks API bez dodatnog tokena, prava upisa ili tabele. Proveravaju se format, obim, pokretanje i njegov pokušaj; ne prenose se puni HTML, tekstovi pesama, nalozi, ključevi ili proizvoljne poruke greške. Stariji poslovi bez ove anotacije jasno su označeni, a nedostupni detalji nisu predstavljeni kao rezultat bez problema.
+
+Ista stranica ima zaseban datirani red pregleda sadržaja: filtere za biografije, diskografije, fotografije i akorde, sa tačnim javnim/editor vezama. Kontrolni zbirovi se porede sa trenutnim zapisima, pa naknadna izmena znači „potrebna nova provera“, a ne automatski „rešeno“. Ovaj red nije svakodnevna semantička provera celog kataloga. Opis sadržajnih dopuna i nalaza je u [izveštaju od 8. novembra](content-admin-review-2026-11-08.md).
+
 Svako pokretanje ima GitHub run sa dnevnikom koraka, Markdown sažetkom i artifact-om sa `report.json` i `summary.md`. Artifact-i se čuvaju **30 dana**; za dugoročnu arhivu potrebno je zasebno rešenje. U javnom repozitorijumu izveštaje treba smatrati javnim: sadrže javne putanje i fiksne poruke nalaza, bez HTML tela, tekstova pesama, naloga, ključeva i sadržaja baze. AI dobija najviše 15 sažetih nalaza i njegov savet je takođe deo izveštaja.
 
 Admin → **Nadzor sajta** prikazuje do deset poslednjih produkcijskih pokretanja i veze do GitHub izveštaja. Pristup se proverava za svaki admin zahtev, čak i kada je istorija keširana. Keš traje pet minuta. Čita se samo javni GitHub API, bez dodatnog tokena; privremeni limit API-ja ili mrežna greška prikazuju se kao nepotvrđeno stanje. Uspešan workflow nije potvrda da nema upozorenja; pravi nalazi su u izveštaju. Panel ne tvrdi da je AI uključen dok se njegov status ne pregleda u konkretnom izveštaju.

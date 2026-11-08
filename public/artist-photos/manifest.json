@@ -78,6 +78,25 @@
       "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
     },
     {
+      "artistId": "cmmxt5kpu08reob3g7qrgu9ht",
+      "artistName": "Adam Lambert",
+      "slug": "adam-lambert",
+      "category": "strane",
+      "image": "/artist-photos/Q190231-6e2b54601ca3e368.webp",
+      "sha256": "6e2b54601ca3e368cffa6abb626af2eb888bdc24b92cb903b49cbfb4b3ac0038",
+      "width": 720,
+      "height": 960,
+      "wikidataId": "Q190231",
+      "entityUrl": "https://www.wikidata.org/wiki/Q190231",
+      "title": "Queen + Adam Lambert 3 (38835621981).jpg",
+      "author": "marcen27 from Glasgow, UK",
+      "credit": "Queen + Adam Lambert 3",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Queen_%2B_Adam_Lambert_3_(38835621981).jpg",
+      "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
+    },
+    {
       "artistId": "cmmxt15tm04rtob3gmy40mm93",
       "artistName": "Ado Gegaj",
       "slug": "ado-gegaj",
@@ -189,6 +208,25 @@
       "license": "CC BY-SA 3.0",
       "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
       "source": "https://commons.wikimedia.org/wiki/File:Zespol_Piesni_i_Tanca_Slask_i_Goran_Bregovic_023.jpg",
+      "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
+    },
+    {
+      "artistId": "cmmxt5ltq08seob3g2pcc2qb4",
+      "artistName": "Alice Cooper",
+      "slug": "alice-cooper",
+      "category": "strane",
+      "image": "/artist-photos/Q332032-8a28bc127897b894.webp",
+      "sha256": "8a28bc127897b894eda8f22383ba78c8cc03bbfcd57398083a3fdd320a34d005",
+      "width": 639,
+      "height": 960,
+      "wikidataId": "Q332032",
+      "entityUrl": "https://www.wikidata.org/wiki/Q332032",
+      "title": "Alice Cooper 2011.jpg",
+      "author": "Ross Halfin",
+      "credit": "http://www.mynewsdesk.com/se/pressroom/liseberg/image/view/alice-cooper-paa-liseberg-i-sommar-110662",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Alice_Cooper_2011.jpg",
       "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
     },
     {
