@@ -7,12 +7,14 @@ import SiteImage from "./SiteImage"
 import { isHomeSongList, type HomeSong } from "@/lib/homeSongs"
 import { RefreshCw } from "lucide-react"
 
-export default function LatestSongs() {
+export default function LatestSongs({initialSongs}:{initialSongs?:HomeSong[]}={}) {
   const { t } = useI18n()
 
-  const [songs, setSongs] = useState<HomeSong[]>([]), [error, setError] = useState(false), [retry, setRetry] = useState(0)
+  const [loadedSongs, setSongs] = useState<HomeSong[]>(initialSongs??[]), [error, setError] = useState(false), [retry, setRetry] = useState(0)
+  const songs=initialSongs!==undefined&&retry===0?initialSongs:loadedSongs
 
   useEffect(() => {
+    if(initialSongs!==undefined&&retry===0)return
     const controller = new AbortController()
     void fetch("/api/latest", { signal: controller.signal }).then(async response => {
       const data: unknown = await response.json()
@@ -20,7 +22,7 @@ export default function LatestSongs() {
       if (!controller.signal.aborted) { setSongs(data); setError(false) }
     }).catch(() => { if (!controller.signal.aborted) setError(true) })
     return () => controller.abort()
-  }, [retry])
+  }, [retry,initialSongs])
 
   return (
     <section className="theme-dark-surface theme-photo-band relative isolate w-full py-10">

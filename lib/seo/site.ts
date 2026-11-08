@@ -1,4 +1,6 @@
 export const PUBLIC_CATEGORIES = ["narodne", "domace", "strane"] as const
+import { preferredOrigin, PRIMARY_SITE_URL } from "./domain.cjs"
+export { PRIMARY_SITE_URL }
 export { SITE_NAME } from "../brand"
 export const DEFAULT_SITE_URL = "https://moj-sajt-rho.vercel.app"
 
@@ -8,7 +10,7 @@ export function resolveSiteOrigin(env: Record<string, string | undefined>) {
   try { url = new URL(input.includes("://") ? input : "https://" + input) }
   catch { throw Error("SITE_URL must be the public HTTPS site origin.") }
   if (url.protocol !== "https:" || url.username || url.password || url.search || url.hash || url.pathname !== "/" || url.port) throw Error("SITE_URL must be the public HTTPS site origin without a path, query or credentials.")
-  return url.origin
+  return preferredOrigin(url.origin)
 }
 
 export const SITE_URL = resolveSiteOrigin(process.env)

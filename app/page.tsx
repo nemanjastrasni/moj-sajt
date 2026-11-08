@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { getHomeSongs } from "@/lib/homeSongsServer"
 import StructuredData from "./components/StructuredData"
 import { websiteData } from "@/lib/seo/structured-data"
 import Hero from "./components/Hero"
@@ -14,8 +15,10 @@ import { SITE_NAME } from "@/lib/brand"
 const homeMetadata = publicPageMetadata(`${SITE_NAME} – Akordi i tekstovi pesama`, "Pesme sa akordima, lične plejliste, capo, PDF pesmarice, biografije i diskografije izvođača.", "/")
 
 export const metadata = { ...homeMetadata, title: { absolute: `${SITE_NAME} – Akordi i tekstovi pesama` } }
+export const revalidate=60
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [popular,latest]=await Promise.all([getHomeSongs("popular").catch(()=>undefined),getHomeSongs("latest").catch(()=>undefined)])
 
   return (
     <div className="w-full home-page">
@@ -90,8 +93,8 @@ export default function HomePage() {
         </div>
 
       </section>
-      <PopularSongs />
-      <LatestSongs />
+      <PopularSongs initialSongs={popular}/>
+      <LatestSongs initialSongs={latest}/>
 
     </div>
   )

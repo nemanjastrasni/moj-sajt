@@ -158,58 +158,70 @@
   "popularBackground": {
     "source": "/images/hero/hero-festival-purple.jpg",
     "sourceBytes": 2698437,
-    "src": "/images/optimized/popularBackground-1920-b0535ac4f291.webp",
+    "src": "/images/optimized/popularBackground-1920-0dee3757050f.webp",
     "width": 1920,
     "height": 1280,
-    "bytes": 138330,
-    "srcSet": "/images/optimized/popularBackground-640-c59eb663ba0e.webp 640w, /images/optimized/popularBackground-1280-cfc27a8b378d.webp 1280w, /images/optimized/popularBackground-1920-b0535ac4f291.webp 1920w",
+    "bytes": 101184,
+    "srcSet": "/images/optimized/popularBackground-480-1d136f71e5d2.webp 480w, /images/optimized/popularBackground-640-6d91dffe4006.webp 640w, /images/optimized/popularBackground-1280-84344bce9498.webp 1280w, /images/optimized/popularBackground-1920-0dee3757050f.webp 1920w",
     "variants": [
       {
-        "src": "/images/optimized/popularBackground-640-c59eb663ba0e.webp",
+        "src": "/images/optimized/popularBackground-480-1d136f71e5d2.webp",
+        "width": 480,
+        "height": 320,
+        "bytes": 13978
+      },
+      {
+        "src": "/images/optimized/popularBackground-640-6d91dffe4006.webp",
         "width": 640,
         "height": 427,
-        "bytes": 28064
+        "bytes": 21398
       },
       {
-        "src": "/images/optimized/popularBackground-1280-cfc27a8b378d.webp",
+        "src": "/images/optimized/popularBackground-1280-84344bce9498.webp",
         "width": 1280,
         "height": 853,
-        "bytes": 75464
+        "bytes": 56800
       },
       {
-        "src": "/images/optimized/popularBackground-1920-b0535ac4f291.webp",
+        "src": "/images/optimized/popularBackground-1920-0dee3757050f.webp",
         "width": 1920,
         "height": 1280,
-        "bytes": 138330
+        "bytes": 101184
       }
     ]
   },
   "latestBackground": {
     "source": "/images/hero/hero-openair-stage.jpg",
     "sourceBytes": 667922,
-    "src": "/images/optimized/latestBackground-1920-2a8f0c70b5a7.webp",
+    "src": "/images/optimized/latestBackground-1920-419eb99ec98e.webp",
     "width": 1920,
     "height": 2559,
-    "bytes": 228652,
-    "srcSet": "/images/optimized/latestBackground-640-6fc3bfc4d824.webp 640w, /images/optimized/latestBackground-1280-396403ee3588.webp 1280w, /images/optimized/latestBackground-1920-2a8f0c70b5a7.webp 1920w",
+    "bytes": 167446,
+    "srcSet": "/images/optimized/latestBackground-480-1d4bdd65e5d3.webp 480w, /images/optimized/latestBackground-640-c38f4abd401b.webp 640w, /images/optimized/latestBackground-1280-2769fde87c78.webp 1280w, /images/optimized/latestBackground-1920-419eb99ec98e.webp 1920w",
     "variants": [
       {
-        "src": "/images/optimized/latestBackground-640-6fc3bfc4d824.webp",
+        "src": "/images/optimized/latestBackground-480-1d4bdd65e5d3.webp",
+        "width": 480,
+        "height": 640,
+        "bytes": 20936
+      },
+      {
+        "src": "/images/optimized/latestBackground-640-c38f4abd401b.webp",
         "width": 640,
         "height": 853,
-        "bytes": 46386
+        "bytes": 33898
       },
       {
-        "src": "/images/optimized/latestBackground-1280-396403ee3588.webp",
+        "src": "/images/optimized/latestBackground-1280-2769fde87c78.webp",
         "width": 1280,
         "height": 1706,
-        "bytes": 132284
+        "bytes": 97702
       },
       {
-        "src": "/images/optimized/latestBackground-1920-2a8f0c70b5a7.webp",
+        "src": "/images/optimized/latestBackground-1920-419eb99ec98e.webp",
         "width": 1920,
         "height": 2559,
-        "bytes": 228652
+        "bytes": 167446
       }
     ]
   }
