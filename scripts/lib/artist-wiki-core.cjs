@@ -29,6 +29,9 @@ function albumFromText(text, title, kind, yearNow, explicitYear = null) {
   const trailing = metadata.match(/(?:[,–—-]\s*)((?:19|20)\d{2})\.?\s*$/)
   const released = title && metadata.match(/\b(?:released|release date|datum izdavanja)\s*:\s*[^:]{0,60}?\b((?:19|20)\d{2})\b/i)
   if (explicitYear && released?.[1] && explicitYear !== released[1]) return null
+  // A parenthesis can contain an original release and a later reissue. Its
+  // final year is not proof of the original release date; retain it for review.
+  if (!explicitYear && !released && datedParentheses && new Set(datedParentheses[0].match(/\b(?:19|20)\d{2}\b/g)).size > 1) return null
   const metadataYears = title ? [...new Set([...metadata.matchAll(/\b(?:19|20)\d{2}\b/g)].map(match=>match[0]))] : []
   const year = explicitYear || released?.[1] || leading?.[1] || datedParentheses?.[0].match(/\b(?:19|20)\d{2}\b/g)?.at(-1) || trailing?.[1] || (metadataYears.length === 1 ? metadataYears[0] : null)
   if (!year || Number(year) > yearNow) return null
@@ -44,7 +47,7 @@ function albumFromText(text, title, kind, yearNow, explicitYear = null) {
   for (const [opening, closing] of [['"', '"'], ['„', '“'], ['“', '”']]) {
     if (title.startsWith(opening) && title.endsWith(closing)) { title = title.slice(opening.length, -closing.length).trim(); break }
   }
-  if (!title || title.length > 180 || /^(?:albums?|albumi|studio albums?|diskografija|discography|released|izdato|godina|title|naslov)$/i.test(title) || /https?:|\[object Object\]|demo album|snimljen|сингл плоча|singl ploca/i.test(title) || (kind === "album" && title.includes("/")) || title.includes("(") && !title.includes(")")) return null
+  if (!title || title.length > 180 || /^(?:albums?|albumi|studio albums?|diskografija|discography|released|izdato|godina|title|naslov)$/i.test(title) || /^(?:released|release date|date of release|datum izdavanja|izdato|label|format|formats|izdavac)\s*:/i.test(toLatin(title)) || /https?:|\[object Object\]|demo album|snimljen|сингл плоча|singl ploca/i.test(title) || (kind === "album" && title.includes("/")) || title.includes("(") && !title.includes(")")) return null
   return { title, year, kind }
 }
 

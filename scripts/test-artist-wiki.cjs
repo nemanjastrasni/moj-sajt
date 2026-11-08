@@ -1,8 +1,19 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- CommonJS parser and publication regression fixtures. */
 const { test } = require("node:test")
 const assert = require("node:assert/strict")
 const core = require("./lib/artist-wiki-core.cjs")
 const tool = require("./artist-wiki.cjs")
 const prose = "The band was founded by musicians and is known for its albums and concerts. ".repeat(5)
+
+test("standalone release metadata is not imported as an album title", () => {
+  const html='<h2>Discography</h2><h3>Albums</h3><div><p><i><b>Actual record</b></i></p><ul><li>Released: April 22, 1971</li><li>Format: LP</li><li>Label: Records</li></ul></div><ul><li><i>Another record</i> (1972)</li></ul>'
+  assert.deepEqual(core.extractArticle(html,{strictAlbums:true}).albums,[{title:'Another record',year:'1972',kind:'album'}])
+})
+
+test("a reissue date is not substituted for an ambiguous original release", () => {
+  const html='<h2>Studio albums</h2><ul><li><i>First record</i> (1971., reizdanje 2008.)</li><li>Second record (1977., reissue 2008.)</li><li><i>Clear release</i> (1979)</li></ul>'
+  assert.deepEqual(core.extractArticle(html,{strictAlbums:true}).albums,[{title:'Clear release',year:'1979',kind:'studio'}])
+})
 
 test("a thorough maintenance lookup compares fuller discographies without changing the preferred biography", async () => {
   const entity={id:'Q100',labels:{en:{value:'Test Band'}},claims:{P31:[{rank:'normal',mainsnak:{snaktype:'value',datavalue:{value:{id:'Q215380'}}}}]},sitelinks:{srwiki:{title:'Test Band'},enwiki:{title:'Test Band'}}}

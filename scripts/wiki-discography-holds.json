@@ -1,4 +1,6 @@
 [
+  { "name": "Zvonko Bogdan", "wikidataId": "Q2633794", "reason": "Wikipedia album cards were parsed as Released: date metadata; unsupported layout and the unfamiliar Legolas title require source review before import." },
+  { "name": "Mišo Kovač", "wikidataId": "Q965634", "reason": "Wikipedia list mixes original releases with 2008 reissues, repeated titles and conflicting studio/compilation classifications; review individually before import." },
   { "name": "Aca Lukas", "wikidataId": "Q337143", "reason": "Prepared studio list contains kafana/live releases; verify release types individually." },
   { "name": "Atheist Rap", "wikidataId": "Q703217", "reason": "Prepared studio list includes Predsednici predsednistva predsednika; verify compilation classification." },
   { "name": "Divlje Jagode", "wikidataId": "Q93292", "reason": "Prepared first-album year conflicts with the band's official historical material; review dates and newer releases." },
