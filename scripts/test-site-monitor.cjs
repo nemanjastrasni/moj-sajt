@@ -34,8 +34,19 @@ test('production origins cannot target localhost, credentials, plaintext or URL 
 test('sitemap entries cannot turn into authenticated requests, foreign requests or private playlist probes', () => {
   assert.equal(publicPath(origin + song, origin), song)
   assert.equal(publicPath(origin + '/plejliste/lako', origin), '/plejliste/lako')
+  assert.equal(publicPath(origin + '/public-listening-playlists', origin), '/public-listening-playlists')
   for (const path of ['/admin', '/api/admin/songs', '/profile', '/plejliste/private-user-id', '/plejliste/pesme-koje-znam', song + '?playlist=private', '/pesme/%ZZ']) assert.equal(publicPath(origin + path, origin), null)
   assert.equal(publicPath('https://foreign.example/pesme/x', origin), null)
+  for (const path of ['/public-listening-playlists/private-id', '/public-listening-playlists?userId=private', '/listening-playlist/private-id']) assert.equal(publicPath(origin + path, origin), null)
+})
+
+test('the public listening catalog belongs in the sitemap without authorizing private lists', async () => {
+  const fixture = siteFixture({ '/sitemaps/pages.xml': map(['/', '/public-listening-playlists']) })
+  const result = await inspectSite({ origin, fetcher: fixture.fetcher, now })
+  assert.equal(result.status, 'healthy')
+  assert.equal(result.coverage.sitemapUrls, 4)
+  assert.ok(fixture.calls.includes('/public-listening-playlists'))
+  assert.equal(fixture.calls.some(path => path.startsWith('/listening-playlist')), false)
 })
 test('robots allow/disallow rules use specificity rather than treating Allow slash as a bypass', () => {
   const source = 'User-agent: special\nDisallow: /\nUser-agent: *\nAllow: /\nDisallow: /pesme/\nAllow: /pesme/domace/'
@@ -118,4 +129,21 @@ test('report markup escapes text and states its actual coverage and zero-write p
   const report = warningReport(); report.coverage = { sitemapFiles: 3, sitemapUrls: 100, songUrls: 90, pagesChecked: 12 }; report.checks[0].path = '/pesme/<script>|test'
   const markdown = markdownReport(report)
   assert.ok(markdown.includes('bez potvrde Google indeksiranja')); assert.ok(markdown.includes('**0**')); assert.doesNotMatch(markdown, /\/pesme\/<script>/)
+})
+
+test('provider HTTP 429 remains explicit, costs no retry and never exposes provider body or credentials', async () => {
+  let paidCalls = 0
+  const result = await analyzeReport(warningReport(), { now, env, fetcher: async url => {
+    if (url.startsWith('https://api.github.com/')) return Response.json({ workflow_runs: [] })
+    paidCalls++
+    return Response.json({ error: { message: 'private-provider-content' } }, { status: 429 })
+  } })
+  assert.equal(paidCalls, 1)
+  assert.equal(result.status, 'warning')
+  assert.equal(result.ai.status, 'provider-error')
+  assert.equal(result.ai.httpStatus, 429)
+  const markdown = markdownReport(result)
+  assert.match(markdown, /HTTP 429/)
+  assert.match(markdown, /ne potvrđuje/)
+  assert.doesNotMatch(JSON.stringify(result) + markdown, /private-provider-content|test-key-never-print/)
 })

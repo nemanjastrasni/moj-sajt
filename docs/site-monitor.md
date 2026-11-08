@@ -38,6 +38,10 @@ Neispravan, prekinut ili neodobren oblik AI odgovora odbacuje se. AI ne može da
 
 ## Lokalna provera i sledeća faza
 
+Ispravka od 8. novembra 2026: javni katalog `/public-listening-playlists` sada je izričito dozvoljen u sitemap proveri. Ranije je bio pregledan kao javna početna stranica kataloga, ali nije bio u dozvoljenoj listi sitemap adresa, što je izazivalo lažni kritični nalaz `sitemap_private_or_foreign`. Dozvola važi samo za tu tačnu putanju; privatne liste, podputanje, strani domeni i query parametri ostaju odbijeni. Monitor i admin granice prolaze 20 testova. Lokalno pokretanje ispravljenog monitora nad produkcionim javnim stranicama prošlo je: 13 sitemap datoteka, 11.769 javnih adresa, 9.393 pesme, 21 pregledana stranica, bez upozorenja ili kritičnih nalaza. Ovo ne menja stare GitHub izveštaje: novi rezultat u panelu zahteva objavu ispravke i novo GitHub pokretanje.
+
+U neuspelom GitHub pokretanju [42367118611](https://github.com/nemanjastrasni/moj-sajt/actions/runs/42367118611) AI je zasebno dobio HTTP 429. Sažetak sada navodi HTTP status i korak za proveru kredita, kvote i ograničenja zahteva. Sam status ne dokazuje koji je od tih razloga; videti [OpenAI objašnjenje grešaka](https://developers.openai.com/api/docs/guides/error-codes). Nije izvršen novi plaćeni API poziv, nije promenjen ključ, model ili finansijsko ograničenje. Uspešne osnovne provere ne zahtevaju AI analizu.
+
 `npm run test:site-monitor` proverava monitor i AI granice bez mreže i bez API troška. `node --test scripts/test-admin-monitor.cjs` proverava admin pristup i istoriju. `npm run monitor:site` čita produkcijske javne stranice i čuva lokalne ignorisane izveštaje u `reports/site-monitor/`.
 
 Pošto nema sadržajnih izmena, za ovu fazu nema promena baze koje treba vraćati. Sledeća faza zahteva zasebno odobrenje: centralni dnevnik sa pre/posle stanjem, strogo ograničena ovlašćenja, proverene uslove za malu ispravku, kontrolu paralelnih izmena, postupak vraćanja i vlasničko odobravanje ozbiljnijih zahvata. Postojeći privilegovani Supabase nalog ne sme se prosleđivati botu.

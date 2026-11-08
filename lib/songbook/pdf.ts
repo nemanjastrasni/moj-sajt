@@ -5,7 +5,8 @@ import { capoSheet, isCapo } from "../chords/capo"
 import { parseSongSheet } from "../chords/songSheet"
 import { MAX_BOOK_SONGS, MAX_PDF_CHARACTERS, type PdfSong } from "./model"
 import { printBlocks } from "./layout"
-import { SITE_NAME } from "../brand"
+import { BRAND_ACCENT, BRAND_LABEL } from "../brand"
+import { BRAND_LOGO_HEIGHT, BRAND_LOGO_PATHS, BRAND_LOGO_WIDTH } from "../brand-artwork"
 
 export type PdfOptions = { title: string; fontSize: number; chordSize?: number; book: boolean; contents: boolean; locale: "sr" | "en" }
 export type PdfFonts = { regular: Uint8Array; bold: Uint8Array }
@@ -38,7 +39,20 @@ export async function generateSongbookPdf(songs: PdfSong[], options: PdfOptions,
   const regular = await doc.embedFont(fonts.regular, { subset: true }), bold = await doc.embedFont(fonts.bold, { subset: true })
   const supported = new Set(regular.getCharacterSet()), supportedBold = new Set(bold.getCharacterSet())
   const en = options.locale === "en", title = text(options.title).slice(0, 120)
-  doc.setTitle(title); doc.setCreator(SITE_NAME); doc.setLanguage(en ? "en" : "sr-Latn")
+  doc.setTitle(title); doc.setCreator(BRAND_LABEL); doc.setLanguage(en ? "en" : "sr-Latn")
+  // Embed the same vector mark once, then reuse it on the cover and every footer.
+  // The print version uses dark lettering on paper and the approved green accent.
+  const artwork = await PDFDocument.create()
+  const artworkPage = artwork.addPage([BRAND_LOGO_WIDTH, BRAND_LOGO_HEIGHT])
+  const accent = [1, 3, 5].map(offset => parseInt(BRAND_ACCENT.slice(offset, offset + 2), 16) / 255)
+  for (const [part, path] of Object.entries(BRAND_LOGO_PATHS)) {
+    artworkPage.drawSvgPath(path, { y: BRAND_LOGO_HEIGHT, color: part === "accent" ? rgb(accent[0], accent[1], accent[2]) : part === "suffix" ? rgb(.27, .29, .3) : rgb(.09, .11, .12) })
+  }
+  const logo = await doc.embedPage(artworkPage)
+  function drawLogo(p: PDFPage, width: number, top: number) {
+    const height = width * BRAND_LOGO_HEIGHT / BRAND_LOGO_WIDTH
+    p.drawPage(logo, { x: MARGIN, y: top - height, width, height })
+  }
   function page() {
     if (doc.getPageCount() >= MAX_PAGES) throw new Error("Knjiga ima previse stranica. Izaberi manje pesama ili manji tekst.")
     return doc.addPage(PageSizes.A4)
@@ -54,8 +68,8 @@ export async function generateSongbookPdf(songs: PdfSong[], options: PdfOptions,
   }
   if (options.book) {
     const cover = page()
-    let y = paragraph(cover, title, HEIGHT - 170, 28, true)
-    y = paragraph(cover, SITE_NAME, y - 24, 14)
+    drawLogo(cover, 260, HEIGHT - MARGIN)
+    const y = paragraph(cover, title, HEIGHT - 170, 28, true)
     paragraph(cover, `${songs.length} ${en ? "songs" : "pesama"}`, y - 12, 11)
   }
   const contentsPages: { page: PDFPage; entries: { index: number; lines: string[]; top: number }[] }[] = []
@@ -131,7 +145,7 @@ export async function generateSongbookPdf(songs: PdfSong[], options: PdfOptions,
   }
   doc.getPages().forEach((p, index) => {
     const footer = `${index + 1} / ${doc.getPageCount()}`
-    draw(p, SITE_NAME, MARGIN, 34, 8, false, .4)
+    drawLogo(p, 96, 50)
     draw(p, footer, WIDTH - MARGIN - regular.widthOfTextAtSize(footer, 8), 34, 8, false, .4)
   })
   return { bytes: await doc.save(), pageCount: doc.getPageCount(), songPages }

@@ -16,7 +16,7 @@ function originUrl(value) {
 function publicPath(value, origin) {
   try {
     const url = new URL(value)
-    if (url.origin !== origin || url.search || url.hash || url.username || url.password || !PUBLIC_PATH.test(url.pathname) && url.pathname !== '/') return null
+    if (url.origin !== origin || url.search || url.hash || url.username || url.password || !PUBLIC_PATH.test(url.pathname) && url.pathname !== '/' && url.pathname !== '/public-listening-playlists') return null
     const decoded = decodeURIComponent(url.pathname)
     if (PRIVATE_PATH.test(decoded) || /^\/plejliste\/(?:pesme-koje-znam|top-user)(?:\/|$)/.test(decoded) || /[\u0000-\u001f\\]/.test(decoded)) return null
     if (decoded.startsWith('/plejliste/') && !CATALOG_SLUGS.has(decoded.slice('/plejliste/'.length))) return null
@@ -158,7 +158,9 @@ async function inspectSite({ origin: input, now = new Date(), fetcher = fetch, s
 const markdownText = value => String(value).replace(/[\\`*_[\]<>|#]/g, character => '\\' + character).replace(/[\r\n]+/g, ' ')
 function markdownReport(report) {
   const labels = { healthy: 'Provere su prošle', warning: 'Potrebna je provera nalaza', critical: 'Otkriven je ozbiljan problem' }
-  return `# GitarAkordi — dnevni nadzor\n\n${labels[report.status]}\n\nVreme: ${report.startedAt}\n\nRežim: samo nadzor. Upisi u bazu i kod: **0**.\n\nSitemap: ${report.coverage.sitemapFiles} datoteka, ${report.coverage.sitemapUrls} adresa (${report.coverage.songUrls} pesama). Pregledano stranica: ${report.coverage.pagesChecked}. Ovo je uzorak javnih stranica, bez potvrde Google indeksiranja.\n\n| Nivo | Provera | Putanja | Nalaz |\n| --- | --- | --- | --- |\n${report.checks.map(check => `| ${check.level} | ${check.code} | ${markdownText(check.path)} | ${markdownText(check.message)} |`).join('\n')}\n\nAI: ${markdownText(report.ai.status)}.\n${report.ai.analysis ? '\nAI predlog zahteva proveru i odobrenje; ništa nije izvršeno.\n\n' + markdownText(report.ai.analysis.summary) + '\n\n' + report.ai.analysis.findings.map(f => `- ${markdownText(f.checkId)}: ${markdownText(f.explanation)} Predlog: ${markdownText(f.recommendation)}`).join('\n') : ''}\n`
+  const httpStatus = report.ai.status === 'provider-error' && Number.isInteger(report.ai.httpStatus) && report.ai.httpStatus >= 400 && report.ai.httpStatus <= 599 ? ` (HTTP ${report.ai.httpStatus})` : ''
+  const aiNotice = report.ai.status === 'provider-error' && report.ai.httpStatus === 429 ? '\nAI analiza nije dobijena. Proveri API kredite, kvotu i ograničenja zahteva. HTTP 429 sam po sebi ne potvrđuje koji je od tih uzroka. Rezultati redovnih provera ostaju navedeni iznad.\n' : ''
+  return `# GitarAkordi — dnevni nadzor\n\n${labels[report.status]}\n\nVreme: ${report.startedAt}\n\nRežim: samo nadzor. Upisi u bazu i kod: **0**.\n\nSitemap: ${report.coverage.sitemapFiles} datoteka, ${report.coverage.sitemapUrls} adresa (${report.coverage.songUrls} pesama). Pregledano stranica: ${report.coverage.pagesChecked}. Ovo je uzorak javnih stranica, bez potvrde Google indeksiranja.\n\n| Nivo | Provera | Putanja | Nalaz |\n| --- | --- | --- | --- |\n${report.checks.map(check => `| ${check.level} | ${check.code} | ${markdownText(check.path)} | ${markdownText(check.message)} |`).join('\n')}\n\nAI: ${markdownText(report.ai.status)}${httpStatus}.\n${aiNotice}${report.ai.analysis ? '\nAI predlog zahteva proveru i odobrenje; ništa nije izvršeno.\n\n' + markdownText(report.ai.analysis.summary) + '\n\n' + report.ai.analysis.findings.map(f => `- ${markdownText(f.checkId)}: ${markdownText(f.explanation)} Predlog: ${markdownText(f.recommendation)}`).join('\n') : ''}\n`
 }
 
 module.exports = { originUrl, publicPath, robotsAllows, fetchText, samples, inspectSite, markdownReport, USER_AGENT }

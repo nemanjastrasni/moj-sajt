@@ -129,6 +129,8 @@ test("real PDF has embedded fonts, an A4 page and no menu/video content", async 
   const result = await generateSongbookPdf([pdfSong], { ...options, book: false, contents: false }, fonts)
   const doc = await PDFDocument.load(result.bytes)
   assert.equal(doc.getPageCount(), 1); assert.equal(doc.getTitle(), options.title)
+  assert.equal(doc.getCreator(), "GitarAkordi.com")
+  assert.equal(doc.getPage(0).node.Resources().lookup(PDFName.of("XObject")).keys().length, 1)
   assert.ok(Math.abs(doc.getPage(0).getWidth() - 595.28) < .01)
   assert.equal(doc.catalog.has(PDFName.of("OpenAction")), false)
 })

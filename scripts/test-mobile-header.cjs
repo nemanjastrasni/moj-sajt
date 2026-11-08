@@ -76,7 +76,7 @@ test("permanent search strip is server-renderable, labeled and closed until a qu
   assert.equal($("label").attr("for"), $("input").attr("id"))
   assert.equal($("dialog").length, 0)
   assert.equal($(".search-header-brand").attr("href"), "/")
-  assert.equal($(".search-header-brand img").attr("alt"), "GitarAkordi")
+  assert.equal($(".search-header-brand svg[role=img]").attr("aria-label"), "GitarAkordi.com")
 })
 
 test("mobile account text is escaped, not injected as markup", () => {
