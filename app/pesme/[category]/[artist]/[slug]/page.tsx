@@ -3,6 +3,7 @@ import { headers } from "next/headers"
 import { getPublicSong } from "@/lib/publicPages"
 import { countSongViewAfterResponse } from "@/lib/songViews"
 import { publicPageMetadata } from "@/lib/seo/metadata"
+import { songMetadataText } from "@/lib/seo/content"
 import { routePath } from "@/lib/seo/site"
 import Breadcrumbs from "@/app/components/Breadcrumbs"
 import { getCategoryLabel } from "@/lib/categories"
@@ -35,7 +36,8 @@ export async function generateMetadata(
   const { category, artist, slug } = await params
   const song = await getPublicSong(category, artist, slug)
   if (!song) notFound()
-  return publicPageMetadata(`${song.title} – ${song.artist.name}: akordi i tekst`, `Akordi i tekst pesme ${song.title} – ${song.artist.name}. Tonalitet, capo preporuke i prikaz za sviranje.`, routePath("pesme", category, song.artist.slug, song.slug))
+  const text = songMetadataText(song)
+  return { ...publicPageMetadata(text.title, text.description, routePath("pesme", category, song.artist.slug, song.slug)), ...(!text.index ? { robots: { index: false, follow: true } } : {}) }
 }
 
 export default async function SongPage({ params, searchParams }: Props) {

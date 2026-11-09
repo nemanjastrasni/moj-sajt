@@ -1,4 +1,6 @@
 import { publicUrl, SITE_NAME } from "./site"
+import { BRAND_LABEL } from "../brand"
+import { SOCIAL_IMAGE } from "./social-image"
 
 export type BreadcrumbItem = { name: string; path: string }
 
@@ -14,5 +16,5 @@ export function breadcrumbData(items: BreadcrumbItem[]) {
 }
 
 export function websiteData() {
-  return { "@context": "https://schema.org", "@type": "WebSite", "@id": publicUrl("/") + "#website", name: SITE_NAME, url: publicUrl("/"), inLanguage: "sr-Latn" }
+  return { "@context": "https://schema.org", "@type": "WebSite", "@id": publicUrl("/") + "#website", name: SITE_NAME, alternateName: [BRAND_LABEL, "gitarakordi.com"], url: publicUrl("/"), inLanguage: "sr-Latn", image: { "@type": "ImageObject", url: publicUrl(SOCIAL_IMAGE.src), width: SOCIAL_IMAGE.width, height: SOCIAL_IMAGE.height } }
 }

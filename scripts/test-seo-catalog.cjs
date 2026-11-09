@@ -135,6 +135,8 @@ test("website identity uses the configured canonical origin without a fake searc
   const data = structured.websiteData()
   assert.equal(data.url, site.SITE_URL + "/")
   assert.equal(data.name, site.SITE_NAME)
+  assert.deepEqual(data.alternateName, ['GitarAkordi.com', 'gitarakordi.com'])
+  assert.equal(data.image.url, site.SITE_URL + '/brand/gitarakordi-share.png')
   assert.equal(data.potentialAction, undefined)
 })
 
@@ -144,6 +146,19 @@ test("social images use the actual artist photo and preserve the default fallbac
   assert.equal(artist.openGraph.images[0].width, undefined, "do not invent the photo dimensions")
   assert.equal(artist.twitter.images[0], artist.openGraph.images[0].url)
   assert.ok(metadata.publicPageMetadata("Pesme", "Akordi", "/pesme").openGraph.images[0].width > 0)
+  const fallback = metadata.publicPageMetadata("Pesme", "Akordi", "/pesme").openGraph.images[0]
+  assert.equal(fallback.url, site.SITE_URL + '/brand/gitarakordi-share.png')
+  assert.equal(fallback.width, 1200)
+  assert.equal(fallback.height, 630)
+})
+
+test("the shared default card is a real public image with the advertised dimensions", async () => {
+  const image = metadata.publicPageMetadata("Pesme", "Akordi", "/pesme").openGraph.images[0]
+  const source = path.join(root, 'public', new URL(image.url).pathname)
+  const actual = await require('sharp')(source).metadata()
+  assert.equal(actual.format, 'png')
+  assert.equal(actual.width, image.width)
+  assert.equal(actual.height, image.height)
 })
 
 test("sitemap exposes chord roots and public catalog entry points without private recommendations", () => {

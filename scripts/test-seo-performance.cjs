@@ -91,6 +91,36 @@ test('metadata and song rendering share a request read; view counting is deferre
   await jobs[0](); assert.equal(calls.filter(call => call[1] === 'update').length, 1)
   assert.deepEqual(calls.find(call => call[1] === 'update')[2], { where: { id: 'song' }, data: { popularity: { increment: 1 } } })
 })
+
+test('song search snippets describe rendered text, notation and missing content without inventing chords', async () => {
+  data.song.lyrics = 'A kada pođem daleko\nBiće mi drago.'
+  data.song.chords = 'Am Dm E7'
+  const text = await pages.song.generateMetadata(props())
+  assert.match(text.title, /tekst pesme$/)
+  assert.doesNotMatch(text.description, /[Aa]kordi|capo|tonalitet/)
+  assert.equal(text.openGraph.description, text.description)
+  assert.equal(text.twitter.title, text.title)
+  data.song.lyrics = 'e|---0---2---3---|\nB|---1---3---0---|'
+  assert.match((await pages.song.generateMetadata(props())).title, /zapis za sviranje$/)
+  data.song.lyrics = ' \n\u200b'
+  const empty = await pages.song.generateMetadata(props())
+  assert.deepEqual(empty.robots, { index: false, follow: true })
+  assert.equal(calls.filter(call => call[0] === 'song').length, 1)
+})
+
+test('biography metadata advertises only the content actually available on the profile', async () => {
+  const bio = await pages.bio.generateMetadata(props())
+  assert.match(bio.title, /– Biografija$/)
+  assert.doesNotMatch(bio.description, /diskografija|albumi|godine izdanja/i)
+  data.artist.bio = 'Biografija nije dostupna.'
+  data.artist.discography = [{ title: 'Probni album' }]
+  const discs = await pages.bio.generateMetadata(props())
+  assert.match(discs.title, /– Diskografija$/)
+  assert.doesNotMatch(discs.description, /biografija|godine izdanja/i)
+  assert.equal(discs.robots, undefined)
+  data.artist.bioShort = 'Kratka proverena biografija.'
+  assert.match((await pages.bio.generateMetadata(props())).title, /Biografija i diskografija$/)
+})
 test('unknown songs and categories are 404s, not plausible-looking SEO pages', async () => {
   await assert.rejects(pages.song.generateMetadata(props('missing')), error => error.code === 'NEXT_NOT_FOUND')
   await assert.rejects(pages.song.generateMetadata({ params: Promise.resolve({ category: 'invalid', artist: 'zeljko', slug: 'pesma' }) }), error => error.code === 'NEXT_NOT_FOUND')

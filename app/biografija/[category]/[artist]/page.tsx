@@ -1,5 +1,6 @@
 import { getPublicArtist } from "@/lib/publicPages"
 import { publicPageMetadata } from "@/lib/seo/metadata"
+import { biographyMetadataText } from "@/lib/seo/content"
 import { routePath } from "@/lib/seo/site"
 import Breadcrumbs from "@/app/components/Breadcrumbs"
 import { getCategoryLabel } from "@/lib/categories"
@@ -34,7 +35,8 @@ export const dynamic = "force-dynamic"
 export async function generateMetadata({ params }: { params: Promise<{ category: string; artist: string }> }) {
   const { category, artist } = await params, data = await getPublicArtist(category, artist)
   if (!data) notFound()
-  return { ...publicPageMetadata(`${data.name} – Biografija i diskografija`, `Biografija izvođača ${data.name}, diskografija, albumi i godine izdanja prema dostupnim izvorima.`, routePath("biografija", category, data.slug), { image: getArtistImage(data) }), ...(!hasBiographyContent(data) ? { robots: { index: false, follow: true } } : {}) }
+  const text = biographyMetadataText(data)
+  return { ...publicPageMetadata(text.title, text.description, routePath("biografija", category, data.slug), { image: getArtistImage(data) }), ...(!hasBiographyContent(data) ? { robots: { index: false, follow: true } } : {}) }
 }
 
 export default async function BiographyPage({ params }: { params: Promise<{ category: string; artist: string }> }) {
