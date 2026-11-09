@@ -1,0 +1,5 @@
+.guide { max-width: 52rem; margin-block: 2rem; line-height: 1.75; }
+.guide h2 { margin-block: 1.5rem .5rem; font-size: 1.25rem; font-weight: 700; line-height: 1.4; }
+.guide p { margin-block: .75rem; }
+.links { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; }
+.links a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: underline; text-underline-offset: .2em; }

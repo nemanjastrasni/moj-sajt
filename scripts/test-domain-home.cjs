@@ -5,6 +5,7 @@ const{domainRedirects,PRIMARY_SITE_URL}=require('../lib/seo/domain.cjs'),{resolv
 let fail=false,reads=0
 const songs=Array.from({length:5},(_,i)=>({id:'s'+i,title:'Pesma '+i,slug:'pesma-'+i,category:'domace',artist:{name:'Izvođač',slug:'izvodjac'}}))
 const original=Module._load
+require.extensions['.css']=module=>{module.exports={}}
 Module._load=function(request,parent,main){if(request==='@/lib/homeSongsServer')return{getHomeSongs:async()=>{reads++;if(fail)throw Error('private-db-secret');return songs}};if(request==='./UiText')return{useI18n:()=>({t:s=>s})};if(request==='./components/UiText')return{__esModule:true,default:({text})=>React.createElement('span',null,text)};if(['./components/HomeRepertoire','./components/Hero','./components/StructuredData'].includes(request))return{__esModule:true,default:()=>null};if(request==='next/link')return{__esModule:true,default:props=>React.createElement('a',props)};if(request.startsWith('@/'))request=path.join(__dirname,'..',request.slice(2));return original.call(this,request,parent,main)}
 let Page,robots,config
 try{Page=require('../app/page.tsx').default;robots=require('../app/robots.ts').default;config=require('../next.config.ts').default}finally{Module._load=original}

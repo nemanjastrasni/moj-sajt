@@ -11,10 +11,12 @@ import HomeRepertoire from "./components/HomeRepertoire"
 import SiteImage from "./components/SiteImage"
 import { publicPageMetadata } from "@/lib/seo/metadata"
 import { SITE_NAME } from "@/lib/brand"
+import guide from "./components/CatalogGuide.module.css"
 
-const homeMetadata = publicPageMetadata(`${SITE_NAME} – Akordi i tekstovi pesama`, "Pesme sa akordima, lične plejliste, capo, PDF pesmarice, biografije i diskografije izvođača.", "/")
+const homeTitle = `${SITE_NAME} – Akordi za gitaru i tekstovi pesama`
+const homeMetadata = publicPageMetadata(homeTitle, "Akordi za gitaru i tekstovi zabavnih, narodnih i stranih pesama. Pronađi pesmu, promeni tonalitet i sačuvaj svoj repertoar u plejlisti.", "/")
 
-export const metadata = { ...homeMetadata, title: { absolute: `${SITE_NAME} – Akordi i tekstovi pesama` } }
+export const metadata = { ...homeMetadata, title: { absolute: homeTitle } }
 export const revalidate=60
 
 export default async function HomePage() {
@@ -23,7 +25,7 @@ export default async function HomePage() {
   return (
     <div className="w-full home-page">
       <StructuredData data={websiteData()} />
-      <h1 className="sr-only">{SITE_NAME} – <UiText text="Akordi i tekstovi" /></h1>
+      <h1 className="sr-only">{SITE_NAME} – <UiText text="Akordi za gitaru i tekstovi pesama" /></h1>
 
       <HomeRepertoire />
 
@@ -95,6 +97,18 @@ export default async function HomePage() {
       </section>
       <PopularSongs initialSongs={popular}/>
       <LatestSongs initialSongs={latest}/>
+      <section className="mx-auto max-w-6xl px-6 py-6" aria-labelledby="home-song-guide">
+        <div className={guide.guide}>
+          <h2 id="home-song-guide"><UiText text="Pesme sa akordima za gitaru" /></h2>
+          <p><UiText text="Pronađi pesmu po naslovu ili izvođaču, izaberi kategoriju i otvori zapis za sviranje. Uz pesme su dostupni promena tonaliteta, lične plejliste i izvoz PDF pesmarice." /></p>
+          <p><UiText text="Za početak izaberi lakše pesme ili pogledaj dijagrame akorda pre nego što sastaviš svoj repertoar." /></p>
+          <nav className={guide.links} aria-labelledby="home-song-guide">
+            <Link href="/pesme" prefetch={false}><UiText text="Pronađi pesme sa akordima" /></Link>
+            <Link href="/akordi" prefetch={false}><UiText text="Dijagrami akorda za gitaru" /></Link>
+            <Link href="/plejliste/beginner" prefetch={false}><UiText text="Pesme za početnike" /></Link>
+          </nav>
+        </div>
+      </section>
 
     </div>
   )

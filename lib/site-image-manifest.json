@@ -107,6 +107,21 @@
         "height": 639,
         "bytes": 48842
       }
+    ],
+    "avifSrcSet": "/images/optimized/categoryNarodne-480-5ea6604c7e3c.avif 480w, /images/optimized/categoryNarodne-960-44029fae9b25.avif 960w",
+    "avifVariants": [
+      {
+        "src": "/images/optimized/categoryNarodne-480-5ea6604c7e3c.avif",
+        "width": 480,
+        "height": 319,
+        "bytes": 12547
+      },
+      {
+        "src": "/images/optimized/categoryNarodne-960-44029fae9b25.avif",
+        "width": 960,
+        "height": 639,
+        "bytes": 33299
+      }
     ]
   },
   "categoryDomace": {
@@ -130,6 +145,21 @@
         "height": 640,
         "bytes": 34840
       }
+    ],
+    "avifSrcSet": "/images/optimized/categoryDomace-480-ed6a51d23fc5.avif 480w, /images/optimized/categoryDomace-960-df5abca8e338.avif 960w",
+    "avifVariants": [
+      {
+        "src": "/images/optimized/categoryDomace-480-ed6a51d23fc5.avif",
+        "width": 480,
+        "height": 320,
+        "bytes": 10258
+      },
+      {
+        "src": "/images/optimized/categoryDomace-960-df5abca8e338.avif",
+        "width": 960,
+        "height": 640,
+        "bytes": 23992
+      }
     ]
   },
   "categoryStrane": {
@@ -152,6 +182,21 @@
         "width": 960,
         "height": 548,
         "bytes": 29712
+      }
+    ],
+    "avifSrcSet": "/images/optimized/categoryStrane-480-b5a189744107.avif 480w, /images/optimized/categoryStrane-960-808bf6200261.avif 960w",
+    "avifVariants": [
+      {
+        "src": "/images/optimized/categoryStrane-480-b5a189744107.avif",
+        "width": 480,
+        "height": 274,
+        "bytes": 9916
+      },
+      {
+        "src": "/images/optimized/categoryStrane-960-808bf6200261.avif",
+        "width": 960,
+        "height": 548,
+        "bytes": 19753
       }
     ]
   },
@@ -188,6 +233,33 @@
         "height": 1280,
         "bytes": 101184
       }
+    ],
+    "avifSrcSet": "/images/optimized/popularBackground-480-e72f836390a4.avif 480w, /images/optimized/popularBackground-640-4805ecd03682.avif 640w, /images/optimized/popularBackground-1280-972fbcd83e93.avif 1280w, /images/optimized/popularBackground-1920-66cec0a94aa3.avif 1920w",
+    "avifVariants": [
+      {
+        "src": "/images/optimized/popularBackground-480-e72f836390a4.avif",
+        "width": 480,
+        "height": 320,
+        "bytes": 12079
+      },
+      {
+        "src": "/images/optimized/popularBackground-640-4805ecd03682.avif",
+        "width": 640,
+        "height": 427,
+        "bytes": 17741
+      },
+      {
+        "src": "/images/optimized/popularBackground-1280-972fbcd83e93.avif",
+        "width": 1280,
+        "height": 853,
+        "bytes": 41219
+      },
+      {
+        "src": "/images/optimized/popularBackground-1920-66cec0a94aa3.avif",
+        "width": 1920,
+        "height": 1280,
+        "bytes": 66183
+      }
     ]
   },
   "latestBackground": {
@@ -222,6 +294,33 @@
         "width": 1920,
         "height": 2559,
         "bytes": 167446
+      }
+    ],
+    "avifSrcSet": "/images/optimized/latestBackground-480-9a45c62a3e7d.avif 480w, /images/optimized/latestBackground-640-4d49d3656142.avif 640w, /images/optimized/latestBackground-1280-d470edac0224.avif 1280w, /images/optimized/latestBackground-1920-41d5436fe79c.avif 1920w",
+    "avifVariants": [
+      {
+        "src": "/images/optimized/latestBackground-480-9a45c62a3e7d.avif",
+        "width": 480,
+        "height": 640,
+        "bytes": 20239
+      },
+      {
+        "src": "/images/optimized/latestBackground-640-4d49d3656142.avif",
+        "width": 640,
+        "height": 853,
+        "bytes": 31320
+      },
+      {
+        "src": "/images/optimized/latestBackground-1280-d470edac0224.avif",
+        "width": 1280,
+        "height": 1706,
+        "bytes": 76837
+      },
+      {
+        "src": "/images/optimized/latestBackground-1920-41d5436fe79c.avif",
+        "width": 1920,
+        "height": 2559,
+        "bytes": 122142
       }
     ]
   }
