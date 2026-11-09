@@ -2,14 +2,16 @@
 const { test } = require("node:test")
 const assert = require("node:assert/strict")
 const { inspectGoogleAuth, siteOrigin } = require("./check-google-auth.cjs")
-const site = "https://moj-sajt-rho.vercel.app"
+const site = "https://www.gitarakordi.com"
 const response = body => Response.json(body)
 const providers = callbackUrl => response({ google: { signinUrl: site + "/api/auth/signin/google", callbackUrl } })
 
 test("diagnostic accepts only known site origins and explicit local development origins", () => {
   assert.equal(siteOrigin(site + "/"), site)
+  assert.equal(siteOrigin("https://moj-sajt-rho.vercel.app"), "https://moj-sajt-rho.vercel.app")
+  assert.equal(siteOrigin("https://gitarakordi.com"), "https://gitarakordi.com")
   assert.equal(siteOrigin("http://localhost:3000"), "http://localhost:3000")
-  for (const url of ["http://moj-sajt-rho.vercel.app", "https://evil.test", "https://user:pass@moj-sajt-rho.vercel.app", site + "/login", site + "?secret=x", "http://169.254.169.254", site + ":444"]) assert.throws(() => siteOrigin(url))
+  for (const url of ["http://moj-sajt-rho.vercel.app", "http://www.gitarakordi.com", "https://www.gitarakordi.com.evil.test", "https://evil.test", "https://user:pass@moj-sajt-rho.vercel.app", site + "/login", site + "?secret=x", "http://169.254.169.254", site + ":444"]) assert.throws(() => siteOrigin(url))
 })
 
 test("provider-only check does not start OAuth or contact external destinations", async () => {

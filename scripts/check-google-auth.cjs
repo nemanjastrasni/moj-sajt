@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- Standalone CommonJS public-endpoint diagnostic. */
 const { parseArgs } = require("node:util")
-const DEFAULT_SITE = "https://moj-sajt-rho.vercel.app"
+const { PRIMARY_SITE_URL: DEFAULT_SITE } = require('../lib/seo/domain.cjs')
 function siteOrigin(value) {
   const url = new URL(value)
   const local = ["localhost", "127.0.0.1"].includes(url.hostname)
-  const allowed = local || ["moj-sajt-rho.vercel.app", "moj-sajt-git-main-nemanjastrasnis-projects.vercel.app"].includes(url.hostname)
+  const allowed = local || ["www.gitarakordi.com", "gitarakordi.com", "moj-sajt-rho.vercel.app", "moj-sajt-git-main-nemanjastrasnis-projects.vercel.app"].includes(url.hostname)
   if (!allowed || url.username || url.password || url.search || url.hash || url.pathname !== "/" || (!local && (url.protocol !== "https:" || url.port)) || (local && !["http:", "https:"].includes(url.protocol))) throw Error("Unsupported site origin")
   return url.origin
 }

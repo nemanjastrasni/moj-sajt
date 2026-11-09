@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- Standalone public-page performance audit. */
 const { parseArgs } = require('node:util')
 const fs = require('node:fs/promises'), path = require('node:path'), puppeteer = require('puppeteer')
-const { values } = parseArgs({ options: { 'base-url': { type: 'string', default: 'https://moj-sajt-rho.vercel.app' }, song: { type: 'string', default: '/pesme/domace/zana/dodirni-mi-kolena' }, out: { type: 'string', default: 'reports/site-performance' }, 'home-only': { type: 'boolean', default: false } } })
+const { PRIMARY_SITE_URL } = require('../lib/seo/domain.cjs')
+const { values } = parseArgs({ options: { 'base-url': { type: 'string', default: PRIMARY_SITE_URL }, song: { type: 'string', default: '/pesme/domace/zana/dodirni-mi-kolena' }, out: { type: 'string', default: 'reports/site-performance' }, 'home-only': { type: 'boolean', default: false } } })
 const base = new URL(values['base-url'])
 if (!['http:', 'https:'].includes(base.protocol) || base.protocol === 'http:' && !['localhost', '127.0.0.1'].includes(base.hostname) || base.username || base.password || base.pathname !== '/' || base.search || base.hash) throw Error('Use a public HTTPS origin, or a local development server, without credentials, path or query.')
 const song = new URL(values.song, base)

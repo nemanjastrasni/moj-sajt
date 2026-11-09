@@ -2,6 +2,12 @@
 const { test } = require('node:test'), assert = require('node:assert/strict')
 const { inspectSite, publicPath, originUrl, robotsAllows, fetchText, samples, markdownReport, USER_AGENT } = require('./lib/site-monitor.cjs')
 const { analyzeReport, validAnalysis, aiEligibility } = require('./lib/site-monitor-ai.cjs')
+const { monitorOrigin } = require('./site-monitor.cjs')
+test('monitor migrates known legacy settings to www while rejecting unsafe origins before normalization', () => {
+  for (const value of ['https://moj-sajt-rho.vercel.app/', 'https://gitarakordi.com', 'https://www.gitarakordi.com']) assert.equal(monitorOrigin(value), 'https://www.gitarakordi.com')
+  assert.equal(monitorOrigin('https://site.example'), 'https://site.example')
+  for (const value of ['http://moj-sajt-rho.vercel.app', 'https://user:secret@www.gitarakordi.com', 'https://www.gitarakordi.com/path', 'https://www.gitarakordi.com/?secret=x', 'https://127.0.0.1']) assert.throws(() => monitorOrigin(value))
+})
 const origin = 'https://site.example', song = '/pesme/domace/bend/pesma', bio = '/biografija/domace/bend'
 const xml = (tag, rows) => `<?xml version="1.0"?><${tag}>${rows.join('')}</${tag}>`
 const map = paths => xml('urlset', paths.map(path => `<url><loc>${origin + path}</loc></url>`))

@@ -2,7 +2,7 @@ export const PUBLIC_CATEGORIES = ["narodne", "domace", "strane"] as const
 import { preferredOrigin, PRIMARY_SITE_URL } from "./domain.cjs"
 export { PRIMARY_SITE_URL }
 export { SITE_NAME } from "../brand"
-export const DEFAULT_SITE_URL = "https://moj-sajt-rho.vercel.app"
+export const DEFAULT_SITE_URL = PRIMARY_SITE_URL
 
 export function resolveSiteOrigin(env: Record<string, string | undefined>) {
   const input = env.SITE_URL || env.VERCEL_PROJECT_PRODUCTION_URL || DEFAULT_SITE_URL

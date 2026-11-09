@@ -12,6 +12,7 @@ on:
       - 'scripts/lib/site-monitor*.cjs'
       - 'scripts/test-site-monitor.cjs'
       - 'scripts/test-site-monitor-report.cjs'
+      - 'lib/seo/domain.cjs'
       - 'package-lock.json'
   pull_request:
     paths:
@@ -20,6 +21,7 @@ on:
       - 'scripts/lib/site-monitor*.cjs'
       - 'scripts/test-site-monitor.cjs'
       - 'scripts/test-site-monitor-report.cjs'
+      - 'lib/seo/domain.cjs'
 
 permissions:
   contents: read
@@ -49,7 +51,7 @@ jobs:
         id: monitor
         if: github.event_name != 'pull_request'
         env:
-          MONITOR_SITE_URL: ${{ vars.MONITOR_SITE_URL || 'https://moj-sajt-rho.vercel.app' }}
+          MONITOR_SITE_URL: ${{ vars.MONITOR_SITE_URL || 'https://www.gitarakordi.com' }}
         run: node scripts/site-monitor.cjs
       - name: Optional AI advice for scheduled findings
         if: always() && steps.monitor.outcome != 'skipped' && steps.monitor.outcome != '' && github.event_name == 'schedule' && github.run_attempt == 1
