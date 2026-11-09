@@ -3,7 +3,7 @@ const { publicPath, originUrl } = require('./site-monitor.cjs')
 const { validAnalysis } = require('./site-monitor-ai.cjs')
 const ANNOTATION_TITLE = 'GitarAkordi monitor report v1'
 const MAX_REPORT_BYTES = 32000
-const CODES = new Set(['robots_http','robots_sitemap','sitemap_http','sitemap_index','sitemap_origin','sitemap_partition_http','empty_sitemap','oversized_sitemap','sitemap_private_or_foreign','sitemap_duplicate','song_sitemap_empty','robots_blocks_public','page_http','canonical','title','description','heading','public_noindex','structured_json','website_schema','breadcrumb_schema','admin_access','checks_passed','monitor_incomplete'])
+const CODES = new Set(['robots_http','robots_sitemap','sitemap_http','sitemap_index','sitemap_origin','sitemap_partition_http','empty_sitemap','oversized_sitemap','sitemap_private_or_foreign','sitemap_duplicate','song_sitemap_empty','robots_blocks_public','page_http','canonical','title','description','heading','home_navigation','public_noindex','structured_json','website_schema','breadcrumb_schema','admin_access','checks_passed','monitor_incomplete'])
 const integer = (value, max) => Number.isSafeInteger(value) && value >= 0 && value <= max
 function reportPath(value, origin) {
   if (typeof value !== 'string' || value.length > 250 || !value.startsWith('/') || value.startsWith('//')) return null

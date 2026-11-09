@@ -200,6 +200,11 @@ test("standalone bold single headings stop parsing under a previous live-album s
   assert.equal(r.albums.length, 1); assert.equal(r.albums[0].title, "Real Live Album")
 })
 
+test("live-album recording chronologies never become release years or duplicate releases", () => {
+  const result = core.extractArticle('<h2>Live albums</h2><ul><li><i>Archive Concert</i> (2002)</li></ul><h2>Live albums by recording date</h2><ul><li><i>Archive Concert</i> – December 13, 1970</li><li><i>Unreleased Show</i> – March 12, 1971</li></ul><h2>Studio albums</h2><ul><li><i>New Studio</i> (2003)</li></ul>', { strictAlbums: true })
+  assert.deepEqual(result.albums, [{ title: "Archive Concert", year: "2002", kind: "live" }, { title: "New Studio", year: "2003", kind: "studio" }])
+})
+
 test("failed deployment verification stops before opening a database connection", async () => {
   let connected = false
   await assert.rejects(tool.applyChanges({ artists: [] }, null, { loadManifest: async () => ({}), verify: async () => { throw Error("Not deployed") }, connect: async () => { connected = true } }), /Not deployed/)

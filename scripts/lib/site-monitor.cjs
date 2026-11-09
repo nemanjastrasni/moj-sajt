@@ -136,6 +136,7 @@ async function inspectSite({ origin: input, now = new Date(), fetcher = fetch, s
       if (!$('title').text().trim()) add('warning', 'title', path, 'Nedostaje naslov stranice.')
       if (!$('meta[name="description"]').attr('content')?.trim()) add('warning', 'description', path, 'Nedostaje opis stranice.')
       if ($('h1').length !== 1) add('warning', 'heading', path, 'Stranica nema tačno jedan glavni naslov.', {observedCount:$('h1').length})
+      if (path === '/' && $('.responsive-header[data-home="false"]').length) add('warning', 'home_navigation', path, 'Serversko zaglavlje početne označeno je kao unutrašnja stranica. Proveriti hidrataciju posle obnavljanja keša.')
       const robotsMeta = [$('meta[name="robots"]').attr('content'), $('meta[name="googlebot"]').attr('content'), result.headers.get('x-robots-tag')].join(',')
       if (/(?:^|[\s,])(?:noindex|none)(?:[\s,]|$)/i.test(robotsMeta) && !/\/slovo\//.test(path)) add('warning', 'public_noindex', path, 'Javna stranica je označena da se ne indeksira; proveriti da li je to namerno.')
       const types = []

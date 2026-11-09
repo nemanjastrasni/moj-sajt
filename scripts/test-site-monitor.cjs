@@ -73,6 +73,19 @@ test('missing canonical is a finding, whereas a public admin data response is cr
   assert.equal(result.status, 'critical'); assert.ok(result.checks.some(check => check.code === 'admin_access'))
   assert.equal(result.checks.find(check=>check.code==='admin_access').httpStatus,200)
 })
+
+test('daily HTML checks detect the root ISR header regression and publish a readable admin finding', async () => {
+  const wrong = html('/') + '<div class="responsive-header" data-home="false"><a class="mobile-header-back" href="/">Nazad</a></div>'
+  const fixture = siteFixture({ '/': wrong }), result = await inspectSite({ origin, fetcher: fixture.fetcher, now })
+  assert.equal(result.status, 'warning')
+  assert.equal(result.checks.find(check => check.code === 'home_navigation')?.path, '/')
+  const {createPublishedReport,parsePublishedReport} = require('./lib/site-monitor-report.cjs')
+  const published = createPublishedReport(result,{runId:'42',attempt:1})
+  assert.equal(parsePublishedReport(published).checks.some(check => check.code === 'home_navigation'),true)
+  assert.equal(result.databaseWrites,0); assert.equal(result.sourceWrites,0)
+  const corrected = siteFixture({ '/': html('/') + '<div class="responsive-header" data-home="true"></div><script>self.__next_f=[];/* internal /index alias */</script>', [song]:html(song)+'<div class="responsive-header" data-home="false"></div>' })
+  assert.equal((await inspectSite({origin,fetcher:corrected.fetcher,now})).status,'healthy')
+})
 test('foreign XML URLs are reported without being fetched and blocked song pages are not fetched', async () => {
   let fixture = siteFixture({ '/sitemap.xml': xml('sitemapindex', ['<sitemap><loc>https://evil.example/sitemaps/pages.xml</loc></sitemap>']) })
   let result = await inspectSite({ origin, fetcher: fixture.fetcher, now }); assert.equal(result.status, 'critical'); assert.ok(result.checks.some(check => check.code === 'sitemap_origin'))

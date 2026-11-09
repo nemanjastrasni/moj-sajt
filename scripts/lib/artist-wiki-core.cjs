@@ -12,6 +12,9 @@ function key(value) { return normalizeName(toLatin(value)) }
 function isCalendarBio(value) { return /^\s*\d{4}\.\s+je bila (?:prosta|prestupna) godina\b/i.test(toLatin(value || "")) }
 function albumKind(heading) {
   const text = key(heading)
+  // A concert's recording date is not the album's release date. These
+  // chronological reference lists can repeat releases under earlier years.
+  if (/by recording date|recording dates|recording chronology|datumu snimanja|datum snimanja/.test(text)) return "skip"
   if (/singl|single|extended play|\beps?\b|\bvideos?\b|videograf|videograph|pesme|pjesme|songs|track list|dueti|duets|hitovi|spotovi|ucesca|appearances|various artists|soundtrack|filmska muzika/.test(text)) return "skip"
   if (/studio|studij/.test(text)) return "studio"
   if (/live|koncert|uzivo/.test(text)) return "live"

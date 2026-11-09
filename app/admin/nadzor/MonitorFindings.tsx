@@ -20,6 +20,7 @@ const descriptions: Record<string, [string, string, string]> = {
   title: ["Nedostaje naslov za pretraživače", "U HTML-u nije pronađen popunjen title.", "Dopuniti metadata naslov za ovu stranicu."],
   description: ["Nedostaje opis za pretraživače", "Meta description nije popunjen.", "Dodati kratak opis koji odgovara sadržaju stranice."],
   heading: ["Proveriti glavni naslov", "Stranica nema tačno jedan H1 naslov.", "Proveriti strukturu naslova, uz očuvanje izgleda."],
+  home_navigation: ["Proveriti učitavanje zaglavlja početne", "Serverski HTML početne označava zaglavlje kao da je otvorena unutrašnja stranica. To je ranije izazivalo ponovno iscrtavanje i dodatno preuzimanje slika.", "Otvoriti početnu na telefonu i proveriti greške u browseru posle obnavljanja keša. Proveriti normalizaciju Vercelove interne /index putanje; sam HTML nalaz ne potvrđuje sve JavaScript greške."],
   public_noindex: ["Javna stranica ima noindex oznaku", "Stranica traži da se ne indeksira. To može biti namerno.", "Potvrditi namenu stranice pre uklanjanja noindex oznake."],
   structured_json: ["Neispravni strukturirani podaci", "Jedan JSON-LD blok nije ispravan JSON.", "Proveriti generisanje i validnost strukturiranih podataka."],
   website_schema: ["Nedostaje WebSite podatak", "Početna strana nema očekivane strukturirane podatke o sajtu.", "Proveriti JSON-LD početne strane."],

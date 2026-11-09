@@ -20,6 +20,16 @@ Module._load = function(request, parent, main) {
 let service, Page
 try { service = require('../lib/monitoring/server.ts'); Page = require('../app/admin/nadzor/page.tsx').default } finally { Module._load = original }
 const now = new Date('2026-11-05T12:00:00Z')
+
+test('home navigation findings explain the affected page and next check in the admin panel', () => {
+  const React=require('react'),Findings=require('../app/admin/nadzor/MonitorFindings.tsx').default
+  const report={origin:'https://site.example',status:'warning',finishedAt:'2026-11-09T20:30:00Z',coverage:{pagesChecked:21,songUrls:9394},checks:[{id:'check-1',level:'warning',code:'home_navigation',path:'/'}],omittedChecks:0,ai:{status:'not-requested'}}
+  const output=renderToStaticMarkup(React.createElement(Findings,{details:{state:'ready',report,failedSteps:[]},run:{startedAt:'2026-11-09T20:29:00Z',attempt:1,url:'https://github.com/nemanjastrasni/moj-sajt/actions/runs/100'}}))
+  assert.ok(output.includes('Proveriti učitavanje zaglavlja početne'))
+  assert.ok(output.includes('Serverski HTML početne'))
+  assert.ok(output.includes('Vercelove interne /index putanje'))
+  assert.ok(output.includes('href="/"'))
+})
 const run = (overrides = {}) => ({ id: 100, event: 'schedule', status: 'completed', conclusion: 'success', created_at: '2026-11-05T04:23:00Z', head_branch: 'main', ...overrides })
 beforeEach(() => { allowed = true; authCalls = 0; stored = null; global.fetch = async () => Response.json({ workflow_runs: [run()] }) })
 afterEach(() => { global.fetch = realFetch })
