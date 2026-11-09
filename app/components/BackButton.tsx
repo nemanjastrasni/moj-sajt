@@ -2,13 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { publicPathname } from "@/lib/navigation/pathname"
 import { ArrowLeft } from "lucide-react"
 import { useI18n } from "./UiText"
 import { useParentHref } from "./BackNavigation"
 
 export default function BackButton({ compact = false }: { compact?: boolean }) {
   const { t } = useI18n()
-  const href = useParentHref(usePathname())
+  const href = useParentHref(publicPathname(usePathname()))
 
   if (!href) return null
 

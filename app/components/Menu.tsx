@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { signOut, useSession } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
+import { publicPathname } from "@/lib/navigation/pathname"
 import type { Session } from "next-auth"
 import { BookOpen, ClipboardList, FilePlus2, Guitar, Headphones, House, ListMusic, LogIn, LogOut, Mail, Menu as MenuIcon, Music2, Shield, UserRound, X } from "lucide-react"
 import { useI18n } from "./UiText"
@@ -40,7 +41,7 @@ const accountLinks = [
 
 export default function Menu() {
   const { data: session, status } = useSession()
-  const pathname = usePathname()
+  const pathname = publicPathname(usePathname())
   const [online, setOnline] = useState<PresenceCounts | null>(null)
 
   useEffect(() => {

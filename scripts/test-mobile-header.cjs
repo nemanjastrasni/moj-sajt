@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Isolated Node fixtures load TypeScript components through CommonJS. */
 require("ts-node").register({ transpileOnly: true, compilerOptions: { module: "CommonJS", moduleResolution: "Node", jsx: "react-jsx" } })
 const { test } = require("node:test")
 const assert = require("node:assert/strict")
@@ -67,6 +68,22 @@ test("compact Back retains the logical parent and an accessible label, and is ab
   assert.equal($("a span.sr-only").text(), "Nazad")
   pathname = "/"
   assert.equal(renderToStaticMarkup(React.createElement(BackButton, { compact: true })), "")
+})
+
+test("Vercel root ISR alias renders the same header and Back buttons as the browser root", () => {
+  session = null
+  pathname = "/"
+  const root = renderToStaticMarkup(React.createElement(Menu))
+  pathname = "/index"
+  const regenerated = renderToStaticMarkup(React.createElement(Menu))
+  assert.equal(regenerated, root, "root regeneration must not replace the hydrated header")
+  const $ = cheerio.load(regenerated)
+  assert.equal($(".responsive-header").attr("data-home"), "true")
+  assert.equal($(".mobile-header-back, .desktop-header-back a").length, 0)
+  assert.equal(renderToStaticMarkup(React.createElement(BackButton)), "")
+  assert.equal(renderToStaticMarkup(React.createElement(BackButton, { compact: true })), "")
+  pathname = "/pesme/domace/index"
+  assert.equal(render(React.createElement(BackButton))("a").attr("href"), "/pesme/domace")
 })
 
 test("permanent search strip is server-renderable, labeled and closed until a query is typed", () => {
