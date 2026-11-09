@@ -83,6 +83,15 @@ test("discovery chooses the band, not an animal with the same label", async () =
   const result = await core.discoverPhoto({ name: "Animals" }, wiki())
   assert.equal(result.wikidataId, "Q100"); assert.equal(result.state, "review-ready")
 })
+
+test("photo preparation rechecks a report's claimed music identity before accepting old candidates", async () => {
+  const current={id:"a",name:"Animals"},good={id:"a",candidate:{wikidataId:"Q100",evidence:"musical-group"}}
+  assert.equal(await publisher.verifyPreparedIdentity(good,current,wiki()),true)
+  const wrong={id:"a",candidate:{wikidataId:"Q102",evidence:"musical-group",label:"Animals"}}
+  assert.equal(await publisher.verifyPreparedIdentity(wrong,current,wiki()),false)
+  assert.equal(await publisher.verifyPreparedIdentity(good,{...current,name:"Other Band"},wiki()),false)
+  assert.equal(await publisher.verifyPreparedIdentity({...good,candidate:{...good.candidate,evidence:"musician"}},current,wiki()),false)
+})
 test("two valid musical identities stay ambiguous and are not downloaded", async () => {
   const result = await core.discoverPhoto({ name: "Animals" }, wiki([band, human]))
   assert.equal(result.state, "ambiguous"); assert.equal(result.photo, undefined)
@@ -221,7 +230,7 @@ test("large photo collections remain bounded before any verification or database
 })
 
 test("artist image selection excludes statues, gravestones and signatures", () => {
-  for (const description of ["Statue of the singer", "Nadgrobna ploca", "\u0421\u043f\u043e\u043c\u0435\u043d\u0438\u043a \u043f\u0435\u0432\u0430\u0447\u0443", "Album cover"]) {
+  for (const description of ["Statue of the singer", "Nadgrobna ploca", "\u0421\u043f\u043e\u043c\u0435\u043d\u0438\u043a \u043f\u0435\u0432\u0430\u0447\u0443", "Album cover", "Mural of a singer", "Graffiti portrait", "Wall painting", "Bista pevaca", "Concert poster", "Najava koncerta BG"]) {
     assert.equal(core.isArtistPhoto({ description }), false)
     assert.equal(core.photoMetadata({ ...info, extmetadata: { ...info.extmetadata, ImageDescription: { value: description } } }).allowed, false)
   }

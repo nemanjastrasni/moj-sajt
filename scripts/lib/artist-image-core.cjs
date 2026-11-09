@@ -149,7 +149,7 @@ function plain(value = "") { return cheerio.load(String(value)).text().replace(/
 function isArtistPhoto(photo) {
   let source = photo.filePage || ""
   try { source = decodeURIComponent(source) } catch {}
-  return !/\b(?:statue|monument|sculpture|gravestone|tombstone|tomb|headstone|memorial|logo|autograph|signature)\b|nadgrobn|spomenik|grobnica|\u0441\u043f\u043e\u043c\u0435\u043d\u0438\u043a|\u043d\u0430\u0434\u0433\u0440\u043e\u0431|\u043c\u043e\u0433\u0438\u043b|postage stamp|album cover/i.test((photo.description || "") + " " + source.replace(/_/g, " "))
+  return !/\b(?:statue|monument|sculpture|gravestone|tombstone|tomb|headstone|memorial|mural|graffiti|bust|bista|grabmal|poster|flyer|logo|autograph|signature)\b|wall painting|najava koncerta|nadgrobn|spomenik|grobnica|\u0441\u043f\u043e\u043c\u0435\u043d\u0438\u043a|\u043d\u0430\u0434\u0433\u0440\u043e\u0431|\u043c\u043e\u0433\u0438\u043b|postage stamp|album cover/i.test((photo.description || "") + " " + source.replace(/_/g, " "))
 }
 function photoMetadata(info) {
   const meta = info.extmetadata ?? {}

@@ -4,7 +4,7 @@ const path = require("node:path")
 const sharp = require("sharp")
 const { parseArgs } = require("node:util")
 const { databaseClient, readDatabase } = require("./lib/artist-image-source.cjs")
-const { digest, normalizeName, nameMatches, safeWikiUrl, safePhotoSourceUrl, isArtistPhoto } = require("./lib/artist-image-core.cjs")
+const { digest, normalizeName, nameMatches, safeWikiUrl, safePhotoSourceUrl, isArtistPhoto, WikiClient, resolveMusicIdentity } = require("./lib/artist-image-core.cjs")
 
 const ROOT = path.resolve(__dirname, "..")
 const ASSETS = path.join(ROOT, "public", "artist-photos")
@@ -37,12 +37,22 @@ function eligible(item, current, minSongs) {
     /^staged\/Q\d+-[a-f0-9]{16}\.webp$/.test(candidate.stagedFile || ""))
 }
 
+async function verifyPreparedIdentity(item, current, client) {
+  // An old report's label/evidence is a proposal, not proof that its entity is
+  // actually a musician or the intended group. Recheck before preparing assets.
+  const id = item.candidate?.wikidataId
+  if (!current || !/^Q\d{1,15}$/.test(id || "")) return false
+  const result = await resolveMusicIdentity({ ...current, wikidataId: id }, client)
+  return result.state === "identified" && result.entity.id === id && result.evidence === item.candidate.evidence
+}
+
 async function prepare(reportFiles, ca, minSongs, skipNames = []) {
   if (!reportFiles.length) throw new Error("At least one --report is required")
   const loaded = await readDatabase(ca)
   const live = new Map(loaded.artists.map(item => [item.id, item]))
   const manifest = JSON.parse(await fs.readFile(MANIFEST, "utf8"))
   const known = new Map(manifest.photos.map(item => [item.artistId, item]))
+  const identityClient = new WikiClient()
   let added = 0
   const holds = require("./artist-photo-holds.json")
   const skippedNames = new Set([...holds.map(item => item.name), ...skipNames].map(normalizeName))
@@ -51,6 +61,8 @@ async function prepare(reportFiles, ca, minSongs, skipNames = []) {
     if (report.source?.kind !== "database") throw new Error("Cannot publish from a snapshot")
     for (const item of report.artists) {
       if (known.has(item.id) || skippedNames.has(normalizeName(item.name)) || !eligible(item, live.get(item.id), minSongs)) continue
+      identityClient.deadline = Date.now() + 20000
+      if (!await verifyPreparedIdentity(item, live.get(item.id), identityClient)) continue
       const candidate = item.candidate, photo = candidate.photo
       safePhotoSourceUrl(photo.filePage)
       safeWikiUrl(candidate.entityUrl)
@@ -173,4 +185,4 @@ if (require.main === module) main().catch(error => {
   console.error("Photo publication stopped:", safeMessages.has(error.message) ? error.message : error.code || error.name, "/ check deployment, CA and input. Credentials are not logged.")
   process.exitCode = 1
 })
-module.exports = { eligible, deploymentOrigin, deploymentBytes, verifyDeployment, checkedUpdate, prepare, publish }
+module.exports = { eligible, verifyPreparedIdentity, deploymentOrigin, deploymentBytes, verifyDeployment, checkedUpdate, prepare, publish }

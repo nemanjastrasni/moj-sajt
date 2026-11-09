@@ -705,6 +705,25 @@
       "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
     },
     {
+      "artistId": "cmmxt5oh208uoob3gco50k2zv",
+      "artistName": "Black",
+      "slug": "black",
+      "category": "strane",
+      "image": "/artist-photos/Q504409-56bcc5196aaf4e8e.webp",
+      "sha256": "56bcc5196aaf4e8e01bf3f6d94a775334fd88229d87aea4efff3c527fe972a06",
+      "width": 588,
+      "height": 960,
+      "wikidataId": "Q504409",
+      "entityUrl": "https://www.wikidata.org/wiki/Q504409",
+      "title": "Colin- Vearncombe.jpg",
+      "author": "Andrew D. Hurley",
+      "credit": "https://www.flickr.com/photos/andrewhurley/2533106045/",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Colin-_Vearncombe.jpg",
+      "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
+    },
+    {
       "artistId": "cmmxt5ok808urob3ggitl9g3u",
       "artistName": "Blind Guardian",
       "slug": "blind-guardian",
@@ -1294,6 +1313,25 @@
       "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
     },
     {
+      "artistId": "cmmxt5s0c08xwob3gcr2usqw3",
+      "artistName": "Cream",
+      "slug": "cream",
+      "category": "strane",
+      "image": "/artist-photos/Q203736-b67115f1bbef2919.webp",
+      "sha256": "b67115f1bbef291965c1c42028b0264226a0e37826cb9a354dc0ed89a47dcdf6",
+      "width": 928,
+      "height": 615,
+      "wikidataId": "Q203736",
+      "entityUrl": "https://www.wikidata.org/wiki/Q203736",
+      "title": "Cream Clapton Bruce Baker 1960s.jpg",
+      "author": "General Artists Corporation (management) /Atco Records (the band's record label at one time).",
+      "credit": "eBay item photo",
+      "license": "Public domain",
+      "licenseUrl": "",
+      "source": "https://commons.wikimedia.org/wiki/File:Cream_Clapton_Bruce_Baker_1960s.jpg",
+      "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
+    },
+    {
       "artistId": "cmmxt5s3z08xzob3gw0afq8wm",
       "artistName": "Creedence Clearwater Revival",
       "slug": "creedence-clearwater-revival",
@@ -1348,6 +1386,25 @@
       "license": "CC BY-SA 4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
       "source": "https://commons.wikimedia.org/wiki/File:Dejan_Cuki%C4%87_(c._2000).jpg",
+      "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
+    },
+    {
+      "artistId": "cmmxt5s7g08y2ob3g9z91l311",
+      "artistName": "Cure",
+      "slug": "cure",
+      "category": "strane",
+      "image": "/artist-photos/Q484427-9af3e1be08deb69d.webp",
+      "sha256": "9af3e1be08deb69d0b6e8dffaff8a3381045ba5281f9f1aee48953a0be865959",
+      "width": 960,
+      "height": 638,
+      "wikidataId": "Q484427",
+      "entityUrl": "https://www.wikidata.org/wiki/Q484427",
+      "title": "The Cure Live in Singapore 2- 1st August 2007.jpg",
+      "author": "momento mori from Kuala Lumpur, Malaysia",
+      "credit": "The Cure Live in Singapore - 1st August 2007",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:The_Cure_Live_in_Singapore_2-_1st_August_2007.jpg",
       "changes": "EXIF orientation corrected where present; resized without cropping or enlargement; converted to WebP."
     },
     {
