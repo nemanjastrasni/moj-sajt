@@ -6,7 +6,7 @@ export default function ArtistHeader({ name, image }: { name: string; image: str
   return (
     <>
       <header className={styles.artistHeader}>
-        <ArtistImage src={image} name={name} variant="portrait" priority />
+        <ArtistImage src={image} name={name} variant="portrait" sizes="(max-width: 600px) 120px, 240px" priority />
         <h1>{name}</h1>
       </header>
       <ArtistPhotoCredit image={image} />

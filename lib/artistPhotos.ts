@@ -10,10 +10,12 @@ type ArtistPhoto = {
 }
 
 const babeBrokenImage = "https://remixpress.com/wp-content/uploads/2015/09/Babe_foto_Dejan_Skopelja.jpg"
+const photosByArtistId = new Map(manifest.photos.map(photo => [photo.artistId, photo]))
+const managedImages = new Set(manifest.photos.map(photo => photo.image))
 
 export function getArtistImage(artist: ArtistPhoto): string | null {
-  const prepared = manifest.photos.find(photo => photo.artistId === artist.id &&
-    photo.artistName === artist.name && photo.slug === artist.slug && photo.category === artist.category)
+  const candidate = photosByArtistId.get(artist.id)
+  const prepared = candidate?.artistName === artist.name && candidate.slug === artist.slug && candidate.category === artist.category ? candidate : undefined
   // Repair only the reviewed stale URL; preserve subsequent manual photo changes.
   if (prepared && (!artist.image?.trim() ||
     (artist.id === "cmmxst0n50068obh8fw7hq0av" && artist.image === babeBrokenImage))) return prepared.image
@@ -21,9 +23,10 @@ export function getArtistImage(artist: ArtistPhoto): string | null {
 }
 
 export function selectMosaicArtists<T extends ArtistPhoto & { _count: { songs: number } }>(artists: T[], limit = 12): T[] {
-  const managed = new Set(manifest.photos.map(photo => photo.image))
-  return artists.filter(artist => artist.slug && getArtistImage(artist))
-    .sort((a, b) => Number(managed.has(getArtistImage(b)!)) - Number(managed.has(getArtistImage(a)!)) ||
-      b._count.songs - a._count.songs || a.name.localeCompare(b.name, "sr-Latn") || a.id.localeCompare(b.id))
+  return artists.map(artist => ({ artist, image: getArtistImage(artist) }))
+    .filter(row => row.artist.slug && row.image)
+    .sort((a, b) => Number(managedImages.has(b.image!)) - Number(managedImages.has(a.image!)) ||
+      b.artist._count.songs - a.artist._count.songs || a.artist.name.localeCompare(b.artist.name, "sr-Latn") || a.artist.id.localeCompare(b.artist.id))
     .slice(0, limit)
+    .map(row => row.artist)
 }

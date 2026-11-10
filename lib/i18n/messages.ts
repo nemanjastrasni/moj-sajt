@@ -1,5 +1,6 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "Zatvori pretragu": "Close search",
   "PDF trenutno nije dostupan. Pokušaj ponovo.": "PDF is unavailable. Try again.",
   "Učitavam izvođače i pesme...": "Loading artists and songs...",
   "Učitavam capo preporuke...": "Loading capo suggestions...",

@@ -15,6 +15,7 @@
     "backup:app": "node scripts/application-backup.cjs",
     "test:backup": "node --test scripts/test-application-backup.cjs",
     "images:optimize": "node scripts/optimize-site-images.cjs",
+    "artists:thumbnails": "node scripts/optimize-artist-photos.cjs",
     "images:avif": "node scripts/optimize-site-avif.cjs",
     "performance:measure": "node scripts/measure-site.cjs",
     "test:chords": "node --test scripts/test-song-sheet.cjs",
@@ -75,6 +76,7 @@
     "test:artist-wiki": "node --test scripts/test-artist-wiki.cjs",
     "test:artist-images": "node --test scripts/test-artist-images.cjs",
     "test:artist-media": "node --test scripts/test-artist-media.cjs",
+    "test:artist-responsive": "node --test scripts/test-artist-responsive.cjs",
     "postinstall": "prisma generate"
   },
   "dependencies": {

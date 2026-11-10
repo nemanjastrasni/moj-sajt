@@ -12,7 +12,7 @@ import { useI18n } from "./UiText"
 
 type Snapshot = { query: string; status: "idle" | "ready" | "error"; results: SongSearchResult[]; error?: string }
 
-export default function SongSearch({ loadResults = loadSongSearch, inlinePopup = false, onNavigate, compact = false }: { loadResults?: SongSearchLoader; inlinePopup?: boolean; onNavigate?: () => void; compact?: boolean }) {
+export default function SongSearch({ loadResults = loadSongSearch, inlinePopup = false, onNavigate, compact = false, mobileCollapsible = false, onActiveChange }: { loadResults?: SongSearchLoader; inlinePopup?: boolean; onNavigate?: () => void; compact?: boolean; mobileCollapsible?: boolean; onActiveChange?: (active: boolean) => void }) {
   const { t, locale } = useI18n()
   const router = useRouter()
   const id = useId()
@@ -40,7 +40,7 @@ export default function SongSearch({ loadResults = loadSongSearch, inlinePopup =
 
   useEffect(() => {
     const search = prepared.search
-    if (!search) return
+    if (!open || !search) return
     const controller = new AbortController()
     const timer = window.setTimeout(async () => {
       try {
@@ -53,16 +53,19 @@ export default function SongSearch({ loadResults = loadSongSearch, inlinePopup =
       }
     }, 250)
     return () => { window.clearTimeout(timer); controller.abort() }
-  }, [prepared.search, requestKey, loadResults])
+  }, [open, prepared.search, requestKey, loadResults])
 
   useEffect(() => {
     function outside(event: Event) {
-      if (event.target instanceof Node && !container.current?.contains(event.target) && !popupContainer.current?.contains(event.target)) setOpen(false)
+      if (event.target instanceof Node && !container.current?.contains(event.target) && !popupContainer.current?.contains(event.target)) {
+        setOpen(false); onActiveChange?.(false)
+        if (mobileCollapsible && window.matchMedia("(max-width: 767px)").matches) input.current?.blur()
+      }
     }
     document.addEventListener("pointerdown", outside)
     document.addEventListener("focusin", outside)
     return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("focusin", outside) }
-  }, [])
+  }, [mobileCollapsible, onActiveChange])
 
   useEffect(() => {
     if (!expanded) return
@@ -105,16 +108,17 @@ export default function SongSearch({ loadResults = loadSongSearch, inlinePopup =
     if (!expanded) return
     function escape(event: globalThis.KeyboardEvent) {
       if (event.key !== "Escape" || event.defaultPrevented || document.querySelector("dialog[open]")) return
-      event.preventDefault(); input.current?.focus(); setOpen(false); setActive(-1)
+      event.preventDefault(); input.current?.focus(); setOpen(false); setActive(-1); onActiveChange?.(false)
+      if (mobileCollapsible && window.matchMedia("(max-width: 767px)").matches) input.current?.blur()
     }
     document.addEventListener("keydown", escape)
     return () => document.removeEventListener("keydown", escape)
-  }, [expanded])
+  }, [expanded, mobileCollapsible, onActiveChange])
 
   function handleKey(event: KeyboardEvent<HTMLInputElement>) {
     if (event.nativeEvent.isComposing) return
-    if (event.key === "Escape") { event.preventDefault(); setOpen(false); setActive(-1); return }
-    if (event.key === "Tab") { setOpen(false); return }
+    if (event.key === "Escape") { event.preventDefault(); setOpen(false); setActive(-1); onActiveChange?.(false); if (mobileCollapsible && window.matchMedia("(max-width: 767px)").matches) input.current?.blur(); return }
+    if (event.key === "Tab") { setOpen(false); onActiveChange?.(false); return }
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault()
       setOpen(true)
@@ -124,7 +128,7 @@ export default function SongSearch({ loadResults = loadSongSearch, inlinePopup =
       event.preventDefault()
       if (expanded && results.length) {
         setOpen(false)
-        onNavigate?.()
+        onActiveChange?.(false); if (mobileCollapsible) input.current?.blur(); onNavigate?.()
         router.push(songSearchHref(results[active] ?? results[0]))
       } else setOpen(true)
     }
@@ -140,9 +144,10 @@ export default function SongSearch({ loadResults = loadSongSearch, inlinePopup =
       <input ref={input} id={`${id}-input`} type="search" role="combobox" autoComplete="off" autoCapitalize="none" spellCheck={false} enterKeyHint="search" maxLength={SEARCH_MAX_LENGTH} value={query}
         aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={expanded} aria-controls={expanded ? `${id}-results` : undefined}
         aria-activedescendant={expanded && active >= 0 && results[active] ? `${id}-result-${active}` : undefined}
-        onChange={event => { setQuery(event.target.value); setActive(-1); setOpen(true) }} onFocus={() => setOpen(true)} onKeyDown={handleKey}
+        onChange={event => { setQuery(event.target.value); setActive(-1); setOpen(true); onActiveChange?.(true) }} onFocus={() => { setOpen(true); onActiveChange?.(true) }} onKeyDown={handleKey}
         placeholder={t("Pesma ili izvodjac...")} className={`song-search-input ${compact ? "header-search-input" : "min-h-12 rounded-lg py-3 pl-3"} w-full border border-gray-600 bg-black/40 pr-12 text-base text-white outline-none placeholder:text-gray-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20`} />
-      {query && <button type="button" aria-label={t("Obrisi pretragu")} title={t("Obrisi pretragu")} onClick={() => { setQuery(""); setActive(-1); input.current?.focus() }} className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-lg text-gray-400 hover:text-white focus-visible:outline-2 focus-visible:outline-sky-400"><X size={18} /></button>}
+      {query && <button type="button" aria-label={t("Obrisi pretragu")} title={t("Obrisi pretragu")} onClick={() => { setQuery(""); setActive(-1); input.current?.focus() }} className="song-search-clear absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-lg text-gray-400 hover:text-white focus-visible:outline-2 focus-visible:outline-sky-400"><X size={18} /></button>}
+      {mobileCollapsible && <button type="button" className="header-search-close" aria-label={t("Zatvori pretragu")} title={t("Zatvori pretragu")} onClick={() => { setOpen(false); setActive(-1); onActiveChange?.(false); input.current?.blur() }}><X size={20} /></button>}
     </div>
     {expanded && popup.width > 0 && typeof document !== "undefined" && renderPopup(<div ref={popupContainer}
       style={{ left: popup.left, width: popup.width, ...(popup.above ? { bottom: popup.bottom } : { top: popup.top }) }}
@@ -156,7 +161,7 @@ export default function SongSearch({ loadResults = loadSongSearch, inlinePopup =
       <ul ref={list} id={`${id}-results`} role="listbox" aria-label={t("Pronadjene pesme")} aria-busy={loading} style={{ maxHeight: popup.maxHeight }} className="overflow-y-auto overscroll-contain">
         {results.map((song, index) => <li key={song.id} role="presentation">
           <Link href={songSearchHref(song)} prefetch={false} id={`${id}-result-${index}`} role="option" aria-selected={active === index} tabIndex={-1}
-            onMouseEnter={() => setActive(index)} onPointerDown={event => { if (event.pointerType === "mouse") event.preventDefault() }} onClick={() => { setOpen(false); onNavigate?.() }}
+            onMouseEnter={() => setActive(index)} onPointerDown={event => { if (event.pointerType === "mouse") event.preventDefault() }} onClick={() => { setOpen(false); onActiveChange?.(false); if (mobileCollapsible) input.current?.blur(); onNavigate?.() }}
             className={`block min-h-14 min-w-0 border-b border-white/5 px-4 py-3 last:border-b-0 ${active === index ? "bg-sky-900/50" : "hover:bg-white/10"}`}>
             <span className="block break-words text-sm font-semibold">{song.title}</span>
             <span className="mt-1 block break-words text-xs text-gray-400">{song.artist.name}{song.category ? ` / ${getCategoryLabel(song.category, locale)}` : ""}</span>

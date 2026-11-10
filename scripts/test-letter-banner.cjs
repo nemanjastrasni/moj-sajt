@@ -5,6 +5,7 @@ const { createElement } = require('react'), { renderToStaticMarkup } = require('
 const root = path.resolve(__dirname, '..'), original = Module._load
 let artists = [], queries = []
 Module._load = function (request, parent, main) {
+  if (request === 'next/cache') return { unstable_cache: fn => fn }
   if (request === '@/lib/prisma') return { prisma: { artist: { findMany: async query => { queries.push(query); return artists } } } }
   if (request.endsWith('.module.css')) return { __esModule: true, default: new Proxy({}, { get: (_, key) => key }) }
   if (request === 'next/link') return { __esModule: true, default: ({ href, children }) => createElement('a', { href }, children) }
