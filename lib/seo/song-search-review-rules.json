@@ -1,0 +1,44 @@
+[
+  {
+    "kind": "incomplete",
+    "source": {
+      "id": "cmnab8ez5000nobz4aymhen3e",
+      "title": "Zombie",
+      "slug": "zombie",
+      "artistId": "cmnab8eoa000lobz4toq2bn7q",
+      "artistSlug": "the-cranberries",
+      "category": "strane",
+      "fingerprint": "8f5908ba1cf995579ebe267467b43d5003714af95a21833aec08e784ef5f4d27"
+    },
+    "target": {
+      "id": "cmmxt5ry408xvob3gspni2qqn",
+      "title": "Zombie",
+      "slug": "zombie",
+      "artistId": "cmmxt5rui08xrob3gzqyhiv46",
+      "artistSlug": "cranberries",
+      "category": "strane",
+      "fingerprint": "1ed626ab68e9d47bda779dfef0393f1c6449a177ad8242b710b54533eeaff4cb"
+    }
+  },
+  {
+    "kind": "duplicate",
+    "source": {
+      "id": "cmn7xacvi01g1objwhdkln28z",
+      "title": "Bela Ladja",
+      "slug": "djordje-balasevic-bela-ladja",
+      "artistId": "cmmxt0d0h0413ob3gbnncbmpb",
+      "artistSlug": "djordje-balasevic",
+      "category": "domace",
+      "fingerprint": "750aaa56cd45a2c11c5110e387c66478cf2cf63cefbac30814693f2a3ca5a601"
+    },
+    "target": {
+      "id": "cmn7vkg2l00d2ob8gmtkujn4s",
+      "title": "Bela Ladja",
+      "slug": "balasevic-djordje-bela-ladja",
+      "artistId": "cmmxt0d0h0413ob3gbnncbmpb",
+      "artistSlug": "djordje-balasevic",
+      "category": "domace",
+      "fingerprint": "750aaa56cd45a2c11c5110e387c66478cf2cf63cefbac30814693f2a3ca5a601"
+    }
+  }
+]

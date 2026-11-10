@@ -1,11 +1,12 @@
 import { chordImages } from "./chordImages"
 import { parseChordSymbol } from "./chordSymbols"
+import { chordRendererFactory } from "chord-symbol/lib/chord-symbol.js"
 
 const sharpNotes: Record<string, string> = { Db: "C#", Eb: "D#", Gb: "F#", Ab: "G#", Bb: "A#" }
 const flatNotes: Record<string, string> = { "C#": "Db", "D#": "Eb", "F#": "Gb", "G#": "Ab", "A#": "Bb" }
 const imageNames = new Map(Object.keys(chordImages).map((name) => [name.toLowerCase(), name]))
 
-export function getChordAssetName(symbol: string) {
+function directAssetName(symbol: string) {
   const chord = parseChordSymbol(symbol)
   if (!chord) return null
   const root = sharpNotes[chord.normalized.rootNote] ?? chord.normalized.rootNote
@@ -29,6 +30,31 @@ export function getChordAssetName(symbol: string) {
     pitch(assetChord.normalized.bassNote ?? "") !== pitch(chord.normalized.bassNote ?? "") ||
     assetChord.normalized.semitones.join(",") !== chord.normalized.semitones.join(",")) return null
   return assetName
+}
+
+const renderFull = chordRendererFactory({ simplify: "none", useShortNamings: false, notationSystem: "english" })
+const renderShort = chordRendererFactory({ simplify: "none", useShortNamings: true, notationSystem: "english" })
+
+export function getChordAssetName(symbol: string) {
+  const direct = directAssetName(symbol)
+  if (direct) return direct
+  const chord = parseChordSymbol(symbol)
+  if (!chord) return null
+  // Normalize only the lookup. The author's chord label and transposition stay intact.
+  for (let candidate of [renderFull(chord), renderShort(chord)]) {
+    // A suspension replaces the third; a redundant minor marker adds no minor third.
+    if (chord.normalized.isSuspended && !chord.normalized.semitones.some(interval => interval === 3 || interval === 4)) {
+      candidate = candidate.replace(/^([A-G][#b]?)m(?=sus)/, "$1")
+    }
+    const asset = directAssetName(candidate)
+    if (!asset) continue
+    const actual = parseChordSymbol(asset.replace("_", "/"))
+    const pitch = (note: string) => sharpNotes[note] ?? note
+    if (actual && pitch(actual.normalized.rootNote) === pitch(chord.normalized.rootNote) &&
+      pitch(actual.normalized.bassNote ?? "") === pitch(chord.normalized.bassNote ?? "") &&
+      actual.normalized.semitones.join(",") === chord.normalized.semitones.join(",")) return asset
+  }
+  return null
 }
 
 export function getChordAssetUrl(name: string, variant = 1) {

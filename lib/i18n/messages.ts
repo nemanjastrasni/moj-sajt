@@ -1,5 +1,7 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "Ovaj zapis sadrži samo početni fragment pesme.": "This chart contains only the beginning of the song.",
+  "Otvori potpuniji zapis ove pesme": "Open a more complete chart of this song",
   "Vodiči za gitaru": "Guitar guides",
   "Vodič za čitanje akorda i dijagrama": "Guide to reading chords and diagrams",
   "Vežbanje promene akorda": "Practising chord changes",

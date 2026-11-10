@@ -5,13 +5,19 @@ import { hasBiographyContent } from "@/lib/biographies/catalog"
 import { CHORD_ROOTS } from "./catalog"
 import { catalogEntries } from "@/lib/playlists/catalog"
 import { guitarGuides, guidePath } from "@/lib/guitarGuides"
+import { getSitemapSongExclusions } from "./song-search-review-server"
 import { PUBLIC_CATEGORIES, publicUrl, routePath, SITE_URL } from "./site"
 
 export const SITEMAP_BATCH_SIZE = 1000
 export const sitemapStaticPaths = ["/", "/pesme", "/biografija", "/akordi", "/vodici", ...guitarGuides.map(guide => guidePath(guide.slug)), "/plejliste", "/public-listening-playlists", "/o-nama", "/kontakt", "/foto-izvori", "/wiki-izvori", "/prijava-povrede", ...CHORD_ROOTS.map(root => routePath("akordi", root)), ...catalogEntries.map(entry => routePath("plejliste", entry.slug)), ...PUBLIC_CATEGORIES.map(category => routePath("top-50", category)), ...PUBLIC_CATEGORIES.flatMap(category => [routePath("pesme", category), routePath("biografija", category)])]
 const where = { artist: { category: { in: [...PUBLIC_CATEGORIES] } }, lyrics: { not: "" } }
+async function songWhere() {
+  const excluded = await getSitemapSongExclusions()
+  return excluded.length ? { ...where, id: { notIn: excluded } } : where
+}
 const counts = unstable_cache(async () => {
-  const [songs, artists] = await Promise.all([prisma.song.count({ where }), prisma.artist.count({ where: { category: { in: [...PUBLIC_CATEGORIES] } } })])
+  const songFilter = await songWhere()
+  const [songs, artists] = await Promise.all([prisma.song.count({ where: songFilter }), prisma.artist.count({ where: { category: { in: [...PUBLIC_CATEGORIES] } } })])
   return { songs, artists }
 }, ["seo-sitemap-counts-v1"], { revalidate: 300, tags: ["seo-sitemap"] })
 
@@ -31,7 +37,7 @@ export async function sitemapIndex() {
 
 const publicPage = unstable_cache(async (kind: "songs" | "artists", page: number) => {
   if (kind === "songs") {
-    const songs = await prisma.song.findMany({ where, select: { slug: true, artist: { select: { slug: true, category: true } } }, orderBy: { id: "asc" }, skip: page * SITEMAP_BATCH_SIZE, take: SITEMAP_BATCH_SIZE })
+    const songs = await prisma.song.findMany({ where: await songWhere(), select: { slug: true, artist: { select: { slug: true, category: true } } }, orderBy: { id: "asc" }, skip: page * SITEMAP_BATCH_SIZE, take: SITEMAP_BATCH_SIZE })
     return songs.flatMap(song => {
       const url = song.artist.category ? catalogUrl("pesme", song.artist.category, song.artist.slug, song.slug) : null
       return url ? [url] : []

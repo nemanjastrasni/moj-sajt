@@ -2,11 +2,12 @@ import { songContentKind } from "../adminStats/model"
 import { biographyText } from "../biographies/catalog"
 import { normalizeDiscography } from "../discography"
 
-export function songMetadataText(song: { title: string; lyrics: string | null; artist: { name: string } }) {
+export function songMetadataText(song: { title: string; lyrics: string | null; artist: { name: string } }, incomplete = false) {
   // SongClient renders lyrics. A legacy chords field that is not displayed must
   // not make the search snippet advertise chords that the visitor cannot see.
   const kind = songContentKind({ lyrics: song.lyrics, chords: null })
   const name = `${song.title} – ${song.artist.name}`
+  if (incomplete) return { title: `${name}: početni fragment`, description: `Početni fragment pesme ${name}. Pročitaj napomenu o nepotpunom zapisu.`, index: false }
   if (kind === "withChords") return { title: `${name}: akordi i tekst`, description: `Akordi i tekst pesme ${name}. Promena tonaliteta, capo preporuke i prikaz za sviranje.`, index: true }
   if (kind === "notationOnly") return { title: `${name}: zapis za sviranje`, description: `Zapis pesme ${name}. Pregledaj dostupnu tabulaturu ili instrumentalne oznake i koristi prikaz za sviranje.`, index: true }
   if (kind === "textOnly") return { title: `${name}: tekst pesme`, description: `Tekst pesme ${name}. Pročitaj tekst i dodaj pesmu u svoj repertoar.`, index: true }

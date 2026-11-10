@@ -20,6 +20,9 @@ import { performanceHref } from "@/lib/performance/model"
 import { performerArtists, performerHref } from "@/lib/artists/performers"
 import { playlistViewerId } from "@/lib/playlists/server"
 import { omiljeneId } from "@/lib/playlists/omiljene"
+import { getSongSearchReview } from "@/lib/seo/song-search-review-server"
+import UiText from "@/app/components/UiText"
+import Link from "next/link"
 
 type Props = {
   params: Promise<{
@@ -36,8 +39,9 @@ export async function generateMetadata(
   const { category, artist, slug } = await params
   const song = await getPublicSong(category, artist, slug)
   if (!song) notFound()
-  const text = songMetadataText(song)
-  return { ...publicPageMetadata(text.title, text.description, routePath("pesme", category, song.artist.slug, song.slug)), ...(!text.index ? { robots: { index: false, follow: true } } : {}) }
+  const review = await getSongSearchReview(song)
+  const text = songMetadataText(song, review?.kind === "incomplete")
+  return { ...publicPageMetadata(text.title, text.description, review?.canonicalPath ?? routePath("pesme", category, song.artist.slug, song.slug)), ...(!text.index ? { robots: { index: false, follow: true } } : {}) }
 }
 
 export default async function SongPage({ params, searchParams }: Props) {
@@ -62,12 +66,17 @@ export default async function SongPage({ params, searchParams }: Props) {
   const fromArtist = typeof query.artist === "string" ? performers.find(artist => artist.id === query.artist) : undefined
   const returnTo = playlist ?? (fromFavorites ? "/favorite" : fromArtist ? performerHref(fromArtist) : performers[0] ? performerHref(performers[0]) : null)
   const contentVersion = songReviewVersion(song)
+  const searchReview = await getSongSearchReview(song)
   countSongViewAfterResponse(song.id, await headers())
 
   return (
     <>
     <Breadcrumbs items={[{ name: "Početna", path: "/" }, { name: "Pesme", path: "/pesme" }, { name: getCategoryLabel(category), path: routePath("pesme", category) }, { name: song.artist.name, path: routePath("pesme", category, song.artist.slug) }, { name: song.title, path: routePath("pesme", category, song.artist.slug, song.slug) }]} />
     {returnTo && <BackNavigationTarget pathname={pathname} href={returnTo} />}
+    {searchReview?.kind === "incomplete" && <aside aria-label="Napomena o zapisu pesme" className="my-4 rounded-lg border border-amber-500/50 p-4 leading-relaxed">
+      <p><UiText text="Ovaj zapis sadrži samo početni fragment pesme." /></p>
+      {searchReview.alternativePath && <Link href={searchReview.alternativePath} prefetch={false} className="inline-block py-2 underline underline-offset-2"><UiText text="Otvori potpuniji zapis ove pesme" /></Link>}
+    </aside>}
     <SongClient
       key={song.id + (fromFavorites ? ":favorite" : ":original") + (query.play === "1" ? ":play" : "")}
       fromFavorites={fromFavorites}

@@ -158,7 +158,7 @@ test('song sitemap batches are bounded, stable and contain only canonical public
   const response = await mapRequest('songs-1.xml'), text = await response.text()
   assert.match(text, /<urlset/); assert.match(text, /\/pesme\/domace\/zeljko\/pesma/)
   assert.doesNotMatch(text, /private|playlist=|lyrics|lastmod/)
-  const query = calls.find(call => call[0] === 'song' && call[1] === 'many')[2]
+  const query = calls.find(call => call[0] === 'song' && call[1] === 'many' && call[2].take === maps.SITEMAP_BATCH_SIZE)[2]
   assert.equal(query.take, maps.SITEMAP_BATCH_SIZE); assert.equal(query.skip, maps.SITEMAP_BATCH_SIZE); assert.deepEqual(query.orderBy, { id: 'asc' })
   assert.deepEqual(Object.keys(query.select).sort(), ['artist', 'slug'])
 })
@@ -185,7 +185,7 @@ test('static sitemap excludes personal/admin screens and safely serializes XML',
 })
 test('invalid/out-of-range sitemap pages never issue large offset data queries', async () => {
   for (const file of ['songs--1.xml', 'songs-01.xml', 'songs-999999999.xml', 'private-0.xml', 'songs-2.xml', 'artists-1.xml']) assert.equal((await mapRequest(file)).status, 404)
-  assert.equal(calls.filter(call => call[1] === 'many').length, 0)
+  assert.equal(calls.filter(call => call[1] === 'many' && call[2].skip !== undefined).length, 0)
 })
 test('sitemap database failures return retryable 503, never an empty successful catalog', async () => {
   down = true

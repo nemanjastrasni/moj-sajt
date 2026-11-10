@@ -177,6 +177,20 @@ test("six added slash chords resolve to their own images including enharmonic ba
   assert.equal(getChordAssetUrl("D7_f#"), "/chords_final/D7_f%23_v1.png")
 })
 
+test("equivalent chord spellings reuse an exact diagram without discarding additions or bass", () => {
+  for (const [symbol, expected] of [["F#m(add6)", ["F#m6"]], ["F#msus4", ["F#sus", "F#sus4"]], ["Cadd2", ["Cadd9"]], ["C6add9", ["C69"]]]) {
+    const asset = getChordAssetName(symbol)
+    assert.ok(expected.includes(asset), symbol)
+    const original = require('../lib/chords/chordSymbols.ts').parseChordSymbol(symbol)
+    const actual = require('../lib/chords/chordSymbols.ts').parseChordSymbol(asset.replace('_', '/'))
+    assert.equal(actual.normalized.rootNote, original.normalized.rootNote)
+    assert.deepEqual(actual.normalized.semitones, original.normalized.semitones)
+    assert.equal(actual.normalized.bassNote, original.normalized.bassNote)
+    assert.ok(require('node:fs').existsSync(require('node:path').join(__dirname, '../public', decodeURIComponent(getChordAssetUrl(asset)))))
+  }
+  for (const unsupported of ["Am6add9(no5)", "F#m(add6)/C", "E(#9)", "F(#9)"]) assert.equal(getChordAssetName(unsupported), null, unsupported)
+})
+
 test("added PNGs are intact transparent 300px images and contain the required bass and chord tones", async () => {
   const fs = require("node:fs")
   const path = require("node:path")
