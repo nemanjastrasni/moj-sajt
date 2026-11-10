@@ -1,0 +1,31 @@
+.page { max-width: 54rem; margin: 0 auto; padding: clamp(1.5rem, 5vw, 3rem) 0; line-height: 1.8; overflow-wrap: anywhere; }
+.page h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; font-weight: 750; margin: 1.25rem 0; }
+.page h2 { font-size: clamp(1.25rem, 4vw, 1.6rem); line-height: 1.35; font-weight: 700; margin: 0 0 1rem; }
+.page p { margin: .85rem 0; }
+.page a { text-decoration: underline; text-underline-offset: .2em; }
+.intro { font-size: 1.125rem; opacity: .85; max-width: 46rem; }
+.contents { border-block: 1px solid #7776; padding: 1.25rem 0; margin: 2rem 0; }
+.contents ol, .steps { list-style: decimal; padding-left: 1.5rem; }
+.contents a, .links a { display: inline-block; min-height: 44px; padding-block: .35rem; }
+.section { margin: 2.5rem 0; scroll-margin-top: 8rem; }
+.steps li { padding-left: .25rem; margin: .75rem 0; }
+.cards { display: grid; gap: 1.25rem; margin-top: 2rem; }
+.card { border: 1px solid #7776; border-radius: 1rem; padding: clamp(1.1rem, 4vw, 1.75rem); }
+.card h2 { margin-bottom: .75rem; }
+.links { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; margin-block: 1rem; }
+.diagrams { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1.5rem 0; }
+.diagram { width: min(11rem, 100%); margin: 0; text-align: center; border: 1px solid #7776; border-radius: .75rem; padding: .75rem; }
+.diagram figcaption { font-weight: 700; font-size: 1.25rem; }
+.diagram svg { display: block; width: 100%; height: auto; }
+.diagram code { font-size: .9rem; }
+.example { border: 1px solid #7776; border-radius: .75rem; padding: clamp(.75rem, 3vw, 1.25rem); margin: 1.5rem 0; }
+.bars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.bar { border-left: 3px solid #7779; padding: .5rem .75rem; }
+.bar strong, .bar span { display: block; }
+.bar strong { font-size: 1.25rem; }
+.bar span { font-variant-numeric: tabular-nums; white-space: nowrap; font-size: .9rem; }
+.example table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: .95rem; }
+.example caption { text-align: left; padding-bottom: 1rem; }
+.example th, .example td { text-align: left; padding: .6rem .35rem; border-bottom: 1px solid #7775; vertical-align: top; }
+.source { font-size: .9rem; opacity: .8; padding-top: 1.5rem; border-top: 1px solid #7776; }
+@media (min-width: 640px) { .bars { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

@@ -53,6 +53,7 @@ export default function RootLayout({
 
           <footer className="mx-auto max-w-6xl px-4 pb-8 text-xs text-gray-400">
             <Link href="/kontakt" className="underline underline-offset-2"><UiText text="Kontakt" /></Link>
+            {" · "}<Link href="/vodici" className="underline underline-offset-2"><UiText text="Vodiči za gitaru" /></Link>
             {" · "}<Link href="/o-nama" className="underline underline-offset-2"><UiText text="O nama" /></Link>
             {" · "}<Link href="/prijava-povrede" className="underline underline-offset-2"><UiText text="Prijava povrede prava" /></Link>
             {" · "}

@@ -103,6 +103,7 @@ export default async function HomePage() {
           <p><UiText text="Pronađi pesmu po naslovu ili izvođaču, izaberi kategoriju i otvori zapis za sviranje. Uz pesme su dostupni promena tonaliteta, lične plejliste i izvoz PDF pesmarice." /></p>
           <p><UiText text="Za početak izaberi lakše pesme ili pogledaj dijagrame akorda pre nego što sastaviš svoj repertoar." /></p>
           <nav className={guide.links} aria-labelledby="home-song-guide">
+            <Link href="/vodici" prefetch={false}><UiText text="Vodiči za gitaru" /></Link>
             <Link href="/pesme" prefetch={false}><UiText text="Pronađi pesme sa akordima" /></Link>
             <Link href="/akordi" prefetch={false}><UiText text="Dijagrami akorda za gitaru" /></Link>
             <Link href="/plejliste/beginner" prefetch={false}><UiText text="Pesme za početnike" /></Link>

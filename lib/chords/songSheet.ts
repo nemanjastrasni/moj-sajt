@@ -13,7 +13,7 @@ export type SheetLine = {
   tokens: SheetToken[]
 }
 
-const sectionLabel = /^\s*(?:uvod|intro|ref(?:ren)?|kraj|outro|solo|prelaz|riff|verse|chorus|bridge|interlude|instrumental|bass|bas)(?:\s+\d+)?\s*[.:]?\s*/i
+const sectionLabel = /^\s*(?:uvod|uvo|for[šs]pil|intro|ref(?:ren)?|kraj|outro|solo|prelaz|riff|verse|chorus|bridge|interlude|instrumental|bass|bas)(?=\s|[.:]|$)(?:\s+\d+)?\s*[.:]?\s*/i
 const wordCharacter = /[\p{L}\p{N}_#\u266f\u266d]/u
 const connector = /[-.\u2010-\u2015]/
 

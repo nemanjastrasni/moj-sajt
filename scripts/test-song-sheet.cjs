@@ -39,6 +39,25 @@ test("riff annotations and section labels do not disable chords", () => {
   assert.equal(parseSheetLine("G{riff}").text, "G{riff}")
 })
 
+test("Forspil and UVO rows expose all chords for transposition without changing the stored notation", () => {
+  for (const source of ["Forspil: Cm C7   Fm C7 Fm Fm    G7 G7 G7 G7", "Foršpil: Cm C7 Fm", "UVO: Em H7 Em E7 Am C H7 Em D"]) {
+    const line = parseSheetLine(source)
+    assert.equal(line.kind, "chords", source)
+    assert.equal(line.text, source)
+    assert.ok(line.tokens.length >= 3)
+    for (const token of line.tokens) {
+      assert.equal(normalizeChordSymbol(source.slice(token.start, token.end)), token.chord)
+      assert.notEqual(transposeChordSymbol(token.chord, 1), token.chord)
+    }
+  }
+  for (const source of ["Forspil traje dok A peva", "UVO je A u ovoj recenici", "Uvodna A", "Soloist A", "Bassoon A"]) {
+    assert.deepEqual(parseSheetLine(source), { kind: "lyrics", text: source, tokens: [] })
+  }
+  const blocks = groupSheetLines(parseSongSheet("Am D\nForspil:\nC G"))
+  assert.equal(blocks.length, 3)
+  assert.equal(blocks[1].lyricLine.text, "Forspil:")
+})
+
 test("does not identify letters in lyrics or notes as chords", () => {
   for (const source of ["on A warm San Franciscan night", "A nekad tako srecan sam bio", ". I think About the old Days", "Capo II", "[Verse 2]", "Hello A and D", "Uvodna prica o pesmi", "Prelaz 2:"]) {
     const line = parseSheetLine(source)

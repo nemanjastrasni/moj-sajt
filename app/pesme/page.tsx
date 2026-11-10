@@ -40,6 +40,10 @@ export default function PesmePage() {
         <h2><UiText text="Kako koristiti zapis pesme" /></h2>
         <p><UiText text="Otvori pesmu i proveri njen zapis. Kada su akordi uneti, možeš promeniti tonalitet i uključiti njihove dijagrame. Pojedini zapisi sadrže samo tekst ili tabulaturu; naslov stranice označava koji je sadržaj dostupan." /></p>
         <Link href="/akordi" prefetch={false}><UiText text="Pogledaj dijagrame i oznake akorda" /></Link>
+        <nav className={styles.links} aria-label="Vodiči za gitaru">
+          <Link href="/vodici/vezbanje-promene-akorda" prefetch={false}><UiText text="Vežbanje promene akorda" /></Link>
+          <Link href="/vodici/capo-i-promena-tonaliteta" prefetch={false}><UiText text="Capo i promena tonaliteta" /></Link>
+        </nav>
       </section>
     </div>
   )

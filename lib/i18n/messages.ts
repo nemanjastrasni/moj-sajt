@@ -1,5 +1,9 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "Vodiči za gitaru": "Guitar guides",
+  "Vodič za čitanje akorda i dijagrama": "Guide to reading chords and diagrams",
+  "Vežbanje promene akorda": "Practising chord changes",
+  "Capo i promena tonaliteta": "Capo and transposition",
   "Akordi za gitaru i tekstovi pesama": "Guitar chords and song lyrics",
   "Pesme sa akordima za gitaru": "Songs with guitar chords",
   "Pronađi pesmu po naslovu ili izvođaču, izaberi kategoriju i otvori zapis za sviranje. Uz pesme su dostupni promena tonaliteta, lične plejliste i izvoz PDF pesmarice.": "Find a song by title or artist, choose a category and open its notation. Song tools include transposition, personal playlists and PDF songbook export.",

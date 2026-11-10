@@ -35,6 +35,7 @@ export default function AkordiPage() {
         <h2><UiText text="Akordi za početnike" /></h2>
         <p><UiText text="Za prve vežbe možeš krenuti od otvorenih hvatova Em, Am, C, G i D. Vežbaj polako prelazak između dva hvata i proveri da li se potrebne žice jasno čuju, pa tek onda povećaj tempo." /></p>
         <nav className={styles.links} aria-labelledby="reading-chords">
+          <Link href="/vodici/kako-se-citaju-akordi-za-gitaru" prefetch={false}><UiText text="Vodič za čitanje akorda i dijagrama" /></Link>
           <Link href="/plejliste/acoustic" prefetch={false}><UiText text="Pesme sa osnovnim otvorenim akordima" /></Link>
           <Link href="/plejliste/beginner" prefetch={false}><UiText text="Pesme za početnike" /></Link>
           <Link href="/pesme" prefetch={false}><UiText text="Pronađi pesme sa akordima" /></Link>

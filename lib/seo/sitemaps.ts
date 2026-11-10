@@ -4,10 +4,11 @@ import { prisma } from "@/lib/prisma"
 import { hasBiographyContent } from "@/lib/biographies/catalog"
 import { CHORD_ROOTS } from "./catalog"
 import { catalogEntries } from "@/lib/playlists/catalog"
+import { guitarGuides, guidePath } from "@/lib/guitarGuides"
 import { PUBLIC_CATEGORIES, publicUrl, routePath, SITE_URL } from "./site"
 
 export const SITEMAP_BATCH_SIZE = 1000
-export const sitemapStaticPaths = ["/", "/pesme", "/biografija", "/akordi", "/plejliste", "/public-listening-playlists", "/o-nama", "/kontakt", "/foto-izvori", "/wiki-izvori", "/prijava-povrede", ...CHORD_ROOTS.map(root => routePath("akordi", root)), ...catalogEntries.map(entry => routePath("plejliste", entry.slug)), ...PUBLIC_CATEGORIES.map(category => routePath("top-50", category)), ...PUBLIC_CATEGORIES.flatMap(category => [routePath("pesme", category), routePath("biografija", category)])]
+export const sitemapStaticPaths = ["/", "/pesme", "/biografija", "/akordi", "/vodici", ...guitarGuides.map(guide => guidePath(guide.slug)), "/plejliste", "/public-listening-playlists", "/o-nama", "/kontakt", "/foto-izvori", "/wiki-izvori", "/prijava-povrede", ...CHORD_ROOTS.map(root => routePath("akordi", root)), ...catalogEntries.map(entry => routePath("plejliste", entry.slug)), ...PUBLIC_CATEGORIES.map(category => routePath("top-50", category)), ...PUBLIC_CATEGORIES.flatMap(category => [routePath("pesme", category), routePath("biografija", category)])]
 const where = { artist: { category: { in: [...PUBLIC_CATEGORIES] } }, lyrics: { not: "" } }
 const counts = unstable_cache(async () => {
   const [songs, artists] = await Promise.all([prisma.song.count({ where }), prisma.artist.count({ where: { category: { in: [...PUBLIC_CATEGORIES] } } })])
