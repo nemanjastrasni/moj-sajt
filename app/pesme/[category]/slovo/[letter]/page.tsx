@@ -1,16 +1,14 @@
-import { cache } from "react"
 import { notFound, permanentRedirect } from "next/navigation"
 import { catalogLetter } from "@/lib/seo/catalog"
 import { isPublicCategory, routePath } from "@/lib/seo/site"
 import { publicPageMetadata } from "@/lib/seo/metadata"
 import { getCategoryLabel } from "@/lib/categories"
-import { prisma } from "@/lib/prisma"
+import { readLetterArtistCards } from "@/lib/artists/publicCatalog"
 import Link from "next/link"
 import { CategoryLabel } from "@/app/components/UiText"
 import ArtistImage from "@/app/components/ArtistImage"
 import { getArtistImage } from "@/lib/artistPhotos"
 import styles from "@/app/components/ArtistMedia.module.css"
-import { isResolvedCollaboration } from "@/lib/artists/performers"
 import SiteImage, { type SiteImageName } from "@/app/components/SiteImage"
 
 export const dynamic = "force-dynamic"
@@ -22,19 +20,6 @@ const categoryImages: Partial<Record<string, SiteImageName>> = {
 }
 
 
-function getFirstLetter(name?: string) {
-
-  if (!name) return ""
-
-  const upper = name.trim().toUpperCase()
-
-  if (upper.startsWith("DŽ")) return "DŽ"
-  if (upper.startsWith("LJ")) return "LJ"
-  if (upper.startsWith("NJ")) return "NJ"
-
-  return upper[0]
-}
-
 type Props = { params: Promise<{ category: string; letter: string }> }
 
 async function letterRoute(params: Props["params"]) {
@@ -45,29 +30,7 @@ async function letterRoute(params: Props["params"]) {
   return { category, ...letter }
 }
 
-const letterArtists = cache(async (category: string, letter: string) => {
-  const isSpecial = letter === "#"
-  const artists = await prisma.artist.findMany({
-  where: { category },
-  orderBy: { name: "asc" },
-  select: { id: true, name: true, slug: true, category: true, image: true,
-    songs: { select: { id: true, performers: { select: { artistId: true } } } },
-    performances: { select: { songId: true } },
-  },
-})
-
-  const filtered = artists.filter((artist) => {
-  if (isResolvedCollaboration(artist.songs)) return false
-  const first = getFirstLetter(artist.name)
-
-  if (isSpecial) {
-  return !/^[A-ZČĆŽŠĐ]/.test(artist.name.trim().toUpperCase())
-}
-
-  return first === letter
-})
-  return filtered
-})
+const letterArtists = readLetterArtistCards
 
 export async function generateMetadata({ params }: Props) {
   const { category, label, slug } = await letterRoute(params)
@@ -104,7 +67,7 @@ export default async function LetterPage({ params }: Props) {
     <ArtistImage src={getArtistImage(artist)} name={artist.name} />
 
     <span>
-      {artist.name} ({new Set([...artist.songs.map(song => song.id), ...artist.performances.map(row => row.songId)]).size})
+      {artist.name} ({artist.songCount})
     </span>
   </Link>
 ))}

@@ -4,14 +4,14 @@ import { contentAdmin } from "@/lib/adminContent/server"
 import { isReviewStatus, type ReviewStatus } from "@/lib/songReview/model"
 import SongReviewBadge from "./SongReviewBadge"
 import styles from "./ArtistSongList.module.css"
-import { estimateDifficulty } from "@/lib/music/difficulty"
+import { estimateDifficulty, type Difficulty } from "@/lib/music/difficulty"
 import SongDifficulty from "./SongDifficulty"
 import UiText from "./UiText"
 import { difficultyExplanation } from "@/lib/music/difficulty"
 import SongPerformers from "./SongPerformers"
 import { performerArtists, type SongPerformerView } from "@/lib/artists/performers"
 
-type Song = { id: string; slug: string; title: string; lyrics: string; chords?: string | null; difficulty: string; artist?: { slug: string; category: string | null }; performers?: { artist: SongPerformerView }[] }
+type Song = { id: string; slug: string; title: string; lyrics?: string; chords?: string | null; difficulty?: string; assessment?: { level: Difficulty | null; hasChords: boolean }; artist?: { slug: string; category: string | null }; performers?: { artist: SongPerformerView }[] }
 type Props = { category: string; artist: string; songs: Song[]; artistId?: string }
 
 export default async function ArtistSongList({ category, artist, songs, artistId }: Props) {
@@ -30,10 +30,10 @@ export default async function ArtistSongList({ category, artist, songs, artistId
 export function ArtistSongRows({ category, artist, songs, statuses, artistId }: Props & { statuses?: Map<string, ReviewStatus> }) {
   return <><ul className={styles.list}>
     {songs.map(song => {
-      const assessment = estimateDifficulty(song)
+      const assessment = song.assessment ?? (() => { const result = estimateDifficulty(song); return { level: result.level, hasChords: result.chords.length > 0 } })()
       return <li key={song.id} className={styles.row}>
       <Link href={`/pesme/${encodeURIComponent(song.artist?.category ?? category)}/${encodeURIComponent(song.artist?.slug ?? artist)}/${encodeURIComponent(song.slug)}${artistId ? "?artist=" + encodeURIComponent(artistId) : ""}`} className={styles.link}>
-        {assessment.chords.length ? "\uD83C\uDFB8 " : "\uD83C\uDFB5 "}
+        {assessment.hasChords ? "\uD83C\uDFB8 " : "\uD83C\uDFB5 "}
         {song.title}
         <span className={styles.difficulty}>{" \u2022 "}<SongDifficulty level={assessment.level} /></span>
       </Link>

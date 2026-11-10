@@ -1,5 +1,10 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "PDF trenutno nije dostupan. Pokušaj ponovo.": "PDF is unavailable. Try again.",
+  "Učitavam izvođače i pesme...": "Loading artists and songs...",
+  "Učitavam capo preporuke...": "Loading capo suggestions...",
+  "Capo preporuke nisu dostupne. Pokušaj ponovo.": "Capo suggestions are unavailable. Try again.",
+  "Učitavam alat...": "Loading tool...",
   "Ovaj zapis sadrži samo početni fragment pesme.": "This chart contains only the beginning of the song.",
   "Otvori potpuniji zapis ove pesme": "Open a more complete chart of this song",
   "Vodiči za gitaru": "Guitar guides",

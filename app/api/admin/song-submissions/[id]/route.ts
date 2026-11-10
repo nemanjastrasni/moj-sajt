@@ -15,6 +15,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     const result = await reviewSubmission(id, user.id, validateReview(body))
     // Publication has already committed; a cache failure must not report a failed approval.
     try { revalidateTag("playlist-catalog") } catch {}
+    try { revalidateTag("public-artist-index"); revalidateTag("public-artist-songs") } catch {}
     try { revalidatePath("/pesme", "layout"); revalidatePath("/"); revalidatePath("/admin/predlozi"); revalidatePath("/moji-predlozi") } catch {}
     if (result.artistId) queueArtistWikipedia(result.artistId)
     return NextResponse.json({ href: result.href })

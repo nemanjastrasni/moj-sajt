@@ -95,6 +95,7 @@ export default async function SongPage({ params, searchParams }: Props) {
         artistSlug: song.artist.slug,
         artistName: song.artist.name,
         performers,
+        tutorial: song.tutorial,
       }}
       /*media={media}*/
     />

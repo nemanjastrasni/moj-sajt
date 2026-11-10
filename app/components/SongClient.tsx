@@ -5,8 +5,9 @@ import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { LoaderCircle, Maximize, Minus, Pause, Play, Plus, RotateCcw, Settings2 } from "lucide-react"
-import { useI18n } from "./UiText"
-import UsedChordCard from "./UsedChordCard"
+import UiText, { useI18n } from "./UiText"
+import dynamic from "next/dynamic"
+const UsedChordCard=dynamic(()=>import("./UsedChordCard"))
 import SongSheet from "./SongSheet"
 import SongPdfButton from "./SongPdfButton"
 import SongPlaylistButton from "./SongPlaylistButton"
@@ -14,13 +15,13 @@ import SongReportButton from "./SongReportButton"
 import CapoControl from "./CapoControl"
 import useSongCapo from "./useSongCapo"
 import useSongKey from "./useSongKey"
-import PerformanceView from "./PerformanceView"
+const PerformanceView=dynamic(()=>import("./PerformanceView"),{loading:()=> <p role="status"><UiText text="Učitavam alat..." /></p>})
 import usePlaylistSongSettings from "./usePlaylistSongSettings"
 import PlaylistSettingsStatus from "./PlaylistSettingsStatus"
 import SongPerformers from "./SongPerformers"
 import PlaylistSongNavigation from "./PlaylistSongNavigation"
 import SongDisplayMode from "./SongDisplayMode"
-import SongTutorial from "./SongTutorial"
+import SongTutorialLauncher from "./SongTutorialLauncher"
 import PlaylistDialog from "./PlaylistDialog"
 import { getUsedChords, parseSongSheet } from "@/lib/chords/songSheet"
 import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
@@ -29,7 +30,7 @@ import styles from "./SongToolbar.module.css"
 
 type Props = {
   adminTools?: ReactNode; fromFavorites?: boolean; performanceHref?: string; playlistId?: string; songVersion?: string; startPerformance?: boolean
-  song: { id: string; title: string; artist: string; content?: string; lyrics?: string; chords?: string; category?: string; artistSlug?: string; artistName?: string; performers?: SongPerformerView[] }
+  song: { id: string; title: string; artist: string; content?: string; lyrics?: string; chords?: string; category?: string; artistSlug?: string; artistName?: string; performers?: SongPerformerView[]; tutorial?: { videoId: string; title: string } | null }
   media?: { platform: string; embedUrl: string } | null
 }
 
@@ -85,7 +86,7 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
       <button type="button" className={styles.icon} disabled={controls.controlsDisabled} title={t("Rezim za sviranje")} aria-label={t("Rezim za sviranje")} onClick={async () => { if (performanceHref && !await playlistSettings.canLeave()) return; setScrolling(false); setShowVideo(false); if (performanceHref) router.push(performanceHref); else setPerformance(true) }}><Maximize /></button>
       <SongPlaylistButton key={song.id} songId={song.id} disabled={controls.controlsDisabled} settings={{ transpose, capo: capo.active ? capo.selected : null }} />
       <SongPdfButton song={{ id: song.id, title, artist, lyrics }} transpose={transpose} capo={capo.active ? capo.selected : null} disabled={controls.controlsDisabled} textSize={textSize} chordSize={chordSize} />
-      <SongTutorial songId={song.id} mode="user" onPlay={() => { setScrolling(false); setShowVideo(false) }} />
+      <SongTutorialLauncher tutorial={song.tutorial} onPlay={() => { setScrolling(false); setShowVideo(false) }} />
       <button type="button" className={styles.videoToggle} data-song-video-toggle disabled={loadingVideo} aria-pressed={showVideo} aria-busy={loadingVideo}
         title={`${t(showVideo ? "Sakrij video" : "Prikazi video")} (YouTube)`}
         aria-label={loadingVideo ? t("Ucitavam video...") : `${t(showVideo ? "Sakrij video" : "Prikazi video")} (YouTube)`} onClick={() => void toggleVideo()}>

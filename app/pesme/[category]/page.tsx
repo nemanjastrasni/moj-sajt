@@ -1,6 +1,6 @@
 import Link from "next/link"
 import type { Metadata } from "next"
-import { prisma } from "@/lib/prisma"
+import { readArtistCards } from "@/lib/artists/publicCatalog"
 import { getCategoryLabel } from "@/lib/categories"
 import { CategoryLabel } from "@/app/components/UiText"
 import ArtistMosaic from "@/app/components/ArtistMosaic"
@@ -29,10 +29,7 @@ export default async function CategoryPage(
   const { category } = await params
   if (!isPublicCategory(category)) notFound()
 
-  const artists = await prisma.artist.findMany({
-  where: { category },
-  select: { id: true, name: true, slug: true, category: true, image: true, _count: { select: { songs: true } } },
-})
+  const artists = await readArtistCards(category)
 
 const lettersSet = new Set<string>()
 

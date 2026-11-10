@@ -1,7 +1,7 @@
 import { PDFDocument, PageSizes, rgb, type PDFFont, type PDFPage } from "pdf-lib"
 import fontkit from "@pdf-lib/fontkit"
 import { transposeChordSymbol } from "../chords/chordSymbols"
-import { capoSheet, isCapo } from "../chords/capo"
+import { capoSheet, isCapo } from "../chords/capoDisplay"
 import { parseSongSheet } from "../chords/songSheet"
 import { MAX_BOOK_SONGS, MAX_PDF_CHARACTERS, type PdfSong } from "./model"
 import { printBlocks } from "./layout"

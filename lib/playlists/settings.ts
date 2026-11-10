@@ -1,4 +1,4 @@
-import { isCapo } from "../chords/capo"
+import { isCapo } from "../chords/capoDisplay"
 import { SubmissionError } from "../submissions/validation"
 
 export type PlayingValues = { transpose: number; capo: number | null }

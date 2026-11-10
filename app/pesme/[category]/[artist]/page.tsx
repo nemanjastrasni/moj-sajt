@@ -1,6 +1,6 @@
 import UiText from "@/app/components/UiText"
 import { notFound } from "next/navigation"
-import { prisma } from "@/lib/prisma"
+import { readArtistSongCards } from "@/lib/artists/publicCatalog"
 import Link from "next/link"
 import ArtistHeader from "@/app/components/ArtistHeader"
 import { getArtistImage } from "@/lib/artistPhotos"
@@ -11,7 +11,6 @@ import ArtistSongList from "@/app/components/ArtistSongList"
 import { BackNavigationTarget } from "@/app/components/BackNavigation"
 import { artistIndexHref } from "@/lib/navigation/parent"
 import { hasBiographyContent } from "@/lib/biographies/catalog"
-import { performerSelect } from "@/lib/artists/performers"
 import { getPublicArtist } from "@/lib/publicPages"
 import { publicPageMetadata } from "@/lib/seo/metadata"
 import { routePath } from "@/lib/seo/site"
@@ -39,12 +38,7 @@ export default async function ArtistPage({ params }: ArtistProps) {
   const artistData = await getPublicArtist(category, artist)
 
   if (!artistData) notFound()
-  const songs = await prisma.song.findMany({
-    where: { OR: [{ artistId: artistData.id }, { performers: { some: { artistId: artistData.id } } }] },
-    select: { id: true, slug: true, title: true, chords: true, lyrics: true, difficulty: true,
-      artist: { select: { slug: true, category: true } }, performers: performerSelect },
-    orderBy: [{ title: "asc" }, { id: "asc" }],
-  })
+  const songs = await readArtistSongCards(artistData.id)
   const image = getArtistImage(artistData)
 
   return (

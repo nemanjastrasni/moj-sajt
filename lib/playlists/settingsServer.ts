@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 import { SubmissionError } from "../submissions/validation"
-import { capoSource } from "../chords/capo"
+import { capoSource } from "../chords/capoDisplay"
 import { parseSongSheet } from "../chords/songSheet"
 import { playlistTransaction, readablePlaylistWhere } from "./server"
 import type { PlayingSnapshot, PlayingValues, playingUpdate } from "./settings"

@@ -8,7 +8,7 @@ export const getPublicSong = cache(async (category: string, artist: string, slug
   return prisma.song.findFirst({
     where: { slug, artist: { slug: artist, category } },
     select: { id: true, title: true, slug: true, lyrics: true, chords: true, category: true,
-      artist: { select: { id: true, name: true, slug: true, category: true } }, performers: performerSelect },
+      artist: { select: { id: true, name: true, slug: true, category: true } }, tutorial: { select: { videoId: true, title: true } }, performers: performerSelect },
   })
 })
 

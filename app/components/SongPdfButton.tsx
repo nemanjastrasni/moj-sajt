@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react"
 import { Download, FileDown, LoaderCircle } from "lucide-react"
 import { useI18n } from "./UiText"
 import { normalizeTranspose } from "@/lib/songbook/model"
-import { downloadPdf, pdfError, preparePdfDownload } from "@/lib/songbook/client"
 
 type Props = { song: { id: string; title: string; artist: string; lyrics: string }; transpose: number; capo?: number | null; textSize: number; chordSize: number; disabled?: boolean }
 export default function SongPdfButton({ song, transpose, capo, textSize, chordSize, disabled = false }: Props) {
@@ -19,14 +18,17 @@ export default function SongPdfButton({ song, transpose, capo, textSize, chordSi
   async function exportSong() {
     if (running.current) return
     running.current = true; setBusy(true); setError("")
+    let formatError: (cause: unknown) => string = () => t("PDF trenutno nije dostupan. Pokušaj ponovo.")
     try {
+      const {preparePdfDownload,downloadPdf,pdfError}=await import("@/lib/songbook/client")
+      formatError = pdfError
       const result = await preparePdfDownload([{ ...song, transpose: normalizeTranspose(transpose), ...(capo != null ? { capo } : {}) }], {
         title: `${song.artist} - ${song.title}`, locale, book: false, contents: false,
         fontSize: Math.max(8, Math.min(24, textSize * .75)), chordSize: Math.max(8, Math.min(24, chordSize * .75)),
       })
       if (!alive.current) { URL.revokeObjectURL(result.url); return }
       setFile({ ...result, key }); downloadPdf(result)
-    } catch (cause) { if (alive.current) setError(pdfError(cause)) }
+    } catch (cause) { if (alive.current) setError(formatError(cause)) }
     finally { running.current = false; if (alive.current) setBusy(false) }
   }
   return <div className="flex min-w-0 flex-wrap items-center gap-2">
