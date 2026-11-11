@@ -9,7 +9,7 @@ let normalizedSearchQuery, foldedSearchSql
 try { ({ normalizedSearchQuery, foldedSearchSql } = require("../lib/songSearchServer.ts")) } finally { Module._load = original }
 const { prepareSongQuery } = require("../lib/songSearch.ts"), { Prisma } = require("@prisma/client")
 async function main() {
-  const { values } = parseArgs({ options: { ca: { type: "string" } } }), db = await require("./lib/artist-image-source.cjs").databaseClient(values.ca)
+  const { values } = parseArgs({ options: { ca: { type: "string" }, plans: { type: "boolean", default: false } } }), db = await require("./lib/artist-image-source.cjs").databaseClient(values.ca)
   try {
     await db.query("BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY")
     const sample = Prisma.sql`SELECT ${foldedSearchSql(Prisma.sql`${"\u017deljko \u0110or\u0111e \u010c\u0106\u0160\u017d"}`)} AS folded`
@@ -22,7 +22,13 @@ async function main() {
         assert.ok(rows.length > 0 && rows.length <= 12)
         assert.ok(rows.every(row => !Object.hasOwn(row, "lyrics") && !Object.hasOwn(row, "email")))
         if (ids) assert.deepEqual(rows.map(row => row.id), ids); else ids = rows.map(row => row.id)
-        results.push({ query, count: rows.length, elapsedMs: Date.now() - started, artists: [...new Set(rows.map(row => row.artist.name))].slice(0, 3) })
+        const result = { query, count: rows.length, elapsedMs: Date.now() - started, artists: [...new Set(rows.map(row => row.artist.name))].slice(0, 3) }
+        if (values.plans) {
+          const plan = (await db.query("EXPLAIN (ANALYZE, FORMAT JSON, TIMING OFF) " + sql.text, sql.values)).rows[0]["QUERY PLAN"][0]
+          const indexes = node => [node["Index Name"], ...(node.Plans ?? []).flatMap(indexes)].filter(Boolean)
+          result.executionMs = plan["Execution Time"]; result.indexes = [...new Set(indexes(plan.Plan))]
+        }
+        results.push(result)
       }
     }
     await db.query("ROLLBACK")
