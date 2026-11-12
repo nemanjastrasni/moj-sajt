@@ -3,11 +3,12 @@ import { artistWikiManifest, wikiValueHash, type WikiSource } from "@/lib/artist
 import { allArtistWikiCredits } from "@/lib/artistWikiServer"
 
 export const metadata = publicPageMetadata("Wikipedia – Izvori biografija i diskografija", "Izvori, autori i revizije Wikipedia članaka korišćenih za biografije i diskografije izvođača.", "/wiki-izvori")
-export const dynamic = "force-dynamic"
+export const revalidate = 1800
+const manifestHash = wikiValueHash(artistWikiManifest)
 export default async function WikiCreditsPage() {
   const artists = await allArtistWikiCredits()
   return (
-    <section className="mx-auto max-w-3xl py-10" data-artist-wiki-storage="database" data-artist-wiki-manifest={wikiValueHash(artistWikiManifest)}>
+    <section className="mx-auto max-w-3xl py-10" data-artist-wiki-storage="database" data-artist-wiki-manifest={manifestHash}>
       <h1 className="mb-8 text-2xl font-bold">Wikipedia: izvori / Sources</h1>
       <div className="divide-y divide-gray-700">
         {artists.map(artist => (

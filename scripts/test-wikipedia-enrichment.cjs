@@ -4,7 +4,7 @@ const {test,beforeEach}=require('node:test'),assert=require('node:assert/strict'
 const store=require('./lib/artist-wiki-store.cjs'),core=require('./lib/artist-wiki-core.cjs')
 const source={language:'sr',title:'Probni bend',pageId:1,revisionId:2,url:'https://sr.wikipedia.org/wiki/Probni_bend',revisionUrl:'https://sr.wikipedia.org/w/index.php?oldid=2',historyUrl:'https://sr.wikipedia.org/w/index.php?title=Probni+bend&action=history',license:'https://creativecommons.org/licenses/by-sa/4.0/'}
 const bio='Probni bend je muzička grupa poznata po albumima i koncertnim nastupima. '.repeat(5)
-let state,proposal,mutate,failCredit,callbacks,lookups
+let state,proposal,mutate,failCredit,callbacks,lookups,refreshes
 const db={
   artist:{findUnique:async()=>structuredClone(state.artist),update:async({data})=>Object.assign(state.artist,data)},
   $queryRawUnsafe:async(sql,...values)=>{
@@ -21,6 +21,7 @@ Module._load=function(request,parent,main){
   if(request==='@/lib/prisma')return {prisma:db}
   if(request==='next/server')return {after:fn=>callbacks.push(fn)}
   if(request==='next/cache')return {revalidatePath:()=>{}}
+  if(request==='@/lib/wikiCreditsCache')return {refreshWikiCredits:()=>{refreshes++}}
   if(request==='@/scripts/lib/artist-wiki-core.cjs')return {planBio:core.planBio,wikipediaClient:()=>({}),discoverContent:async()=>{lookups++;mutate?.();return proposal}}
   if(request==='@/scripts/lib/artist-wiki-store.cjs')return store
   return original.call(this,request,parent,main)
@@ -30,12 +31,13 @@ try{service=require('../lib/artists/wikipedia.ts')}finally{Module._load=original
 beforeEach(()=>{
   state={artist:{id:'a',name:'Probni bend',slug:'probni-bend',category:'domace',bio:null,discography:null,image:'keep.jpg'},profile:{state:'pending',checkedAt:new Date(0)}}
   proposal={state:'identified-content',wikidataId:'Q123',bio,bioSource:source,discography:[{title:'Prvi album',year:'2000',kind:'studio'}],discographySource:source}
-  mutate=null;failCredit=false;callbacks=[];lookups=0
+  mutate=null;failCredit=false;callbacks=[];lookups=0;refreshes=0
 })
 test('new artist enrichment stores content and exact source hashes atomically',async()=>{
   service.queueArtistWikipedia('a');assert.equal(lookups,0);await callbacks[0]()
   assert.equal(state.artist.bio,bio);assert.equal(state.artist.image,'keep.jpg')
   assert.equal(state.profile.bioSource.hash,store.hash(bio));assert.equal(state.profile.discographySource.hash,store.hash(state.artist.discography))
+  assert.equal(refreshes,1)
 })
 test('manual edits made during a Wikipedia lookup are preserved',async()=>{
   mutate=()=>{state.artist.bio='Ručna biografija';state.artist.discography=[{title:'Ručni album'}]}
@@ -44,6 +46,7 @@ test('manual edits made during a Wikipedia lookup are preserved',async()=>{
 })
 test('a failed attribution write rolls back content updates',async()=>{
   failCredit=true;await assert.rejects(service.enrichArtistWikipedia('a'),/credit-failed/);assert.equal(state.artist.bio,null);assert.equal(state.artist.discography,null)
+  assert.equal(refreshes,0)
 })
 test('concurrent work and recent completed lookups do not cause repeated requests',async()=>{
   state.profile={state:'working',checkedAt:new Date(),wikidataId:'Q123'};await service.enrichArtistWikipedia('a');assert.equal(lookups,0)

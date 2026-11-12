@@ -77,6 +77,7 @@
     "test:biography-sources": "node --test scripts/test-biography-sources.cjs",
     "artists:discographies:recheck": "node scripts/recheck-discographies.cjs",
     "test:artist-wiki": "node --test scripts/test-artist-wiki.cjs",
+    "test:wiki-credits-cache": "node --test scripts/test-wiki-credits-cache.cjs scripts/test-wikipedia-enrichment.cjs scripts/test-admin-content.cjs",
     "test:artist-images": "node --test scripts/test-artist-images.cjs",
     "test:artist-media": "node --test scripts/test-artist-media.cjs",
     "test:artist-responsive": "node --test scripts/test-artist-responsive.cjs",

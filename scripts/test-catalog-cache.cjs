@@ -4,9 +4,10 @@ const {test,beforeEach}=require('node:test'),assert=require('node:assert/strict'
 const difficulty=require('../lib/music/difficulty.ts'),{catalogEntries,matchesCatalog}=require('../lib/playlists/catalog.ts')
 const stored=new Map(),requestMemo=new Map(),definitions=[],payloads=[]
 const scope=new AsyncLocalStorage()
-let rows,queries,assessments,down,gate,nextFunction=0
+let rows,queries,assessments,decodes,down,gate,now,nextFunction=0
 const original=Module._load
 Module._load=function(request,parent,main){
+  if(request==='node:zlib'){const zlib=original.call(this,request,parent,main);return {...zlib,gunzip:(...args)=>{decodes++;return zlib.gunzip(...args)}}}
   if(request==='@/lib/prisma')return {prisma:{song:{findMany:async query=>{
     queries.push(query);if(down)throw Error('database unavailable')
     if(gate)await gate
@@ -19,8 +20,8 @@ Module._load=function(request,parent,main){
     definitions.push({keys,options})
     return(...args)=>{
       const key=JSON.stringify([keys,args])
-      if(stored.has(key))return Promise.resolve(stored.get(key).result)
-      return Promise.resolve().then(()=>fn(...args)).then(result=>{payloads.push(result);stored.set(key,{result,tags:options.tags});return result})
+      if(stored.has(key)&&stored.get(key).expires>now)return Promise.resolve(stored.get(key).result)
+      return Promise.resolve().then(()=>fn(...args)).then(result=>{payloads.push(result);stored.set(key,{result,tags:options.tags,expires:now+options.revalidate*1000});return result})
     }
   }}
   if(request==='../music/difficulty')return {...difficulty,estimateDifficulty:song=>{assessments++;return difficulty.estimateDifficulty(song)}}
@@ -31,7 +32,7 @@ let catalogPage
 try{({catalogPage}=require('../lib/playlists/catalog-server.ts'))}finally{Module._load=original}
 const fixture=(id,lyrics='C G Am',category='domace')=>({id,title:'Pesma '+id,slug:id,category,lyrics:lyrics+'\nLYRIC_BODY_NOT_IN_CACHE',chords:'CHORD_BODY_NOT_IN_CACHE',artist:{name:'Bend',slug:'bend',email:'SECRET'},userId:'SECRET',transpose:5})
 const request=(...args)=>scope.run(new Map(),()=>catalogPage(...args))
-beforeEach(()=>{stored.clear();requestMemo.clear();payloads.length=0;queries=[];assessments=0;down=false;gate=null;rows=[fixture('a'),fixture('b','E(#9) A7'),fixture('c','C D','narodne'),fixture('d','Samo tekst','strane')]})
+beforeEach(()=>{stored.clear();requestMemo.clear();payloads.length=0;queries=[];assessments=decodes=now=0;down=false;gate=null;rows=[fixture('a'),fixture('b','E(#9) A7'),fixture('c','C D','narodne'),fixture('d','Samo tekst','strane')]})
 
 test('different pages and filters reuse assessments while categories stay separate',async()=>{
   await request('4-akorda',null,1)
@@ -41,20 +42,20 @@ test('different pages and filters reuse assessments while categories stay separa
   await request('acoustic',null,1)
   assert.equal(queries.length,1);assert.equal(assessments,firstAssessments)
   const folk=await request('narodne','narodne',1)
-  assert.deepEqual(folk.songs.map(song=>song.id),['c']);assert.equal(queries.length,2)
+  assert.deepEqual(folk.songs.map(song=>song.id),['c']);assert.equal(queries.length,1);assert.equal(assessments,firstAssessments)
   assert.deepEqual(queries[0].orderBy,[{popularity:'desc'},{title:'asc'},{id:'asc'}])
 })
 
 test('cached index and page responses contain only public metadata, never source text or accounts',async()=>{
   const page=await request('4-akorda',null,1)
-  assert.equal(payloads.length,1)
-  const decoded=gunzipSync(Buffer.from(payloads[0],'base64')).toString('utf8'),cards=JSON.parse(decoded)
+  assert.equal(payloads.length,2)
+  const decoded=gunzipSync(Buffer.from(payloads.find(row=>row.encoded).encoded,'base64')).toString('utf8'),cards=JSON.parse(decoded)
   assert.doesNotMatch(decoded,/LYRIC_BODY|CHORD_BODY|SECRET|lyrics|chords|email|userId|transpose/)
   assert.deepEqual(Object.keys(cards[0]).sort(),['artist','catalogs','category','id','level','slug','title'])
   assert.deepEqual(Object.keys(page.songs[0]).sort(),['artist','category','id','level','slug','title'])
   assert.deepEqual(page.songs[0].artist,{name:'Bend',slug:'bend'})
   const definition=definitions[0]
-  assert.equal(definition.options.revalidate,60)
+  assert.equal(definition.options.revalidate,1800)
   assert.ok(definition.options.tags.includes('playlist-catalog'))
 })
 
@@ -101,5 +102,26 @@ test('all existing public filters preserve legacy selection, ordering, paginatio
     const songs=selected.slice((current-1)*50,current*50).map(({song,assessment})=>({id:song.id,title:song.title,slug:song.slug,category:song.category,artist:{name:song.artist.name,slug:song.artist.slug},level:assessment.level}))
     assert.deepEqual(await request(entry.slug,category,number),{total:selected.length,pages,current,songs})
   }
-  assert.equal(queries.length,2)
+  assert.equal(queries.length,1)
+})
+
+test('warm pages skip decompression, while excessive page numbers share the actual last-page cache entry',async()=>{
+  rows=Array.from({length:125},(_,i)=>fixture(String(i)))
+  const first=await request('4-akorda',null,999);assert.equal(first.current,3);assert.equal(decodes,1)
+  for(const page of [1000,999999,1e9,3])assert.deepEqual(await request('4-akorda',null,page),first)
+  assert.equal(decodes,1);assert.equal(queries.length,1)
+  await request('4-akorda',null,1);assert.equal(decodes,2)
+})
+
+test('TTL refresh and administrative invalidation observe changed cards, totals and source revisions',async()=>{
+  const first=await request('4-akorda',null,1);rows[0].title='Updated title'
+  now=1799999;assert.deepEqual(await request('4-akorda',null,1),first);assert.equal(queries.length,1);assert.equal(decodes,1)
+  now=1800000;assert.equal((await request('4-akorda',null,1)).songs[0].title,'Updated title');assert.equal(queries.length,2);assert.equal(decodes,2)
+  rows.push(fixture('new'));for(const [key,entry]of stored)if(entry.tags.includes('playlist-catalog'))stored.delete(key)
+  assert.equal((await request('4-akorda',null,1)).total,first.total+1);assert.equal(queries.length,3)
+})
+
+test('unknown filters and invalid skill values do not create shared cache entries or issue database reads',async()=>{
+  for(const args of [['private-user-id',null,1],['4-akorda','private',1],['skill',null,1,99]])assert.equal((await request(...args)).total,0)
+  assert.equal(queries.length,0);assert.equal(payloads.length,0)
 })

@@ -7,6 +7,7 @@ import { requireSongAdmin, refreshAdminSongs } from "@/lib/adminSongs/server"
 import { SubmissionError } from "@/lib/submissions/validation"
 import type { validateArtistEdit, validateBioDelete, validateUserRole } from "./validation"
 import { artistPageHref } from "./paths"
+import { refreshWikiCredits } from "@/lib/wikiCreditsCache"
 
 type ArtistState = { name: string; category: string | null; image: string | null; bio: string | null; bioShort: string | null; discography: unknown }
 export function artistContentVersion(artist: ArtistState) {
@@ -62,6 +63,7 @@ export async function updateUserRole(id: string, actorId: string, input: ReturnT
 }
 export function refreshArtistContent(...artists: { category: string | null; slug: string }[]) {
   refreshAdminSongs()
+  refreshWikiCredits()
   try { revalidateTag("admin-content-backlog") } catch {}
   try {
     revalidatePath("/admin/artists", "layout")

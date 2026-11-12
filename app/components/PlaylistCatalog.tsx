@@ -17,7 +17,7 @@ export default async function PlaylistCatalog({ slug, page = "1", category }: { 
     <h1 className={entry.level ? `${styles.title} ${difficultyStyles.label}` : styles.title} data-difficulty={entry.level ?? undefined}><UiText text={entry.title} /></h1>
     <p className={styles.notice}><UiText text={difficultyExplanation} /></p>
     <nav className={styles.actions} aria-label="Kategorije">
-      {[undefined, "domace", "strane", "narodne"].map(cat => <Link key={cat ?? "all"} className={styles.button} aria-current={cat === selectedCategory ? "page" : undefined} href={href(1, cat)}>
+      {[undefined, "domace", "strane", "narodne"].map(cat => <Link key={cat ?? "all"} prefetch={false} className={styles.button} aria-current={cat === selectedCategory ? "page" : undefined} href={href(1, cat)}>
         {cat ? <CategoryLabel value={cat} /> : <UiText text="Sve kategorije" />}
       </Link>)}
     </nav>
@@ -28,9 +28,9 @@ export default async function PlaylistCatalog({ slug, page = "1", category }: { 
       <span className={styles.level}><SongDifficulty level={song.level} /></span>
     </div>)}
     {pages > 1 && <nav className={styles.pagination} aria-label="Stranice">
-      {current > 1 && <Link className={styles.button} href={href(current - 1, selectedCategory)}><UiText text="Prethodna" /></Link>}
+      {current > 1 && <Link prefetch={false} className={styles.button} href={href(current - 1, selectedCategory)}><UiText text="Prethodna" /></Link>}
       <span>{current} / {pages}</span>
-      {current < pages && <Link className={styles.button} href={href(current + 1, selectedCategory)}><UiText text="Sledeca" /></Link>}
+      {current < pages && <Link prefetch={false} className={styles.button} href={href(current + 1, selectedCategory)}><UiText text="Sledeca" /></Link>}
     </nav>}
   </section>
 }

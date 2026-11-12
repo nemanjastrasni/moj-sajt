@@ -2,22 +2,25 @@ import { unstable_cache } from "next/cache"
 import { cache } from "react"
 import { gzip, gunzip } from "node:zlib"
 import { promisify } from "node:util"
+import { createHash } from "node:crypto"
 import { prisma } from "@/lib/prisma"
 import { difficultyLevels, estimateDifficulty, type Difficulty } from "../music/difficulty"
-import { catalogEntries, matchesCatalog } from "./catalog"
+import { catalogEntries, catalogEntry, matchesCatalog } from "./catalog"
 
 type CatalogCard = {
   id: string; title: string; slug: string; category: string
   artist: { name: string; slug: string }; level: Difficulty | null; catalogs: string[]
 }
 const compress = promisify(gzip), decompress = promisify(gunzip)
+const PUBLIC_CATEGORIES = ["domace", "strane", "narodne"]
+type CatalogIndex = { version: string; encoded: string; counts: Record<string, Record<string, number>> }
 
-// Reuse the same public assessments across filters/pages for one minute.
+// Assess the public catalog once for all categories for thirty minutes.
 // Compression keeps the metadata index comfortably below the data-cache size limit.
 // Full lyrics, chord bodies, accounts and personal settings never enter this cache.
-async function buildCatalog(category: string | null) {
+async function buildCatalog(): Promise<CatalogIndex> {
   const rows = await prisma.song.findMany({
-    where: { category: category ?? { in: ["domace", "strane", "narodne"] } },
+    where: { category: { in: PUBLIC_CATEGORIES } },
     select: { id: true, title: true, slug: true, category: true, lyrics: true, chords: true, artist: { select: { name: true, slug: true } } },
     orderBy: [{ popularity: "desc" }, { title: "asc" }, { id: "asc" }],
   })
@@ -26,35 +29,44 @@ async function buildCatalog(category: string | null) {
     return { id: song.id, title: song.title, slug: song.slug, category: song.category, artist: { name: song.artist.name, slug: song.artist.slug }, level: assessment.level,
       catalogs: catalogEntries.filter(entry => matchesCatalog(song, entry.slug, assessment)).map(entry => entry.slug) }
   })
-  return (await compress(JSON.stringify(cards))).toString("base64")
+  const counts: CatalogIndex["counts"] = Object.fromEntries(["all", ...PUBLIC_CATEGORIES].map(category => [category, {}]))
+  for (const card of cards) {
+    const selections = [...card.catalogs, ...difficultyLevels.flatMap((_, maximum) => card.level !== null && difficultyLevels.indexOf(card.level) <= maximum ? ["skill:" + maximum] : [])]
+    for (const category of ["all", card.category]) for (const selection of selections) counts[category][selection] = (counts[category][selection] ?? 0) + 1
+  }
+  const zipped = await compress(JSON.stringify(cards))
+  return { version: createHash("sha256").update(zipped).digest("hex"), encoded: zipped.toString("base64"), counts }
 }
 
 // Share only work currently in progress, including background cache refreshes.
 // Completed snapshots remain governed by Next's TTL and admin invalidation tag.
-const building = new Map<string | null, Promise<string>>()
-function sharedBuild(category: string | null) {
-  let pending = building.get(category)
-  if (!pending) {
-    pending = buildCatalog(category)
-    building.set(category, pending)
-    const completed = () => { if (building.get(category) === pending) building.delete(category) }
+let building: Promise<CatalogIndex> | null = null
+function sharedBuild() {
+  if (!building) {
+    const pending = buildCatalog()
+    building = pending
+    const completed = () => { if (building === pending) building = null }
     void pending.then(completed, completed)
   }
-  return pending
+  return building
 }
-const encodedCatalog = unstable_cache(sharedBuild, ["playlist-catalog-index-v2", JSON.stringify(catalogEntries)], { revalidate: 60, tags: ["playlist-catalog"] })
-
-// Decode once per RSC request, shared by its metadata and rendered catalog.
-const readCatalog = cache(async (category: string | null): Promise<CatalogCard[]> =>
-  JSON.parse((await decompress(Buffer.from(await encodedCatalog(category), "base64"))).toString("utf8")))
+const encodedCatalog = unstable_cache(sharedBuild, ["playlist-catalog-index-v3", JSON.stringify(catalogEntries)], { revalidate: 1800, tags: ["playlist-catalog"] })
 
 export const catalogPage = cache(async (slug: string, category: string | null, page: number, maximumSkill: number | null = null) => {
-  const filtered = (await readCatalog(category)).filter(song => maximumSkill === null ? song.catalogs.includes(slug) : song.level !== null && difficultyLevels.indexOf(song.level) <= maximumSkill)
-  const pages = Math.max(1, Math.ceil(filtered.length / 50)), current = Math.min(pages, Math.max(1, page))
-  return {
-    total: filtered.length, pages, current,
-    songs: filtered.slice((current - 1) * 50, current * 50).map(song => ({ id: song.id, title: song.title, slug: song.slug, category: song.category, artist: song.artist, level: song.level })),
-  }
+  if (category !== null && !PUBLIC_CATEGORIES.includes(category) || maximumSkill === null && !catalogEntry(slug) || maximumSkill !== null && (!Number.isInteger(maximumSkill) || maximumSkill < 0 || maximumSkill >= difficultyLevels.length)) return { total: 0, pages: 1, current: 1, songs: [] as Omit<CatalogCard, "catalogs">[] }
+  const selection = maximumSkill === null ? slug : "skill:" + maximumSkill
+  // Read the shared index outside the page cache: nested unstable_cache calls
+  // bypass the inner cache in Next 15 and would repeat the expensive assessment.
+  const index = await encodedCatalog()
+  const total = index.counts[category ?? "all"][selection] ?? 0, pages = Math.max(1, Math.ceil(total / 50))
+  const current = Math.min(pages, Number.isFinite(page) ? Math.max(1, Math.floor(page)) : 1)
+  // Include the source revision so a refreshed index cannot serve an older page.
+  // Only finite public filters and the actual clamped page enter the cache key.
+  return unstable_cache(async () => {
+    const cards: CatalogCard[] = JSON.parse((await decompress(Buffer.from(index.encoded, "base64"))).toString("utf8"))
+    const filtered = cards.filter(song => (category === null || song.category === category) && (maximumSkill === null ? song.catalogs.includes(slug) : song.level !== null && difficultyLevels.indexOf(song.level) <= maximumSkill))
+    return { total, pages, current, songs: filtered.slice((current - 1) * 50, current * 50).map(song => ({ id: song.id, title: song.title, slug: song.slug, category: song.category, artist: song.artist, level: song.level })) }
+  }, ["playlist-catalog-page-v1", index.version, selection, category ?? "all", String(current)], { revalidate: 1800, tags: ["playlist-catalog"] })()
 })
 
 export function catalogPageNumber(value: unknown) {

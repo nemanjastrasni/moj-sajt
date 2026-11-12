@@ -6,6 +6,7 @@ import type { WikiSource } from "@/lib/artistWiki"
 import type { Album } from "@/lib/discography"
 import { discoverContent, wikipediaClient, planBio } from "@/scripts/lib/artist-wiki-core.cjs"
 import { credit, validSource, eligibleDiscography, saveProfile } from "@/scripts/lib/artist-wiki-store.cjs"
+import { refreshWikiCredits } from "@/lib/wikiCreditsCache"
 
 type SourceProfile = { wikidataId: string | null; state: string; checkedAt: Date }
 type Proposal = { state: string; wikidataId?: string; bio?: string | null; bioSource?: Omit<WikiSource,"hash"> | null; discography?: Album[]; discographySource?: Omit<WikiSource,"hash"> | null }
@@ -39,7 +40,8 @@ export async function enrichArtistWikipedia(artistId: string) {
     if (Object.keys(update).length) await tx.artist.update({ where: { id: artist.id }, data: update })
     await saveProfile(adapter(tx), current, proposal, sources)
   })
-  for (const path of ["/biografija", "/wiki-izvori", `/biografija/${artist.category}/${artist.slug}`, `/pesme/${artist.category}/${artist.slug}`]) revalidatePath(path)
+  refreshWikiCredits()
+  for (const path of ["/biografija", `/biografija/${artist.category}/${artist.slug}`, `/pesme/${artist.category}/${artist.slug}`]) revalidatePath(path)
 }
 export function queueArtistWikipedia(artistId: string) {
   try { after(async () => {
