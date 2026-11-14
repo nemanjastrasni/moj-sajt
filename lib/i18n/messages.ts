@@ -410,4 +410,8 @@ export const english: Record<string, string> = {
   "Predlozi pesama": "Song submissions",
   "Korisnici": "Users",
   "Poslednja aktivnost": "Last activity",
+  "Prikaz tabulature": "Tablature display",
+  "Prilagodi ekranu": "Fit to screen",
+  "Izvorni redovi": "Original lines",
+  "Za širi pregled okreni telefon vodoravno. Sve žice ostaju zajedno.": "For a wider view, turn your phone sideways. All strings stay together.",
 }

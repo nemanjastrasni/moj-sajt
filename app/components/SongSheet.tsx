@@ -1,11 +1,13 @@
 "use client"
 
-import { memo, useEffect, useRef, useState } from "react"
+import { Fragment, memo, useEffect, useMemo, useRef, useState } from "react"
 import Chord from "./Chord"
 import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
-import { groupSheetLines, wrapSheetBlock, type SheetLine } from "@/lib/chords/songSheet"
+import { wrapSheetBlock, type SheetLine } from "@/lib/chords/songSheet"
+import { displaySheetLines, groupDisplaySheetLines, layoutTabBlock } from "@/lib/chords/tabLayout"
 import { lyricsOnlyLines } from "@/lib/chords/lyricsOnly"
 import { useI18n } from "./UiText"
+import styles from "./TabSheet.module.css"
 
 type Props = {
   lines: SheetLine[]
@@ -20,6 +22,9 @@ function SongSheet({ lines, transpose, textSize, chordSize, lyricsOnly = false }
   const sheetRef = useRef<HTMLDivElement>(null)
   const measureRef = useRef<HTMLSpanElement>(null)
   const [columns, setColumns] = useState(80)
+  const [fitTabs, setFitTabs] = useState(true)
+  const blocks = useMemo(() => groupDisplaySheetLines(lines), [lines])
+  const hasTabs = blocks.some(block => block.tabLines)
 
   useEffect(() => {
     if (lyricsOnly) return
@@ -38,7 +43,7 @@ function SongSheet({ lines, transpose, textSize, chordSize, lyricsOnly = false }
   }, [textSize, lyricsOnly])
 
   if (lyricsOnly) {
-    const text = lyricsOnlyLines(lines).join("\n")
+    const text = lyricsOnlyLines(displaySheetLines(lines)).join("\n")
     return <div data-song-sheet data-lyrics-only translate="no" style={{ fontSize: textSize, lineHeight: 1.8, whiteSpace: "pre-line", overflowWrap: "anywhere", letterSpacing: 0 }}>{text || <p role="status">{t("Tekst pesme nije dostupan.")}</p>}</div>
   }
 
@@ -77,14 +82,20 @@ function SongSheet({ lines, transpose, textSize, chordSize, lyricsOnly = false }
       translate="no"
     >
       <span ref={measureRef} aria-hidden="true" className="pointer-events-none absolute invisible whitespace-pre">0000000000</span>
-      {groupSheetLines(lines).map((block, blockIndex) => {
+      {hasTabs && <div className={styles.tools} role="group" aria-label={t("Prikaz tabulature")}>
+        <button type="button" aria-pressed={fitTabs} onClick={() => setFitTabs(true)}>{t("Prilagodi ekranu")}</button>
+        <button type="button" aria-pressed={!fitTabs} onClick={() => setFitTabs(false)}>{t("Izvorni redovi")}</button>
+        <p className={styles.hint}>{t("Za širi pregled okreni telefon vodoravno. Sve žice ostaju zajedno.")}</p>
+      </div>}
+      {blocks.map((block, blockIndex) => {
         if (block.lyricLine?.kind === "tab") {
-          const length = wrapSheetBlock(block, columns)[0].end
-          return <div key={blockIndex} className="max-w-full overflow-x-auto" data-tab-block tabIndex={0} role="region" aria-label={t("Tabulatura")}>
-            <div style={{ minWidth: `${length}ch` }}>
-              {renderChordRow(block.chordLine, 0, length, length)}
-              {(block.tabLines ?? [block.lyricLine]).map((line, index) => <pre key={index} data-tab-row className="m-0 whitespace-pre" style={{ font: "inherit", lineHeight: 1.65 }}>{line.text}</pre>)}
-            </div>
+          const layout = layoutTabBlock(block, columns, fitTabs)
+          return <div key={blockIndex} className={styles.block} data-tab-block data-tab-fit={fitTabs} tabIndex={0} role="region" aria-label={t("Tabulatura")}>
+            {layout.segments.map(segment => <div key={segment.start} className={styles.segment} data-tab-segment>
+              {block.chordLine && <div style={{ marginLeft: `${segment.prefixWidth}ch` }}>{renderChordRow(block.chordLine, segment.start, segment.end, segment.end - segment.start)}</div>}
+              <pre className={styles.staff}>{segment.rows.map((row, index) => <Fragment key={index}><span data-tab-row>{row}</span>{index < segment.rows.length - 1 ? "\n" : null}</Fragment>)}</pre>
+            </div>)}
+            {layout.annotations.map((note, index) => <p key={index} className={styles.note} data-tab-note>{note.label} {note.text}</p>)}
           </div>
         }
 

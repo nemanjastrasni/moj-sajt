@@ -18,7 +18,7 @@
     "artists:thumbnails": "node scripts/optimize-artist-photos.cjs",
     "images:avif": "node scripts/optimize-site-avif.cjs",
     "performance:measure": "node scripts/measure-site.cjs",
-    "test:chords": "node --test scripts/test-song-sheet.cjs",
+    "test:chords": "node --test scripts/test-song-sheet.cjs scripts/test-tab-layout.cjs",
     "test:capo": "node --test scripts/test-capo.cjs",
     "test:mobile-speed": "node --test scripts/test-lazy-capo.cjs scripts/test-artist-catalog-cache.cjs",
     "test:auth": "node --test scripts/test-auth.cjs",

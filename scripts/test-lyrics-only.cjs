@@ -20,6 +20,7 @@ test("rendered lyrics have no chord components, preserve stanzas and escape text
   Module._load = function(request, parent, isMain) {
     if (request === "./UiText") return { useI18n: () => ({ t: value => value }) }
     if (request === "./Chord") return { __esModule: true, default: () => { throw Error("No chord should render") } }
+    if (request.endsWith(".module.css")) return { __esModule: true, default: {} }
     if (request.startsWith("@/")) request = path.join(__dirname, "..", request.slice(2))
     return original.call(this, request, parent, isMain)
   }

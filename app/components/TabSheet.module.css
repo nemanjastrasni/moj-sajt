@@ -1,0 +1,10 @@
+.tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; font-family: var(--font-poppins, Arial), sans-serif; font-size: 14px; line-height: 1.5; }
+.tools button { min-height: 44px; padding: 8px 12px; border: 1px solid var(--control-line, #56616c); border-radius: 6px; cursor: pointer; }
+.tools button[aria-pressed="true"] { color: var(--control-focus, #69baff); border-color: currentColor; }
+.tools button:focus-visible, .block:focus-visible { outline: 2px solid var(--control-focus, #69baff); outline-offset: 2px; }
+.hint { width: 100%; color: var(--control-muted, #a1a1aa); font-size: 13px; }
+.block { min-width: 0; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; margin-bottom: .5em; }
+.segment + .segment { margin-top: .8em; }
+.staff { margin: 0; padding: 0; border: 0; overflow: visible; width: max-content; min-width: 0; max-width: none; white-space: pre; font: inherit; line-height: 1.65; }
+.note { margin: .4em 0 0; white-space: normal; overflow-wrap: anywhere; font-size: .85em; }
+@media (min-width: 768px) and (min-height: 501px) { .hint { display: none; } }
