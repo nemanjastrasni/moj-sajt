@@ -2,16 +2,9 @@ import { createHash, randomUUID } from "node:crypto"
 import { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 import { requireSongAdmin } from "@/lib/adminSongs/server"
-import { ACTIVE_WINDOW_MS, RETENTION_MS, countryCode, presenceSnapshot, type PresenceCounts, type PresenceRow } from "./model"
+import { ACTIVE_WINDOW_MS, RETENTION_MS, PRESENCE_CLEANUP_INTERVAL_MS, countryCode, presenceSnapshot, type PresenceCounts, type PresenceRow } from "./model"
 
-let ready: Promise<void> | null = null
-export async function ensurePresenceTable() {
-  if (!ready) ready = (async () => {
-    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS public.online_presence (visitor_id TEXT PRIMARY KEY, user_id TEXT, last_seen TIMESTAMPTZ NOT NULL DEFAULT NOW(), country_code TEXT)`
-    await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS online_presence_last_seen_idx ON public.online_presence (last_seen)`
-  })().catch(error => { ready = null; throw error })
-  await ready
-}
+// Provisioning is handled by the existing presence:setup command, not HTTP requests.
 export function visitorId(cookie: string | undefined) {
   return cookie && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(cookie) ? cookie : randomUUID()
 }
@@ -20,7 +13,6 @@ export function visitsSince(since: Date) {
     FROM public.online_presence p LEFT JOIN public."User" u ON u.id = p.user_id WHERE p.last_seen >= ${since}`
 }
 export async function getPresenceCounts(): Promise<PresenceCounts> {
-  await ensurePresenceTable()
   await cleanupPresence()
   const now = Date.now()
   const rows = await prisma.$queryRaw<{ logged_in: number; guests: number }[]>(Prisma.sql`
@@ -30,17 +22,24 @@ export async function getPresenceCounts(): Promise<PresenceCounts> {
   return { total: loggedIn + guests, loggedIn, guests, checkedAt: new Date(now).toISOString() }
 }
 export async function recordPresence(id: string, userId: string | null, country: unknown) {
-  await ensurePresenceTable()
   const code = countryCode(country)
   await prisma.$executeRaw`INSERT INTO public.online_presence (visitor_id, user_id, last_seen, country_code) VALUES (${id}, ${userId}, NOW(), ${code})
     ON CONFLICT (visitor_id) DO UPDATE SET user_id = EXCLUDED.user_id, last_seen = NOW(), country_code = EXCLUDED.country_code`
 }
+let cleanupAfter = 0
+let cleaning: Promise<void> | null = null
 async function cleanupPresence() {
-  await prisma.$executeRaw`DELETE FROM public.online_presence WHERE last_seen < ${new Date(Date.now() - RETENTION_MS)}`
+  if (cleaning) return cleaning
+  if (Date.now() < cleanupAfter) return
+  const pending = (async () => {
+    await prisma.$executeRaw`DELETE FROM public.online_presence WHERE last_seen < ${new Date(Date.now() - RETENTION_MS)}`
+    cleanupAfter = Date.now() + PRESENCE_CLEANUP_INTERVAL_MS
+  })()
+  cleaning = pending
+  try { await pending } finally { if (cleaning === pending) cleaning = null }
 }
 export async function getAdminPresence() {
   await requireSongAdmin()
-  await ensurePresenceTable()
   await cleanupPresence()
   const now = Date.now()
   const rows = await prisma.$queryRaw<PresenceRow[]>(visitsSince(new Date(now - RETENTION_MS)))

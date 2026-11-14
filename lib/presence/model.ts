@@ -1,5 +1,7 @@
 export const ACTIVE_WINDOW_MS = 2 * 60 * 1000
 export const RETENTION_MS = 10 * 60 * 1000
+export const HEARTBEAT_INTERVAL_MS = 60 * 1000
+export const PRESENCE_CLEANUP_INTERVAL_MS = 60 * 1000
 export const PRESENCE_EVENT = "gitarakordi-presence"
 export type PresenceCounts = { total: number; loggedIn: number; guests: number; checkedAt: string }
 export type PresenceRow = { visitor_id: string; user_id: string | null; last_seen: Date | string; country_code: string | null }

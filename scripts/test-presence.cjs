@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- Existing CommonJS module-stub regression pattern. */
 require("ts-node").register({ transpileOnly: true, compilerOptions: { module: "CommonJS", moduleResolution: "Node", jsx: "react-jsx" } })
-const { test, beforeEach } = require("node:test")
+const { test, beforeEach, after } = require("node:test")
+const originalOriginEnv={NEXTAUTH_URL:process.env.NEXTAUTH_URL,SITE_URL:process.env.SITE_URL}
+after(()=>{for(const [key,value]of Object.entries(originalOriginEnv)){if(value===undefined)delete process.env[key];else process.env[key]=value}})
 const assert = require("node:assert/strict")
 const Module = require("node:module")
 const path = require("node:path")
@@ -36,7 +38,7 @@ try {
   route = require("../app/api/online/route.ts")
   adminRoute = require("../app/api/admin/online/route.ts")
 } finally { Module._load = original }
-beforeEach(() => { rows = [row(visitor, "u1", 10000), row("device2", "u1", 20000, "DE"), row("device3", "u2", 10000), row("guest", null, 30000), row("stale", null, 180000)]; session = null; admin = false; down = false; queries = []; writes = []; checks = 0 })
+beforeEach(() => { process.env.NEXTAUTH_URL="https://site.test";delete process.env.SITE_URL;rows = [row(visitor, "u1", 10000), row("device2", "u1", 20000, "DE"), row("device3", "u2", 10000), row("guest", null, 30000), row("stale", null, 180000)]; session = null; admin = false; down = false; queries = []; writes = []; checks = 0 })
 
 test("one user on two devices counts once, guests by browser, and totals always add up", () => {
   const result = model.presenceSnapshot(rows, now)
@@ -129,4 +131,16 @@ test("cross-site writes are refused and service failures are unavailable, never 
   assert.equal(response.status, 503)
   assert.equal(data.total, undefined)
   assert.doesNotMatch(JSON.stringify(data), /private-db-secret/)
+})
+
+
+test('presence cleanup is shared and throttled; HTTP paths never provision tables or indexes',async()=>{
+ const originalNow=Date.now;Date.now=()=>now+10*60*1000
+ try{await Promise.all([server.getPresenceCounts(),server.getPresenceCounts(),server.getPresenceCounts()]);assert.equal(writes.filter(write=>write.sql.includes('DELETE')).length,1);await server.getPresenceCounts();assert.equal(writes.filter(write=>write.sql.includes('DELETE')).length,1);assert.ok(!writes.some(write=>/CREATE TABLE|CREATE INDEX/.test(write.sql)))}finally{Date.now=originalNow}
+ assert.equal(model.HEARTBEAT_INTERVAL_MS,60000);assert.ok(model.HEARTBEAT_INTERVAL_MS<model.ACTIVE_WINDOW_MS)
+})
+
+test('Render heartbeat accepts the trusted public origin and emits a secure cookie',async()=>{
+ const before=process.env.NEXTAUTH_URL;process.env.NEXTAUTH_URL='https://www.gitarakordi.com'
+ try{const result=await route.POST(new Request('http://localhost:10000/api/online',{method:'POST',headers:{origin:'https://www.gitarakordi.com','sec-fetch-site':'same-origin'}}));assert.equal(result.status,200);assert.match(result.headers.get('set-cookie'),/Secure/);writes.length=0;assert.equal((await route.POST(new Request('http://localhost:10000/api/online',{method:'POST',headers:{origin:'https://evil.test','x-forwarded-host':'evil.test'}}))).status,403);assert.equal(writes.length,0)}finally{if(before===undefined)delete process.env.NEXTAUTH_URL;else process.env.NEXTAUTH_URL=before}
 })

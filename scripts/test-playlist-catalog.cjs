@@ -8,10 +8,7 @@ const React = require("react")
 let rows = [], selection, sessionId = "owner", skillLevel = "beginner"
 const original = Module._load
 Module._load = function(request, parent, main) {
-  if (request === "@/lib/prisma") return { prisma: {
-    song: { findMany: async args => { selection = args; return rows.filter(row => typeof args.where.category === "string" ? row.category === args.where.category : args.where.category.in.includes(row.category)) } },
-    user: { findUnique: async () => ({ skillLevel }) },
-  } }
+  if(request==='@/lib/prisma'){const tx={$queryRaw:async()=>rows.map(({lyrics,chords,...row})=>({...row,sourceHash:'changed-fixture'})),song:{findMany:async args=>{selection=args;return rows.filter(row=>args.where.id.in.includes(row.id))}}};return{prisma:{...tx,$transaction:async work=>work(tx),user:{findUnique:async()=>({skillLevel})}}}}
   if (request === "@/lib/playlists/server") return { playlistViewerId: async () => sessionId }
   if (request === "next/cache") return { unstable_cache: fn => fn }
   if (request === "next/link") return { __esModule: true, default: ({ children, ...props }) => React.createElement("a", props, children) }

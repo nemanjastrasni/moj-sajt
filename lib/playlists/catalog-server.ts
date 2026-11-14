@@ -6,6 +6,9 @@ import { createHash } from "node:crypto"
 import { prisma } from "@/lib/prisma"
 import { difficultyLevels, estimateDifficulty, type Difficulty } from "../music/difficulty"
 import { catalogEntries, catalogEntry, matchesCatalog } from "./catalog"
+import { catalogSourceHash } from "./catalog-source"
+import { catalogAssessmentRevision, savedCatalogAssessment } from "./catalog-snapshot"
+import { Prisma } from "@prisma/client"
 
 type CatalogCard = {
   id: string; title: string; slug: string; category: string
@@ -14,18 +17,32 @@ type CatalogCard = {
 const compress = promisify(gzip), decompress = promisify(gunzip)
 const PUBLIC_CATEGORIES = ["domace", "strane", "narodne"]
 type CatalogIndex = { version: string; encoded: string; counts: Record<string, Record<string, number>> }
+type CatalogSource = Omit<CatalogCard, "level" | "catalogs"> & { sourceHash: string }
 
 // Assess the public catalog once for all categories for thirty minutes.
 // Compression keeps the metadata index comfortably below the data-cache size limit.
 // Full lyrics, chord bodies, accounts and personal settings never enter this cache.
 async function buildCatalog(): Promise<CatalogIndex> {
-  const rows = await prisma.song.findMany({
-    where: { category: { in: PUBLIC_CATEGORIES } },
-    select: { id: true, title: true, slug: true, category: true, lyrics: true, chords: true, artist: { select: { name: true, slug: true } } },
-    orderBy: [{ popularity: "desc" }, { title: "asc" }, { id: "asc" }],
-  })
+  // Keep metadata/fingerprint and changed source reads in one consistent snapshot.
+  // Parsing happens after the transaction has released its connection.
+  const { rows, sources } = await prisma.$transaction(async tx => {
+    const rows = await tx.$queryRaw<CatalogSource[]>(Prisma.sql`
+      SELECT s.id,s.title,s.slug,s.category,${catalogSourceHash} AS "sourceHash",
+        jsonb_build_object('name',a.name,'slug',a.slug) AS artist
+      FROM public."Song" s JOIN public."Artist" a ON a.id=s."artistId"
+      WHERE s.category IN (${Prisma.join(PUBLIC_CATEGORIES)})
+      ORDER BY s.popularity DESC,s.title ASC,s.id ASC`)
+    const changed = rows.filter(song => !savedCatalogAssessment(song.id, song.sourceHash)).map(song => song.id)
+    const sources = changed.length ? await tx.song.findMany({
+      where: { id: { in: changed } }, select: { id: true, lyrics: true, chords: true },
+    }) : []
+    return { rows, sources }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead, maxWait: 5000, timeout: 15000 })
+  const changedSources = new Map(sources.map(song => [song.id, song]))
   const cards: CatalogCard[] = rows.map(song => {
-    const assessment = estimateDifficulty(song)
+    const source = changedSources.get(song.id)
+    const assessment = savedCatalogAssessment(song.id, song.sourceHash) ?? (source ? estimateDifficulty(source) : undefined)
+    if (!assessment) throw Error("Catalog source snapshot is incomplete")
     return { id: song.id, title: song.title, slug: song.slug, category: song.category, artist: { name: song.artist.name, slug: song.artist.slug }, level: assessment.level,
       catalogs: catalogEntries.filter(entry => matchesCatalog(song, entry.slug, assessment)).map(entry => entry.slug) }
   })
@@ -50,7 +67,7 @@ function sharedBuild() {
   }
   return building
 }
-const encodedCatalog = unstable_cache(sharedBuild, ["playlist-catalog-index-v3", JSON.stringify(catalogEntries)], { revalidate: 1800, tags: ["playlist-catalog"] })
+const encodedCatalog = unstable_cache(sharedBuild, ["playlist-catalog-index-v4", catalogAssessmentRevision, JSON.stringify(catalogEntries)], { revalidate: 1800, tags: ["playlist-catalog"] })
 
 export const catalogPage = cache(async (slug: string, category: string | null, page: number, maximumSkill: number | null = null) => {
   if (category !== null && !PUBLIC_CATEGORIES.includes(category) || maximumSkill === null && !catalogEntry(slug) || maximumSkill !== null && (!Number.isInteger(maximumSkill) || maximumSkill < 0 || maximumSkill >= difficultyLevels.length)) return { total: 0, pages: 1, current: 1, songs: [] as Omit<CatalogCard, "catalogs">[] }

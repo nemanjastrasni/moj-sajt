@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- Existing CommonJS module-loader test harness. */
+require("./lib/test-public-origin.cjs")
 require("ts-node").register({
   transpileOnly: true,
   compilerOptions: { module: "CommonJS", moduleResolution: "Node" },

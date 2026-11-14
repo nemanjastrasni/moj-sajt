@@ -4,15 +4,13 @@ const {test,beforeEach}=require('node:test'),assert=require('node:assert/strict'
 const difficulty=require('../lib/music/difficulty.ts'),{catalogEntries,matchesCatalog}=require('../lib/playlists/catalog.ts')
 const stored=new Map(),requestMemo=new Map(),definitions=[],payloads=[]
 const scope=new AsyncLocalStorage()
-let rows,queries,assessments,decodes,down,gate,now,nextFunction=0
+let rows,queries,assessments,decodes,down,gate,now,nextFunction=0,sourceQueries=[]
 const original=Module._load
 Module._load=function(request,parent,main){
   if(request==='node:zlib'){const zlib=original.call(this,request,parent,main);return {...zlib,gunzip:(...args)=>{decodes++;return zlib.gunzip(...args)}}}
-  if(request==='@/lib/prisma')return {prisma:{song:{findMany:async query=>{
-    queries.push(query);if(down)throw Error('database unavailable')
-    if(gate)await gate
-    return rows.filter(row=>typeof query.where.category==='string'?row.category===query.where.category:query.where.category.in.includes(row.category))
-  }}}}
+  if(request==='@/lib/prisma'){const tx={
+    $queryRaw:async query=>{queries.push(query);if(down)throw Error('database unavailable');if(gate)await gate;return rows.filter(row=>['domace','narodne','strane'].includes(row.category)).map(({lyrics,chords,...row})=>({...row,sourceHash:row.sourceHash??'changed-source'}))},
+    song:{findMany:async query=>{sourceQueries.push(query);return rows.filter(row=>query.where.id.in.includes(row.id)).map(({id,lyrics,chords})=>({id,lyrics,chords}))}}};return{prisma:{...tx,$transaction:async(work,options)=>{assert.equal(options.isolationLevel,'RepeatableRead');return work(tx)}}}}
   if(request==='react')return {...React,cache:fn=>{const id=nextFunction++;return(...args)=>{
     const memo=scope.getStore()??requestMemo,key=JSON.stringify([id,args]);if(!memo.has(key))memo.set(key,Promise.resolve().then(()=>fn(...args)));return memo.get(key)
   }}}
@@ -32,7 +30,7 @@ let catalogPage
 try{({catalogPage}=require('../lib/playlists/catalog-server.ts'))}finally{Module._load=original}
 const fixture=(id,lyrics='C G Am',category='domace')=>({id,title:'Pesma '+id,slug:id,category,lyrics:lyrics+'\nLYRIC_BODY_NOT_IN_CACHE',chords:'CHORD_BODY_NOT_IN_CACHE',artist:{name:'Bend',slug:'bend',email:'SECRET'},userId:'SECRET',transpose:5})
 const request=(...args)=>scope.run(new Map(),()=>catalogPage(...args))
-beforeEach(()=>{stored.clear();requestMemo.clear();payloads.length=0;queries=[];assessments=decodes=now=0;down=false;gate=null;rows=[fixture('a'),fixture('b','E(#9) A7'),fixture('c','C D','narodne'),fixture('d','Samo tekst','strane')]})
+beforeEach(()=>{stored.clear();requestMemo.clear();payloads.length=0;queries=[];sourceQueries=[];assessments=decodes=now=0;down=false;gate=null;rows=[fixture('a'),fixture('b','E(#9) A7'),fixture('c','C D','narodne'),fixture('d','Samo tekst','strane')]})
 
 test('different pages and filters reuse assessments while categories stay separate',async()=>{
   await request('4-akorda',null,1)
@@ -43,7 +41,7 @@ test('different pages and filters reuse assessments while categories stay separa
   assert.equal(queries.length,1);assert.equal(assessments,firstAssessments)
   const folk=await request('narodne','narodne',1)
   assert.deepEqual(folk.songs.map(song=>song.id),['c']);assert.equal(queries.length,1);assert.equal(assessments,firstAssessments)
-  assert.deepEqual(queries[0].orderBy,[{popularity:'desc'},{title:'asc'},{id:'asc'}])
+  assert.match(queries[0].text,/ORDER BY s\.popularity DESC,s\.title ASC,s\.id ASC/)
 })
 
 test('cached index and page responses contain only public metadata, never source text or accounts',async()=>{
@@ -71,7 +69,7 @@ test('skill changes use the current level without caching user accounts or repro
   assert.ok(!beginner.songs.some(song=>song.id==='b'))
   assert.ok(advanced.songs.some(song=>song.id==='b'))
   assert.equal(queries.length,1)
-  assert.ok(!queries[0].select.userId)
+  assert.doesNotMatch(queries[0].text,/userId|email|transpose/)
 })
 
 test('concurrent cold requests share one database read and assessment build',async()=>{
@@ -124,4 +122,16 @@ test('TTL refresh and administrative invalidation observe changed cards, totals 
 test('unknown filters and invalid skill values do not create shared cache entries or issue database reads',async()=>{
   for(const args of [['private-user-id',null,1],['4-akorda','private',1],['skill',null,1,99]])assert.equal((await request(...args)).total,0)
   assert.equal(queries.length,0);assert.equal(payloads.length,0)
+})
+
+
+test('matching public fingerprints avoid source text reads and assessment; changed sources are recalculated',async()=>{
+ const snapshot=require('../lib/playlists/catalog-assessments.json'),[id,saved]=Object.entries(snapshot.songs)[0]
+ rows=[{...fixture(id),sourceHash:saved[0]}]
+ const expected=saved[1],level=await request('domace',null,1)
+ assert.equal(level.songs[0].level,expected);assert.equal(sourceQueries.length,0);assert.equal(assessments,0)
+ rows[0]={...fixture(id,'E(#9) A7'),sourceHash:'changed'};for(const[key,entry]of stored)if(entry.tags.includes('playlist-catalog'))stored.delete(key)
+ assert.equal((await request('veoma-tesko',null,1)).songs[0].id,id);assert.equal(sourceQueries.length,1);assert.equal(assessments,1)
+ rows=[];for(const[key,entry]of stored)if(entry.tags.includes('playlist-catalog'))stored.delete(key)
+ assert.equal((await request('domace',null,1)).total,0)
 })

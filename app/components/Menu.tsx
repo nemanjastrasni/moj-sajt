@@ -9,7 +9,7 @@ import { publicPathname } from "@/lib/navigation/pathname"
 import type { Session } from "next-auth"
 import { BookOpen, ClipboardList, FilePlus2, Guitar, Headphones, House, ListMusic, LogIn, LogOut, Mail, Menu as MenuIcon, Music2, Shield, UserRound, X } from "lucide-react"
 import { useI18n } from "./UiText"
-import { PRESENCE_EVENT, validCounts, type PresenceCounts } from "@/lib/presence/model"
+import { HEARTBEAT_INTERVAL_MS, PRESENCE_EVENT, validCounts, type PresenceCounts } from "@/lib/presence/model"
 import BackButton from "./BackButton"
 import ThemeToggle from "./ThemeToggle"
 import LanguageSelect from "./LanguageSelect"
@@ -63,7 +63,7 @@ export default function Menu() {
       finally { window.clearTimeout(deadline); if (running === controller) running = null }
     }
     heartbeat()
-    const interval = window.setInterval(heartbeat, 30000)
+    const interval = window.setInterval(heartbeat, HEARTBEAT_INTERVAL_MS)
     const visible = () => { if (document.visibilityState === "visible") heartbeat() }
     document.addEventListener("visibilitychange", visible)
     window.addEventListener(PRESENCE_EVENT, update)

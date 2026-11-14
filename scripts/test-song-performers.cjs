@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- Isolated performer and page fixtures. */
+require("./lib/test-public-origin.cjs")
 require("ts-node").register({ transpileOnly: true, compilerOptions: { module: "CommonJS", moduleResolution: "Node", jsx: "react-jsx" } })
 const { test } = require("node:test"), assert = require("node:assert/strict"), fs = require("node:fs"), path = require("node:path"), Module = require("node:module")
 const { collaborationPlan, collaborationParts, artistNameKey } = require("../lib/artists/collaborations.ts")

@@ -6,14 +6,14 @@ import { prisma } from "@/lib/prisma"
 import { submissionUser } from "@/lib/submissions/server"
 import { SubmissionError } from "@/lib/submissions/validation"
 import { readLimitedJson, RequestBodyError } from "@/lib/auth/request"
+import { isSameOrigin } from "@/lib/auth/origin.cjs"
 import { songReviewVersion } from "@/lib/songReview/server"
 import { songPageHref } from "@/lib/adminContent/paths"
 import { ReportError, REPORT_DAILY_LIMIT, REPORT_PAGE_SIZE, isReportKind, isReportStatus, reportId, type ReportInput, type ReportFilters, type ReportView, type validateReportReview } from "./model"
 
 export const reportUser = (admin = false) => submissionUser(admin)
 export async function reportBody(request: Request) {
-  const origin = request.headers.get("origin")
-  if (origin && origin !== new URL(request.url).origin || request.headers.get("sec-fetch-site") === "cross-site") throw new ReportError(403, "Nije dozvoljeno.")
+  if (!isSameOrigin(request)) throw new ReportError(403, "Nije dozvoljeno.")
   if (!request.headers.get("content-type")?.startsWith("application/json")) throw new ReportError(415, "Ocekuju se JSON podaci.")
   try { return await readLimitedJson(request, 16000) }
   catch (cause) { if (cause instanceof RequestBodyError) throw new ReportError(cause.status, "Neispravni ili preveliki podaci prijave."); throw cause }

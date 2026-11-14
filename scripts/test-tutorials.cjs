@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- Isolated API and client fixtures, no live writes. */
+require("./lib/test-public-origin.cjs")
 require("ts-node").register({ transpileOnly: true, compilerOptions: { module: "CommonJS", moduleResolution: "Node" } })
 const { test, beforeEach } = require("node:test"), assert = require("node:assert/strict"), path = require("node:path"), Module = require("node:module")
 const { tutorialInput, isTutorialSnapshot } = require("../lib/tutorials/model.ts"), { tutorialRequest } = require("../lib/tutorials/client.ts")

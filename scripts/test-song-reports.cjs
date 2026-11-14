@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- Isolated CommonJS API/client tests. */
+require("./lib/test-public-origin.cjs")
 require("ts-node").register({ transpileOnly: true, compilerOptions: { module: "CommonJS", moduleResolution: "Node", jsx: "react-jsx" } })
 const { test, beforeEach } = require("node:test")
 const assert = require("node:assert/strict")

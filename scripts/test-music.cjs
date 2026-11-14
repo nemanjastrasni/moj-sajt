@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- Isolated music API and player model fixtures. */
+require("./lib/test-public-origin.cjs")
 require('ts-node').register({transpileOnly:true,compilerOptions:{module:'CommonJS',moduleResolution:'Node',jsx:'react-jsx'}})
 const {test,beforeEach}=require('node:test'),assert=require('node:assert/strict'),Module=require('node:module'),path=require('node:path')
 const model=require('../lib/music/model.ts')

@@ -57,8 +57,8 @@ export default function RootLayout({
             {" · "}<Link href="/o-nama" className="underline underline-offset-2"><UiText text="O nama" /></Link>
             {" · "}<Link href="/prijava-povrede" className="underline underline-offset-2"><UiText text="Prijava povrede prava" /></Link>
             {" · "}
-            <Link href="/foto-izvori" className="underline underline-offset-2">Fotografije / Photo Credits</Link>
-            {" · "}<Link href="/wiki-izvori" className="underline underline-offset-2">Wikipedia / Sources</Link>
+            <Link prefetch={false} href="/foto-izvori" className="underline underline-offset-2">Fotografije / Photo Credits</Link>
+            {" · "}<Link prefetch={false} href="/wiki-izvori" className="underline underline-offset-2">Wikipedia / Sources</Link>
           </footer>
 
         </Providers>

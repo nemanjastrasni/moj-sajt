@@ -6,14 +6,14 @@ import { slugify } from "@/lib/until/slug"
 import { submissionUser } from "@/lib/submissions/server"
 import { SubmissionError } from "@/lib/submissions/validation"
 import { readLimitedJson, RequestBodyError } from "@/lib/auth/request"
+import { isSameOrigin } from "@/lib/auth/origin.cjs"
 import { NextResponse } from "next/server"
 import { ADMIN_PAGE_SIZE, adminSongWhere, escapeAdminLike, type AdminSongFilters } from "./query"
 import type { ArtistChoice, SongBatch, validateSongEdit } from "./validation"
 
 export const requireSongAdmin = () => submissionUser(true)
 export function adminSameOrigin(request: Request) {
-  const origin = request.headers.get("origin")
-  if (origin && origin !== new URL(request.url).origin || request.headers.get("sec-fetch-site") === "cross-site") throw new SubmissionError(403, "Nije dozvoljeno.")
+  if (!isSameOrigin(request)) throw new SubmissionError(403, "Nije dozvoljeno.")
 }
 export async function adminSongBody(request: Request) {
   adminSameOrigin(request)
