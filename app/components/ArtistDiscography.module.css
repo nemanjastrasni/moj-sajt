@@ -8,5 +8,6 @@
 .table th:first-child, .year { width: 72px; }
 .table tbody th { font-weight: 400; overflow-wrap: anywhere; }
 .year { font-variant-numeric: tabular-nums; color: var(--theme-muted, #a1a1aa); }
+.publisher { display: block; margin-top: 4px; font-size: 13px; line-height: 1.5; color: var(--theme-muted, #a1a1aa); }
 .empty { color: var(--theme-muted, #a1a1aa); font-size: 14px; }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

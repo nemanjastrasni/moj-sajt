@@ -15,6 +15,7 @@ const runStatus = (status: string, conclusion: string | null) => status !== "com
 
 export default async function MonitorPage({ searchParams }: { searchParams: Promise<Record<string,string|string[]|undefined>> }) {
   const [history,review,params,backlog,activity,decisions] = await Promise.all([readMonitorHistory(),readCatalogReview(),searchParams,readContentBacklog(),readActionEvents(),readFindingDecisions()])
+  const currentSummary = backlog ? { artists:backlog.total,biographies:backlog.total-backlog.counts.bio,discographies:backlog.total-backlog.counts.discography,photos:backlog.total-backlog.counts.image,checkedAt:backlog.checkedAt } : undefined
   const latest = history.runs[0]
   const details = latest ? await readMonitorDetails(latest) : null
   return <section className="admin-page admin-monitor">
@@ -22,7 +23,7 @@ export default async function MonitorPage({ searchParams }: { searchParams: Prom
     <p className="admin-monitor-notice"><ShieldCheck aria-hidden="true" /><span>{monitorScheduleNotice(history)}</span></p>
     {latest && details && <MonitorFindings run={latest} details={details} />}
     <ContentBacklog data={backlog} selection={backlogSelection(params)} />
-    <CatalogFindings review={review} selection={reviewSelection(params.oblast,params.strana)} decisions={decisions}/>
+    <CatalogFindings review={review} selection={reviewSelection(params.oblast,params.strana,params.stanje)} decisions={decisions} currentSummary={currentSummary}/>
     <ActionHistory history={activity} />
     <h2>Šta nadzor radi</h2>
     <p>Proverava dostupnost javnih stranica, sitemap, SEO oznake i zabranu anonimnog pristupa admin podacima. Svakog dana proverava drugi uzorak pesama. Radi na GitHub serveru i kada je tvoj računar isključen.</p>

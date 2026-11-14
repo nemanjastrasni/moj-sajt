@@ -64,7 +64,8 @@ export async function updateUserRole(id: string, actorId: string, input: ReturnT
 export function refreshArtistContent(...artists: { category: string | null; slug: string }[]) {
   refreshAdminSongs()
   refreshWikiCredits()
-  try { revalidateTag("admin-content-backlog") } catch {}
+  for (const tag of ["admin-content-backlog", "admin-catalog-review"]) { try { revalidateTag(tag) } catch {} }
+  try { revalidatePath("/admin/nadzor") } catch {}
   try {
     revalidatePath("/admin/artists", "layout")
     for (const artist of artists) {

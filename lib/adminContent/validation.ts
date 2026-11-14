@@ -24,7 +24,7 @@ export function parseArtistDiscography(value: unknown) {
     if (typeof row === "string") return !row.trim() || row.length > 1000
     if (!row || typeof row !== "object" || Array.isArray(row)) return true
     const album = row as Record<string, unknown>
-    return typeof album.title !== "string" || !album.title.trim() || album.title.length > 1000 || (album.year != null && album.year !== "" && (!["string", "number"].includes(typeof album.year) || !/^(?:18|19|20)\d{2}$/.test(String(album.year)))) || (album.kind != null && (typeof album.kind !== "string" || !["studio", "live", "compilation", "album"].includes(album.kind)))
+    return typeof album.title !== "string" || !album.title.trim() || album.title.length > 1000 || (album.year != null && album.year !== "" && (!["string", "number"].includes(typeof album.year) || !/^(?:18|19|20)\d{2}$/.test(String(album.year)))) || (album.kind != null && (typeof album.kind !== "string" || !["studio", "live", "compilation", "single", "album"].includes(album.kind)))
   })) throw new SubmissionError(400, "Unesi albume po redovima ili JSON niz albuma sa nazivom i godinom.")
   return rows as (string | { title: string; year?: string | number; kind?: string })[]
 }

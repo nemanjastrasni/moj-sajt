@@ -36,7 +36,14 @@ test('removed records lose their links, and cached admin data still requires aut
  allowed=false;await assert.rejects(service.readCatalogReview(),/forbidden/);assert.equal(authCalls,2);assert.equal(reads,2)
 })
 test('filters accept only known categories and bounded page values',()=>{
- assert.deepEqual(service.reviewSelection('akordi','2'),{kind:'akordi',page:2})
+ assert.deepEqual(service.reviewSelection('akordi','2'),{kind:'akordi',page:2,status:'otvoreni'})
  for(const value of ['../admin','https://evil.example',null,['akordi']])assert.equal(service.reviewSelection(value,'-2').kind,'sve')
  assert.equal(service.reviewSelection('slike','1000000000000000').page,1)
+})
+
+test('missing-field findings resolve only when meaningful content is present',async()=>{
+ const added={...findings[0],id:'disc-a',field:'discography',kind:'diskografije',confidence:'missing',expectedHash:hash([])}
+ findings.push(added)
+ try{artist.discography=['Albumi'];assert.notEqual((await service.readCatalogReview()).findings.at(-1).state,'resolved');cache=null
+ artist.discography=['Albumi','2000 — Album'];const result=await service.readCatalogReview();assert.equal(result.findings.at(-1).state,'resolved');assert.match(result.findings.at(-1).currentVersion,/^[a-f0-9]{64}$/);assert.doesNotMatch(JSON.stringify(result),/2000 — Album/)}finally{findings.pop()}
 })

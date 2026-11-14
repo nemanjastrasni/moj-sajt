@@ -1,3 +1,4 @@
+import { normalizeDiscography } from "@/lib/discography"
 import { unstable_cache } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { requireSongAdmin } from "@/lib/adminSongs/server"
@@ -9,18 +10,19 @@ export const backlogKinds = { sve:"Sve što nedostaje", bio:"Biografije", discog
 export type BacklogKind = keyof typeof backlogKinds
 export type BacklogRow = { id:string;name:string;slug:string;category:string|null;songs:number;missing:("bio"|"discography"|"image")[];reason:string|null }
 const cachedBacklog=unstable_cache(async()=>{
-  // Count missing fields in PostgreSQL; the list never needs full biography or album payloads.
-  const artists=await prisma.$queryRawUnsafe<{id:string;name:string;slug:string;category:string|null;image:string|null;bioMissing:boolean;discographyMissing:boolean;songs:number}[]>('SELECT a.id,a.name,a.slug,a.category,a.image,(a.bio IS NULL OR a.bio !~ \'[^[:space:]]\') AS "bioMissing",(a.discography IS NULL OR a.discography=\'null\'::jsonb OR a.discography=\'[]\'::jsonb OR jsonb_typeof(a.discography)=\'string\' AND (a.discography #>> \'{}\') !~ \'[^[:space:]]\') AS "discographyMissing",(SELECT count(*)::int FROM public."Song" s WHERE s."artistId"=a.id) AS songs FROM public."Artist" a ORDER BY a.id')
+  // Keep biographies out of this read. The shared display parser determines
+  // whether discography contains actual releases rather than headings alone.
+  const artists=await prisma.$queryRawUnsafe<{id:string;name:string;slug:string;category:string|null;image:string|null;discography:unknown;bioMissing:boolean;discographyMissing:boolean;songs:number}[]>('SELECT a.id,a.name,a.slug,a.category,a.image,a.discography,(a.bio IS NULL OR a.bio !~ \'[^[:space:]]\') AS "bioMissing",(a.discography IS NULL OR a.discography=\'null\'::jsonb OR a.discography=\'[]\'::jsonb OR jsonb_typeof(a.discography)=\'string\' AND (a.discography #>> \'{}\') !~ \'[^[:space:]]\') AS "discographyMissing",(SELECT count(*)::int FROM public."Song" s WHERE s."artistId"=a.id) AS songs FROM public."Artist" a ORDER BY a.id')
   const rows:BacklogRow[]=artists.map(a=>{
     const missing:BacklogRow["missing"]=[]
     if(a.bioMissing)missing.push("bio")
-    if(a.discographyMissing)missing.push("discography")
+    if(!normalizeDiscography(a.discography).length)missing.push("discography")
     if(!getArtistImage(a))missing.push("image")
     const note=review.findings.find(f=>f.subjectId===a.id&&missing.includes(f.field as "bio"|"discography"|"image")&&f.title!=="Biografija nedostaje"&&f.title!=="Diskografija nedostaje"&&f.title!=="Fotografija nedostaje")
     return{id:a.id,name:a.name,slug:a.slug,category:a.category,songs:a.songs,missing,reason:note?.observed||(missing.includes("discography")&&holds.some(h=>h.name===a.name)?"Pripremljeni izvor zahteva proveru godina ili vrsta izdanja.":null)}
   })
   return{checkedAt:new Date().toISOString(),total:rows.length,counts:{bio:rows.filter(r=>r.missing.includes("bio")).length,discography:rows.filter(r=>r.missing.includes("discography")).length,image:rows.filter(r=>r.missing.includes("image")).length},rows:rows.filter(r=>r.missing.length)}
-},["admin-complete-content-backlog-v1"],{revalidate:300,tags:["admin-content-backlog"]})
+},["admin-complete-content-backlog-v2"],{revalidate:300,tags:["admin-content-backlog"]})
 export async function readContentBacklog(){await requireSongAdmin();try{return await cachedBacklog()}catch{return null}}
 export function backlogSelection(params:Record<string,unknown>){
   const kind:BacklogKind=typeof params.nedostaje==="string"&&Object.hasOwn(backlogKinds,params.nedostaje)?params.nedostaje as BacklogKind:"sve"

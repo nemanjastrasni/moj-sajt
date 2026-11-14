@@ -414,4 +414,7 @@ export const english: Record<string, string> = {
   "Prilagodi ekranu": "Fit to screen",
   "Izvorni redovi": "Original lines",
   "Za širi pregled okreni telefon vodoravno. Sve žice ostaju zajedno.": "For a wider view, turn your phone sideways. All strings stay together.",
+  "Singlovi": "Singles",
+  "Singl": "Single",
+  "Izdavač": "Label",
 }

@@ -1,32 +1,45 @@
 import Link from "next/link"
-import { ExternalLink, Pencil } from "lucide-react"
+import { CheckCircle2, ExternalLink, Pencil } from "lucide-react"
 import { reviewKinds, type ReviewedFinding, type ReviewKind } from "@/lib/monitoring/catalog-review"
+import { decisionMatches, findingStatus, type FindingDecision } from "@/lib/monitoring/finding-status"
 import FindingActions from "./FindingActions"
 
 type Review = { checkedAt:string; songCheckedAt:string; summary:{ artists:number;biographies:number;discographies:number;photos:number;songs:number;songsNeedingTechnicalReview:number }; findings:ReviewedFinding[] }
+type Selection = {kind:ReviewKind;page:number;status?:"otvoreni"|"reseni"|"svi"}
+type CurrentSummary = {artists:number;biographies:number;discographies:number;photos:number;checkedAt:string}
 const date=(value:string)=>new Intl.DateTimeFormat("sr-Latn",{dateStyle:"short",timeStyle:"short",timeZone:"Europe/Belgrade"}).format(new Date(value))
-const href=(kind:ReviewKind,page=1)=>`/admin/nadzor?oblast=${kind}&strana=${page}#content-findings`
+const href=(kind:ReviewKind,status:string,page=1)=>`/admin/nadzor?oblast=${kind}&stanje=${status}&strana=${page}#content-findings`
 const PAGE_SIZE=12
-export default function CatalogFindings({review,selection,decisions={}}:{review:Review;selection:{kind:ReviewKind;page:number};decisions?:Record<string,string>}) {
-  const filtered=review.findings.filter(row=>selection.kind==="sve"||row.kind===selection.kind)
+export default function CatalogFindings({review,selection,decisions={},currentSummary}:{review:Review;selection:Selection;decisions?:Record<string,FindingDecision>;currentSummary?:CurrentSummary}) {
+  const rows=review.findings.map(item=>({...item,status:findingStatus(item,decisions[item.id])})),status=selection.status??"otvoreni"
+  const inState=rows.filter(item=>status==="svi"||status==="otvoreni"&&item.status==="open"||status==="reseni"&&item.status!=="open")
+  const filtered=inState.filter(row=>selection.kind==="sve"||row.kind===selection.kind)
   const pages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE)),page=Math.min(selection.page,pages),items=filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE)
-  const s=review.summary
+  const s=currentSummary??review.summary
   return <section id="content-findings" aria-labelledby="catalog-findings-heading">
     <h2 id="catalog-findings-heading">Biografije, diskografije, slike i akordi — konkretni nalazi</h2>
-    <p className="admin-muted">Pregled sadržaja: {date(review.checkedAt)}. Pesme tehnički proverene: {date(review.songCheckedAt)}. Ovo su nalazi pregleda sadržaja, odvojeni od svakodnevne provere dostupnosti sajta.</p>
-    <div className="admin-review-summary"><p><strong>{s.biographies} / {s.artists}</strong> upisanih biografija</p><p><strong>{s.discographies} / {s.artists}</strong> diskografija</p><p><strong>{s.photos} / {s.artists}</strong> povezanih fotografija</p><p><strong>{s.songsNeedingTechnicalReview} / {s.songs}</strong> pesama sa tehničkim upozorenjem</p></div>
-    <p className="admin-muted">Broj upisanih tekstova nije potvrda njihove tačnosti. Tehničko upozorenje nije dokaz pogrešnog akorda. Prikazan je odabrani red za dalji rad; nisu svih {s.songsNeedingTechnicalReview} pesama pojedinačno pregledane slušanjem. Stanje izabranih zapisa ponovo se proverava pri učitavanju, uz keš do pet minuta.</p>
-    <nav className="admin-review-filters" aria-label="Oblasti nalaza">{Object.entries(reviewKinds).map(([kind,label])=><Link key={kind} href={href(kind as ReviewKind)} prefetch={false} aria-current={kind===selection.kind?"page":undefined}>{label} ({kind==="sve"?review.findings.length:review.findings.filter(row=>row.kind===kind).length})</Link>)}</nav>
-    <p className="admin-muted">Prikaz {items.length ? (page-1)*PAGE_SIZE+1 : 0}–{Math.min(page*PAGE_SIZE,filtered.length)} od {filtered.length} nalaza u ovoj oblasti.</p>
-    <div className="admin-finding-list">{items.map(item=><article key={item.id} className="admin-finding" data-level={item.confidence==="confirmed-mismatch"||item.confidence==="technical-error"?"critical":"warning"}>
-      <div className="admin-finding-heading"><h3>{item.name} — {item.title}</h3><span className="admin-finding-badge">{reviewKinds[item.kind]}</span></div>
-      {decisions[item.id]&&<p className="admin-finding-advice">Tvoja odluka o nalazu: {({resolve:"označeno kao rešeno",dismiss:"nalaz odbačen",reopen:"ponovo otvoren"} as Record<string,string>)[decisions[item.id]]}. {item.state!=="unchanged"?"Sadržaj je naknadno menjan ili nije potvrđen; ova odluka se odnosi na raniji nalaz.":"Odluka je evidentirana odvojeno od izmena sadržaja."}</p>}
-      {item.state!=="unchanged"&&<p className="admin-finding-advice">{item.state==="changed"?"Zapis je menjan posle ovog pregleda. Nalaz ispod je istorijski i zahteva novu proveru; ne pretpostavljamo da je problem i dalje prisutan ili rešen.":item.state==="removed"?"Zapis više nije pronađen. Stari nalaz ne treba primenjivati na drugi profil.":"Trenutno stanje baze nije potvrđeno. Prikazan je ranije zabeležen nalaz; veze su privremeno isključene."}</p>}
-      <dl><dt>Gde</dt><dd><code>{item.href || item.publicHref || (item.slug&&item.category?`/biografija/${encodeURIComponent(item.category)}/${encodeURIComponent(item.slug)}`:"Zapis nije trenutno dostupan.")}</code></dd><dt>Šta je primećeno</dt><dd>{item.observed}</dd><dt>Pouzdanost nalaza</dt><dd>{item.confidence==="confirmed-mismatch"?"Potvrđeno: tema postojećeg teksta ne odgovara profilu. Izvor za zamenu još treba proveriti.":item.confidence==="technical-error"?"Potvrđen tehnički problem u zapisu; muzički sadržaj nije automatski procenjen.":item.confidence==="technical-warning"?"Automatsko upozorenje — potrebna ručna provera.":"Podatak nedostaje; nije zaključeno da ne postoji pouzdan izvor."}</dd><dt>Sledeći korak</dt><dd>{item.next}</dd><dt>Odobrenje</dt><dd>{item.requiresApproval?"Čeka tvoju odluku. Nalaz nije automatski promenio zapis.":"Pouzdane dopune praznih polja mogu se pripremiti u okviru odobrenog rada."}</dd></dl>
-      <div className="admin-row-actions">{item.href&&<Link className="admin-finding-link" href={item.href} prefetch={false} target="_blank" rel="noopener noreferrer"><ExternalLink aria-hidden="true" />Otvori pogođenu stranicu</Link>}{item.editHref&&<Link className="admin-finding-link" href={item.editHref} prefetch={false}><Pencil aria-hidden="true" />Pregledaj u editoru</Link>}</div>
-      <details><summary>Tehnički trag nalaza</summary><p className="admin-muted">Oznaka: {item.id}. Stanje pri pregledu sačuvano je kontrolnim zbirom; ovde se ne prikazuju puni tekstovi pesama ili podaci naloga.</p>{item.sourceNote&&<p className="admin-muted">Napomena o izvoru: {item.sourceNote}</p>}</details>
-      <FindingActions findingId={item.id} subjectId={item.subjectId} field={item.subject==="artist"&&(item.field==="bio"||item.field==="discography")?item.field:undefined} canClear={item.field==="bio"&&item.confidence==="confirmed-mismatch"} canDecide disabled={item.state!=="unchanged"}/>
-    </article>)}</div>
-    <nav className="admin-review-filters" aria-label="Stranice nalaza">{page>1&&<Link href={href(selection.kind,page-1)} prefetch={false}>Prethodna</Link>}<span>Strana {page} / {pages}</span>{page<pages&&<Link href={href(selection.kind,page+1)} prefetch={false}>Sledeća</Link>}</nav>
+    <p className="admin-muted">Prvobitni pregled: {date(review.checkedAt)}. Pesme tehnički proverene: {date(review.songCheckedAt)}. Trenutno stanje izabranih zapisa proverava se ponovo; ručno čuvanje odmah poništava keš ovog pregleda.</p>
+    <div className="admin-review-summary"><p><strong>{s.biographies} / {s.artists}</strong> upisanih biografija</p><p><strong>{s.discographies} / {s.artists}</strong> diskografija</p><p><strong>{s.photos} / {s.artists}</strong> povezanih fotografija</p><p><strong>{review.summary.songsNeedingTechnicalReview} / {review.summary.songs}</strong> pesama sa tehničkim upozorenjem u prvobitnom pregledu</p></div>
+    <p className="admin-muted">{currentSummary?`Popunjenost proverena: ${date(currentSummary.checkedAt)}.`:"Trenutna popunjenost nije dostupna; brojevi iznad potiču iz prvobitnog pregleda."} Popunjeno polje rešava nalaz da podatak nedostaje; tačnost teksta ili akorda i dalje zahteva proveru. Promenjen sadržaj ne preuzima staru odluku administratora.</p>
+    <nav className="admin-review-filters" aria-label="Stanje nalaza">{([["otvoreni","Otvoreni",rows.filter(row=>row.status==="open").length],["reseni","Završeni / rešeni",rows.filter(row=>row.status!=="open").length],["svi","Svi",rows.length]] as const).map(([value,label,count])=><Link key={value} href={href(selection.kind,value)} prefetch={false} aria-current={status===value?"page":undefined}>{label} ({count})</Link>)}</nav>
+    <nav className="admin-review-filters" aria-label="Oblasti nalaza">{Object.entries(reviewKinds).map(([kind,label])=><Link key={kind} href={href(kind as ReviewKind,status)} prefetch={false} aria-current={kind===selection.kind?"page":undefined}>{label} ({kind==="sve"?inState.length:inState.filter(row=>row.kind===kind).length})</Link>)}</nav>
+    <p className="admin-muted">Prikaz {items.length ? (page-1)*PAGE_SIZE+1 : 0}–{Math.min(page*PAGE_SIZE,filtered.length)} od {filtered.length} nalaza.</p>
+    {!items.length&&<p role="status">Nema nalaza u ovom prikazu.</p>}
+    <div className="admin-finding-list">{items.map(item=>{
+      const closed=item.status!=="open",automatic=item.state==="resolved",decision=decisions[item.id]
+      const title=closed?(automatic?({bio:"Biografija je popunjena",discography:"Diskografija je popunjena",image:"Fotografija je dodata",song:"Nalaz je završen"} as const)[item.field]:item.status==="removed"?"Zapis je uklonjen":item.status==="dismissed"?"Nalaz je odbačen":"Nalaz je označen kao rešen"):item.title
+      const trace=<><p><strong>Prvobitni nalaz:</strong> {item.title}</p><p>{item.observed}</p><p>{item.next}</p><p className="admin-muted">Oznaka: {item.id}. Kontrolni zbir čuva vezu sa pregledanim zapisom.</p>{item.sourceNote&&<p className="admin-muted">Napomena o izvoru: {item.sourceNote}</p>}</>
+      return <article key={item.id} className="admin-finding" data-finding-status={item.status} data-level={closed?"info":item.confidence==="confirmed-mismatch"||item.confidence==="technical-error"?"critical":"warning"}>
+        <div className="admin-finding-heading"><h3>{item.name} — {title}</h3><span className="admin-finding-badge">{reviewKinds[item.kind]}</span></div>
+        {closed&&<p className="admin-finding-advice"><CheckCircle2 size={18} aria-hidden="true" /> {automatic?"Rešeno: polje je sada popunjeno. Ovo nije automatska potvrda tačnosti sadržaja.":item.status==="removed"?"Stari nalaz se više ne primenjuje na ovaj zapis.":"Odluka administratora važi za trenutno pregledanu verziju sadržaja."}</p>}
+        {decision&&<p className="admin-muted">Tvoja odluka: {({resolve:"označeno kao rešeno",dismiss:"nalaz odbačen",reopen:"ponovo otvoreno"} as Record<string,string>)[typeof decision==="string"?decision:decision.operation]}. {decisionMatches(item,decision)?"Odnosi se na trenutno stanje.":"Sadržaj je naknadno menjan ili nije potvrđen; prethodna odluka je sačuvana u istoriji."}</p>}
+        {!closed&&item.state==="changed"&&<p className="admin-finding-advice">Zapis je izmenjen posle prvobitnog pregleda. Proveri ispravku, pa označi nalaz kao rešen ili ga odbaci. Stari predlog ne može automatski prepisati noviji sadržaj.</p>}
+        {item.state==="unavailable"&&<p className="admin-finding-advice">Trenutno stanje baze nije potvrđeno. Akcije su privremeno isključene.</p>}
+        <div className="admin-row-actions">{item.href&&<Link className="admin-finding-link" href={item.href} prefetch={false} target="_blank" rel="noopener noreferrer"><ExternalLink aria-hidden="true" />Otvori pogođenu stranicu</Link>}{item.editHref&&<Link className="admin-finding-link" href={item.editHref} prefetch={false}><Pencil aria-hidden="true" />Pregledaj u editoru</Link>}</div>
+        {closed?<details><summary>Raniji nalaz i tehnički trag</summary>{trace}</details>:trace}
+        <FindingActions findingId={item.id} subjectId={item.subjectId} currentVersion={item.currentVersion} field={item.subject==="artist"&&(item.field==="bio"||item.field==="discography")?item.field:undefined} canClear={item.field==="bio"&&item.confidence==="confirmed-mismatch"&&item.state==="unchanged"} canDecide={Boolean(item.currentVersion)} disabled={item.state!=="unchanged"}/>
+      </article>
+    })}</div>
+    <nav className="admin-review-filters" aria-label="Stranice nalaza">{page>1&&<Link href={href(selection.kind,status,page-1)} prefetch={false}>Prethodna</Link>}<span>Strana {page} / {pages}</span>{page<pages&&<Link href={href(selection.kind,status,page+1)} prefetch={false}>Sledeća</Link>}</nav>
   </section>
 }

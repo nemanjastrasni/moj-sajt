@@ -14,7 +14,7 @@ const adapter=(tx:Prisma.TransactionClient)=>({query:async(sql:string,params:unk
 async function transaction<T>(work:(db:ReturnType<typeof adapter>)=>Promise<T>){return prisma.$transaction(tx=>work(adapter(tx)),{timeout:15000})}
 function field(value:unknown){if(value!=="bio"&&value!=="discography")throw new SubmissionError(400,"Izaberi biografiju ili diskografiju.");return value}
 function id(value:unknown){if(typeof value!=="string"||!/^[a-zA-Z0-9_-]{1,180}$/.test(value))throw new SubmissionError(400,"Neispravna oznaka.");return value}
-function refresh(a?:{slug:string;category:string|null}){if(a)refreshArtistContent(a);try{revalidateTag("admin-content-backlog");revalidatePath("/admin/nadzor");revalidatePath("/wiki-izvori")}catch{}}
+function refresh(a?:{slug:string;category:string|null}){if(a)refreshArtistContent(a);try{revalidateTag("admin-content-backlog");revalidateTag("admin-catalog-review");revalidatePath("/admin/nadzor");revalidatePath("/wiki-izvori")}catch{}}
 export async function contentAction(actorId:string,input:Record<string,unknown>){
  try{
  if(input.action==="prepare"){
@@ -25,7 +25,7 @@ export async function contentAction(actorId:string,input:Record<string,unknown>)
   const result=await transaction(db=>core.complete(db,reserved.id,actorId,candidate,error));refresh();return result
  }
  if(input.action==="clear"){const result=await transaction(db=>core.clearProposal(db,actorId,{findingId:id(input.findingId)}));refresh();return result}
- if(input.action==="decision"){const result=await transaction(db=>core.decision(db,actorId,{findingId:id(input.findingId),decision:input.decision}));refresh();return result}
+ if(input.action==="decision"){const result=await transaction(db=>core.decision(db,actorId,{findingId:id(input.findingId),decision:input.decision,currentVersion:input.currentVersion}));refresh();return result}
  if(["apply","undo","discard"].includes(String(input.action))){
   if(input.action!=="discard"&&(input.approved!==true||typeof input.confirmation!=="string"||input.confirmation.length>200))throw new SubmissionError(400,"Potvrdi izvor i upiši naziv izvođača.")
   const result=await transaction(db=>input.action==="apply"?core.apply(db,actorId,id(input.id),input.confirmation):input.action==="undo"?core.undo(db,actorId,id(input.id),input.confirmation):core.discard(db,actorId,id(input.id)))
@@ -43,5 +43,11 @@ export async function readProposals(findingId?:string){
 }
 export async function readProposal(idValue:string){await requireSongAdmin();const rows=await prisma.$queryRawUnsafe<Proposal[]>('SELECT * FROM public."AdminContentProposal" WHERE id=$1',id(idValue));return rows[0]?JSON.parse(JSON.stringify(rows[0])) as Proposal:null}
 export type ActionEvent={id:string;proposalId:string;action:string;createdAt:string;actorName:string;name:string|null;findingId:string;status:string}
-export async function readFindingDecisions(){await requireSongAdmin();try{const rows=await prisma.$queryRawUnsafe<{findingId:string;operation:string}[]>('SELECT DISTINCT ON ("findingId") "findingId",operation FROM public."AdminContentProposal" WHERE field=\'finding\' ORDER BY "findingId","createdAt" DESC,id DESC');return Object.fromEntries(rows.map(r=>[r.findingId,r.operation])) as Record<string,string>}catch{return{} as Record<string,string>}}
+export async function readFindingDecisions(){
+ await requireSongAdmin()
+ try{
+  const rows=await prisma.$queryRawUnsafe<{findingId:string;operation:string;currentVersion:string|null}[]>('SELECT DISTINCT ON ("findingId") "findingId",operation,data->>\'currentVersion\' AS "currentVersion" FROM public."AdminContentProposal" WHERE field=\'finding\' ORDER BY "findingId","createdAt" DESC,id DESC')
+  return Object.fromEntries(rows.map(row=>[row.findingId,{operation:row.operation,currentVersion:row.currentVersion}])) as Record<string,{operation:string;currentVersion:string|null}>
+ }catch{return{} as Record<string,{operation:string;currentVersion:string|null}>}
+}
 export async function readActionEvents(){await requireSongAdmin();try{const rows=await prisma.$queryRawUnsafe<ActionEvent[]>('SELECT e.id,e."proposalId",e.action,e."createdAt",COALESCE(u.name,e."actorId") AS "actorName",p.data->\'identity\'->>\'name\' AS name,p."findingId",p.status FROM public."AdminContentEvent" e JOIN public."AdminContentProposal" p ON p.id=e."proposalId" LEFT JOIN public."User" u ON u.id=e."actorId" ORDER BY e."createdAt" DESC,e.id DESC LIMIT 50');return{state:"ready" as const,rows:JSON.parse(JSON.stringify(rows)) as ActionEvent[]}}catch{return{state:"unavailable" as const,rows:[] as ActionEvent[]}}}

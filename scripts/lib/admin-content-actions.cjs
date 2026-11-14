@@ -2,6 +2,7 @@
 const {randomUUID}=require('node:crypto')
 const {hash,credit,validSource,eligibleDiscography,saveProfile}=require('./artist-wiki-store.cjs')
 const catalog=require('../../lib/monitoring/catalog-review-data.json')
+const {findingVersion}=require('./catalog-finding-version.cjs')
 const json=value=>JSON.parse(JSON.stringify(value))
 class ActionError extends Error{constructor(status,message){super(message);this.status=status}}
 const fail=(condition,message,status=409)=>{if(!condition)throw new ActionError(status,message)}
@@ -82,7 +83,12 @@ async function undo(db,actorId,id,confirmation){
 async function discard(db,actorId,id){await actor(db,actorId);const p=(await db.query('SELECT * FROM public."AdminContentProposal" WHERE id=$1 FOR UPDATE',[id])).rows[0];fail(p?.status==='ready','Predlog više nije aktivan.');await db.query('UPDATE public."AdminContentProposal" SET status=\'discarded\',"updatedAt"=CURRENT_TIMESTAMP WHERE id=$1',[id]);await event(db,id,'discarded',actorId);return{...p,status:'discarded'}}
 async function decision(db,actorId,input){
  await actor(db,actorId);const f=finding(input.findingId);fail(f&&['resolve','dismiss','reopen'].includes(input.decision),'Nepoznat nalaz ili odluka.',400)
- const id=randomUUID(),data={note:f.observed,expectedHash:f.expectedHash,name:f.name,decision:input.decision}
+ fail(typeof input.currentVersion==='string'&&/^[a-f0-9]{64}$/.test(input.currentVersion),'Osveži pregled pre odluke o nalazu.',400)
+ const fields=['bio','discography','image'];fail(f.subject==='song'||fields.includes(f.field),'Nepoznato polje nalaza.',400)
+ const sql=f.subject==='song'?'SELECT id,title,slug,category,lyrics,chords FROM public."Song" WHERE id=$1 FOR UPDATE':`SELECT id,name,slug,category,"${f.field}" FROM public."Artist" WHERE id=$1 FOR UPDATE`
+ const current=(await db.query(sql,[f.subjectId])).rows[0];fail(current,'Zapis više nije dostupan.',404)
+ const version=findingVersion(f,current);fail(version===input.currentVersion,'Sadržaj je menjan posle prikaza nalaza. Osveži pregled pre odluke.')
+ const id=randomUUID(),data={note:f.observed,expectedHash:f.expectedHash,name:current.name??current.title,currentVersion:version,decision:input.decision}
  await db.query('INSERT INTO public."AdminContentProposal" (id,"findingId","subjectId",field,operation,status,data,"actorId") VALUES ($1,$2,$3,\'finding\',$4,\'applied\',$5::jsonb,$6)',[id,f.id,f.subjectId,input.decision,JSON.stringify(data),actorId]);await event(db,id,input.decision,actorId)
  return{id,status:'applied',data}
 }

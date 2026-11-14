@@ -74,3 +74,8 @@ test('transient failures are not stored as successful partial credits; a missing
 test('both invalidations are attempted even when one cache layer fails',()=>{
  const warn=console.warn;console.warn=()=>{};try{tagFailure=true;policy.refreshWikiCredits();assert.ok(events.some(e=>e[0]==='path'));events.length=0;tagFailure=false;pathFailure=true;policy.refreshWikiCredits();assert.ok(events.some(e=>e[0]==='tag'))}finally{console.warn=warn}
 })
+
+test('manual artist saves invalidate both administrative content views even if cache invalidation fails',()=>{
+ const warn=console.warn;console.warn=()=>{}
+ try{tagFailure=true;admin.refreshArtistContent(state.artist);assert.ok(events.some(e=>e[0]==='tag'&&e[1]==='admin-content-backlog'));assert.ok(events.some(e=>e[0]==='tag'&&e[1]==='admin-catalog-review'));assert.ok(events.some(e=>e[0]==='path'&&e[1]==='/admin/nadzor'))}finally{console.warn=warn}
+})
