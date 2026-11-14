@@ -22,7 +22,7 @@ Module._load=function(request,parent,main){
       return Promise.resolve().then(()=>fn(...args)).then(result=>{payloads.push(result);stored.set(key,{result,tags:options.tags,expires:now+options.revalidate*1000});return result})
     }
   }}
-  if(request==='../music/difficulty')return {...difficulty,estimateDifficulty:song=>{assessments++;return difficulty.estimateDifficulty(song)}}
+  if(request==='../music/readDifficulty'){const actual=original.call(this,request,parent,main);return {...actual,assessMissingSongs:songs=>{assessments+=songs.length;return actual.assessMissingSongs(songs)}}}
   if(request.startsWith('@/'))request=path.join(__dirname,'..',request.slice(2))
   return original.call(this,request,parent,main)
 }

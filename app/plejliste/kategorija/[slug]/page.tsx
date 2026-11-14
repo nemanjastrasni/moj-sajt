@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation"
-import { catalogEntry } from "@/lib/playlists/catalog"
+import { catalogEntry } from "@/lib/playlists/catalog-model"
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   if (!catalogEntry(slug)) notFound()

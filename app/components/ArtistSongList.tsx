@@ -4,10 +4,10 @@ import { contentAdmin } from "@/lib/adminContent/server"
 import { isReviewStatus, type ReviewStatus } from "@/lib/songReview/model"
 import SongReviewBadge from "./SongReviewBadge"
 import styles from "./ArtistSongList.module.css"
-import { estimateDifficulty, type Difficulty } from "@/lib/music/difficulty"
+import type { Difficulty } from "@/lib/music/difficultyModel"
 import SongDifficulty from "./SongDifficulty"
 import UiText from "./UiText"
-import { difficultyExplanation } from "@/lib/music/difficulty"
+import { difficultyExplanation } from "@/lib/music/difficultyModel"
 import SongPerformers from "./SongPerformers"
 import { performerArtists, type SongPerformerView } from "@/lib/artists/performers"
 
@@ -30,7 +30,12 @@ export default async function ArtistSongList({ category, artist, songs, artistId
 export function ArtistSongRows({ category, artist, songs, statuses, artistId }: Props & { statuses?: Map<string, ReviewStatus> }) {
   return <><ul className={styles.list}>
     {songs.map(song => {
-      const assessment = song.assessment ?? (() => { const result = estimateDifficulty(song); return { level: result.level, hasChords: result.chords.length > 0 } })()
+      const assessment = song.assessment ?? (() => {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- Server-only compatibility for legacy callers without supplied assessments.
+        const { estimateDifficulty } = require("../../lib/music/difficulty") as typeof import("../../lib/music/difficulty")
+        const result = estimateDifficulty(song)
+        return { level: result.level, hasChords: result.chords.length > 0 }
+      })()
       return <li key={song.id} className={styles.row}>
       <Link href={`/pesme/${encodeURIComponent(song.artist?.category ?? category)}/${encodeURIComponent(song.artist?.slug ?? artist)}/${encodeURIComponent(song.slug)}${artistId ? "?artist=" + encodeURIComponent(artistId) : ""}`} className={styles.link}>
         {assessment.hasChords ? "\uD83C\uDFB8 " : "\uD83C\uDFB5 "}

@@ -1,5 +1,5 @@
 import { isCapo } from "../chords/capoDisplay"
-import { SubmissionError } from "../submissions/validation"
+import { SubmissionError } from "../submissions/errors"
 
 export type PlayingValues = { transpose: number; capo: number | null }
 export type PlayingSetting = PlayingValues & { entryId: string; version: number }

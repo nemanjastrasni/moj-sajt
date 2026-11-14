@@ -4,8 +4,9 @@ import { gzip, gunzip } from "node:zlib"
 import { promisify } from "node:util"
 import { createHash } from "node:crypto"
 import { prisma } from "@/lib/prisma"
-import { difficultyLevels, estimateDifficulty, type Difficulty } from "../music/difficulty"
-import { catalogEntries, catalogEntry, matchesCatalog } from "./catalog"
+import { difficultyLevels, type Difficulty } from "../music/difficultyModel"
+import { catalogEntries, catalogEntry, matchesCatalog } from "./catalog-model"
+import { assessMissingSongs } from "../music/readDifficulty"
 import { assessmentRevision, storedAssessment } from "../music/storedAssessment"
 import { Prisma } from "@prisma/client"
 
@@ -37,10 +38,9 @@ async function buildCatalog(): Promise<CatalogIndex> {
     }) : []
     return { rows, sources }
   }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead, maxWait: 5000, timeout: 15000 })
-  const changedSources = new Map(sources.map(song => [song.id, song]))
+  const changedAssessments = await assessMissingSongs(sources)
   const cards: CatalogCard[] = rows.map(song => {
-    const source = changedSources.get(song.id)
-    const assessment = storedAssessment(song.musicAssessment) ?? (source ? estimateDifficulty(source) : undefined)
+    const assessment = storedAssessment(song.musicAssessment) ?? changedAssessments.get(song.id)
     if (!assessment) throw Error("Catalog source snapshot is incomplete")
     return { id: song.id, title: song.title, slug: song.slug, category: song.category, artist: { name: song.artist.name, slug: song.artist.slug }, level: assessment.level,
       catalogs: catalogEntries.filter(entry => matchesCatalog(song, entry.slug, assessment)).map(entry => entry.slug) }

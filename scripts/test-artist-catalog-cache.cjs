@@ -9,7 +9,7 @@ Module._load=function(request,parent,main){
  if(request==='@/lib/prisma')return{prisma}
  if(request==='react')return{...original.call(this,request,parent,main),cache:fn=>fn}
  if(request==='next/cache')return{unstable_cache:(fn,keys,options)=>{definitions.push({keys,options});return(...args)=>{const key=JSON.stringify([keys,args]);if(!cacheStore.has(key))cacheStore.set(key,fn(...args).catch(e=>{cacheStore.delete(key);throw e}));return cacheStore.get(key)}}}
- if(request==='@/lib/music/difficulty'){const actual=original.call(this,path.join(root,'lib/music/difficulty'),parent,main);return{...actual,estimateDifficulty:s=>{assessments++;return actual.estimateDifficulty(s)}}}
+ if(request==='@/lib/music/readDifficulty'){const actual=original.call(this,path.join(root,'lib/music/readDifficulty'),parent,main);return{...actual,assessMissingSongs:songs=>{assessments+=songs.length;return actual.assessMissingSongs(songs)}}}
  if(request.startsWith('@/'))request=path.join(root,request.slice(2))
  return original.call(this,request,parent,main)
 }

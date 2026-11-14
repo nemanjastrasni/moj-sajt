@@ -4,8 +4,8 @@ import { NextResponse } from "next/server"
 import { revalidatePath } from "next/cache"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { SubmissionError } from "@/lib/submissions/validation"
-import { submissionBody } from "@/lib/submissions/server"
+import { SubmissionError } from "@/lib/submissions/errors"
+import { submissionBody } from "@/lib/submissions/request"
 
 export const playlistOrder: Prisma.PlaylistSongOrderByWithRelationInput[] = [{ order: { sort: "asc", nulls: "last" } }, { id: "asc" }]
 export const privateHeaders = { "Cache-Control": "private, no-store", Vary: "Cookie" }

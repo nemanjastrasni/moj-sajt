@@ -1,8 +1,8 @@
 import { publicPageMetadata } from "@/lib/seo/metadata"
 import Link from "next/link"
 import UiText from "@/app/components/UiText"
-import { catalogEntries } from "@/lib/playlists/catalog"
-import { difficultyExplanation } from "@/lib/music/difficulty"
+import { catalogEntries } from "@/lib/playlists/catalog-model"
+import { difficultyExplanation } from "@/lib/music/difficultyModel"
 import styles from "@/app/components/PlaylistClient.module.css"
 import difficultyStyles from "@/app/components/SongDifficulty.module.css"
 

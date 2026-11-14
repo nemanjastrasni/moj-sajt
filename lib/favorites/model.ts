@@ -1,4 +1,4 @@
-import { SubmissionError } from "../submissions/validation"
+import { SubmissionError } from "../submissions/errors"
 
 export type FavoriteSetting = { id: string; transpose: number }
 export const FAVORITE_MIN_TRANSPOSE = -11

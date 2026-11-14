@@ -63,12 +63,12 @@ test('all difficulty badges render their unchanged labels without initializing t
     assert.equal($('span').attr('title'),model.difficultyExplanation)
   }
 })
-test('artist rows assess each song once while preserving chord/text indicators, difficulty and links',()=>{
+test('artist rows reuse supplied assessments while preserving chord/text indicators, difficulty and links',()=>{
   let calls=0
   const {ArtistSongRows}=loadUi('app/components/ArtistSongList.tsx',{assess:song=>{calls++;return {level:song.id==='chords'?'very_easy':null,chords:song.id==='chords'?['C']:[]}}})
-  const songs=[{id:'chords',slug:'chords',title:'With chords',lyrics:'C',difficulty:'beginner'},{id:'text',slug:'text',title:'Text only',lyrics:'Fixture',difficulty:'beginner'}]
+  const songs=[{id:'chords',slug:'chords',title:'With chords',assessment:{level:'very_easy',hasChords:true}},{id:'text',slug:'text',title:'Text only',assessment:{level:null,hasChords:false}}]
   const $=cheerio.load(renderToStaticMarkup(React.createElement(ArtistSongRows,{songs,category:'domace',artist:'fixture',artistId:'fixture-id'})))
-  assert.equal(calls,2);assert.equal($('li').length,2)
+  assert.equal(calls,0);assert.equal($('li').length,2)
   assert.match($('li').first().text(),/🎸 With chords/);assert.match($('li').last().text(),/🎵 Text only/)
   assert.equal($('a').first().attr('href'),'/pesme/domace/fixture/chords?artist=fixture-id')
 })

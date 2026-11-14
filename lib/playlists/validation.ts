@@ -1,4 +1,4 @@
-import { SubmissionError } from "../submissions/validation"
+import { SubmissionError } from "../submissions/errors"
 
 export function playlistId(value: unknown): string {
   if (typeof value !== "string" || !/^[a-zA-Z0-9_-]{1,128}$/.test(value)) throw new SubmissionError(400, "Neispravna playlista ili pesma.")

@@ -1,7 +1,7 @@
 import { cache } from "react"
 import { unstable_cache } from "next/cache"
 import { prisma } from "@/lib/prisma"
-import { estimateDifficulty } from "@/lib/music/difficulty"
+import { assessMissingSongs } from "@/lib/music/readDifficulty"
 import { assessmentRevision, storedAssessment } from "@/lib/music/storedAssessment"
 import { Prisma } from "@prisma/client"
 import { isPublicCategory } from "@/lib/seo/site"
@@ -48,10 +48,9 @@ const cachedSongs = unstable_cache(async (artistId: string) => sharePending("son
   const sources = missing.length ? await tx.song.findMany({ where: { id: { in: missing } }, select: { id: true, lyrics: true, chords: true } }) : []
   return { songs, sources }
   }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead, timeout: 15000 })
-  const byId = new Map(sources.map(song => [song.id, song]))
+  const missingAssessments = await assessMissingSongs(sources)
   return songs.map(song => {
-    const source = byId.get(song.id)
-    const assessment = storedAssessment(song.musicAssessment) ?? (source ? estimateDifficulty(source) : undefined)
+    const assessment = storedAssessment(song.musicAssessment) ?? missingAssessments.get(song.id)
     if (!assessment) throw Error("Artist source snapshot is incomplete")
     return { id: song.id, slug: song.slug, title: song.title, artist: song.artist, performers: song.performers,
       assessment: { level: assessment.level, hasChords: assessment.chords.length > 0 } }

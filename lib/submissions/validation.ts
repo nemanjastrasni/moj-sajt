@@ -1,3 +1,4 @@
+import { SubmissionError } from "./errors"
 import { parseSongSheet } from "../chords/songSheet"
 import { slugify } from "../until/slug"
 
@@ -9,9 +10,7 @@ export const submissionCategories = [
 export const submissionExample = "[Strofa 1]\nG               D\nOvde ide prvi stih pesme\nEm              C\nOvde ide drugi stih\n\n[Refren]\nC       D       G\nOvde ide tekst refrena"
 export type SubmissionInput = { category: string; artistName: string; title: string; lyrics: string }
 
-export class SubmissionError extends Error {
-  constructor(public status: number, message: string) { super(message) }
-}
+export { SubmissionError } from "./errors"
 
 export function validateSubmission(value: unknown): SubmissionInput {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new SubmissionError(400, "Neispravni podaci.")
