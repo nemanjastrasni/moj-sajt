@@ -8,10 +8,11 @@ let artistReads, songReads, artists, songs
 const root = path.join(__dirname, ".."), cache = new Map()
 const original = Module._load
 Module._load = function(request, parent, main) {
-  if (request === "@/lib/prisma") return { prisma: {
+  if (request === "@/lib/prisma") { const tx={ $queryRaw:async()=>{songReads++;return songs}, song:{findMany:async({where})=>songs.filter(song=>where.id.in.includes(song.id))} }; return { prisma: {
+    $transaction:async work=>work(tx),
     artist: { findMany: async () => { artistReads++; return artists } },
     song: { findMany: async ({ where }) => { songReads++; return songs.filter(song => typeof where.category === "string" ? song.category === where.category : where.category.in.includes(song.category)) } },
-  } }
+  } } }
   if (request === "next/navigation") return {
     notFound: () => { throw Object.assign(Error("not found"), { status: 404 }) },
     permanentRedirect: url => { throw Object.assign(Error("redirect"), { status: 308, url }) },

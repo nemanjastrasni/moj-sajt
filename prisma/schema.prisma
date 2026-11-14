@@ -136,6 +136,7 @@ model Song {
   artistId      String
   createdAt     DateTime?      @default(now()) 
   popularity    Int            @default(0)
+  musicAssessment Json?
   difficulty    String         @default("beginner")
   favorites     Favorite[]
   playlistSongs PlaylistSong[]

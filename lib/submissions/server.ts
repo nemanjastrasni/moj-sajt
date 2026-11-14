@@ -1,3 +1,4 @@
+import { persistSongAssessment } from "@/lib/music/assessment"
 import { getServerSession } from "next-auth"
 import { Prisma } from "@prisma/client"
 import { NextResponse } from "next/server"
@@ -73,6 +74,7 @@ export async function reviewSubmission(id: string, reviewerId: string, review: R
       const exists = await tx.song.findFirst({ where: { artistId: artist.id, OR: [{ slug }, { title: input.title }] } })
       if (exists) throw new SubmissionError(409, "Ova pesma vec postoji kod izvodjaca. Proveri duplikat pre objave.")
       const song = await tx.song.create({ data: { title: input.title, slug, category: input.category, lyrics: input.lyrics, artistId: artist.id } })
+      await persistSongAssessment(tx, song.id, { lyrics: input.lyrics, chords: null })
       publishedSongId = song.id
       href = "/pesme/" + [input.category, artist.slug, song.slug].map(encodeURIComponent).join("/")
     }

@@ -1,3 +1,4 @@
+import { persistSongAssessment } from "../lib/music/assessment"
 import { PrismaClient } from "@prisma/client"
 import fs from "fs"
 import path from "path"
@@ -49,7 +50,8 @@ async function importSongs() {
 
   for (const song of songs) {
     try {
-      await prisma.song.create({
+      await prisma.$transaction(async tx => {
+      const created = await tx.song.create({
         data: {
           id: song.id,
           slug: song.slug,
@@ -61,6 +63,8 @@ async function importSongs() {
           popularity: Number(song.popularity || 0),
           difficulty: song.difficulty || "beginner",
         },
+      })
+      await persistSongAssessment(tx, created.id, { lyrics: song.lyrics, chords: song.chords || null })
       })
     } catch (e) {
       console.log("Song skip:", song.title)

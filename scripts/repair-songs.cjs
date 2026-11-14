@@ -6,6 +6,7 @@ const { databaseClient } = require("./lib/artist-image-source.cjs")
 const { sourceIndex } = require("./audit-songs.cjs")
 const { songKey, hash, escapeHtml: h } = require("./lib/song-audit.cjs")
 const { PROTECTED, contentVersion, createRepairPlanner, validateOperation } = require("./lib/song-repair.cjs")
+const { assessmentUpdate } = require("../lib/music/assessment.ts")
 const ROOT = path.resolve(__dirname, "..")
 const planner = () => createRepairPlanner(url => existsSync(path.join(ROOT, "public", decodeURIComponent(url))))
 const songSelect = 'SELECT s.*, a.name AS artist, a.slug AS "artistSlug", CASE WHEN r."songId" IS NULL THEN NULL ELSE jsonb_build_object(\'status\',r.status,\'reviewedById\',r."reviewedById",\'updatedAt\',r."updatedAt") END AS review FROM public."Song" s JOIN public."Artist" a ON a.id=s."artistId" LEFT JOIN public."SongReview" r ON r."songId"=s.id'
@@ -72,13 +73,15 @@ async function apply(db, values, reportRoot = path.join(ROOT,"reports/song-repai
       if(op.afterLyrics!==op.before.lyrics){
         const changed=await db.query('UPDATE public."Song" SET lyrics=$1 WHERE id=$2 AND lyrics IS NOT DISTINCT FROM $3 AND chords IS NOT DISTINCT FROM $4',[op.afterLyrics,op.id,op.before.lyrics,op.before.chords])
         if(changed.rowCount!==1)throw Error("Stale content")
+        const assessment = assessmentUpdate(op.id,{lyrics:op.afterLyrics,chords:op.before.chords})
+        if((await db.query(assessment.text,assessment.values)).rowCount!==1)throw Error("Stale music assessment")
       }
       await db.query('INSERT INTO public."SongReview" ("songId",status,"reviewedById","updatedAt") VALUES ($1,$2,$3,CURRENT_TIMESTAMP) ON CONFLICT ("songId") DO UPDATE SET status=EXCLUDED.status,"reviewedById"=EXCLUDED."reviewedById","updatedAt"=EXCLUDED."updatedAt"',[op.id,op.status,actor])
     }
     const after=(await db.query(songSelect+' WHERE s.id=ANY($1::text[]) ORDER BY s.id',[ids])).rows
     for(let i=0;i<after.length;i++){
       const row=after[i],before=current[i],op=operations[i]
-      const metadata=value=>Object.fromEntries(Object.entries(value).filter(([key])=>!["lyrics","review"].includes(key)))
+      const metadata=value=>Object.fromEntries(Object.entries(value).filter(([key])=>!["lyrics","review","musicAssessment"].includes(key)))
       if(row.id!==op.id || row.lyrics!==op.afterLyrics || row.review?.status!==op.status || row.review?.reviewedById!==actor || JSON.stringify(metadata(row))!==JSON.stringify(metadata(before)))throw Error("Post-write verification failed")
     }
     const afterCounts=(await db.query('SELECT (SELECT count(*) FROM public."Song")::int AS songs,(SELECT count(*) FROM public."Favorite")::int AS favorites,(SELECT count(*) FROM public."PlaylistSong")::int AS links')).rows[0]

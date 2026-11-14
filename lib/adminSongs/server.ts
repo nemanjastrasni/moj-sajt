@@ -1,3 +1,5 @@
+import { persistSongAssessment } from "@/lib/music/assessment"
+import { storedAssessment } from "@/lib/music/storedAssessment"
 import { randomUUID } from "node:crypto"
 import { Prisma } from "@prisma/client"
 import { revalidatePath, revalidateTag } from "next/cache"
@@ -62,6 +64,7 @@ export async function createAdminSongs(input: SongBatch, actorId: string) {
         slug = `${base}-${suffix++}`
       }
       const song = await tx.song.create({ data: { ...draft, slug, category: input.category, artistId: artist.id }, select: { id: true, title: true, slug: true } })
+      await persistSongAssessment(tx, song.id, draft)
       await tx.songReview.create({ data: { songId: song.id, status: "manually_corrected", reviewedById: actorId, updatedAt: new Date() } })
       songs.push(song)
     }
@@ -78,6 +81,9 @@ export async function updateAdminSong(id: string, input: ReturnType<typeof valid
     // An untouched empty form field must not turn NULL into a content change.
     const chords = before.chords === null && input.chords === "" ? null : input.chords
     const song = await tx.song.update({ where: { id }, data: { title: input.title, lyrics: input.lyrics, chords, artistId: artist.id, category: input.category } })
+    if (before.lyrics !== input.lyrics || before.chords !== chords || !storedAssessment(before.musicAssessment)) {
+      await persistSongAssessment(tx, id, { lyrics: input.lyrics, chords })
+    }
     return { song, artist, before }
   })
 }

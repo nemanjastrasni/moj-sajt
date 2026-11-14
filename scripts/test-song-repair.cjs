@@ -65,6 +65,10 @@ function fakeDb(rows,options={}){
     if(sql.includes('FOR UPDATE'))return{rows:[]}
     if(sql.includes('count(*)'))return{rows:[{songs:state.length,favorites:5,links:9}]}
     if(sql.startsWith("SELECT s.*"))return{rows:structuredClone(state.filter(row=>args[0].includes(row.id)).sort((a,b)=>a.id.localeCompare(b.id)))}
+    if(sql.startsWith('UPDATE public."Song" SET "musicAssessment"')){
+      const row=state.find(row=>row.id===args[1]);if(row.lyrics!==args[2]||row.chords!==args[3])return{rowCount:0}
+      row.musicAssessment=JSON.parse(args[0]);return{rowCount:1}
+    }
     if(sql.startsWith('UPDATE public."Song"')){
       writes++;if(options.failUpdate===writes)throw Object.assign(Error("SQL failed"),{code:"XX001"})
       const row=state.find(row=>row.id===args[1]);if(row.lyrics!==args[2]||row.chords!==args[3])return{rowCount:0}

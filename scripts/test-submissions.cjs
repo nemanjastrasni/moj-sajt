@@ -13,6 +13,11 @@ function matches(record, where) {
     : value && typeof value === "object" && "gte" in value ? record[key] >= value.gte : record[key] === value)
 }
 const tx = {
+  $executeRaw: async query => {
+    const [json,id,lyrics,chords] = query.values, row=state.songs.find(song=>song.id===id)
+    if (!row || row.lyrics!==lyrics || (row.chords??null)!==chords) return 0
+    row.musicAssessment=JSON.parse(json); return 1
+  },
   songSubmission: {
     count: async ({ where }) => state.proposals.filter(item => matches(item, where)).length,
     findFirst: async ({ where }) => state.proposals.find(item => matches(item, where)) ?? null,
@@ -155,4 +160,10 @@ test("database outage is not mistaken for successful submission", async () => {
   databaseFailure = true
   const response = await POST(request(valid))
   assert.equal(response.status, 503); assert.doesNotMatch(JSON.stringify(await response.json()), /secret-db-url/)
+})
+
+test('approval stores the same musical assessment as current parsing',async()=>{
+ await pending();session={user:{id:'admin'}}
+ assert.equal((await review({...valid,action:'approve',reviewNote:''})).status,200)
+ assert.deepEqual(state.songs[0].musicAssessment,require('../lib/music/assessment.ts').assessSong(state.songs[0]))
 })

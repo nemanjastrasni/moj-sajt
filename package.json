@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/catalog-assessment-snapshot.cjs --check && prisma generate && next build",
+    "build": "node scripts/song-assessments.cjs --check && prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "test:route-boundaries": "node --test scripts/test-route-boundaries.cjs",
@@ -82,11 +82,11 @@
     "test:artist-media": "node --test scripts/test-artist-media.cjs",
     "test:artist-responsive": "node --test scripts/test-artist-responsive.cjs",
     "postinstall": "prisma generate",
-    "catalog:snapshot:check": "node scripts/catalog-assessment-snapshot.cjs --check",
-    "catalog:snapshot:generate": "node scripts/catalog-assessment-snapshot.cjs --output lib/playlists/catalog-assessments.json",
     "test:request-origin": "node --test scripts/test-request-origin.cjs",
-    "test:catalog-snapshot": "node --test scripts/test-catalog-cache.cjs scripts/test-catalog-snapshot.cjs",
-    "home:indexes": "node scripts/setup-home-indexes.cjs"
+    "home:indexes": "node scripts/setup-home-indexes.cjs",
+    "songs:assessments": "node scripts/song-assessments.cjs",
+    "test:song-assessments": "node --test scripts/test-song-assessments.cjs",
+    "test:song-assessments-db": "node scripts/test-song-assessments-db.cjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",

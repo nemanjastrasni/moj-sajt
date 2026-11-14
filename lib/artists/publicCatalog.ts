@@ -2,6 +2,8 @@ import { cache } from "react"
 import { unstable_cache } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { estimateDifficulty } from "@/lib/music/difficulty"
+import { assessmentRevision, storedAssessment } from "@/lib/music/storedAssessment"
+import { Prisma } from "@prisma/client"
 import { isPublicCategory } from "@/lib/seo/site"
 import { isResolvedCollaboration, performerSelect } from "./performers"
 
@@ -35,17 +37,25 @@ export const readLetterArtistCards = cache(async (category: string, letter: stri
   (letter === "#" ? !/^[A-ZČĆŽŠĐ]/.test(artist.name.trim().toUpperCase()) : artistInitial(artist.name) === letter)))
 
 const cachedSongs = unstable_cache(async (artistId: string) => sharePending("songs:" + artistId, async () => {
-  const songs = await prisma.song.findMany({
+  const { songs, sources } = await prisma.$transaction(async tx => {
+  const songs = await tx.song.findMany({
     where: { OR: [{ artistId }, { performers: { some: { artistId } } }] },
-    select: { id: true, slug: true, title: true, chords: true, lyrics: true,
+    select: { id: true, slug: true, title: true, musicAssessment: true,
       artist: { select: { slug: true, category: true } }, performers: performerSelect },
     orderBy: [{ title: "asc" }, { id: "asc" }],
   })
+  const missing = songs.filter(song => !storedAssessment(song.musicAssessment)).map(song => song.id)
+  const sources = missing.length ? await tx.song.findMany({ where: { id: { in: missing } }, select: { id: true, lyrics: true, chords: true } }) : []
+  return { songs, sources }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead, timeout: 15000 })
+  const byId = new Map(sources.map(song => [song.id, song]))
   return songs.map(song => {
-    const assessment = estimateDifficulty(song)
+    const source = byId.get(song.id)
+    const assessment = storedAssessment(song.musicAssessment) ?? (source ? estimateDifficulty(source) : undefined)
+    if (!assessment) throw Error("Artist source snapshot is incomplete")
     return { id: song.id, slug: song.slug, title: song.title, artist: song.artist, performers: song.performers,
       assessment: { level: assessment.level, hasChords: assessment.chords.length > 0 } }
   })
-}), ["public-artist-songs-v1"], { revalidate: 300, tags: ["public-artist-songs"] })
+}), ["public-artist-songs-v2", assessmentRevision], { revalidate: 300, tags: ["public-artist-songs"] })
 
 export const readArtistSongCards = cache(async (artistId: string) => artistId ? cachedSongs(artistId) : [])

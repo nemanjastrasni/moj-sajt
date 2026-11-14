@@ -4,6 +4,7 @@ const {test,beforeEach}=require('node:test'),assert=require('node:assert/strict'
 const root=path.join(__dirname,'..'),original=Module._load,cacheStore=new Map(),definitions=[]
 let reads,artists,songs,down,assessments
 const prisma={artist:{findMany:async q=>{reads.push(['artist',q]);if(down)throw Error('db-secret');return artists.filter(a=>a.category===q.where.category)}},song:{findMany:async q=>{reads.push(['song',q]);if(down)throw Error('db-secret');return songs}}}
+prisma.$transaction=async(work,options)=>{assert.equal(options.isolationLevel,'RepeatableRead');return work(prisma)}
 Module._load=function(request,parent,main){
  if(request==='@/lib/prisma')return{prisma}
  if(request==='react')return{...original.call(this,request,parent,main),cache:fn=>fn}
@@ -33,7 +34,7 @@ test('Serbian digraphs, numbers, collaboration exclusions and distinct performan
 })
 test('cached song cards preserve assessments and links without retaining lyrics or recalculating on warm requests',async()=>{
  const a=await catalog.readArtistSongCards('Azra'),b=await catalog.readArtistSongCards('Azra')
- assert.deepEqual(a,b);assert.equal(reads.length,1);assert.equal(assessments,2)
+ assert.deepEqual(a,b);assert.equal(reads.length,2);assert.equal(assessments,2)
  assert.equal(a[0].assessment.hasChords,true);assert.equal(a[1].assessment.hasChords,false)
  assert.equal(a[0].artist.slug,'Azra');assert.doesNotMatch(JSON.stringify(a),/Probni zapis|Samo probni tekst|lyrics|chords/)
  assert.ok(definitions.some(d=>d.options.tags.includes('public-artist-songs')))
@@ -43,4 +44,13 @@ test('category boundaries are distinct, invalid categories skip DB, errors retry
  down=true;await assert.rejects(catalog.readArtistCards('domace'));down=false
  await catalog.readArtistCards('domace');await catalog.readArtistCards('strane');assert.equal(reads.length,3)
  artists.push(artist('Anja'));cacheStore.clear();assert.equal((await catalog.readLetterArtistCards('domace','A')).length,2)
+})
+
+test('persisted artist assessments require no source text reads or recalculation',async()=>{
+ const {assessSong}=require('../lib/music/assessment.ts')
+ for(const song of songs)song.musicAssessment=assessSong(song)
+ const result=await catalog.readArtistSongCards('Azra')
+ assert.equal(reads.length,1);assert.equal(assessments,0)
+ assert.equal(reads[0][1].select.lyrics,undefined);assert.equal(reads[0][1].select.chords,undefined)
+ assert.equal(result[0].assessment.hasChords,true);assert.equal(result[1].assessment.hasChords,false)
 })

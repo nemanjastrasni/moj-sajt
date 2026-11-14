@@ -47,7 +47,7 @@ test("artist pages union owned songs and guest appearances with canonical links"
   const original = Module._load
   Module._load = function(request, parent, isMain) {
     if (request === "next/cache") return { unstable_cache: fn => fn }
-    if (request === "@/lib/prisma") return { prisma: { artist: { findFirst: async () => ({ ...artist("aca", "Aca Lukas"), bio: null }) }, song: { findMany: async input => { query = input; return [] } } } }
+    if (request === "@/lib/prisma") return { prisma: { $transaction:async work=>work({song:{findMany:async input=>{query=input;return []}}}), artist: { findFirst: async () => ({ ...artist("aca", "Aca Lukas"), bio: null }) }, song: { findMany: async input => { query = input; return [] } } } }
     if (request === "@/lib/artistPhotos") return { getArtistImage: () => null }
     if (request === "@/lib/adminContent/server") return { artistContentVersion: () => "version" }
     if (request.endsWith(".module.css")) return {}

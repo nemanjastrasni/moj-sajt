@@ -7,7 +7,7 @@ const path = require("node:path")
 const { Prisma } = require("@prisma/client")
 const validation = require("../lib/adminSongs/validation.ts")
 const query = require("../lib/adminSongs/query.ts")
-let state, session, failCreate, failDelete, down, serialFailures, attempts, listArgs, cacheFailure, failReview, revokeOnWrite
+let failAssessment, assessmentWrites, state, session, failCreate, failDelete, down, serialFailures, attempts, listArgs, cacheFailure, failReview, revokeOnWrite
 function matches(row, where = {}) {
   return Object.entries(where).every(([key, value]) => {
     if (key === "AND") return value.every(w => matches(row, w))
@@ -26,6 +26,12 @@ function matches(row, where = {}) {
 }
 const withArtist = song => song ? { ...song, artist: state.artists.find(a => a.id === song.artistId) } : null
 const tx = {
+  $executeRaw: async query => {
+    assessmentWrites++; if (failAssessment) throw Error("assessment-failed")
+    const [json,id,lyrics,chords] = query.values, row=state.songs.find(song=>song.id===id)
+    if (!row || row.lyrics!==lyrics || (row.chords??null)!==chords) return 0
+    row.musicAssessment=JSON.parse(json); return 1
+  },
   user: { findUnique: async ({ where }) => state.users.find(u => u.id === where.id) ?? null },
   songReview: { create: async ({ data }) => { if (failReview) throw Error("review-write-failed"); state.reviews.push({ ...data }); return data } },
   artist: {
@@ -39,7 +45,7 @@ const tx = {
   song: {
     findUnique: async ({ where }) => withArtist(state.songs.find(s => s.id === where.id)),
     findFirst: async ({ where }) => state.songs.find(s => matches(s, where)) ?? null,
-    create: async ({ data }) => { if (data.title === failCreate) throw Error("secret-db-url"); const row = { ...data, id: "song-" + state.songs.length }; state.songs.push(row); return row },
+    create: async ({ data }) => { if (data.title === failCreate) throw Error("secret-db-url"); const row = { chords:null, ...data, id: "song-" + state.songs.length }; state.songs.push(row); return row },
     update: async ({ where, data }) => Object.assign(state.songs.find(s => s.id === where.id), data),
     delete: async ({ where }) => {
       if (failDelete) throw Error("secret-delete-error")
@@ -91,7 +97,7 @@ const seeded = () => {
 beforeEach(() => {
   state = { users: [{ id: "admin", role: "admin", banned: false }, { id: "user", role: "user", banned: false }], artists: [], songs: [], reviews: [], favorites: [], playlistSongs: [], proposals: [], playlists: [{ id: "playlist" }], listening: [{ id: "listening" }] }
   session = { user: { id: "admin", role: "admin" } }; failCreate = ""; failDelete = false; down = false; serialFailures = 0; attempts = 0; cacheFailure = false
-  failReview = false; revokeOnWrite = false
+  failReview = false; revokeOnWrite = false; failAssessment=false; assessmentWrites=0
 })
 const nativeFetch = global.fetch
 afterEach(() => { global.fetch = nativeFetch })
@@ -278,4 +284,19 @@ test("client deadline aborts the request and reports uncertain state instead of 
   })
   try { await assert.rejects(adminSongRequest("/api/admin/songs", "POST", {}), /Zahtev traje predugo/); assert.equal(signal.aborted, true) }
   finally { global.setTimeout = nativeTimeout }
+})
+
+test('create and edit persist current assessments; metadata-only edits reuse the saved result',async()=>{
+ const {assessSong}=require('../lib/music/assessment.ts')
+ const result=await server.createAdminSongs(validation.validateSongBatch(valid()),'admin')
+ const song=state.songs[0];assert.deepEqual(song.musicAssessment,assessSong(song));assert.equal(assessmentWrites,1)
+ const input={artistId:result.artist.id,artistName:result.artist.name,category:'domace',title:'Renamed',lyrics:song.lyrics,chords:song.chords??''}
+ await server.updateAdminSong(song.id,input);assert.equal(assessmentWrites,1)
+ await server.updateAdminSong(song.id,{...input,lyrics:'F#m Bm E'});assert.equal(assessmentWrites,2)
+ assert.deepEqual(state.songs[0].musicAssessment,assessSong(state.songs[0]))
+})
+test('failed assessment persistence rolls back the song and new artist',async()=>{
+ failAssessment=true
+ assert.equal((await routes.POST(request(valid()))).status,503)
+ assert.equal(state.songs.length,0);assert.equal(state.artists.length,0);assert.equal(state.reviews.length,0)
 })

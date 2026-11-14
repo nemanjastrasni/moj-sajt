@@ -125,13 +125,16 @@ test('unknown filters and invalid skill values do not create shared cache entrie
 })
 
 
-test('matching public fingerprints avoid source text reads and assessment; changed sources are recalculated',async()=>{
- const snapshot=require('../lib/playlists/catalog-assessments.json'),[id,saved]=Object.entries(snapshot.songs)[0]
- rows=[{...fixture(id),sourceHash:saved[0]}]
- const expected=saved[1],level=await request('domace',null,1)
- assert.equal(level.songs[0].level,expected);assert.equal(sourceQueries.length,0);assert.equal(assessments,0)
- rows[0]={...fixture(id,'E(#9) A7'),sourceHash:'changed'};for(const[key,entry]of stored)if(entry.tags.includes('playlist-catalog'))stored.delete(key)
- assert.equal((await request('veoma-tesko',null,1)).songs[0].id,id);assert.equal(sourceQueries.length,1);assert.equal(assessments,1)
+test('stored assessments avoid source reads and parsing; invalidated and outdated assessments use current text',async()=>{
+ const {assessSong}=require('../lib/music/assessment.ts')
+ rows=[fixture('saved')];rows[0].musicAssessment=assessSong(rows[0])
+ const level=await request('domace',null,1)
+ assert.equal(level.songs[0].level,'very_easy');assert.equal(sourceQueries.length,0);assert.equal(assessments,0)
+ assert.doesNotMatch(queries[0].text,/sha256|lyrics|jsonb_build_array/)
+ rows[0]={...fixture('saved','E(#9) A7'),musicAssessment:null};for(const[key,entry]of stored)if(entry.tags.includes('playlist-catalog'))stored.delete(key)
+ assert.equal((await request('veoma-tesko',null,1)).songs[0].id,'saved');assert.equal(sourceQueries.length,1);assert.equal(assessments,1)
+ rows[0].musicAssessment={...assessSong(rows[0]),version:'old'};for(const[key,entry]of stored)if(entry.tags.includes('playlist-catalog'))stored.delete(key)
+ assert.equal((await request('veoma-tesko',null,1)).songs[0].id,'saved');assert.equal(sourceQueries.length,2)
  rows=[];for(const[key,entry]of stored)if(entry.tags.includes('playlist-catalog'))stored.delete(key)
  assert.equal((await request('domace',null,1)).total,0)
 })

@@ -2,29 +2,7 @@
 
 ## Javne procene kataloga
 
-`lib/playlists/catalog-assessments.json` sadrži ID javne pesme, SHA-256 otisak para lyrics/chords i postojeću procenu težine/akorda. Tekstovi pesama i podaci korisnika nisu u tom fajlu. Fajl se učitava samo na serveru.
-
-Hladna priprema kataloga prvo čita javne metapodatke i otiske sadržaja. Podudarni zapisi koriste pripremljenu procenu. Samo nove ili izmenjene pesme zahtevaju čitanje tekstova i sveže računanje. Metapodaci i tekstovi izmena čitaju se kroz RepeatableRead transakciju; CPU obrada je posle završetka transakcije. Time izmena između dva čitanja ne može spojiti otisak jedne verzije sa tekstom druge.
-
-Naslovi, kategorije, izvođači, popularnost i redosled ostaju iz aktuelne baze. Brisanje pesme uklanja je iz naredne pripreme čak i ako njen stari ID postoji u fajlu. Sve postojeće oznake za administrativno poništavanje keša i TTL od 1.800 sekundi su zadržani. SQL izmene van aplikacije i dalje zahtevaju redovno osvežavanje ili odgovarajuću aplikacionu invalidaciju.
-
-Pripremljeni skup ima 9.394 pesme. Provera nad stvarnim javnim korpusom potvrdila je jednake procene, članstvo u svim katalozima i redosled za svaki zapis. Za buduće izmene računanje automatski prelazi na postojeći algoritam čim se otisak ne podudara.
-
-## Obnavljanje i provera fajla
-
-`npm run build` prvo proverava da pripremljene procene odgovaraju izvornom parseru i zaključanoj verziji chord-symbol biblioteke. Promena parsera zahteva ponovno generisanje, kako stare procene ne bi promenile značenje. Ova provera pri build-u ne pristupa bazi. Revizija algoritma deo je serverskog ključa keša.
-
-```powershell
-npm run catalog:snapshot:check
-```
-
-Posle izmene algoritma ili većeg uvoza javnih pesama:
-
-```powershell
-npm run catalog:snapshot:generate -- --ca C:\putanja\supabase-ca.crt
-```
-
-Skript koristi postojeći DATABASE_URL, READ ONLY transakciju i verifikovan TLS. Rezultat se čuva u navedenom JSON fajlu projekta; zatim ga treba uključiti u Git. Za osvežavanje se ne menjaju podaci ili šema baze. Neiskorišćeni stari zapisi ne mogu vratiti obrisanu pesmu u katalog. Mala razlika između fajla i baze rešava se runtime proverom otisaka, pa nije potrebno generisati fajl posle svake pojedinačne izmene.
+Prvobitni fajl procena zamenjen je trajnim Song.musicAssessment vrednostima u bazi. Aktuelna arhitektura, setup, backfill i provere opisani su u [Trajne muzičke procene](song-assessments-2026-11-14.md). Stari catalog:snapshot skriptovi su uklonjeni. Ostale izmene iz ove provere ostaju opisane ispod.
 
 ## Indeksi za početnu i top liste
 
