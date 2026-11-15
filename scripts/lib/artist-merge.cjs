@@ -77,15 +77,18 @@ function plan(state, input) {
                 profile[credit] = sourceProfile?.[credit] ?? targetProfile?.[credit] ?? null;
         }
     }
-    return { source, target, sourceSongs, targetSongs, moves, performanceMoves, after, profile, choices, conflicts, copied, version: hash(state) };
+    const result = { source, target, sourceSongs, targetSongs, moves, performanceMoves, after, profile, choices, conflicts, copied, version: hash({state,sourceId:input.sourceId,targetId:input.targetId}) };
+    fail(Buffer.byteLength(JSON.stringify(auditData(state,result)), 'utf8') < 200000, 413, 'Podaci za evidenciju ovog spajanja su preveliki. Potrebna je posebna provera; ništa nije izmenjeno.');
+    return result;
 }
+function auditData(state,p) { return { identity: { name: p.target.name, slug: p.target.slug, category: p.target.category }, before: { source: p.source, target: p.target, profiles: state.profiles, credits: state.credits }, moves: p.moves, choices: p.choices, after: p.after, note: 'Spajanje izvođača; pesme zadržavaju svoje ID vrednosti. Automatsko poništavanje nije podržano.' }; }
 function preview(p) { return { version: p.version, source: { id: p.source.id, name: p.source.name, songs: p.sourceSongs.length }, target: { id: p.target.id, name: p.target.name, songs: p.targetSongs.length }, total: p.moves.length + p.targetSongs.length, collisions: p.moves.filter(s => s.slug !== s.oldSlug), creditedSongs: p.performanceMoves.length, choices: p.choices, conflicts: p.conflicts, copied: p.copied }; }
 async function apply(db, actorId, input) {
     const actor = (await db.query('SELECT role,banned FROM public."User" WHERE id=$1 FOR SHARE', [actorId])).rows[0];
     fail(actor?.role === 'admin' && !actor.banned, 403, 'Nije dozvoljeno.');
     const state = await load(db, input, true), p = plan(state, input);
     fail(input.confirmed === true && input.version === p.version, 409, 'Podaci su u međuvremenu promenjeni. Ponovo pregledaj spajanje.');
-    const auditId = randomUUID(), data = { identity: { name: p.target.name, slug: p.target.slug, category: p.target.category }, before: { source: p.source, target: p.target, profiles: state.profiles, credits: state.credits }, moves: p.moves, choices: p.choices, after: p.after, note: 'Spajanje izvođača; pesme zadržavaju svoje ID vrednosti. Automatsko poništavanje nije podržano.' };
+    const auditId = randomUUID(), data = auditData(state,p);
     // Audit, redirects and content are committed together. The complete old metadata is retained.
     await db.query('INSERT INTO public."AdminContentProposal" (id,"findingId","subjectId",field,operation,status,data,"actorId") VALUES ($1,$2,$3,\'artist-merge\',\'merge\',\'applied\',$4::jsonb,$5)', [auditId, 'artist-merge:' + p.source.category + '/' + p.source.slug, p.target.id, JSON.stringify(data), actorId]);
     await db.query('UPDATE public."Artist" SET bio=$2,"bioShort"=$3,discography=$4::jsonb,image=$5,members=$6::jsonb WHERE id=$1', [p.target.id, p.after.bio, p.after.bioShort, json(p.after.discography), p.after.image, json(p.after.members)]);

@@ -1,4 +1,4 @@
-export type Album = { title: string; year: string; kind: string; publisher?: string; section?: string; group?: string }
+export type Album = { title: string; year: string; kind: string; publisher?: string; note?: string; years?: string[]; section?: string; group?: string }
 export const albumGroups = [
   { kind: "studio", label: "Studijski albumi" },
   { kind: "live", label: "Koncertni albumi" },
@@ -7,13 +7,19 @@ export const albumGroups = [
   { kind: "album", label: "Ostali albumi" },
 ] as const
 const headingKey = (text: string) => text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/^\s*#+\s*|[:：]\s*$/g, "").trim()
+function simpleHeading(key: string): string | undefined {
+  if (/^(?:albumi|studijski albumi|studijska izdanja|studio albums?|albums?)$/.test(key)) return "studio"
+  if (/^(?:live|live albumi|live albums?|uzivo|uzivo albumi|koncertni albumi|albumi uzivo|koncertna izdanja)$/.test(key)) return "live"
+  if (/^(?:kompilacije|kompilacijski albumi|compilations?|compilation albums?)$/.test(key)) return "compilation"
+  if (/^(?:singlovi|singl[- ]ploce|singles?)$/.test(key)) return "single"
+  if (/^(?:mini[- ]albumi|ep izdanja)$/.test(key)) return "album"
+}
 function heading(text: string): { kind: string; label?: string } | undefined {
-  const key = headingKey(text)
-  if (/^(?:albumi|studijski albumi|studijska izdanja|studio albums?|albums?)$/.test(key)) return { kind: "studio" }
-  if (/^(?:live|live albumi|live albums?|koncertni albumi|albumi uzivo|koncertna izdanja)$/.test(key)) return { kind: "live" }
-  if (/^(?:kompilacije|kompilacijski albumi|compilations?|compilation albums?)$/.test(key)) return { kind: "compilation" }
-  if (/^(?:singlovi|singl[- ]ploce|singles?)$/.test(key)) return { kind: "single" }
-  if (/^(?:mini[- ]albumi|ep izdanja)$/.test(key) || (key.match(/kompilacije|koncertni albumi|mini-albumi|singlovi/g)?.length ?? 0) > 1) return { kind: "album", label: text.trim().replace(/[:：]$/, "") }
+  const key = headingKey(text), kind = simpleHeading(key), label = text.trim().replace(/[:：]$/, "")
+  if (kind) return { kind, ...(kind === "album" ? { label } : {}) }
+  if (/^(?:nezvanicno|nezvanicna izdanja|nezvanicni albumi|bootlegs?|bootleg albums?|unofficial releases?)$/.test(key)) return { kind: "album", label }
+  const parts = key.split(/\s*(?:[,;/&]|\bi\b|\band\b)\s*/).filter(Boolean)
+  if (parts.length > 1 && parts.every(part => simpleHeading(part))) return { kind: "album", label }
 }
 const absent = /^(?:\[object Object\]|null|undefined|n\/?a|[-–—.]+|(?:diskografija|discography)(?:\s+(?:jo[sš]\s+)?nije dostupna|\s+is not available(?: yet)?)?[.!]?)$/i
 function sourceRows(value: unknown): unknown[] {
@@ -24,26 +30,50 @@ function sourceRows(value: unknown): unknown[] {
   }
   return value.split(/\r?\n/)
 }
+const publisherHint = /(?:\bPGP\b|\bRTV?\b|\bRT[B/S]\b|Jugoton|Diskoton|Diskos|Records?|Music|Productions?|Produkcija|Croatia Records|Suzy|ZKP|Bellaphon|Sorabia disk)/i
+const formatHint = /(?:\b(?:CD|LP|DVD|EP|vinyl|cassette|live|bootlegs?)\b|kaset|kazet|ploc|ploč|kompilaci|koncert|uzivo|uživo|dupl|maksi|singl|izdanj|remaster|nezvanic|nezvanič)/i
+const yearMatches = (value: string) => [...value.matchAll(/\b(?:18|19|20)\d{2}\b/g)]
+const cleanDetail = (value: string) => value.replace(/^[\s,;:.–—-]+|[\s,;:.–—-]+$/g, "")
+
+function datedDetails(value: string) {
+  const matches = yearMatches(value), years = [...new Set(matches.map(match => match[0]))]
+  // Date ranges and explicitly recorded/remastered dates do not establish a release year.
+  if (!years.length || /\b(?:18|19|20)\d{2}\s*[-–—/]\s*(?:18|19|20)\d{2}\b/.test(value) || /(?:\brecorded\b|\bremaster(?:ed)?\b|snimljen|snimljeno)/i.test(value)) return null
+  const publishers: string[] = [], notes: string[] = []
+  for (const part of value.split(/[,;]/).map(part => part.trim()).filter(Boolean)) {
+    const dates = yearMatches(part), first = dates[0]
+    const before = first ? cleanDetail(part.slice(0, first.index)) : part
+    const after = first ? cleanDetail(part.slice(first.index! + first[0].length)) : ""
+    const candidate = before || after
+    const isPublisher = candidate && (!formatHint.test(candidate) || publisherHint.test(candidate))
+    let remaining = part
+    if (isPublisher) { publishers.push(candidate); remaining = cleanDetail(part.replace(candidate, "")) }
+    const withoutYears = cleanDetail(remaining.replace(/\b(?:18|19|20)\d{2}\b\.?/g, ""))
+    if (withoutYears) notes.push(years.length > 1 ? cleanDetail(remaining) : withoutYears)
+  }
+  return { year: years[0], years, publisher: publishers.join(", "), note: notes.join(", ") }
+}
 function release(text: string) {
-  let title = text.trim(), year = "", publisher = ""
+  let title = text.trim(), year = "", publisher = "", note = "", years: string[] = []
   const leading = title.match(/^((?:18|19|20)\d{2})(?:\s*[-–—:]\s*|\.\s+)/)
   if (leading) { year = leading[1]; title = title.slice(leading[0].length).trim() }
   const datedLabel = title.match(/\s+\(([^()]*)\)\s*$/)
   if (datedLabel) {
-    const lastYear = datedLabel[1].match(/^(.+?)[,;]\s*((?:18|19|20)\d{2})\.?$/)
-    const firstYear = datedLabel[1].match(/^((?:18|19|20)\d{2})[,;]\s*(.+)$/)
-    const parsedYear = lastYear?.[2] || firstYear?.[1], label = lastYear?.[1] || firstYear?.[2]
-    if (parsedYear && label && (!year || year === parsedYear)) { year = parsedYear; publisher = label.trim(); title = title.slice(0, datedLabel.index).trim() }
+    const details = datedDetails(datedLabel[1])
+    if (details && (!year || details.years.length === 1 && year === details.year)) {
+      ;({ year, years, publisher, note } = details)
+      title = title.slice(0, datedLabel.index).trim()
+    }
   }
   if (!year) {
     const trailing = title.match(/\s+(?:\(((?:18|19|20)\d{2})\)|[-–—]\s*((?:18|19|20)\d{2})\.?)\s*$/)
     if (trailing) { year = trailing[1] || trailing[2]; title = title.slice(0, trailing.index).trim() }
   }
   const label = title.match(/\s+\(([^()]+)\)\s*$/)
-  if (year && !publisher && label && /(?:\bPGP\b|\bRT[B/S]\b|Jugoton|Diskoton|Diskos|Records|Music|Productions?|Produkcija|Croatia Records|Suzy|ZKP)/i.test(label[1])) {
+  if (year && !publisher && label && publisherHint.test(label[1])) {
     publisher = label[1].trim(); title = title.slice(0, label.index).trim()
   }
-  return { title, year, publisher }
+  return { title, year, publisher, note, years }
 }
 
 export function normalizeDiscography(value: unknown): Album[] {
@@ -51,14 +81,14 @@ export function normalizeDiscography(value: unknown): Album[] {
   let activeKind = "album", section = "", group = ""
   for (let index = 0; index < rows.length; index++) {
     const row = rows[index]
-    let title = "", year = "", kind = activeKind, publisher = "", rowSection = section, rowGroup = group
+    let title = "", year = "", kind = activeKind, publisher = "", note = "", years: string[] = [], rowSection = section, rowGroup = group
     if (typeof row === "string") {
       const marker = heading(row)
       if (marker) { activeKind = marker.kind; group = marker.label ?? ""; continue }
       if (typeof rows[index + 1] === "string" && heading(rows[index + 1] as string) && !release(row).year && row.trim() && !absent.test(row.trim())) {
         section = row.trim().replace(/[:：]$/, ""); activeKind = "album"; group = ""; continue
       }
-      ;({ title, year, publisher } = release(row))
+      ;({ title, year, publisher, note, years } = release(row))
     } else if (row && typeof row === "object" && "title" in row && typeof row.title === "string") {
       title = row.title.trim()
       if (heading(title) && !("year" in row && row.year)) continue
@@ -70,13 +100,16 @@ export function normalizeDiscography(value: unknown): Album[] {
       }
       if ("section" in row && typeof row.section === "string") rowSection = row.section.trim()
       if ("group" in row && typeof row.group === "string") rowGroup = row.group.trim()
+      if ("note" in row && typeof row.note === "string") note = row.note.trim()
+      if ("years" in row && Array.isArray(row.years)) years = [...new Set(row.years.map(String).filter(value => /^(?:18|19|20)\d{2}$/.test(value)))]
       const parsed = release(title)
-      if (!year || !parsed.year || year === parsed.year) { title = parsed.title; year ||= parsed.year; publisher ||= parsed.publisher }
+      if (!year || !parsed.year || year === parsed.year) { title = parsed.title; year ||= parsed.year; publisher ||= parsed.publisher; note ||= parsed.note; if (!years.length) years = parsed.years }
+      if (!year && years.length) year = years[0]
     }
     if (year) title = title.replace(new RegExp(`\\s*\\(${year}\\)\\s*$`), "").trim()
-    const key = JSON.stringify([rowSection, rowGroup, kind, title.toLowerCase(), year, publisher])
+    const key = JSON.stringify([rowSection, rowGroup, kind, title.toLowerCase(), year, publisher, note, years.length > 1 ? years : []])
     if (title && !absent.test(title) && !seen.has(key)) {
-      seen.add(key); result.push({ title, year, kind, ...(publisher ? { publisher } : {}), ...(rowSection ? { section: rowSection } : {}), ...(rowGroup ? { group: rowGroup } : {}) })
+      seen.add(key); result.push({ title, year, kind, ...(publisher ? { publisher } : {}), ...(note ? { note } : {}), ...(years.length > 1 ? { years } : {}), ...(rowSection ? { section: rowSection } : {}), ...(rowGroup ? { group: rowGroup } : {}) })
     }
   }
   return result

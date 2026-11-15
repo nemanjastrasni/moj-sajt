@@ -37,3 +37,26 @@ test('public table shows separated sections, dates and publisher without renderi
  assert.equal($('[data-discography-group]').length,2);assert.equal($('tbody tr').length,2)
  assert.equal($('tbody tr').first().find('td').text(),'1977');assert.equal($('.publisher').text(),'Izdavač: PGP RTB');assert.ok(!$('tbody tr').text().includes('Albumi'))
 })
+
+test('Smak mixed and unofficial sections do not become album rows',()=>{
+ const raw=['Albumi','Smak (RTV Ljubljana, 1975)','Singlovi','Satelit (RTV LJ, 1976. dupli singl)','Kompilacije, uživo albumi','Plava pesma - Best of (RTV LJ, 1977, kompilacija)','Live without audience (1997, dupli koncertni CD)','Nezvanično','Live 1992','Live in Nis (1995)','Live 1997'];
+ assert.deepEqual(groups(raw).map(g=>[g.label,g.albums.length]),[['Studijski albumi',1],['Singlovi',1],['Kompilacije, uživo albumi',2],['Nezvanično',3]]);assert.equal(normalize(raw).length,7);
+ assert.deepEqual(normalize(['Live 1992','Live 1997']).map(a=>a.year),['','']);
+});
+test('format and release type are notes rather than publishers',()=>{
+ assert.deepEqual(normalize(['Live without audience (1997, dupli koncertni CD)','Best of (RTV S 1996, kompilacija)','Singl (maksi singl, PGP RTB, 1978)']),[
+ {title:'Live without audience',year:'1997',kind:'album',note:'dupli koncertni CD'},
+ {title:'Best of',year:'1996',kind:'album',publisher:'RTV S',note:'kompilacija'},
+ {title:'Singl',year:'1978',kind:'album',publisher:'PGP RTB',note:'maksi singl'}]);
+});
+test('multiple release years retain each edition description and the original source value',()=>{
+ const raw=['OdLIVEno (Sorabia disk, 1992. kaseta, 2021. dupla lp ploča i disk)'],before=JSON.stringify(raw),album=normalize(raw)[0];
+ assert.equal(album.title,'OdLIVEno');assert.deepEqual(album.years,['1992','2021']);assert.equal(album.publisher,'Sorabia disk');assert.equal(album.note,'1992. kaseta, 2021. dupla lp ploča i disk');assert.equal(JSON.stringify(raw),before);assert.deepEqual(parseArtistDiscography(discographyEditorText(raw)),raw);
+});
+test('recording dates and title date ranges are not guessed to be release dates',()=>{
+ for(const title of ['Kolekcija (1970–2010)','Koncert (recorded 1992)','Album (remastered 2000)'])assert.deepEqual(normalize([title]),[{title,year:'',kind:'album'}]);
+});
+test('distinct edition notes are preserved and structured metadata survives rendering',()=>{
+ const raw=[{title:'Album',year:'2000',kind:'live',note:'CD',source:{hash:'keep'}},{title:'Album',year:'2000',kind:'live',note:'LP',years:['2000','2020'],custom:{license:'keep'}}],before=JSON.stringify(raw);
+ assert.equal(normalize(raw).length,2);assert.deepEqual(normalize(raw)[1].years,['2000','2020']);assert.equal(JSON.stringify(raw),before);assert.deepEqual(parseArtistDiscography(discographyEditorText(raw)),raw);
+});

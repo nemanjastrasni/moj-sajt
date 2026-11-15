@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- Isolated route and transaction boundaries. */
 require('ts-node').register({ transpileOnly: true, compilerOptions: { module: 'CommonJS', moduleResolution: 'Node', jsx: 'react-jsx' } });
+const {SubmissionError}=require('../lib/submissions/errors.ts');
 const { test, beforeEach } = require('node:test'), assert = require('node:assert/strict'), Module = require('node:module'), path = require('node:path'), { Prisma } = require('@prisma/client');
 let allowed, originOK, refreshes, output, requests, records, song, target, rawReads, txAttempts, serializationFailures, committed;
 const prisma = {
@@ -14,8 +15,8 @@ Module._load = function (request, parent, main) {
         return { prisma };
     if (request === '@/lib/adminSongs/server')
         return { requireSongAdmin: async () => { if (!allowed)
-                throw Object.assign(Error('forbidden'), { status: 403 }); return { id: 'admin' }; }, adminSongBody: async (req) => { if (!originOK)
-                throw Object.assign(Error('origin'), { status: 403 }); return req.json(); }, adminSongFailure: e => Response.json({ error: e.message }, { status: e.status || 503 }) };
+                throw new SubmissionError(403,'forbidden'); return { id: 'admin' }; }, adminSongBody: async (req) => { if (!originOK)
+                throw new SubmissionError(403,'origin'); return req.json(); }, adminSongFailure: e => Response.json({ error: e.message }, { status: e.status || 503 }) };
     if (request === '@/lib/adminContent/server')
         return { refreshArtistContent: (...args) => refreshes.push(args) };
     if (request === '@/lib/adminContent/merge')

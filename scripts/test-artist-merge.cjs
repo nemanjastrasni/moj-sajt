@@ -17,3 +17,6 @@ test('preview version changes for content, membership, profile or credit changes
 } });
 test('server rejects a revoked admin before reading or writing artists', async () => { let queries = 0; await assert.rejects(core.apply({ query: async () => { queries++; return { rows: [{ role: 'user', banned: false }] }; } }, 'admin', { ...input, action: 'apply', confirmed: true, version: 'a'.repeat(64) }), e => e.status === 403); assert.equal(queries, 1); });
 module.exports = { fixture, input };
+
+test('preview refuses an audit that would exceed the existing database size constraint',()=>{const state=fixture();state.artists[0].bio='x'.repeat(220000);assert.throws(()=>core.plan(state,input),e=>e.status===413)});
+test('preview version binds the direction of the merge',()=>{const state=fixture();assert.notEqual(core.plan(state,input).version,core.plan(state,{...input,sourceId:input.targetId,targetId:input.sourceId}).version)});
