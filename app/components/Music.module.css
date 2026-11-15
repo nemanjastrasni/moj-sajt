@@ -49,6 +49,10 @@
 .choices button:disabled { opacity: .5; cursor: not-allowed; }
 .choices button:focus-visible, .dockLinks a:focus-visible, .dockLinks button:focus-visible { outline: 2px solid var(--control-focus); outline-offset: -2px; }
 .dialogForm { display: grid; gap: 16px; margin: 16px 0; }
+.shareActions { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.shareActions button { white-space: normal; text-align: left; }
+.shareLabel { display: grid; gap: 8px; font-size: 14px; margin: 16px 0 8px; min-width: 0; }
+.shareText { width: 100%; min-width: 0; resize: vertical; font-family: ui-monospace, monospace; font-size: 13px; }
 .dialogForm label:not(.check) { display: grid; gap: 8px; font-size: 14px; }
 .pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 24px; }
 @media (max-width: 1100px) {

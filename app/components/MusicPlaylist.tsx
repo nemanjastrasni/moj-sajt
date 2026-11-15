@@ -7,13 +7,14 @@ import { useRef,useState } from "react"
 import { DndContext,closestCenter,KeyboardSensor,PointerSensor,useSensor,useSensors,type DragEndEvent } from "@dnd-kit/core"
 import { SortableContext,arrayMove,sortableKeyboardCoordinates,useSortable,verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { ArrowDown,ArrowUp,ExternalLink,GripVertical,Headphones,Lock,Pencil,Play,Plus,RefreshCw,Save,Share2,Trash2,Users } from "lucide-react"
+import { ArrowDown,ArrowUp,ExternalLink,GripVertical,Headphones,Lock,Pencil,Play,Plus,RefreshCw,Save,Trash2,Users } from "lucide-react"
 import { externalMusicUrl,musicCategories,type MusicItem,type MusicList } from "@/lib/music/model"
 import { checkedMusic,musicRequest } from "@/lib/music/client"
 import { getCategoryLabel } from "@/lib/categories"
 import { useI18n } from "./UiText"
 import { useMusic } from "./MusicContext"
 import PlaylistDialog from "./PlaylistDialog"
+import MusicShare from "./MusicShare"
 import styles from "./Music.module.css"
 
 export default function MusicPlaylist({initial,viewerId}:{initial:MusicList;viewerId:string|null}){
@@ -57,10 +58,7 @@ export default function MusicPlaylist({initial,viewerId}:{initial:MusicList;view
     <div className={styles.tabs}>
       <button type="button" className="ui-button ui-button-primary" disabled={!list.items.some(item=>item.source)||music.loading} onClick={()=>void music.start(list.id)}><Play aria-hidden="true" />{t("Pusti listu")}</button>
       {editable&&<button type="button" className="ui-button" disabled={busy} onClick={()=>{setName(list.name);setCategory(list.category||"Mix");setPublic(list.isPublic);setError("");setEdit(true)}}><Pencil aria-hidden="true" />{t("Izmeni listu")}</button>}
-      {list.isPublic&&<button type="button" className="ui-button" onClick={async()=>{
-        try{await navigator.clipboard.writeText(location.origin+"/listening-playlist/"+encodeURIComponent(list.id));setNotice("Link playliste je kopiran")}
-        catch{setError("Kopiranje nije uspelo. Kopiraj adresu iz pregledaca.")}
-      }}><Share2 aria-hidden="true" />{t("Podeli")}</button>}
+      <MusicShare list={list} disabled={busy} />
       <Link href="/biografija" className="ui-button">{t("Citaj biografije")}</Link>
     </div>
     {editable&&<form className={styles.fields} onSubmit={async event=>{event.preventDefault();if(await update("/api/listening-playlist/item","POST",{playlistId:list.id,url,title})){setUrl("");setTitle("")}}}><fieldset disabled={busy}>
