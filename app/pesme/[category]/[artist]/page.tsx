@@ -1,3 +1,4 @@
+import { redirectMergedArtist } from "@/lib/artists/mergeRedirect"
 import UiText from "@/app/components/UiText"
 import { notFound } from "next/navigation"
 import { readArtistSongCards } from "@/lib/artists/publicCatalog"
@@ -25,9 +26,7 @@ export async function generateMetadata({ params }: ArtistProps) {
  
   const artistData = await getPublicArtist(category, artist)
   
-  if (!artistData) {
-    notFound()
-  }
+  if (!artistData) { await redirectMergedArtist(category, artist, "artist"); notFound() }
   
   return publicPageMetadata(`${artistData.name} – Akordi i tekstovi pesama`, `Pesme izvođača ${artistData.name}: akordi, tekstovi, procena težine i repertoar za sviranje.`, routePath("pesme", category, artistData.slug), { image: getArtistImage(artistData) })
 }
@@ -37,7 +36,7 @@ export default async function ArtistPage({ params }: ArtistProps) {
 
   const artistData = await getPublicArtist(category, artist)
 
-  if (!artistData) notFound()
+  if (!artistData) { await redirectMergedArtist(category, artist, "artist"); notFound() }
   const songs = await readArtistSongCards(artistData.id)
   const image = getArtistImage(artistData)
 

@@ -37,7 +37,7 @@ export async function contentAction(actorId:string,input:Record<string,unknown>)
 export async function readProposals(findingId?:string){
  await requireSongAdmin()
  try{
-  const rows=await prisma.$queryRawUnsafe<Proposal[]>(findingId?'SELECT * FROM public."AdminContentProposal" WHERE "findingId"=$1 ORDER BY "createdAt" DESC,id DESC LIMIT 10':'SELECT id,"findingId","subjectId",field,operation,status,"createdAt",jsonb_build_object(\'identity\',data->\'identity\',\'note\',data->\'note\',\'decision\',data->\'decision\') AS data FROM public."AdminContentProposal" ORDER BY "createdAt" DESC,id DESC LIMIT 20',...(findingId?[id(findingId)]:[]))
+  const rows=await prisma.$queryRawUnsafe<Proposal[]>(findingId?'SELECT * FROM public."AdminContentProposal" WHERE "findingId"=$1 ORDER BY "createdAt" DESC,id DESC LIMIT 10':'SELECT id,"findingId","subjectId",field,operation,status,"createdAt",jsonb_build_object(\'identity\',data->\'identity\',\'note\',data->\'note\',\'decision\',data->\'decision\') AS data FROM public."AdminContentProposal" WHERE field IN (\'bio\',\'discography\',\'finding\') ORDER BY "createdAt" DESC,id DESC LIMIT 20',...(findingId?[id(findingId)]:[]))
   return{state:"ready" as const,rows:JSON.parse(JSON.stringify(rows)) as Proposal[]}
  }catch{return{state:"unavailable" as const,rows:[] as Proposal[]}}
 }

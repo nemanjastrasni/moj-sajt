@@ -6,6 +6,7 @@ import { Plus, Search, Pencil, Merge } from "lucide-react"
 import Image from "next/image"
 import { revalidatePath } from "next/cache"
 import ConfirmSubmitButton from "../ConfirmSubmitButton"
+import ArtistMergeSelection, { ArtistMergeCheckbox } from "./ArtistMergeSelection"
 
 async function deleteArtist(id: string) {
 "use server"
@@ -21,7 +22,7 @@ revalidatePath("/admin/artists")
 export default async function AdminArtistsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; category?: string; letter?: string }>
+  searchParams: Promise<{ search?: string; category?: string; letter?: string; merge?: string }>
 }) {
   await requireSongAdmin()
 
@@ -29,6 +30,7 @@ export default async function AdminArtistsPage({
   const search = params?.search || ""
   const category = params?.category || ""
   const letter = params?.letter || ""
+  const filterQuery = new URLSearchParams({ search, category, letter }).toString()
 
  const artists = await prisma.artist.findMany({
   where: {
@@ -38,6 +40,7 @@ export default async function AdminArtistsPage({
             {
               name: {
                 contains: search,
+                mode: "insensitive" as const,
               },
             },
           ]
@@ -48,6 +51,7 @@ export default async function AdminArtistsPage({
       {
         name: {
           startsWith: letter,
+          mode: "insensitive" as const,
         },
       },
     ]
@@ -162,9 +166,11 @@ export default async function AdminArtistsPage({
       {artists.length === 0 ? (
         <p className="admin-muted">Nema izvođača.</p>
       ) : (
+        <ArtistMergeSelection key={filterQuery} artists={artists.map(a => ({ id: a.id, name: a.name, songs: a._count.songs }))} initialSelected={params.merge ? [params.merge] : []}>
         <div className="admin-table-scroll" role="region" aria-label="Izvođači" tabIndex={0}><table className="admin-table admin-artists">
           <thead>
             <tr>
+              <th scope="col">Spoji</th>
               <th className="p-3 text-left">Ime</th>
               <th className="p-3 text-left">Slug</th>
               <th className="p-3 text-left">Kategorija</th>
@@ -178,11 +184,12 @@ export default async function AdminArtistsPage({
   {artists.map((artist) => (
     <tr
       key={artist.id}
-      
+
     >
+                <td className="p-3"><ArtistMergeCheckbox id={artist.id} name={artist.name} /></td>
                 <td className="p-3">
                   <Link
-                   href={`/admin/artists/${artist.id}/edit?search=${search}&category=${category}&letter=${letter}`}
+                   href={`/admin/artists/${artist.id}/edit?${filterQuery}`}
                   >
                     {artist.name}
                   </Link>
@@ -209,13 +216,13 @@ export default async function AdminArtistsPage({
 
 <td className="p-3"><div className="admin-row-actions">
   <Link
-    href={`/admin/artists/${artist.id}/edit?search=${search}&category=${category}&letter=${letter}`}
+    href={`/admin/artists/${artist.id}/edit?${filterQuery}`}
     className="ui-button" title="Izmeni izvođača" aria-label={`Izmeni: ${artist.name}`}
   >
     <Pencil aria-hidden="true" />
   </Link>
 
-  <Link href={`/admin/artists/${artist.id}/edit/merge`} className="ui-button" title="Spoji izvođače" aria-label={`Spoji: ${artist.name}`}><Merge aria-hidden="true" /></Link>
+  <Link href={`/admin/artists/${artist.id}/edit/merge?${filterQuery}`} className="ui-button" title="Spoji izvođače" aria-label={`Spoji: ${artist.name}`}><Merge aria-hidden="true" /></Link>
 
   <form action={deleteArtist.bind(null, artist.id)} className="inline">
     <ConfirmSubmitButton name={artist.name} label="Obriši" description={`Ovo je trajno brisanje celog izvođača i njegovih ${artist._count.songs} pesama, ne samo biografije.`} />
@@ -225,6 +232,7 @@ export default async function AdminArtistsPage({
             ))}
           </tbody>
         </table></div>
+        </ArtistMergeSelection>
       )}
     </section>
   )

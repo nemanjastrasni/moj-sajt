@@ -108,6 +108,18 @@
   .admin-navigation a { flex-shrink: 0; white-space: nowrap; }
   .admin-content { padding: 20px 0 32px; }
 }
+
+.artist-merge-panel { margin-block: 16px; padding: 16px; border: 1px solid var(--line, #546068); border-radius: 8px; min-width: 0; }
+.artist-merge-panel p { margin-block: 8px 12px; }
+.artist-merge-targets, .artist-merge-preview { display: grid; gap: 12px; margin-top: 16px; min-width: 0; }
+.artist-merge-panel fieldset { border: 0; padding: 0; margin-block: 12px; min-width: 0; }
+.artist-merge-panel legend { font-weight: 600; margin-bottom: 10px; }
+.artist-merge-targets label, .artist-merge-conflict, .artist-merge-confirm { display: block; margin-block: 8px; overflow-wrap: anywhere; }
+.artist-merge-panel input[type="radio"], .artist-merge-panel input[type="checkbox"], .artist-merge-checkbox { width: 20px; height: 20px; vertical-align: middle; accent-color: #078696; }
+.artist-merge-checkbox { cursor: pointer; }
+.artist-merge-panel pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 240px; overflow-y: auto; font-size: .875rem; }
+.artist-merge-preview .ui-button, .artist-merge-targets .ui-button { justify-self: start; white-space: normal; }
+.artist-merge-error { color: #ff9b9b; }
 @media (max-width: 480px) {
   .admin-filters label { flex-basis: 100%; }
   .admin-stats { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }

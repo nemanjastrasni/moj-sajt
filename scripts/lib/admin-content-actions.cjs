@@ -69,7 +69,7 @@ async function apply(db,actorId,id,confirmation){
 async function undo(db,actorId,id,confirmation){
  await actor(db,actorId)
  const p=(await db.query('SELECT * FROM public."AdminContentProposal" WHERE id=$1 FOR UPDATE',[id])).rows[0]
- fail(p?.status==='applied'&&p.field!=='finding','Ova izmena ne može da se vrati.')
+ fail(p?.status==='applied'&&['bio','discography'].includes(p.field),'Ova izmena ne može da se vrati.')
  const d=p.data,a=await artist(db,p.subjectId)
  fail(confirmation===a.name,'Za potvrdu upiši tačan naziv izvođača.',400)
  fail(hash(identity(a))===hash(d.identity)&&hash(value(a,p.field))===hash(d.after)&&hash(await profile(db,a.id))===hash(d.profileAfter),'Posle ove izmene sadržaj ili izvor su ponovo menjani. Vraćanje je zaustavljeno da ih sačuva.')

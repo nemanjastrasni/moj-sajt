@@ -1,3 +1,4 @@
+import { redirectMergedArtist } from "@/lib/artists/mergeRedirect"
 import { notFound } from "next/navigation"
 import { getPublicArtist } from "@/lib/publicPages"
 import { publicPageMetadata } from "@/lib/seo/metadata"
@@ -22,7 +23,7 @@ type Props = {
 export async function generateMetadata({ params }: Props) {
   const { category, artist } = await params
   const data = await getPublicArtist(category, artist)
-  if (!data) notFound()
+  if (!data) { await redirectMergedArtist(category, artist, "info"); notFound() }
   return publicPageMetadata(`${data.name} – Biografija i diskografija`, `Biografija i diskografija izvođača ${data.name}.`, routePath(hasBiographyContent(data) ? "biografija" : "pesme", category, data.slug), { image: getArtistImage(data) })
 }
 
@@ -31,7 +32,7 @@ export default async function ArtistInfoPage({ params }: Props) {
 
   const artistData = await getPublicArtist(category, artist)
 
-  if (!artistData) notFound()
+  if (!artistData) { await redirectMergedArtist(category, artist, "info"); notFound() }
 
   const image = getArtistImage(artistData)
 

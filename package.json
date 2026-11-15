@@ -87,7 +87,9 @@
     "songs:assessments": "node scripts/song-assessments.cjs",
     "test:song-assessments": "node --test scripts/test-song-assessments.cjs",
     "test:song-assessments-db": "node scripts/test-song-assessments-db.cjs",
-    "test:discography": "node --test scripts/test-discography-sections.cjs scripts/test-finding-status.cjs scripts/test-admin-catalog-review.cjs"
+    "test:discography": "node --test scripts/test-discography-sections.cjs scripts/test-finding-status.cjs scripts/test-admin-catalog-review.cjs",
+    "test:artist-merge": "node --test scripts/test-artist-merge.cjs scripts/test-artist-merge-routes.cjs",
+    "test:artist-merge-db": "node scripts/test-artist-merge-db.cjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",

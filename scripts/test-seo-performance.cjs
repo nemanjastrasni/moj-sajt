@@ -4,6 +4,7 @@ const { test, beforeEach, afterEach } = require('node:test'), assert = require('
 const root = path.join(__dirname, '..'), cacheStore = new Map(), requestCache = new Map(), definitions = []
 let data, calls, jobs, down, functionId = 0
 const prisma = {
+  $queryRawUnsafe: async () => [],
   song: {
     findFirst: async query => { calls.push(['song', 'first', query]); if (down) throw Error('private-database-secret'); return query.where.slug === 'missing' ? null : data.song },
     count: async query => { calls.push(['song', 'count', query]); if (down) throw Error('private-database-secret'); return 1001 },

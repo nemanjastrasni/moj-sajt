@@ -1,3 +1,4 @@
+import { redirectMergedArtist } from "@/lib/artists/mergeRedirect"
 import { notFound, redirect } from "next/navigation"
 import { headers } from "next/headers"
 import { getPublicSong } from "@/lib/publicPages"
@@ -34,11 +35,11 @@ type Props = {
 }
 
 export async function generateMetadata(
-  { params }: Props
+  { params, searchParams }: Props
 ): Promise<Metadata> {
   const { category, artist, slug } = await params
   const song = await getPublicSong(category, artist, slug)
-  if (!song) notFound()
+  if (!song) { await redirectMergedArtist(category, artist, "song", slug, await searchParams); notFound() }
   const review = await getSongSearchReview(song)
   const text = songMetadataText(song, review?.kind === "incomplete")
   return { ...publicPageMetadata(text.title, text.description, review?.canonicalPath ?? routePath("pesme", category, song.artist.slug, song.slug)), ...(!text.index ? { robots: { index: false, follow: true } } : {}) }
@@ -59,9 +60,7 @@ export default async function SongPage({ params, searchParams }: Props) {
 
   const song = await getPublicSong(category, artist, slug)
 
-  if (!song) {
-    notFound()
-  }
+  if (!song) { await redirectMergedArtist(category, artist, "song", slug, query); notFound() }
   const performers = performerArtists(song.performers)
   const fromArtist = typeof query.artist === "string" ? performers.find(artist => artist.id === query.artist) : undefined
   const returnTo = playlist ?? (fromFavorites ? "/favorite" : fromArtist ? performerHref(fromArtist) : performers[0] ? performerHref(performers[0]) : null)
