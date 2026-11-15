@@ -1,0 +1,10 @@
+.text { white-space: pre-line; overflow-wrap: anywhere; }
+.more summary { cursor: pointer; width: fit-content; min-height: 44px; display: flex; align-items: center; text-decoration: underline; text-underline-offset: .2em; }
+.more summary::marker { content: ""; }
+.more summary::-webkit-details-marker { display: none; }
+.more summary:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: 2px; }
+.collapse { display: none; }
+.more[open] .expand { display: none; }
+.more[open] .collapse { display: inline; }
+.more[open] { display: flex; flex-direction: column; }
+.more[open] > summary { order: 1; }

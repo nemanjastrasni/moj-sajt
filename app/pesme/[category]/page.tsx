@@ -9,6 +9,7 @@ import styles from "@/app/components/ArtistMedia.module.css"
 import { publicPageMetadata } from "@/lib/seo/metadata"
 import { isPublicCategory, routePath } from "@/lib/seo/site"
 import { notFound } from "next/navigation"
+import { artistCatalogLetters } from "@/lib/artists/catalogLetters"
 
 export const dynamic = "force-dynamic"
 
@@ -32,27 +33,7 @@ export default async function CategoryPage(
 
   const artists = await readArtistCards(category)
 
-const lettersSet = new Set<string>()
-
-artists.forEach(artist=>{
-
-  if(!artist.name) return
-  const name = artist.name.trim().toUpperCase()
-
-  if(name.startsWith("DŽ")) return lettersSet.add("DŽ")
-  if(name.startsWith("LJ")) return lettersSet.add("LJ")
-  if(name.startsWith("NJ")) return lettersSet.add("NJ")
-
-  const first = name[0]
-
-  if(/^[0-9]/.test(first)){
-  lettersSet.add("#")
-}else if(/^[A-ZČĆŽŠĐ]/.test(first)){
-  lettersSet.add(first)
-}
-})
-
-const letters = Array.from(lettersSet).sort()
+  const letters = artistCatalogLetters(artists)
 
   return (
   <div className={styles.page}>
