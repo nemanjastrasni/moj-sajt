@@ -6,6 +6,7 @@ import { CHORD_ROOTS } from "./catalog"
 import { catalogEntries } from "@/lib/playlists/catalog-model"
 import { guitarGuides, guidePath } from "@/lib/guitarGuides"
 import { getSitemapSongExclusions } from "./song-search-review-server"
+import { songSearchReviewRevision } from "./song-search-review"
 import { PUBLIC_CATEGORIES, publicUrl, routePath, SITE_URL } from "./site"
 
 export const SITEMAP_BATCH_SIZE = 1000
@@ -19,7 +20,7 @@ const counts = unstable_cache(async () => {
   const songFilter = await songWhere()
   const [songs, artists] = await Promise.all([prisma.song.count({ where: songFilter }), prisma.artist.count({ where: { category: { in: [...PUBLIC_CATEGORIES] } } })])
   return { songs, artists }
-}, ["seo-sitemap-counts-v1"], { revalidate: 300, tags: ["seo-sitemap"] })
+}, ["seo-sitemap-counts-v2", songSearchReviewRevision], { revalidate: 300, tags: ["seo-sitemap"] })
 
 export function sitemapFiles(songCount: number, artistCount: number) {
   if ([songCount, artistCount].some(count => !Number.isSafeInteger(count) || count < 0 || count > 10000000)) throw Error("Invalid public catalog size.")
@@ -52,7 +53,7 @@ const publicPage = unstable_cache(async (kind: "songs" | "artists", page: number
     if (hasBiographyContent(artist) && bio) urls.push(bio)
     return urls
   })
-}, ["seo-sitemap-pages-v1", SITE_URL], { revalidate: 300, tags: ["seo-sitemap"] })
+}, ["seo-sitemap-pages-v2", SITE_URL, songSearchReviewRevision], { revalidate: 300, tags: ["seo-sitemap"] })
 
 export async function sitemapPage(file: string): Promise<string | null> {
   if (file === "pages.xml") return xmlUrlset(sitemapStaticPaths.map(publicUrl))

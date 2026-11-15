@@ -30,6 +30,10 @@ export default async function ArtistSongList({ category, artist, songs, artistId
 export function ArtistSongRows({ category, artist, songs, statuses, artistId }: Props & { statuses?: Map<string, ReviewStatus> }) {
   return <><ul className={styles.list}>
     {songs.map(song => {
+      const artists = performerArtists(song.performers)
+      // Song pages return to the first performer by default. Retain context only
+      // for a different credited performer; ordinary links use the canonical URL.
+      const artistContext = artistId && artists[0]?.id !== artistId && artists.some(item => item.id === artistId) ? "?artist=" + encodeURIComponent(artistId) : ""
       const assessment = song.assessment ?? (() => {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- Server-only compatibility for legacy callers without supplied assessments.
         const { estimateDifficulty } = require("../../lib/music/difficulty") as typeof import("../../lib/music/difficulty")
@@ -37,13 +41,13 @@ export function ArtistSongRows({ category, artist, songs, statuses, artistId }: 
         return { level: result.level, hasChords: result.chords.length > 0 }
       })()
       return <li key={song.id} className={styles.row}>
-      <Link href={`/pesme/${encodeURIComponent(song.artist?.category ?? category)}/${encodeURIComponent(song.artist?.slug ?? artist)}/${encodeURIComponent(song.slug)}${artistId ? "?artist=" + encodeURIComponent(artistId) : ""}`} className={styles.link}>
+      <Link href={`/pesme/${encodeURIComponent(song.artist?.category ?? category)}/${encodeURIComponent(song.artist?.slug ?? artist)}/${encodeURIComponent(song.slug)}${artistContext}`} className={styles.link}>
         {assessment.hasChords ? "\uD83C\uDFB8 " : "\uD83C\uDFB5 "}
         {song.title}
         <span className={styles.difficulty}>{" \u2022 "}<SongDifficulty level={assessment.level} /></span>
       </Link>
       {statuses && <span className={styles.status}><SongReviewBadge status={statuses.get(song.id) ?? "unreviewed"} /></span>}
-      <SongPerformers artists={performerArtists(song.performers)} compact />
+      <SongPerformers artists={artists} compact />
     </li>})}
   </ul>{songs.length > 0 && <p className={styles.note}><UiText text={difficultyExplanation} /></p>}</>
 }

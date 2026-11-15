@@ -6,6 +6,7 @@ export type SearchReviewSong = { id: string; title: string; slug: string; lyrics
 type Snapshot = typeof reviews[number]["source"]
 export type SongSearchReview = { kind: "incomplete" | "duplicate"; alternativePath: string | null; canonicalPath: string | null }
 export const reviewedSongIds = [...new Set(reviews.flatMap(review => [review.source.id, review.target.id]))]
+export const songSearchReviewRevision = createHash("sha256").update(JSON.stringify(reviews)).digest("hex")
 export const songSearchReviewSelect = { id: true, title: true, slug: true, lyrics: true, chords: true, artist: { select: { id: true, slug: true, category: true } } } as const
 const fingerprint = (song: SearchReviewSong) => createHash("sha256").update(JSON.stringify([song.lyrics, song.chords])).digest("hex")
 function matches(snapshot: Snapshot, song: SearchReviewSong) {

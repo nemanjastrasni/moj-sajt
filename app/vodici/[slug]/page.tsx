@@ -41,6 +41,6 @@ export default async function GuitarGuidePage({ params }: Props) {
       <h2 id="guide-next"><GuideText text={{ sr: "Nastavi učenje", en: "Keep learning" }} /></h2>
       <nav className={styles.links} aria-labelledby="guide-next">{guitarGuides.filter(other => other.slug !== guide.slug).map(other => <Link key={other.slug} href={guidePath(other.slug)} prefetch={false}><GuideText text={other.title} /></Link>)}</nav>
     </section>
-    <p className={styles.source}><GuideText text={{ sr: "Za dodatno čitanje o osnovama:", en: "Further reading on the basics:" }} />{" "}<a href={guide.source.href} rel="noopener noreferrer" target="_blank">{guide.source.title}</a></p>
+    {guide.source && <p className={styles.source}><GuideText text={{ sr: "Za dodatno čitanje o osnovama:", en: "Further reading on the basics:" }} />{" "}<a href={guide.source.href} rel="noopener noreferrer" target="_blank">{guide.source.title}</a></p>}
   </article>
 }

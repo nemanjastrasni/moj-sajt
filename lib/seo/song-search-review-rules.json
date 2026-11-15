@@ -40,5 +40,215 @@
       "category": "domace",
       "fingerprint": "750aaa56cd45a2c11c5110e387c66478cf2cf63cefbac30814693f2a3ca5a601"
     }
+  },
+  {
+    "kind": "duplicate",
+    "source": {
+      "id": "cmn7vqmyp0131ob8gkae7nv9e",
+      "title": "U Sirokom Svijetu",
+      "slug": "darko-rundek-u-sirokom-svijetu",
+      "artistId": "cmmxswtii00qkob3gogt7ojov",
+      "artistSlug": "darko-rundek",
+      "category": "domace",
+      "fingerprint": "a6667a91e984b1cf59b8d95e59c6518dffaf651aceef5ac42ce2b639e4cd4b81"
+    },
+    "target": {
+      "id": "cmn7y9eeh04feobjw8rd7aj7e",
+      "title": "U Sirokom Svijetu",
+      "slug": "rundek-darko-u-sirokom-svijetu",
+      "artistId": "cmmxswtii00qkob3gogt7ojov",
+      "artistSlug": "darko-rundek",
+      "category": "domace",
+      "fingerprint": "a6667a91e984b1cf59b8d95e59c6518dffaf651aceef5ac42ce2b639e4cd4b81"
+    }
+  },
+  {
+    "kind": "duplicate",
+    "source": {
+      "id": "cmn7vpwcd00zzob8gv68bb2xa",
+      "title": "Aroma Satanica",
+      "slug": "damir-urban-aroma-satanica",
+      "artistId": "cmmxswt1m00q4ob3gghwu2xws",
+      "artistSlug": "damir-urban",
+      "category": "domace",
+      "fingerprint": "d14e32ce8af31056e8cf39773130611d0cafc0c91052af6c479426e61555d952"
+    },
+    "target": {
+      "id": "cmn7yedsd0519objw3s49auzz",
+      "title": "Aroma Satanica",
+      "slug": "urban-damir-aroma-satanica",
+      "artistId": "cmmxswt1m00q4ob3gghwu2xws",
+      "artistSlug": "damir-urban",
+      "category": "domace",
+      "fingerprint": "d14e32ce8af31056e8cf39773130611d0cafc0c91052af6c479426e61555d952"
+    }
+  },
+  {
+    "kind": "duplicate",
+    "source": {
+      "id": "cmn7vqdyl011zob8gedtud959",
+      "title": "Neobican Dan",
+      "slug": "darko-rundek-neobican-dan",
+      "artistId": "cmmxswtii00qkob3gogt7ojov",
+      "artistSlug": "darko-rundek",
+      "category": "domace",
+      "fingerprint": "2ec29972c3113294b5e5d6cfe771568da655c715f1b96606bab82444be32fd50"
+    },
+    "target": {
+      "id": "cmn7y95ub04ecobjwfeaemv3x",
+      "title": "Neobican Dan",
+      "slug": "rundek-darko-neobican-dan",
+      "artistId": "cmmxswtii00qkob3gogt7ojov",
+      "artistSlug": "darko-rundek",
+      "category": "domace",
+      "fingerprint": "2ec29972c3113294b5e5d6cfe771568da655c715f1b96606bab82444be32fd50"
+    }
+  },
+  {
+    "kind": "duplicate",
+    "source": {
+      "id": "cmn7xa82i01fjobjw14kw0z4m",
+      "title": "1987",
+      "slug": "djordje-balasevic-1987",
+      "artistId": "cmmxt0d0h0413ob3gbnncbmpb",
+      "artistSlug": "djordje-balasevic",
+      "category": "domace",
+      "fingerprint": "c22c4f0a6b19c632dbf57b9fadb89dfb5cb3a970798afa464357c4a2825659b3"
+    },
+    "target": {
+      "id": "cmn7vkbal00ckob8gz7olqqag",
+      "title": "1987",
+      "slug": "balasevic-djordje-1987",
+      "artistId": "cmmxt0d0h0413ob3gbnncbmpb",
+      "artistSlug": "djordje-balasevic",
+      "category": "domace",
+      "fingerprint": "c22c4f0a6b19c632dbf57b9fadb89dfb5cb3a970798afa464357c4a2825659b3"
+    }
+  },
+  {
+    "kind": "duplicate",
+    "source": {
+      "id": "cmn7vq5yr0111ob8g7ujm1fk8",
+      "title": "Apokalipso",
+      "slug": "darko-rundek-apokalipso",
+      "artistId": "cmmxswtii00qkob3gogt7ojov",
+      "artistSlug": "darko-rundek",
+      "category": "domace",
+      "fingerprint": "16621d07adc2caa586a3ded25de0841cfbf0acfafce093aae6fe1c17239d73c6"
+    },
+    "target": {
+      "id": "cmn7y8y2q04deobjwplpfrhe4",
+      "title": "Apokalipso",
+      "slug": "rundek-darko-apokalipso",
+      "artistId": "cmmxswtii00qkob3gogt7ojov",
+      "artistSlug": "darko-rundek",
+      "category": "domace",
+      "fingerprint": "16621d07adc2caa586a3ded25de0841cfbf0acfafce093aae6fe1c17239d73c6"
+    }
+  },
+  {
+    "kind": "duplicate",
+    "source": {
+      "id": "cmn7y4sqz03v6objwhjn5velc",
+      "title": "Jutro Ce Promijeniti Sve",
+      "slug": "popovic-davorin-jutro-ce-promijeniti-sve",
+      "artistId": "cmmxswuh400rhob3gk4fzdfj4",
+      "artistSlug": "davorin-popovic",
+      "category": "domace",
+      "fingerprint": "49346d13519d3ae948af66c09fa03e03c31bfe1116cf397e52969ad82cb6fb90"
+    },
+    "target": {
+      "id": "cmn7vqsxg013rob8go198602d",
+      "title": "Jutro Ce Promijeniti Sve",
+      "slug": "davorin-popovic-jutro-ce-promijeniti-sve",
+      "artistId": "cmmxswuh400rhob3gk4fzdfj4",
+      "artistSlug": "davorin-popovic",
+      "category": "domace",
+      "fingerprint": "49346d13519d3ae948af66c09fa03e03c31bfe1116cf397e52969ad82cb6fb90"
+    }
+  },
+  {
+    "kind": "duplicate",
+    "source": {
+      "id": "cmn7vqfw60127ob8gi1kqgaqt",
+      "title": "Radnicka Klasa Odlazi U Raj",
+      "slug": "darko-rundek-radnicka-klasa-odlazi-u-raj",
+      "artistId": "cmmxswtii00qkob3gogt7ojov",
+      "artistSlug": "darko-rundek",
+      "category": "domace",
+      "fingerprint": "3bbee2437fa7db5bb4455fc820c5549a1fd6a7462f8be0259e2459dbf7164cfb"
+    },
+    "target": {
+      "id": "cmn7y97hy04ekobjw827ywovt",
+      "title": "Radnicka Klasa Odlazi U Raj",
+      "slug": "rundek-darko-radnicka-klasa-odlazi-u-raj",
+      "artistId": "cmmxswtii00qkob3gogt7ojov",
+      "artistSlug": "darko-rundek",
+      "category": "domace",
+      "fingerprint": "3bbee2437fa7db5bb4455fc820c5549a1fd6a7462f8be0259e2459dbf7164cfb"
+    }
+  },
+  {
+    "kind": "duplicate",
+    "source": {
+      "id": "cmn7xahp201globjwe5o2tmgj",
+      "title": "Citron Pesma",
+      "slug": "djordje-balasevic-citron-pesma",
+      "artistId": "cmmxt0d0h0413ob3gbnncbmpb",
+      "artistSlug": "djordje-balasevic",
+      "category": "domace",
+      "fingerprint": "3d53a6efd4332bbb3320bf14b1833c885574ce77c3ed48c5f97698f1153a5857"
+    },
+    "target": {
+      "id": "cmn7vkkx300dmob8gjk6qnarq",
+      "title": "Citron Pesma",
+      "slug": "balasevic-djordje-citron-pesma",
+      "artistId": "cmmxt0d0h0413ob3gbnncbmpb",
+      "artistSlug": "djordje-balasevic",
+      "category": "domace",
+      "fingerprint": "3d53a6efd4332bbb3320bf14b1833c885574ce77c3ed48c5f97698f1153a5857"
+    }
+  },
+  {
+    "kind": "duplicate",
+    "source": {
+      "id": "cmn7xan8x01h9objwo68jslda",
+      "title": "Dobro Vece Zagrebe",
+      "slug": "djordje-balasevic-dobro-vece-zagrebe",
+      "artistId": "cmmxt0d0h0413ob3gbnncbmpb",
+      "artistSlug": "djordje-balasevic",
+      "category": "domace",
+      "fingerprint": "f9ec09f2cbc7fcd0101ed2b8689a0166f25b57b322bd367bb9c4081fd97685ec"
+    },
+    "target": {
+      "id": "cmn7vkqf600eaob8gey63biit",
+      "title": "Dobro Vece Zagrebe",
+      "slug": "balasevic-djordje-dobro-vece-zagrebe",
+      "artistId": "cmmxt0d0h0413ob3gbnncbmpb",
+      "artistSlug": "djordje-balasevic",
+      "category": "domace",
+      "fingerprint": "f9ec09f2cbc7fcd0101ed2b8689a0166f25b57b322bd367bb9c4081fd97685ec"
+    }
+  },
+  {
+    "kind": "duplicate",
+    "source": {
+      "id": "cmn7y6wvh044jobjwv1q8ndj0",
+      "title": "Bilo Pa Proslo",
+      "slug": "rade-serbedzija-bilo-pa-proslo",
+      "artistId": "cmmxsyzhk02qyob3guvyyghjk",
+      "artistSlug": "rade-serbedzija",
+      "category": "domace",
+      "fingerprint": "623abdece7a00073c6ae22ddd75cf5baad4bfc31d00b2ad07c62812a0ddc06e1"
+    },
+    "target": {
+      "id": "cmn7yaant04jeobjweqihege9",
+      "title": "Bilo Pa Proslo",
+      "slug": "serbedzija-rade-bilo-pa-proslo",
+      "artistId": "cmmxsyzhk02qyob3guvyyghjk",
+      "artistSlug": "rade-serbedzija",
+      "category": "domace",
+      "fingerprint": "623abdece7a00073c6ae22ddd75cf5baad4bfc31d00b2ad07c62812a0ddc06e1"
+    }
   }
 ]

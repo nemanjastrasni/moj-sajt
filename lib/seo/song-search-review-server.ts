@@ -1,7 +1,7 @@
 import { cache } from "react"
 import { unstable_cache } from "next/cache"
 import { prisma } from "@/lib/prisma"
-import { reviewedSongIds, songReviewRule, songSearchReviewSelect, resolveSongSearchReview, type SearchReviewSong } from "./song-search-review"
+import { reviewedSongIds, songSearchReviewRevision, songReviewRule, songSearchReviewSelect, resolveSongSearchReview, type SearchReviewSong } from "./song-search-review"
 
 export const getSongSearchReview = cache(async (song: SearchReviewSong) => {
   const rule = songReviewRule(song)
@@ -19,4 +19,4 @@ export const getSongSearchReview = cache(async (song: SearchReviewSong) => {
 export const getSitemapSongExclusions = unstable_cache(async () => {
   const songs = await prisma.song.findMany({ where: { id: { in: reviewedSongIds } }, select: songSearchReviewSelect })
   return songs.filter(song => resolveSongSearchReview(song, songs)).map(song => song.id)
-}, ["song-search-review-exclusions-v1"], { revalidate: 300, tags: ["seo-sitemap"] })
+}, ["song-search-review-exclusions-v2", songSearchReviewRevision], { revalidate: 300, tags: ["seo-sitemap"] })

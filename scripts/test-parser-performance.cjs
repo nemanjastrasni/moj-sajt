@@ -70,5 +70,5 @@ test('artist rows reuse supplied assessments while preserving chord/text indicat
   const $=cheerio.load(renderToStaticMarkup(React.createElement(ArtistSongRows,{songs,category:'domace',artist:'fixture',artistId:'fixture-id'})))
   assert.equal(calls,0);assert.equal($('li').length,2)
   assert.match($('li').first().text(),/🎸 With chords/);assert.match($('li').last().text(),/🎵 Text only/)
-  assert.equal($('a').first().attr('href'),'/pesme/domace/fixture/chords?artist=fixture-id')
+  assert.equal($('a').first().attr('href'),'/pesme/domace/fixture/chords')
 })

@@ -173,7 +173,7 @@ test('malformed legacy slugs are skipped without dropping a whole sitemap batch'
   const response = await mapRequest('songs-0.xml'), text = await response.text()
   assert.equal(response.status, 200); assert.equal((text.match(/<url>/g) || []).length, 1)
   assert.match(text, /\/pesme\/domace\/zeljko\/pesma/)
-  assert.ok(definitions.some(definition => definition.keys[0] === 'seo-sitemap-pages-v1' && definition.keys.includes(site.SITE_URL)))
+  assert.ok(definitions.some(definition => definition.keys[0] === 'seo-sitemap-pages-v2' && definition.keys.includes(site.SITE_URL) && definition.keys.includes(require('../lib/seo/song-search-review.ts').songSearchReviewRevision)))
 })
 test('static sitemap excludes personal/admin screens and safely serializes XML', async () => {
   const text = await (await mapRequest('pages.xml')).text()

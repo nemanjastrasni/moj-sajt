@@ -13,6 +13,7 @@ import { useI18n } from "./UiText"
 import PlaylistDialog from "./PlaylistDialog"
 import styles from "./Music.module.css"
 import LikePlaylistButton from "./LikePlaylistButton"
+import GuideText from "./GuideText"
 
 export default function MusicCatalog({lists,owned,page=1,category="",top=false}:{lists:MusicSummary[];owned:boolean;page?:number;category?:string;top?:boolean}){
   const {t,locale}=useI18n(),router=useRouter(),music=useMusic()
@@ -28,6 +29,10 @@ export default function MusicCatalog({lists,owned,page=1,category="",top=false}:
   const categoryHref=(value:string,nextPage=1)=>"/public-listening-playlists?"+new URLSearchParams({...(value?{category:value}:{}),...(top?{top:"1"}:{}),page:String(nextPage)})
   return <section className={styles.page}>
     <div className={styles.heading}><h1>{t(owned?"Moja muzika":"Javne muzicke liste")}</h1><Headphones aria-hidden="true" size={24} /></div>
+    {!owned && <div className={styles.notice}>
+      <p><GuideText text={{ sr: "Pregledaj javne muzičke liste sa YouTube linkovima i pokreni snimke u ugrađenom plejeru. Za pravljenje svojih lista koristi Moju muziku nakon prijave. Lista za slušanje sadrži snimke, dok plejlista za gitaru povezuje zapise pesama sa akordima.", en: "Browse public music lists with YouTube links and start recordings in the embedded player. To create your own lists, sign in and use My music. A listening list contains recordings; a guitar playlist connects song charts with chords." }} /></p>
+      <Link href="/vodici/youtube-muzika-i-muzicke-plejliste" prefetch={false}><GuideText text={{ sr: "Kako napraviti i podeliti muzičku listu", en: "How to create and share a music list" }} /></Link>
+    </div>}
     <nav className={styles.tabs} aria-label={t("Muzicke liste")}><Link className="ui-button" href="/listening-playlist" aria-current={owned?"page":undefined}>{t("Moja muzika")}</Link><Link className="ui-button" href="/public-listening-playlists" aria-current={!owned?"page":undefined}>{t("Javne muzicke liste")}</Link><Link className="ui-button" href="/biografija">{t("Biografije i diskografije")}</Link></nav>
     {owned?<form className={styles.fields} onSubmit={async event=>{
       event.preventDefault();if(busy)return

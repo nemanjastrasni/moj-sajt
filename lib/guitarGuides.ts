@@ -1,6 +1,7 @@
+import { siteGuides } from "./siteGuides"
 export type GuideText = { sr: string; en: string }
 export type GuideSection = { id: string; heading: GuideText; paragraphs: GuideText[]; steps?: GuideText[]; example?: "diagrams" | "practice" | "capo" }
-export type GuitarGuide = { slug: string; title: GuideText; description: GuideText; sections: GuideSection[]; links: { href: string; label: GuideText }[]; source: { href: string; title: string } }
+export type GuitarGuide = { slug: string; title: GuideText; description: GuideText; sections: GuideSection[]; links: { href: string; label: GuideText }[]; source?: { href: string; title: string } }
 const text = (sr: string, en: string): GuideText => ({ sr, en })
 
 export const guitarGuides: GuitarGuide[] = [
@@ -82,6 +83,8 @@ export const guitarGuides: GuitarGuide[] = [
     source: { href: "https://www.fender.com/articles/parts-and-accessories/what-is-a-capo", title: "Fender: What Is a Capo?" }
   }
 ]
+
+guitarGuides.push(...siteGuides)
 
 export function getGuitarGuide(slug: string) {
   return guitarGuides.find(guide => guide.slug === slug)

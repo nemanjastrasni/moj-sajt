@@ -1,8 +1,9 @@
 import Link from "next/link"
 import type { Metadata } from "next"
 import { readArtistCards } from "@/lib/artists/publicCatalog"
-import { getCategoryLabel } from "@/lib/categories"
-import { CategoryLabel } from "@/app/components/UiText"
+import GuideText from "@/app/components/GuideText"
+import { categoryContent } from "@/lib/seo/categoryContent"
+import guide from "@/app/components/CatalogGuide.module.css"
 import ArtistMosaic from "@/app/components/ArtistMosaic"
 import styles from "@/app/components/ArtistMedia.module.css"
 import { publicPageMetadata } from "@/lib/seo/metadata"
@@ -16,9 +17,8 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { category } = await params
   if (!isPublicCategory(category)) notFound()
-  const pretty = getCategoryLabel(category)
-
-  return publicPageMetadata(`${pretty} pesme – Akordi i tekstovi`, `Lista izvođača i pesama u kategoriji ${pretty}.`, routePath("pesme", category))
+  const copy = categoryContent[category]
+  return publicPageMetadata(copy.title, copy.description, routePath("pesme", category))
 }
 
 
@@ -28,6 +28,7 @@ export default async function CategoryPage(
 
   const { category } = await params
   if (!isPublicCategory(category)) notFound()
+  const copy = categoryContent[category]
 
   const artists = await readArtistCards(category)
 
@@ -56,8 +57,16 @@ const letters = Array.from(lettersSet).sort()
   return (
   <div className={styles.page}>
       <h1 className={styles.heading}>
-        <CategoryLabel value={category} />
+        <GuideText text={copy.heading} />
       </h1>
+      <div className={guide.guide}>
+        <p><GuideText text={copy.intro} /></p>
+        <nav className={guide.links} aria-label="Pesme i vežbanje">
+          <Link href={`/plejliste/${category}`} prefetch={false}><GuideText text={{ sr: "Izbor pesama za vežbanje", en: "Songs for practice" }} /></Link>
+          <Link href="/akordi" prefetch={false}><GuideText text={{ sr: "Dijagrami i oznake akorda", en: "Chord diagrams and symbols" }} /></Link>
+          <Link href="/vodici" prefetch={false}><GuideText text={{ sr: "Uputstva za gitaru i plejliste", en: "Guitar and playlist guides" }} /></Link>
+        </nav>
+      </div>
 
       <nav className={styles.letters} aria-label="A-Z">
 
