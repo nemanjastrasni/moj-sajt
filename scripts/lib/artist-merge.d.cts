@@ -8,6 +8,7 @@ export type MergeInput = {
     choices: Record<string, "source" | "target">;
     version?: string;
     confirmed?: boolean;
+    identityConfirmed?: boolean;
 };
 export type Database = {
     query: (sql: string, params?: unknown[]) => Promise<{

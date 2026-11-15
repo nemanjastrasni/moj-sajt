@@ -20,6 +20,8 @@ function validate(input) {
     fail(choices && typeof choices === 'object' && !Array.isArray(choices), 400, 'Neispravan izbor podataka.');
     for (const [key, value] of Object.entries(choices))
         fail(fields.includes(key) && ['source', 'target'].includes(value), 400, 'Neispravan izbor podataka.');
+    if (input.identityConfirmed !== undefined)
+        fail(typeof input.identityConfirmed === 'boolean', 400, 'Neispravna dodatna potvrda izvođača.');
     if (input.action === 'apply')
         fail(input.confirmed === true && typeof input.version === 'string' && /^[a-f0-9]{64}$/.test(input.version), 400, 'Prvo pregledaj i potvrdi spajanje.');
     return { ...input, choices };
@@ -40,7 +42,8 @@ function plan(state, input) {
     fail(source && target && source.id !== target.id, 400, 'Izaberi dva različita izvođača.');
     fail(source.category && source.category === target.category, 409, 'Spajanje je dostupno za izvođače iz iste kategorije. Prvo proveri njihove kategorije.');
     const sourceProfile = state.profiles.find(p => p.artistId === source.id), targetProfile = state.profiles.find(p => p.artistId === target.id);
-    fail(!sourceProfile?.wikidataId || !targetProfile?.wikidataId || sourceProfile.wikidataId === targetProfile.wikidataId, 409, 'Izvođači imaju različite Wikidata identitete. Proveri da li su ista grupa.');
+    const identityConflict = sourceProfile?.wikidataId && targetProfile?.wikidataId && sourceProfile.wikidataId !== targetProfile.wikidataId
+        ? { sourceWikidataId: sourceProfile.wikidataId, targetWikidataId: targetProfile.wikidataId } : null;
     const choices = {}, conflicts = [], copied = [], after = { ...target };
     for (const key of fields) {
         const different = !empty(source[key]) && !empty(target[key]) && hash(source[key]) !== hash(target[key]);
@@ -77,17 +80,18 @@ function plan(state, input) {
                 profile[credit] = sourceProfile?.[credit] ?? targetProfile?.[credit] ?? null;
         }
     }
-    const result = { source, target, sourceSongs, targetSongs, moves, performanceMoves, after, profile, choices, conflicts, copied, version: hash({state,sourceId:input.sourceId,targetId:input.targetId}) };
+    const result = { source, target, sourceSongs, targetSongs, moves, performanceMoves, after, profile, choices, conflicts, copied, identityConflict, version: hash({state,sourceId:input.sourceId,targetId:input.targetId}) };
     fail(Buffer.byteLength(JSON.stringify(auditData(state,result)), 'utf8') < 200000, 413, 'Podaci za evidenciju ovog spajanja su preveliki. Potrebna je posebna provera; ništa nije izmenjeno.');
     return result;
 }
-function auditData(state,p) { return { identity: { name: p.target.name, slug: p.target.slug, category: p.target.category }, before: { source: p.source, target: p.target, profiles: state.profiles, credits: state.credits }, moves: p.moves, choices: p.choices, after: p.after, note: 'Spajanje izvođača; pesme zadržavaju svoje ID vrednosti. Automatsko poništavanje nije podržano.' }; }
-function preview(p) { return { version: p.version, source: { id: p.source.id, name: p.source.name, songs: p.sourceSongs.length }, target: { id: p.target.id, name: p.target.name, songs: p.targetSongs.length }, total: p.moves.length + p.targetSongs.length, collisions: p.moves.filter(s => s.slug !== s.oldSlug), creditedSongs: p.performanceMoves.length, choices: p.choices, conflicts: p.conflicts, copied: p.copied }; }
+function auditData(state,p) { return { identity: { name: p.target.name, slug: p.target.slug, category: p.target.category }, before: { source: p.source, target: p.target, profiles: state.profiles, credits: state.credits }, moves: p.moves, choices: p.choices, after: p.after, ...(p.identityConflict ? { identityOverride: { ...p.identityConflict, confirmed: true } } : {}), note: 'Spajanje izvođača; pesme zadržavaju svoje ID vrednosti. Automatsko poništavanje nije podržano.' }; }
+function preview(p) { return { version: p.version, source: { id: p.source.id, name: p.source.name, songs: p.sourceSongs.length }, target: { id: p.target.id, name: p.target.name, songs: p.targetSongs.length }, total: p.moves.length + p.targetSongs.length, collisions: p.moves.filter(s => s.slug !==s.oldSlug), creditedSongs: p.performanceMoves.length, choices: p.choices, conflicts: p.conflicts, copied: p.copied, identityConflict: p.identityConflict }; }
 async function apply(db, actorId, input) {
     const actor = (await db.query('SELECT role,banned FROM public."User" WHERE id=$1 FOR SHARE', [actorId])).rows[0];
     fail(actor?.role === 'admin' && !actor.banned, 403, 'Nije dozvoljeno.');
     const state = await load(db, input, true), p = plan(state, input);
     fail(input.confirmed === true && input.version === p.version, 409, 'Podaci su u međuvremenu promenjeni. Ponovo pregledaj spajanje.');
+    fail(!p.identityConflict || input.identityConfirmed === true, 409, 'Izvori imaju različite Wikidata oznake. Dodatno potvrdi da je ovo isti izvođač.');
     const auditId = randomUUID(), data = auditData(state,p);
     // Audit, redirects and content are committed together. The complete old metadata is retained.
     await db.query('INSERT INTO public."AdminContentProposal" (id,"findingId","subjectId",field,operation,status,data,"actorId") VALUES ($1,$2,$3,\'artist-merge\',\'merge\',\'applied\',$4::jsonb,$5)', [auditId, 'artist-merge:' + p.source.category + '/' + p.source.slug, p.target.id, JSON.stringify(data), actorId]);

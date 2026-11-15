@@ -9,7 +9,7 @@ test('preview contains counts and conflicts, not song lyrics', () => { const p =
 test('field choice carries its original credits, revisions and hashes without changing them', () => { const state = fixture(), p = core.plan(state, { ...input, choices: { bio: 'source' } }); assert.equal(p.after.bio, 'Old bio'); assert.equal(p.after.bioShort, 'Short'); assert.deepEqual(p.profile.bioSource, state.profiles[0].bioSource); assert.deepEqual(p.profile.discographySource, state.profiles[1].discographySource); });
 test('missing data are filled and identical content retains available attribution', () => { const state = fixture(); state.artists[1].bio = state.artists[0].bio; state.profiles[1].bioSource = null; state.artists[1].image = null; state.artists[0].image = '/source.webp'; const p = core.plan(state, input); assert.equal(p.after.image, '/source.webp'); assert.deepEqual(p.profile.bioSource, state.profiles[0].bioSource); });
 test('duets deduplicate the same artist without altering the position of other artists', () => { const p = core.plan(fixture(), input); assert.deepEqual(p.performanceMoves, [{ songId: 'duet', position: 1 }]); assert.equal(core.preview(p).creditedSongs, 1); });
-test('different categories and incompatible Wikipedia identities block merging', () => { const state = fixture(); state.artists[1].category = 'strane'; assert.throws(() => core.plan(state, input), /kategorij/); state.artists[1].category = 'narodne'; state.profiles[1].wikidataId = 'Q2'; assert.throws(() => core.plan(state, input), /Wikidata/); });
+test('different categories block merging and different Wikipedia identities require explicit consent', () => { const state = fixture(); state.artists[1].category = 'strane'; assert.throws(() => core.plan(state, input), /kategorij/); state.artists[1].category = 'narodne'; state.profiles[1].wikidataId = 'Q2'; assert.deepEqual(core.preview(core.plan(state,input)).identityConflict,{sourceWikidataId:'Q1',targetWikidataId:'Q2'}); });
 test('preview version changes for content, membership, profile or credit changes', () => { const before = core.plan(fixture(), input).version; for (const change of [s => s.songs[0].lyrics = 'Am', s => s.artists[0].name = 'Changed', s => s.profiles[0].bioSource.hash = 'edited', s => s.credits[0].position = 5, s => s.songs.push({ id: 'new', artistId: 'source', slug: 'new' })]) {
     const s = fixture();
     change(s);
@@ -20,3 +20,33 @@ module.exports = { fixture, input };
 
 test('preview refuses an audit that would exceed the existing database size constraint',()=>{const state=fixture();state.artists[0].bio='x'.repeat(220000);assert.throws(()=>core.plan(state,input),e=>e.status===413)});
 test('preview version binds the direction of the merge',()=>{const state=fixture();assert.notEqual(core.plan(state,input).version,core.plan(state,{...input,sourceId:input.targetId,targetId:input.sourceId}).version)});
+
+function mergeDatabase(state){const writes=[];return {writes,async query(sql,params){
+ if(sql.startsWith('SELECT role'))return{rows:[{role:'admin',banned:false}]};
+ if(sql.startsWith('SELECT * FROM public."Artist"'))return{rows:state.artists};
+ if(sql.startsWith('SELECT * FROM public."Song"'))return{rows:state.songs};
+ if(sql.startsWith('SELECT * FROM public."ArtistWikiProfile"'))return{rows:state.profiles};
+ if(sql.startsWith('SELECT p.*'))return{rows:state.credits};
+ if(sql.startsWith('SELECT count'))return{rows:[{n:0}]};
+ writes.push({sql,params});return{rows:[]};
+}}}
+test('conflicting Wikidata identities can be previewed but never applied without extra consent',async()=>{
+ const state=fixture();state.profiles[1].wikidataId='Q2';const preview=core.preview(core.plan(state,input));
+ for(const identityConfirmed of [undefined,false]){const db=mergeDatabase(state);await assert.rejects(core.apply(db,'admin',{...input,action:'apply',confirmed:true,identityConfirmed,version:preview.version}),/Dodatno potvrdi/);assert.equal(db.writes.length,0)}
+ for(const identityConfirmed of ['true',1,null])assert.throws(()=>core.validate({...input,identityConfirmed}),/dodatna potvrda/);
+});
+test('explicit consent permits the merge and is archived with both previous identities',async()=>{
+ const state=fixture();state.profiles[1].wikidataId='Q2';const p=core.plan(state,input),db=mergeDatabase(state);
+ await core.apply(db,'admin',core.validate({...input,action:'apply',confirmed:true,identityConfirmed:true,version:p.version}));
+ const audit=JSON.parse(db.writes.find(w=>w.sql.startsWith('INSERT INTO public."AdminContentProposal"')).params[3]);
+ assert.deepEqual(audit.identityOverride,{sourceWikidataId:'Q1',targetWikidataId:'Q2',confirmed:true});
+ assert.equal(db.writes.find(w=>w.sql.startsWith('INSERT INTO public."ArtistWikiProfile"')).params[3],'Q2');
+ assert.deepEqual(audit.before.profiles,state.profiles);
+});
+test('consent cannot bypass a changed preview or a changed identity',async()=>{
+ const state=fixture();state.profiles[1].wikidataId='Q2';const p=core.plan(state,input);state.profiles[1].wikidataId='Q3';const db=mergeDatabase(state);
+ await assert.rejects(core.apply(db,'admin',{...input,action:'apply',confirmed:true,identityConfirmed:true,version:p.version}),/promenjeni/);assert.equal(db.writes.length,0);
+});
+test('matching or missing identities do not require an extra checkbox',()=>{
+ const state=fixture();assert.equal(core.preview(core.plan(state,input)).identityConflict,null);state.profiles.pop();assert.equal(core.preview(core.plan(state,input)).identityConflict,null);
+});

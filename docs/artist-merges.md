@@ -2,7 +2,7 @@
 
 U **Administracija → Izvođači** označi tačno dva reda. Izaberi **koji naziv i profil ostaju**, zatim **Pregled spajanja**. Posle pregleda potvrdi da su izvođači isti i klikni **Spoji u …**. Ne upisuje se novi naziv: ostaju naziv, ID, kategorija i slug izabranog profila. Stara ikonica za spajanje vodi na ovu istu listu sa označenim prvim izvođačem i sačuvanim filterima.
 
-Spajanje je dostupno unutar iste kategorije. Različiti postojeći Wikidata identiteti zaustavljaju postupak. Prazni podaci zajedničkog profila dopunjavaju se iz drugog profila. Ako se dve neprazne biografije, diskografije, fotografije ili spiskovi članova razlikuju, pregled nudi izbor. Kratka biografija i Wikipedia izvor prate izabranu biografiju; kontrolni hash, autori, revizije i licence izvora se ne prepisuju novim vrednostima.
+Spajanje je dostupno unutar iste kategorije. Različiti postojeći Wikidata identiteti prikazuju dodatno pitanje „Da li si siguran da je ovo isti izvođač?“. Administrator mora posebno označiti potvrdu da bi spajanje bilo dozvoljeno; server je proverava nad svežim podacima u transakciji. Promena izbora ili nov pregled poništava dodatnu potvrdu. U evidenciji ostaju obe stare oznake i eksplicitna saglasnost administratora; zajednički profil zadržava Wikidata oznaku izabranog odredišta. Prazni podaci zajedničkog profila dopunjavaju se iz drugog profila. Ako se dve neprazne biografije, diskografije, fotografije ili spiskovi članova razlikuju, pregled nudi izbor. Kratka biografija i Wikipedia izvor prate izabranu biografiju; kontrolni hash, autori, revizije i licence izvora se ne prepisuju novim vrednostima.
 
 ## Šta se čuva
 
