@@ -16,7 +16,7 @@
 .capo { min-width: 0; max-width: 100%; }
 .heading { margin: 0 0 12px; }
 .heading h1 { font-size: 28px; line-height: 1.25; font-weight: 700; overflow-wrap: anywhere; }
-.artist { display: block; width: fit-content; margin: 12px 0 24px; color: var(--theme-link); font-size: 16px; }
+.artist { display: block; width: fit-content; margin: 12px 0 24px; color: var(--theme-green, #78d9a0); font-size: 16px; }
 .content { min-width: 0; }
 .diagrams { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
 .withVideo { display: grid; grid-template-columns: minmax(0,1fr) minmax(260px,360px); gap: 28px; }
