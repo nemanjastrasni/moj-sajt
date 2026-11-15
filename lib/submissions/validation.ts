@@ -1,5 +1,6 @@
 import { SubmissionError } from "./errors"
-import { parseSongSheet } from "../chords/songSheet"
+import { groupSheetLines, parseSongSheet } from "../chords/songSheet"
+import { hasCompleteTabSystem } from "../chords/tabComposer"
 import { slugify } from "../until/slug"
 
 export const submissionCategories = [
@@ -31,6 +32,8 @@ export function validateSubmission(value: unknown): SubmissionInput {
   if (lyrics.split("\n").some(line => line.length > 500)) throw new SubmissionError(400, "Jedan red moze imati najvise 500 znakova.")
   if (/https?:\/\/|www\.|<\/?[a-z][^>]*>/i.test(lyrics)) throw new SubmissionError(400, "Unesi samo tekst i akorde, bez linkova i HTML oznaka.")
   const lines = parseSongSheet(lyrics)
+  const hasTab = groupSheetLines(lines).some(block => block.tabLines && hasCompleteTabSystem(block.tabLines.map(line => line.text)))
+  if (hasTab) return { category: input.category as string, artistName, title, lyrics }
   if (!lines.some(line => line.tokens.some(token => !token.bass))) throw new SubmissionError(400, "Akorde upisi u poseban red iznad stiha, kao u primeru.")
   if (!lines.some(line => (line.kind === "lyrics" || line.kind === "inline") && /[a-z\u00c0-\u024f\u0400-\u04ff]{2}/i.test(line.text) && !/^\s*\[.*\]\s*$/.test(line.text))) throw new SubmissionError(400, "Pored akorda unesi i tekst pesme.")
   return { category: input.category as string, artistName, title, lyrics }

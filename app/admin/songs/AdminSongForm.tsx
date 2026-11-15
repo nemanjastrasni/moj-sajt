@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react"
+import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Plus, Trash2, Save, Eye, EyeOff, ArrowLeft } from "lucide-react"
@@ -10,6 +10,7 @@ import { submissionCategories } from "@/lib/submissions/validation"
 import { MAX_BATCH, validateSongBatch, validateSongEdit } from "@/lib/adminSongs/validation"
 import { adminSongRequest } from "@/lib/adminSongs/client"
 import styles from "./AdminSongs.module.css"
+import TabComposerButton from "@/app/components/TabComposerButton"
 
 type Artist = { id: string; name: string; category: string | null }
 export type EditableAdminSong = { id: string; title: string; lyrics: string; chords: string | null; category: string; artist: Artist }
@@ -23,6 +24,7 @@ function SongPreview({ lyrics }: { lyrics: string }) {
 
 export default function AdminSongForm({ initial, returnToSong = false, backHref = "/admin/songs" }: { initial?: EditableAdminSong; returnToSong?: boolean; backHref?: string }) {
   const router = useRouter()
+  const lyricsId = useId()
   const nextKey = useRef(1)
   const [artistName, setArtistName] = useState(initial?.artist.name ?? "")
   const [artistId, setArtistId] = useState<string | undefined>(initial?.artist.id)
@@ -111,9 +113,9 @@ export default function AdminSongForm({ initial, returnToSong = false, backHref 
         {songs.map((song, index) => <section className={styles.song} key={song.key}>
           <div className={styles.heading}><h3>Pesma {index + 1}</h3>{!initial && songs.length > 1 && <button type="button" className={`${styles.icon} ${styles.danger}`} title={`Ukloni unos ${index + 1}`} aria-label={`Ukloni unos ${index + 1}`} onClick={() => setSongs(current => current.filter(item => item.key !== song.key))}><Trash2 /></button>}</div>
           <label>Naziv pesme<input className={styles.input} required maxLength={200} value={song.title} onChange={event => update(song.key, { title: event.target.value })} /></label>
-          <label>Tekst sa akordima<textarea required className={`${styles.input} ${styles.lyrics}`} value={song.lyrics} onChange={event => update(song.key, { lyrics: event.target.value })} rows={18} maxLength={100000} wrap="off" spellCheck={false} autoCapitalize="off" autoCorrect="off" /></label>
+          <label>Tekst sa akordima / tabulatura<textarea id={`admin-lyrics${lyricsId}-${song.key}`} required className={`${styles.input} ${styles.lyrics}`} value={song.lyrics} onChange={event => update(song.key, { lyrics: event.target.value })} rows={18} maxLength={100000} wrap="off" spellCheck={false} autoCapitalize="off" autoCorrect="off" /></label>
           {initial?.chords && <details className={styles.details}><summary>Zasebno polje akorda</summary><textarea className={`${styles.input} ${styles.lyrics}`} aria-label="Zasebno polje akorda" value={song.chords} onChange={event => update(song.key, { chords: event.target.value })} rows={4} maxLength={100000} wrap="off" /></details>}
-          <div className={styles.actions}><span className={styles.count}>{song.lyrics.length.toLocaleString("sr-Latn")} / 100.000 znakova</span><button type="button" className={styles.button} aria-expanded={song.preview} aria-controls={`song-preview-${song.key}`} onClick={() => update(song.key, { preview: !song.preview })}>{song.preview ? <EyeOff /> : <Eye />}{song.preview ? "Sakrij pregled" : "Pregled rasporeda"}</button></div>
+          <div className={styles.actions}><span className={styles.count}>{song.lyrics.length.toLocaleString("sr-Latn")} / 100.000 znakova</span><TabComposerButton textareaId={`admin-lyrics${lyricsId}-${song.key}`} value={song.lyrics} onChange={lyrics => update(song.key, { lyrics })} maxLength={100000} disabled={busy} /><button type="button" className={styles.button} aria-expanded={song.preview} aria-controls={`song-preview-${song.key}`} onClick={() => update(song.key, { preview: !song.preview })}>{song.preview ? <EyeOff /> : <Eye />}{song.preview ? "Sakrij pregled" : "Pregled rasporeda"}</button></div>
           {song.preview && <div id={`song-preview-${song.key}`}><SongPreview lyrics={song.lyrics} /></div>}
         </section>)}
         {error && <p className={styles.error} role="alert">{error}</p>}

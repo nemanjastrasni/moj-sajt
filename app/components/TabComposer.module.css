@@ -1,0 +1,18 @@
+.editor { display: grid; gap: 12px; min-width: 0; font-size: 14px; }
+.editor p { line-height: 1.6; margin: 0; }
+.muted { color: var(--control-muted); font-size: 13px; }
+.options { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+.editor .options label { display: grid; gap: 6px; min-width: 0; flex: 1 1 100px; margin: 0; }
+.editor .check { display: flex; gap: 8px; align-items: center; min-height: 44px; line-height: 1.5; margin: 0; }
+.check input { width: 20px; height: 20px; accent-color: var(--control-accent); flex-shrink: 0; }
+.frets { display: grid; grid-template-columns: 20px repeat(5, minmax(0, 1fr)); gap: 4px; min-width: 0; }
+.stringRow { display: contents; }
+.stringLabel, .fretLabel { display: flex; align-items: center; justify-content: center; font-family: ui-monospace, monospace; }
+.fretLabel { color: var(--control-muted); font-size: 12px; }
+.fret { composes: ui-button from global; min-width: 0; min-height: 40px; padding: 4px; justify-content: center; font-variant-numeric: tabular-nums; }
+.fret[aria-pressed="true"] { background: var(--control-accent); border-color: var(--control-accent); color: #fff; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.actions button { white-space: normal; }
+.preview { overflow-x: auto; max-width: 100%; min-width: 0; background: var(--control-bg); border: 1px solid var(--control-line); padding: 10px; }
+.preview pre { font-family: ui-monospace, monospace; font-size: 14px; line-height: 1.55; white-space: pre; margin: 0; }
+.error { color: var(--control-danger); overflow-wrap: anywhere; }

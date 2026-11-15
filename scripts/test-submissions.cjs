@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Node API regression tests use CommonJS loader fixtures. */
 require("./lib/test-public-origin.cjs")
 require("ts-node").register({ transpileOnly: true, compilerOptions: { module: "CommonJS", moduleResolution: "Node" } })
 const { test, beforeEach } = require("node:test")
@@ -104,6 +105,16 @@ test("a valid submission stays pending and never creates a public song", async (
   assert.equal((await POST(request({ ...valid, userId: "admin", status: "approved" }))).status, 201)
   assert.equal(state.proposals[0].userId, "user"); assert.equal(state.proposals[0].status, "pending")
   assert.equal(state.songs.length, 0); assert.equal(state.artists.length, 0)
+})
+
+test("a tab-only proposal stays pending and only an administrator can publish its exact six rows", async () => {
+  const {emptyTabSteps,setTabFret,renderTabSteps}=require('../lib/chords/tabComposer.ts')
+  const lyrics=renderTabSteps(setTabFret(emptyTabSteps(),0,0,12))
+  const response=await POST(request({...valid,title:'Instrumental tab',lyrics}))
+  assert.equal(response.status,201);assert.equal(state.songs.length,0);assert.equal(state.proposals[0].status,'pending');assert.equal(state.proposals[0].lyrics,lyrics)
+  session={user:{id:'admin'}}
+  assert.equal((await review({...valid,title:'Instrumental tab',lyrics,action:'approve',reviewNote:''})).status,200)
+  assert.equal(state.songs.length,1);assert.equal(state.songs[0].lyrics,lyrics)
 })
 test("duplicate pending submission returns conflict", async () => { await pending(); assert.equal((await POST(request(valid))).status, 409) })
 test("five-per-24-hours limit is persisted and all statuses count", async () => {

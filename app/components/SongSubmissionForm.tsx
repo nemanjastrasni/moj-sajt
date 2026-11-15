@@ -1,11 +1,12 @@
 "use client"
 
 import { useI18n } from "@/app/components/UiText"
-import { useMemo, useState, type FormEvent } from "react"
+import { useId, useMemo, useState, type FormEvent } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Check, Eye, Send, X } from "lucide-react"
 import SongSheet from "./SongSheet"
+import TabComposerButton from "./TabComposerButton"
 import { parseSongSheet } from "@/lib/chords/songSheet"
 import { submissionCategories, submissionExample, validateSubmission, type SubmissionInput } from "@/lib/submissions/validation"
 
@@ -17,6 +18,7 @@ export default function SongSubmissionForm({ reviewId, initial }: Props) {
   const { t, locale } = useI18n()
 
   const router = useRouter()
+  const lyricsId = useId()
   const [values, setValues] = useState(initial ?? empty)
   const [note, setNote] = useState("")
   const [accepted, setAccepted] = useState(Boolean(reviewId))
@@ -80,6 +82,7 @@ export default function SongSubmissionForm({ reviewId, initial }: Props) {
           <li>{t("Izaberi kategoriju, upisi tacan naziv izvodjaca ili grupe i naziv pesme.")}</li>
           <li>{t("Akorde pisi u posebnom redu iznad odgovarajuceg stiha. Razmacima ih postavi iznad reci na kojoj se menjaju; ne koristi crtice i tackice za poravnanje.")}</li>
           <li>{t("Strofe i refren odvoji praznim redom. Oznake poput [Strofa 1] i [Refren] stavi u zaseban red.")}</li>
+          <li>{t("Za tabulaturu koristi šest poravnatih redova žica. Dugme Dodaj tabulaturu pomaže da je sastaviš klikom.")}</li>
           <li>{t("Koristi oznake poput C, Am, F#, Bb, E7/B ili E(#9). Ne ubacuj reklame, linkove, HTML ili dupliran tekst.")}</li>
           <li>{t("Salji samo sadrzaj za koji imas pravo da ga podelis. Proveri da pesma vec nije na sajtu.")}</li>
           <li>{t("Najvise 5 predloga za 24 sata. Administrator pregleda i po potrebi ispravlja svaki predlog pre objave.")}</li>
@@ -87,13 +90,14 @@ export default function SongSubmissionForm({ reviewId, initial }: Props) {
         <pre className="max-w-full overflow-x-auto bg-black/30 p-3 font-mono text-sm text-gray-200">{locale === "en" ? "[Verse 1]\nG               D\nYour first line of lyrics\nEm              C\nYour second line of lyrics\n\n[Chorus]\nC       D       G\nYour chorus lyrics" : submissionExample}</pre>
       </details>
 
-      <label className="block min-w-0 space-y-2"><span>{t("Tekst sa akordima")}</span>
-        <textarea required maxLength={40000} rows={18} wrap="off" spellCheck={false} autoCapitalize="off" autoCorrect="off"
+      <label className="block min-w-0 space-y-2"><span>{t("Tekst sa akordima / tabulatura")}</span>
+        <textarea id={`submission-lyrics${lyricsId}`} required maxLength={40000} rows={18} wrap="off" spellCheck={false} autoCapitalize="off" autoCorrect="off"
           aria-describedby="submission-rules submission-length" value={values.lyrics} onChange={event => change("lyrics", event.target.value)}
           className={field + " resize-y overflow-x-auto font-mono leading-7"} style={{ tabSize: 4, letterSpacing: 0 }} />
       </label>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <span id="submission-length" className="text-sm text-gray-400">{t("{count} / 40.000 znakova", { count: values.lyrics.length.toLocaleString(locale === "en" ? "en" : "sr-Latn") })}</span>
+        <TabComposerButton textareaId={`submission-lyrics${lyricsId}`} value={values.lyrics} onChange={lyrics => change("lyrics", lyrics)} maxLength={40000} disabled={busy} />
         <button type="button" aria-expanded={preview} aria-controls="submission-preview" onClick={() => setPreview(value => !value)} className="ui-button"><Eye aria-hidden="true" />{preview ? t("Sakrij pregled") : t("Pregled rasporeda")}</button>
       </div>
       {preview && <section id="submission-preview" aria-label={t("Pregled pesme")} className="min-w-0 border-y border-gray-700 py-6">

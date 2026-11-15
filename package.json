@@ -90,7 +90,8 @@
     "test:discography": "node --test scripts/test-discography-sections.cjs scripts/test-finding-status.cjs scripts/test-admin-catalog-review.cjs",
     "test:artist-merge": "node --test scripts/test-artist-merge.cjs scripts/test-artist-merge-routes.cjs scripts/test-artist-merge-failure.cjs",
     "test:artist-merge-db": "node scripts/test-artist-merge-db.cjs",
-    "test:music-share": "node --test scripts/test-music-share.cjs scripts/test-music.cjs"
+    "test:music-share": "node --test scripts/test-music-share.cjs scripts/test-music.cjs",
+    "test:tab-composer": "node --test scripts/test-tab-composer.cjs scripts/test-submissions.cjs scripts/test-admin-songs.cjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
