@@ -1,0 +1,4 @@
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 1rem; max-width: 52rem; margin-block: 1.5rem; }
+.chord { min-width: 0; display: flex; flex-direction: column; align-items: center; }
+.chord figure { width: 100%; max-width: 11rem; }
+.chord a { display: flex; align-items: center; justify-content: center; min-height: 44px; text-align: center; text-decoration: underline; text-underline-offset: .2em; font-size: .9rem; }

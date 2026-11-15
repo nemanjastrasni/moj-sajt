@@ -3,8 +3,10 @@ import { CHORD_ROOTS } from "@/lib/seo/catalog"
 import UiText from "@/app/components/UiText"
 import Link from "next/link"
 import styles from "@/app/components/CatalogGuide.module.css"
+import BasicGuitarChords from "@/app/components/BasicGuitarChords"
+import GuideText from "@/app/components/GuideText"
 
-export const metadata = publicPageMetadata("Akordi za gitaru – Dijagrami i hvatovi", "Pregled akorda za gitaru po osnovnom tonu. Pronađi durske, molske i druge hvatove sa dijagramima.", "/akordi")
+export const metadata = publicPageMetadata("Gitarski akordi – Dijagrami i osnovni hvatovi", "Gitarski akordi Em, Am, C, G, D, Dm, E i A sa dijagramima. Nauči oznake žica i pragova, pronađi druge hvatove i pesme za vežbanje.", "/akordi")
 
 export default function AkordiPage() {
   const roots = CHORD_ROOTS
@@ -13,10 +15,23 @@ export default function AkordiPage() {
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6"><UiText text="Akordi za gitaru" /></h1>
       <div className={styles.guide}>
-        <p><UiText text="Izaberi osnovni ton da pronađeš dijagrame hvatova. Na stranici jednog tona nalaze se durski, molski i drugi akordi koji počinju tim tonom." /></p>
+        <p><GuideText text={{ sr: "Pronađi gitarske akorde i njihove hvatove. Počni od osnovnih dijagrama ili izaberi ton za pregled drugih oblika.", en: "Find guitar chords and their shapes. Start with the basic diagrams or choose a root note to browse other shapes." }} /></p>
+        <nav className={styles.links} aria-label="Pregled akorda">
+          <a href="#osnovni-akordi"><GuideText text={{ sr: "Osnovni hvatovi", en: "Basic shapes" }} /></a>
+          <a href="#svi-akordi"><GuideText text={{ sr: "Akordi po osnovnom tonu", en: "Chords by root note" }} /></a>
+          <Link href="/pesme" prefetch={false}><GuideText text={{ sr: "Pesme sa akordima", en: "Songs with chords" }} /></Link>
+        </nav>
       </div>
-
-      <div className="grid grid-cols-4 gap-4">
+      <section className={styles.guide} aria-labelledby="osnovni-akordi">
+        <h2 id="osnovni-akordi"><GuideText text={{ sr: "Osnovni akordi za gitaru", en: "Basic guitar chords" }} /></h2>
+        <p><GuideText text={{ sr: "Najdeblja žica je levo. X: ne sviraš žicu; 0: prazna žica; tačka: mesto pritiska.", en: "The thickest string is on the left. X: omit the string; 0: open string; dot: fretted position." }} /></p>
+        <BasicGuitarChords />
+        <p><GuideText text={{ sr: "Primeri su za standardno štimovanje E–A–D–G–B–E. Brojevi ispod mreže označavaju žice; niz ispod dijagrama pokazuje pragove od šeste do prve žice.", en: "These examples use standard E–A–D–G–B–E tuning. Numbers below the grid identify strings; the sequence below each diagram lists frets from string 6 to string 1." }} /></p>
+        <p><GuideText text={{ sr: "Ovo je po jedan mogući hvat svakog akorda. Za druge oblike otvori odgovarajući osnovni ton. Najpre proveri žice pojedinačno, zatim vežbaj prelaz između dva hvata i primeni ih u pesmi.", en: "Each example shows one possible shape. Open its root note for other shapes. Check each string separately, then practise changing between two chords and apply them to a song." }} /></p>
+      </section>
+      <section aria-labelledby="svi-akordi" className={styles.guide}>
+      <h2 id="svi-akordi"><GuideText text={{ sr: "Pregled akorda po osnovnom tonu", en: "Browse chords by root note" }} /></h2>
+      <div className="grid grid-cols-3 gap-4 sm:grid-cols-4">
         {roots.map((r) => (
           <a
             key={r}
@@ -27,6 +42,7 @@ export default function AkordiPage() {
           </a>
         ))}
       </div>
+      </section>
       <section className={styles.guide} aria-labelledby="reading-chords">
         <h2 id="reading-chords"><UiText text="Kako se čitaju oznake akorda?" /></h2>
         <p><UiText text="Slovo označava osnovni ton: C je C-dur, a dodatak m označava mol, kao u Am ili Dm. Znak # povisuje ton za polustepen. Brojevi i druge oznake, poput 7, maj7 i sus4, označavaju drugačiji sastav akorda." /></p>

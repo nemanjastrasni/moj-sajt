@@ -21,6 +21,7 @@ import { biographyText, hasBiographyContent } from "@/lib/biographies/catalog"
 import UiText from "@/app/components/UiText"
 import Link from "next/link"
 import MusicButton from "@/app/components/MusicButton"
+import { normalizeDiscography } from "@/lib/discography"
 
 function cirToLat(text: string) {
   const map: Record<string, string> = {
@@ -48,6 +49,7 @@ export default async function BiographyPage({ params }: { params: Promise<{ cate
   if (!artistData) { await redirectMergedArtist(category, artistSlug, "bio"); notFound() }
   const image = getArtistImage(artistData)
   const biography = biographyText(artistData.bio) || biographyText(artistData.bioShort)
+  const hasDiscography = normalizeDiscography(artistData.discography).length > 0
 
   return (
     <div className={styles.page}>
@@ -57,11 +59,11 @@ export default async function BiographyPage({ params }: { params: Promise<{ cate
       <header className={styles.biographyHero}>
         <div className={styles.biographyPhoto}><ArtistImage src={image} name={artistData.name} variant="portrait" priority /><ArtistPhotoCredit image={image} /></div>
         <div className={styles.biographyIntro}>
-          <p className={styles.eyebrow}><UiText text="Biografija i diskografija" /></p>
+          <p className={styles.eyebrow}><UiText text={biography ? hasDiscography ? "Biografija i diskografija" : "Biografija" : hasDiscography ? "Diskografija" : "Profil izvođača"} /></p>
           <h1>{artistData.name}</h1>
           <nav aria-label={artistData.name} className={styles.biographyLinks}>
             {biography && <a href="#biografija"><UiText text="Biografija" /></a>}
-            <a href={`#discography-${artistData.id}`}><UiText text="Diskografija" /></a>
+            {hasDiscography && <a href={`#discography-${artistData.id}`}><UiText text="Diskografija" /></a>}
             <Link href={`/pesme/${artistData.category}/${artistData.slug}`}><UiText text="Pesme" /></Link>
           </nav>
         </div>

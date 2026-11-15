@@ -15,7 +15,7 @@ import guide from "./components/CatalogGuide.module.css"
 import GuideText from "./components/GuideText"
 import intro from "./components/HomeIntroduction.module.css"
 
-const homeTitle = `${SITE_NAME} – Akordi za gitaru i tekstovi pesama`
+const homeTitle = `Akordi za gitaru i tekstovi pesama | ${SITE_NAME}`
 const homeMetadata = publicPageMetadata(homeTitle, "Akordi za gitaru i tekstovi zabavnih, narodnih i stranih pesama. Pronađi pesmu, promeni tonalitet i sačuvaj svoj repertoar u plejlisti.", "/")
 
 export const metadata = { ...homeMetadata, title: { absolute: homeTitle } }
@@ -30,6 +30,11 @@ export default async function HomePage() {
       <header className={intro.intro}>
         <h1><UiText text="Akordi za gitaru i tekstovi pesama" /></h1>
         <p><GuideText text={{ sr: "Pronađi pesmu za gitaru, pogledaj hvatove i sastavi repertoar za vežbanje. Na jednom mestu su i biografije, diskografije i muzičke liste sa YouTube snimcima.", en: "Find a guitar song, check chord shapes and build a practice repertoire. You can also explore artist biographies, discographies and music lists with YouTube recordings." }} /></p>
+        <nav className={guide.links} aria-label="Pesme i gitarski akordi">
+          <Link href="/pesme" prefetch={false}><GuideText text={{ sr: "Pesme sa akordima", en: "Songs with chords" }} /></Link>
+          <Link href="/akordi" prefetch={false}><GuideText text={{ sr: "Gitarski akordi i hvatovi", en: "Guitar chords and shapes" }} /></Link>
+          <Link href="/plejliste/beginner" prefetch={false}><GuideText text={{ sr: "Lake pesme za gitaru", en: "Easy guitar songs" }} /></Link>
+        </nav>
       </header>
 
       <HomeRepertoire />

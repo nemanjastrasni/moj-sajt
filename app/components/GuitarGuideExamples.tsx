@@ -1,7 +1,7 @@
 import GuideText from "./GuideText"
 import styles from "./GuitarGuides.module.css"
 
-function ChordDiagram({ name, frets }: { name: string; frets: number[] }) {
+export function GuideChordDiagram({ name, frets }: { name: string; frets: readonly number[] }) {
   return <figure className={styles.diagram}>
     <figcaption>{name}</figcaption>
     <svg viewBox="0 0 180 220" role="img" aria-label={`${name}: ${frets.map(fret => fret < 0 ? "X" : fret).join(" ")}`}>
@@ -18,7 +18,7 @@ function ChordDiagram({ name, frets }: { name: string; frets: number[] }) {
 }
 
 export default function GuitarGuideExamples({ kind }: { kind: "diagrams" | "practice" | "capo" }) {
-  if (kind === "diagrams") return <div className={styles.diagrams}><ChordDiagram name="Em" frets={[0, 2, 2, 0, 0, 0]} /><ChordDiagram name="Am" frets={[-1, 0, 2, 2, 1, 0]} /></div>
+  if (kind === "diagrams") return <div className={styles.diagrams}><GuideChordDiagram name="Em" frets={[0, 2, 2, 0, 0, 0]} /><GuideChordDiagram name="Am" frets={[-1, 0, 2, 2, 1, 0]} /></div>
   if (kind === "practice") return <div className={styles.example}>
     <p><strong><GuideText text={{ sr: "Vežba u 4/4: jedan trzaj na početku svakog takta", en: "4/4 exercise: one strum at the start of each bar" }} /></strong></p>
     <div className={styles.bars}>{["Em", "Am", "Em", "Am"].map((chord, index) => <div className={styles.bar} key={index}><strong>{chord}</strong><span>1 · 2 · 3 · 4</span></div>)}</div>
