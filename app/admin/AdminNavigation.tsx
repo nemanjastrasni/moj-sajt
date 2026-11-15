@@ -7,6 +7,7 @@ import { useI18n } from "@/app/components/UiText"
 
 const items = [
   { href: "/admin", label: "Pregled", icon: LayoutDashboard },
+  { href: "/admin/analitika", label: "Analiza korišćenja", icon: LayoutDashboard },
   { href: "/admin/songs", label: "Pesme", icon: Music2 },
   { href: "/admin/artists", label: "Izvođači", icon: Mic2 },
   { href: "/admin/prijave", label: "Prijave grešaka", icon: Flag },

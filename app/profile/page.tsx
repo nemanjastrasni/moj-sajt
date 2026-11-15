@@ -2,6 +2,7 @@ import UiText from "@/app/components/UiText"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { EngagementPreference } from "@/app/components/Engagement"
 import ProfileClient from "./ProfileClient"
 import GoogleAccountLink from "@/app/components/GoogleAccountLink"
 import { getGoogleCredentials } from "@/lib/auth/google"
@@ -38,5 +39,6 @@ if (!user) {
   return <>
     {getGoogleCredentials() && <div className="mx-auto max-w-xl px-10 pt-6"><GoogleAccountLink linked={accounts.length > 0} /></div>}
     <ProfileClient user={profile} />
+    <EngagementPreference />
   </>
 }

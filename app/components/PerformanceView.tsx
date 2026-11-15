@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Maximize, Minimize, Minus, Pause, Play, Plus
 import { parseSongSheet } from "@/lib/chords/songSheet"
 import type { PerformanceSong } from "@/lib/performance/model"
 import { performanceSwipeDirection } from "@/lib/performance/swipe"
+import { useEngagement } from "./Engagement"
 import SongSheet from "./SongSheet"
 import FavoriteTransposeStatus from "./FavoriteTransposeStatus"
 import MetronomeButton from "./MetronomeButton"
@@ -19,6 +20,8 @@ import SongDisplayMode from "./SongDisplayMode"
 type KeyControls = { transpose: number; phase: string; error: string; controlsDisabled: boolean; change: (value: number | ((current: number) => number)) => void; reload: () => Promise<void> }
 type Props = { song: PerformanceSong | null; controls: KeyControls; capoControl?: SongCapo; initialCapo?: { id: string; fret: number }; playlistId?: string; settingsTools?: ReactNode; leaveGuard?: () => boolean | Promise<boolean>; close: () => void; loading?: boolean; error?: string; retry?: () => void; previous?: () => void; next?: () => void; position?: number; total?: number; name?: string; displayMode?: { lyricsOnly: boolean; change: (value: boolean) => void } }
 export default function PerformanceView({ song, controls, capoControl, initialCapo, playlistId, settingsTools, leaveGuard, close, loading = false, error = "", retry, previous, next, position, total, name, displayMode }: Props) {
+  const recordUsage = useEngagement()?.record
+  useEffect(() => { if (playlistId && song?.id && !loading && !error) recordUsage?.({kind:"performance",playlistId,songId:song.id}) }, [playlistId,song?.id,loading,error,recordUsage])
   const { t } = useI18n(), dialog = useRef<HTMLDialogElement>(null), screen = useRef<HTMLDivElement>(null), scroll = useRef<HTMLDivElement>(null)
   const [fullscreen, setFullscreen] = useState(false), [notice, setNotice] = useState(""), [settings, setSettings] = useState(false)
   const [controlsOpen, setControlsOpen] = useState(false), controlsId = useId()

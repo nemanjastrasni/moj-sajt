@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { useEngagement } from "./Engagement"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -36,6 +37,9 @@ type Props = {
 
 export default function SongClient({ song, adminTools, performanceHref, playlistId, songVersion, startPerformance = false }: Props) {
   const { t } = useI18n(), router = useRouter()
+  const engagement = useEngagement()
+  const recordUsage = engagement?.record
+  useEffect(() => { if (playlistId) recordUsage?.({kind:"playlist_song",playlistId,songId:song.id}) }, [playlistId,song.id,recordUsage])
   const [performance, setPerformance] = useState(startPerformance), [lyricsOnly, setLyricsOnly] = useState(false)
   const original = useSongKey(song.id), playlistSettings = usePlaylistSongSettings(playlistId, song.id)
   const controls = playlistId ? playlistSettings : original, { transpose } = controls

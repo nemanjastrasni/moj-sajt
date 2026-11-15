@@ -1,5 +1,6 @@
 "use client"
 
+import { useEngagement } from "./Engagement"
 import Link from "next/link"
 import { useEffect,useRef,useState } from "react"
 import { Pause,Play,RefreshCw,Shuffle,SkipBack,SkipForward } from "lucide-react"
@@ -13,6 +14,8 @@ export default function YouTubeDock(){
   const music=useMusic(),queue=music.queue!,{t}=useI18n(),mount=useRef<HTMLDivElement>(null),player=useRef<YouTubePlayer|null>(null)
   const current=queue.list.items.find(item=>item.id===queue.currentId)!,index=queue.list.items.indexOf(current)
   const [ready,setReady]=useState(0),[retry,setRetry]=useState(0),[phase,setPhase]=useState("loading"),[notice,setNotice]=useState(""),[title,setTitle]=useState("")
+  const recordUsage=useEngagement()?.record
+  useEffect(()=>{if(phase==="playing")recordUsage?.({kind:"music_play",playlistId:queue.list.id})},[phase,queue.list.id,recordUsage])
   const state=useRef({music,current,index})
   useEffect(()=>{state.current={music,current,index}},[music,current,index])
   useEffect(()=>{

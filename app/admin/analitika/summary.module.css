@@ -1,0 +1,12 @@
+.summary { display: grid; gap: 20px; min-width: 0; margin-top: 20px; }
+.summary p { line-height: 1.7; overflow-wrap: anywhere; margin: 0; }
+.summary h2 { font-size: 1.15rem; font-weight: 700; }
+.summary :global(.admin-stats) { margin: 0; }
+.summary :global(.admin-stats strong) { font-size: clamp(20px, 3vw, 32px); overflow-wrap: anywhere; }
+.table { max-width: 100%; overflow-x: auto; border: 1px solid var(--control-line); border-radius: 8px; }
+.table table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table caption { text-align: left; padding: 12px; font-weight: 600; }
+.table th, .table td { text-align: left; padding: 10px; border-top: 1px solid var(--control-line); overflow-wrap: anywhere; }
+.table td { font-variant-numeric: tabular-nums; }
+.table th:not(:first-child), .table td { white-space: nowrap; overflow-wrap: normal; }
+.table tbody th { font-weight: 400; }
