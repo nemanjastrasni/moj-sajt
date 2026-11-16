@@ -3,7 +3,7 @@ import "./theme.css"
 import "./controls.css"
 import Menu from "@/app/components/Menu"
 import { Poppins } from "next/font/google"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import Providers from "./providers"
 import { THEME_INIT_SCRIPT } from "@/lib/theme"
 import { LOCALE_INIT_SCRIPT } from "@/lib/i18n"
@@ -12,6 +12,7 @@ import MusicWorkspace from "@/app/components/MusicWorkspace"
 import Link from "next/link"
 import HeaderSearch from "@/app/components/HeaderSearch"
 import { SITE_NAME, SITE_URL } from "@/lib/seo/site"
+import GuideText from "@/app/components/GuideText"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -22,6 +23,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  appleWebApp: { capable: true, title: SITE_NAME, statusBarStyle: "default" },
   title: {
     default: `${SITE_NAME} – Akordi i tekstovi pesama`,
     template: `%s | ${SITE_NAME}`,
@@ -29,6 +31,7 @@ export const metadata: Metadata = {
   description:
     "Pesme sa akordima, lične plejliste, capo, PDF pesmarice, biografije i diskografije izvođača.",
 }
+export const viewport: Viewport = { themeColor: "#111111" }
 export default function RootLayout({
   children,
 }: {
@@ -54,6 +57,7 @@ export default function RootLayout({
           <footer className="mx-auto max-w-6xl px-4 pb-8 text-xs text-gray-400">
             <Link href="/kontakt" className="underline underline-offset-2"><UiText text="Kontakt" /></Link>
             {" · "}<Link href="/vodici" className="underline underline-offset-2"><UiText text="Vodiči za gitaru" /></Link>
+            {" · "}<Link href="/aplikacija" prefetch={false} className="underline underline-offset-2"><GuideText text={{ sr: "Aplikacija za telefon", en: "Mobile app" }} /></Link>
             {" · "}<Link href="/o-nama" className="underline underline-offset-2"><UiText text="O nama" /></Link>
             {" · "}<Link href="/prijava-povrede" className="underline underline-offset-2"><UiText text="Prijava povrede prava" /></Link>
             {" · "}

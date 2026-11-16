@@ -7,7 +7,7 @@ import { signOut, useSession } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
 import { publicPathname } from "@/lib/navigation/pathname"
 import type { Session } from "next-auth"
-import { BookOpen, ClipboardList, FilePlus2, Guitar, Headphones, House, ListMusic, LogIn, LogOut, Mail, Menu as MenuIcon, Music2, Shield, UserRound, X } from "lucide-react"
+import { BookOpen, ClipboardList, FilePlus2, Guitar, Headphones, House, ListMusic, LogIn, LogOut, Mail, Menu as MenuIcon, Music2, Shield, Smartphone, UserRound, X } from "lucide-react"
 import { useI18n } from "./UiText"
 import { HEARTBEAT_INTERVAL_MS, PRESENCE_EVENT, validCounts, type PresenceCounts } from "@/lib/presence/model"
 import BackButton from "./BackButton"
@@ -16,6 +16,7 @@ import LanguageSelect from "./LanguageSelect"
 import TunerButton from "./TunerButton"
 import MetronomeButton from "./MetronomeButton"
 import BrandSlogan from "./BrandSlogan"
+import GuideText from "./GuideText"
 
 const categories = [
   { href: "/pesme/narodne", label: "Narodne" },
@@ -191,6 +192,7 @@ function HeaderNavigation({ session, status, pathname, online }: {
             {categories.map(category => <Link key={category.href} href={category.href} prefetch={false} onClick={close} className="mobile-menu-link" aria-current={current(category.href) ? "page" : undefined}>{t(category.label)}</Link>)}
           </div>
         </nav>
+        <Link href="/aplikacija" prefetch={false} onClick={close} className="mobile-menu-link" aria-current={current("/aplikacija") ? "page" : undefined}><Smartphone aria-hidden="true" /><GuideText text={{ sr: "Aplikacija za telefon", en: "Mobile app" }} /></Link>
         <section className="mobile-account" aria-labelledby={id + "-account-heading"}>
           <h2 id={id + "-account-heading"}>{t("Korisnicki meni")}</h2>
           {!session ? <button type="button" className="mobile-menu-link" disabled={status === "loading"} onClick={login}><LogIn aria-hidden="true" /><span>{t(status === "loading" ? "Proveravam..." : "Prijavi se")}</span></button> : <>
