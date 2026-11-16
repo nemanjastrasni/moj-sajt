@@ -8,6 +8,7 @@ import { catalogPage, catalogPageNumber } from "@/lib/playlists/catalog-server"
 import { isPublicCategory, routePath } from "@/lib/seo/site"
 import { publicPageMetadata } from "@/lib/seo/metadata"
 import { getCategoryLabel } from "@/lib/categories"
+import { playlistCatalogMetadata } from "@/lib/seo/playlistContent"
 
 export const dynamic = "force-dynamic"
 type Props = { params: Promise<{ id: string }>; searchParams?: Promise<Record<string, string | string[] | undefined>> }
@@ -22,9 +23,9 @@ export async function generateMetadata({ params, searchParams }: Props) {
   const canonicalQuery: Record<string, string> = {}
   if (current > 1) canonicalQuery.page = String(current)
   if (category) canonicalQuery.category = category
-  const label = entry.title + (category ? " – " + getCategoryLabel(category) : "")
+  const copy = playlistCatalogMetadata(entry, category ? getCategoryLabel(category) : null, current)
   return {
-    ...publicPageMetadata(label + " – Pesme za gitaru" + (current > 1 ? " – Strana " + current : ""), `Izbor pesama za gitaru: ${label}. Akordi, tekstovi i procena težine sviranja.`, routePath("plejliste", id), { canonicalQuery }),
+    ...publicPageMetadata(copy.title, copy.description, routePath("plejliste", id), { canonicalQuery }),
     ...(!total ? { robots: { index: false, follow: true } } : {}),
   }
 }

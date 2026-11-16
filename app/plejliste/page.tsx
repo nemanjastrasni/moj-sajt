@@ -29,6 +29,7 @@ export default function PlaylistsPage() {
       {["domace", "strane", "narodne"].map(slug => <Link key={slug} className={styles.button} href={`/plejliste/${slug}`}><UiText text={catalogEntries.find(entry => entry.slug === slug)!.title} /></Link>)}
     </div></section>
     <section className={styles.band}><h2><UiText text="Izbor pesama" /></h2><div className={styles.actions}>
+      <Link className={styles.button} href="/plejliste/beginner" prefetch={false}><GuideText text={{ sr: "Lake pesme za gitaru za početnike", en: "Easy guitar songs for beginners" }} /></Link>
       <Link className={styles.button} href="/plejliste/pesme-koje-znam"><UiText text="Pesme koje mogu da sviram" /></Link>
       {["domace", "strane", "narodne"].map(slug => <Link className={styles.button} key={slug} href={`/top-50/${slug}`}><UiText text={{ domace: "Top 50 zabavnih", strane: "Top 50 stranih", narodne: "Top 50 narodnih" }[slug]!} /></Link>)}
     </div></section>
