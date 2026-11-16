@@ -37,18 +37,6 @@ export default async function CategoryPage(
 
   return (
   <div className={styles.page}>
-      <h1 className={styles.heading}>
-        <GuideText text={copy.heading} />
-      </h1>
-      <div className={guide.guide}>
-        <p><GuideText text={copy.intro} /></p>
-        <nav className={guide.links} aria-label="Pesme i vežbanje">
-          <Link href={`/plejliste/${category}`} prefetch={false}><GuideText text={{ sr: "Izbor pesama za vežbanje", en: "Songs for practice" }} /></Link>
-          <Link href="/akordi" prefetch={false}><GuideText text={{ sr: "Dijagrami i oznake akorda", en: "Chord diagrams and symbols" }} /></Link>
-          <Link href="/vodici" prefetch={false}><GuideText text={{ sr: "Uputstva za gitaru i plejliste", en: "Guitar and playlist guides" }} /></Link>
-        </nav>
-      </div>
-
       <nav className={styles.letters} aria-label="A-Z">
 
         {letters.map((letter)=>(
@@ -62,6 +50,18 @@ export default async function CategoryPage(
 
       </nav>
       <ArtistMosaic artists={artists} category={category} />
+
+      <h1 className={styles.heading}>
+        <GuideText text={copy.heading} />
+      </h1>
+      <div className={guide.guide}>
+        <p><GuideText text={copy.intro} /></p>
+        <nav className={guide.links} aria-label="Pesme i vežbanje">
+          <Link href={`/plejliste/${category}`} prefetch={false}><GuideText text={{ sr: "Izbor pesama za vežbanje", en: "Songs for practice" }} /></Link>
+          <Link href="/akordi" prefetch={false}><GuideText text={{ sr: "Dijagrami i oznake akorda", en: "Chord diagrams and symbols" }} /></Link>
+          <Link href="/vodici" prefetch={false}><GuideText text={{ sr: "Uputstva za gitaru i plejliste", en: "Guitar and playlist guides" }} /></Link>
+        </nav>
+      </div>
     </div>
   )
 }

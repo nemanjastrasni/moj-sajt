@@ -14,9 +14,23 @@ identitete, adrese i kontrolne vrednosti, bez tekstova pesama ili korisničkih
 podataka. `lib/seo/exact-song-redirects.json` sadrži 299 odgovarajućih 308
 preusmeravanja koja Next.js učitava pri buildu.
 
-**Još nije obrisana nijedna pesma i deploy nije pokrenut.** Preusmeravanja
-moraju prvo biti objavljena: tek onda se uklanja drugi zapis. U suprotnom bi
-stari linkovi postali 404, što bi pogoršalo SEO.
+**Čišćenje je završeno 16. novembra 2026.** Posle potvrde svih 299 već
+objavljenih preusmeravanja, svežeg šifrovanog backupa i ponovnog poređenja
+sadržaja uklonjeno je 299 duplikata u jednoj uspešno potvrđenoj transakciji.
+Broj pesama je smanjen sa **9.411 na 9.112**. Nije pokrenut novi deploy.
+
+Završna nezavisna provera baze potvrđuje svih 299 zadržanih ID-jeva, jednake
+kontrolne vrednosti sadržaja i metapodataka, odsustvo svih uklonjenih ID-jeva,
+tri sačuvane veze iz plejlista i nula stavki plejlista bez postojeće pesme.
+Ponovljena HTTP provera uzorka starih URL-ova posle brisanja potvrđuje 308,
+ciljeve sa statusom 200 i očuvanje query parametara. Privatni dnevnik
+originalnih redova i potvrda COMMIT-a čuvaju se izvan repozitorijuma.
+
+Posle čišćenja proveren je i javni sitemap: svih 10 datoteka za pesme vraća
+200, sadrže ukupno 9.111 jedinstvenih URL-ova, svih 299 zadržanih ciljeva i
+nijedan od 299 uklonjenih izvora. Jedna nepotpuna pesma ostaje isključena
+postojećim uredničkim pravilom, zato se broj URL-ova razlikuje od broja
+redova u bazi.
 
 Tri para imaju jedan zapis u plejlisti. Taj ID ostaje, zajedno sa stavkom
 plejliste, redosledom, transpozicijom i capom. Ne prebacuju se niti brišu
@@ -45,6 +59,9 @@ privatnom dnevniku. Ovo čišćenje nije garant boljeg Google rangiranja.
   Backup nije kopiran na drugo mesto. Ključ se čuva odvojeno i ne ide u Git.
 
 ## Redosled primene
+
+Ovaj redosled je već izvršen. Ne pokretati isti plan ponovo: izvori su
+uklonjeni, pa ponovni check/apply treba da stane sa `MISSING_RECORD`.
 
 1. Pregledati i commitovati ovaj kod, pa korisnik pokreće deploy.
 2. Dok se čišćenje ne završi ne menjati ovih 299 parova. Stalna
@@ -76,8 +93,8 @@ privatnom dnevniku. Ovo čišćenje nije garant boljeg Google rangiranja.
    samo izvore. Promenjen sadržaj ili nova veza zaustavljaju celu turu.
    Proverava se da ciljni redovi i postojeće reference ostanu nepromenjeni.
 6. Proveriti broj pesama, stare URL-ove, pretragu, sitemap i tri postojeće
-   stavke plejlista. Pri nalazu od 9.411 zapisa očekuje se 9.112 nakon
-   uspešnog brisanja 299 duplikata. Javni keševi se osvežavaju po postojećem
+   stavke plejlista. Potvrđeno je 9.112 zapisa nakon uspešnog brisanja 299
+   duplikata iz prethodnih 9.411. Javni keševi se osvežavaju po postojećem
    TTL-u; privremeni stari link u keširanoj listi i dalje radi preko 308.
 
 Ako skripta prijavi neizvestan COMMIT ili nedostaje `result.json`, prvo
