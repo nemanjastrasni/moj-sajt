@@ -4,32 +4,40 @@ import UiText, { CategoryLabel } from "@/app/components/UiText"
 import MusicButton from "@/app/components/MusicButton"
 import GuideText from "@/app/components/GuideText"
 import guide from "@/app/components/CatalogGuide.module.css"
+import styles from "./page.module.css"
 
 const categories = [
-  { key: "domace", label: "Zabavne" },
-  { key: "strane", label: "Strane" },
-  { key: "narodne", label: "Narodne" },
+  { key: "domace", description: { sr: "Domaća i ex-Yu muzika", en: "Domestic and ex-Yu music" } },
+  { key: "strane", description: { sr: "Svetski muzičari i bendovi", en: "International musicians and bands" } },
+  { key: "narodne", description: { sr: "Narodna i folk muzika", en: "Folk music" } },
 ]
 
 export const metadata = publicPageMetadata("Biografije i diskografije izvođača", "Biografije muzičara i bendova, diskografije i albumi. Pregledaj izvođače po kategoriji i početnom slovu.", "/biografija")
 
 export default function BiografijePage() {
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 text-white">
-      <div className="mb-8 flex flex-wrap gap-3"><MusicButton /><Link href="/public-listening-playlists" className="ui-button"><UiText text="Javne muzicke liste" /></Link></div>
+    <div className={styles.page}>
+      <nav className={styles.categories} aria-labelledby="biography-categories">
+        <p id="biography-categories" className={styles.prompt}><GuideText text={{ sr: "Izaberi kategoriju", en: "Choose a category" }} /></p>
+        <ul className={styles.list}>
+          {categories.map((cat) => (
+            <li key={cat.key}>
+              <Link
+                href={`/biografija/${cat.key}`}
+                className={styles.card}
+              >
+                <span>
+                  <span className={styles.title}><CategoryLabel value={cat.key} /></span>
+                  <span className={styles.description}><GuideText text={cat.description} /></span>
+                </span>
+                <span className={styles.arrow} aria-hidden="true">→</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
-      <ul className="space-y-4 text-lg">
-        {categories.map((cat) => (
-          <li key={cat.key}>
-            <Link
-              href={`/biografija/${cat.key}`}
-              className="text-blue-400 hover:text-blue-300 hover:underline"
-            >
-              <CategoryLabel value={cat.key} />
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <div className="mb-8 flex flex-wrap gap-3"><MusicButton /><Link href="/public-listening-playlists" className="ui-button"><UiText text="Javne muzicke liste" /></Link></div>
 
       <h1 className="text-3xl font-bold mb-6">
         <GuideText text={{ sr: "Biografije i diskografije izvođača", en: "Artist biographies and discographies" }} />
