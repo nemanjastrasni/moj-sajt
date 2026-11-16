@@ -54,6 +54,23 @@ test('the public listening catalog belongs in the sitemap without authorizing pr
   assert.ok(fixture.calls.includes('/public-listening-playlists'))
   assert.equal(fixture.calls.some(path => path.startsWith('/listening-playlist')), false)
 })
+test('public guides and install instructions are allowed and checked without allowing private paths or query context', async () => {
+  const paths = ['/vodici', '/vodici/kako-se-citaju-akordi-za-gitaru', '/vodici/plejliste-za-gitaru-i-pdf-pesmarica', '/aplikacija']
+  for (const path of paths) assert.equal(publicPath(origin + path, origin), path)
+  for (const path of ['/aplikacija/private-id', '/aplikacija?userId=private', '/vodici?playlist=private', '/vodici/one#private', '/profile/guide', '/listening-playlist/private-id', '/plejliste/private-id']) assert.equal(publicPath(origin + path, origin), null)
+  const fixture = siteFixture({ '/sitemaps/pages.xml': map(['/', ...paths]) })
+  const result = await inspectSite({ origin, fetcher: fixture.fetcher, now })
+  assert.equal(result.status, 'healthy')
+  assert.equal(result.coverage.sitemapUrls, 7)
+  assert.ok(fixture.calls.includes('/vodici')); assert.ok(fixture.calls.includes('/aplikacija'))
+  assert.ok(fixture.calls.some(path => path.startsWith('/vodici/')))
+  for (const path of ['/plejliste', '/plejliste/beginner', '/plejliste/4-akorda', '/plejliste/acoustic']) assert.ok(fixture.calls.includes(path))
+  assert.ok(result.coverage.requests < 100)
+  const broken = siteFixture({ '/sitemaps/pages.xml': map(['/', ...paths]), '/aplikacija': new Response('Not found', { status: 404 }) })
+  const failure = await inspectSite({ origin, fetcher: broken.fetcher, now })
+  assert.equal(failure.status, 'critical')
+  assert.ok(failure.checks.some(check => check.code === 'page_http' && check.path === '/aplikacija' && check.httpStatus === 404))
+})
 test('robots allow/disallow rules use specificity rather than treating Allow slash as a bypass', () => {
   const source = 'User-agent: special\nDisallow: /\nUser-agent: *\nAllow: /\nDisallow: /pesme/\nAllow: /pesme/domace/'
   assert.equal(robotsAllows(source, '/pesme/strane/bend'), false)

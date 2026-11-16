@@ -15,6 +15,17 @@ test('unsafe, incomplete and inconsistent reports cannot be presented as verifie
  for(const override of [{databaseWrites:1},{sourceWrites:1},{origin:'https://user:secret@site.example'},{status:'healthy'},{finishedAt:'bad'},{checks:[{id:'check-1',level:'warning',code:'canonical',path:'/profile/private'}]}])assert.throws(()=>createPublishedReport({...fixture(),...override},context),/INVALID_MONITOR/)
  assert.throws(()=>createPublishedReport(fixture(),{runId:'not-numeric',attempt:1}))
 })
+test('public guide and application findings round-trip through the sanitized admin report',()=>{
+ for(const path of ['/vodici','/vodici/kako-se-citaju-akordi-za-gitaru','/aplikacija']){
+  const report=fixture();report.checks[0].path=path
+  const clean=createPublishedReport(report,context)
+  assert.equal(parsePublishedReport(clean).checks[0].path,path)
+ }
+ for(const path of ['/aplikacija/private-id','/vodici?userId=private','/profile/private']){
+  const report=fixture();report.checks[0].path=path
+  assert.throws(()=>createPublishedReport(report,context),/INVALID_MONITOR/)
+ }
+})
 test('a bounded preview keeps critical findings first and declares omitted findings',()=>{
  const report=fixture();report.status='critical';report.checks=Array.from({length:70},(_,i)=>({id:'check-'+(i+1),level:i===69?'critical':'warning',code:'canonical',path:'/pesme/domace/bend/pesma'}))
  const clean=createPublishedReport(report,context)
