@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { isPublicCategory } from "@/lib/seo/site"
 import Link from "next/link"
-import { prisma } from "@/lib/prisma"
+import { readTopSongs } from "@/lib/topSongsServer"
 import { playlistSongHref } from "@/lib/navigation/parent"
 
 export default async function Top50Page({
@@ -18,18 +18,7 @@ export default async function Top50Page({
     narodne: "Top 50 Narodnih",
   }
 
-  const songs = await prisma.song.findMany({
-    where: {
-      category,
-    },
-    orderBy: {
-      popularity: "desc",
-    },
-    take: 50,
-    include: {
-      artist: true,
-    },
-  })
+  const songs = await readTopSongs(category)
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10 text-white">

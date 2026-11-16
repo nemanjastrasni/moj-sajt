@@ -1,5 +1,5 @@
 import { publicPageMetadata } from "@/lib/seo/metadata"
-import { prisma } from "@/lib/prisma"
+import { readTopSongs } from "@/lib/topSongsServer"
 import Link from "next/link"
 import UiText from "@/app/components/UiText"
 import { playlistSongHref } from "@/lib/navigation/parent"
@@ -9,18 +9,7 @@ export const dynamic = "force-dynamic"
 export const metadata = publicPageMetadata("Top 50 stranih pesama sa akordima", "Izbor 50 stranih pesama prema broju pregleda na sajtu GitarAkordi. Akordi i tekstovi za gitaru.", "/top-50/strane")
 
 export default async function Page() {
-  const songs = await prisma.song.findMany({
-    where: {
-      category: "strane",
-    },
-    include: {
-      artist: true,
-    },
-    orderBy: {
-      popularity: "desc",
-    },
-    take: 50,
-  })
+  const songs = await readTopSongs("strane")
 
   return (
     <div style={{ padding: "40px" }}>
