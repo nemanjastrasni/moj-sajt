@@ -6,6 +6,7 @@ import { readCatalogReview, reviewSelection } from "@/lib/monitoring/catalog-rev
 import { readContentBacklog,backlogSelection } from "@/lib/monitoring/backlog"
 import ContentBacklog from "./ContentBacklog"
 import ActionHistory from "./ActionHistory"
+import ProcessMemory from "./ProcessMemory"
 import { readActionEvents,readFindingDecisions } from "@/lib/monitoring/actions"
 
 export const dynamic = "force-dynamic"
@@ -21,6 +22,7 @@ export default async function MonitorPage({ searchParams }: { searchParams: Prom
   return <section className="admin-page admin-monitor">
     <div className="admin-heading"><h1>Nadzor sajta</h1><a className="ui-button" href={MONITOR_WORKFLOW_URL} target="_blank" rel="noopener noreferrer"><ExternalLink aria-hidden="true" />GitHub Actions</a></div>
     <p className="admin-monitor-notice"><ShieldCheck aria-hidden="true" /><span>{monitorScheduleNotice(history)}</span></p>
+    <ProcessMemory />
     {latest && details && <MonitorFindings run={latest} details={details} />}
     <ContentBacklog data={backlog} selection={backlogSelection(params)} />
     <CatalogFindings review={review} selection={reviewSelection(params.oblast,params.strana,params.stanje)} decisions={decisions} currentSummary={currentSummary}/>

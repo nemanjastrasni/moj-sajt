@@ -5,6 +5,7 @@ const { renderToStaticMarkup } = require('react-dom/server')
 let allowed, authCalls, stored
 const original = Module._load, realFetch = global.fetch
 Module._load = function(request, parent, main) {
+  if (request.endsWith('.module.css')) return { __esModule: true, default: {} }
   if (request === 'next/navigation') return { useRouter:()=>({refresh:()=>{}}) }
   if (request === '@/lib/prisma') return { prisma: { artist:{findMany:async()=>[]},song:{findMany:async()=>[]},$queryRawUnsafe:async()=>[] } }
   if (request === '@/lib/adminSongs/server') return { requireSongAdmin: async () => { authCalls++; if (!allowed) throw Error('forbidden') } }
