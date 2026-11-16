@@ -27,16 +27,6 @@ export default async function HomePage() {
   return (
     <div className="w-full home-page">
       <StructuredData data={websiteData()} />
-      <header className={intro.intro}>
-        <h1><UiText text="Akordi za gitaru i tekstovi pesama" /></h1>
-        <p><GuideText text={{ sr: "Pronađi pesmu za gitaru, pogledaj hvatove i sastavi repertoar za vežbanje. Na jednom mestu su i biografije, diskografije i muzičke liste sa YouTube snimcima.", en: "Find a guitar song, check chord shapes and build a practice repertoire. You can also explore artist biographies, discographies and music lists with YouTube recordings." }} /></p>
-        <nav className={guide.links} aria-label="Pesme i gitarski akordi">
-          <Link href="/pesme" prefetch={false}><GuideText text={{ sr: "Pesme sa akordima", en: "Songs with chords" }} /></Link>
-          <Link href="/akordi" prefetch={false}><GuideText text={{ sr: "Gitarski akordi i hvatovi", en: "Guitar chords and shapes" }} /></Link>
-          <Link href="/plejliste/beginner" prefetch={false}><GuideText text={{ sr: "Lake pesme za gitaru", en: "Easy guitar songs" }} /></Link>
-        </nav>
-      </header>
-
       <HomeRepertoire />
 
       {/* HERO (NOVI) */}
@@ -109,9 +99,10 @@ export default async function HomePage() {
       <LatestSongs initialSongs={latest}/>
       <section className="mx-auto max-w-6xl px-6 py-6" aria-labelledby="home-song-guide">
         <div className={guide.guide}>
-          <h2 id="home-song-guide"><UiText text="Pesme sa akordima za gitaru" /></h2>
-          <p><UiText text="Pronađi pesmu po naslovu ili izvođaču, izaberi kategoriju i otvori zapis za sviranje. Uz pesme su dostupni promena tonaliteta, lične plejliste i izvoz PDF pesmarice." /></p>
-          <p><UiText text="Za početak izaberi lakše pesme ili pogledaj dijagrame akorda pre nego što sastaviš svoj repertoar." /></p>
+          <header className={intro.intro}>
+            <h1 id="home-song-guide"><UiText text="Akordi za gitaru i tekstovi pesama" /></h1>
+            <p><GuideText text={{ sr: "Pronađi pesmu po naslovu ili izvođaču, pogledaj hvatove i sastavi repertoar za vežbanje.", en: "Find a guitar song by title or artist, check chord shapes and build a practice repertoire." }} /></p>
+          </header>
           <nav className={guide.links} aria-labelledby="home-song-guide">
             <Link href="/vodici" prefetch={false}><UiText text="Vodiči za gitaru" /></Link>
             <Link href="/pesme" prefetch={false}><UiText text="Pronađi pesme sa akordima" /></Link>
