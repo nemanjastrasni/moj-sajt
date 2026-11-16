@@ -94,7 +94,8 @@
     "test:tab-composer": "node --test scripts/test-tab-composer.cjs scripts/test-submissions.cjs scripts/test-admin-songs.cjs",
     "test:engagement": "node --test scripts/test-engagement.cjs",
     "test:engagement-db": "node --test scripts/test-engagement-db.cjs",
-    "test:seo-discovery": "node --test scripts/test-seo-discovery.cjs scripts/test-guitar-guides.cjs scripts/test-seo-catalog.cjs scripts/test-seo-performance.cjs scripts/test-parser-performance.cjs scripts/test-song-search-review.cjs scripts/test-search-review-snapshots.cjs"
+    "test:seo-discovery": "node --test scripts/test-seo-discovery.cjs scripts/test-guitar-guides.cjs scripts/test-seo-catalog.cjs scripts/test-seo-performance.cjs scripts/test-parser-performance.cjs scripts/test-song-search-review.cjs scripts/test-search-review-snapshots.cjs",
+    "test:exact-song-duplicates": "node --test scripts/test-exact-song-duplicates.cjs scripts/test-catalog-maintenance.cjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",

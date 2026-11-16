@@ -1,10 +1,11 @@
 import type { NextConfig } from "next";
 import legacyRedirects from "./lib/seo/legacy-redirects.json";
+import exactSongRedirects from "./lib/seo/exact-song-redirects.json";
 import { domainRedirects } from "./lib/seo/domain.cjs";
 
 const nextConfig: NextConfig = {
   async redirects() {
-    return [...domainRedirects(process.env), ...legacyRedirects];
+    return [...domainRedirects(process.env), ...legacyRedirects, ...exactSongRedirects];
   },
   eslint: {
     ignoreDuringBuilds: true,
