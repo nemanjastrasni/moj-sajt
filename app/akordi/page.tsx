@@ -14,11 +14,6 @@ export default function AkordiPage() {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6"><UiText text="Akordi za gitaru" /></h1>
-      <section className={styles.guide} aria-labelledby="osnovni-akordi">
-        <h2 id="osnovni-akordi"><GuideText text={{ sr: "Osnovni akordi za gitaru", en: "Basic guitar chords" }} /></h2>
-        <p><GuideText text={{ sr: "Najdeblja žica je levo. X: ne sviraš žicu; 0: prazna žica; tačka: mesto pritiska.", en: "The thickest string is on the left. X: omit the string; 0: open string; dot: fretted position." }} /></p>
-        <BasicGuitarChords />
-      </section>
       <section aria-labelledby="svi-akordi" className={styles.guide}>
       <h2 id="svi-akordi"><GuideText text={{ sr: "Pregled akorda po osnovnom tonu", en: "Browse chords by root note" }} /></h2>
       <div className="grid grid-cols-3 gap-4 sm:grid-cols-4">
@@ -33,7 +28,12 @@ export default function AkordiPage() {
         ))}
       </div>
       </section>
+      <section className={styles.guide} aria-labelledby="osnovni-akordi">
+        <h2 id="osnovni-akordi"><GuideText text={{ sr: "Osnovni akordi za gitaru", en: "Basic guitar chords" }} /></h2>
+        <BasicGuitarChords />
+      </section>
       <div className={styles.guide}>
+        <p><GuideText text={{ sr: "Najdeblja žica je levo. X: ne sviraš žicu; 0: prazna žica; tačka: mesto pritiska.", en: "The thickest string is on the left. X: omit the string; 0: open string; dot: fretted position." }} /></p>
         <p><GuideText text={{ sr: "Pronađi gitarske akorde i njihove hvatove. Počni od osnovnih dijagrama ili izaberi ton za pregled drugih oblika.", en: "Find guitar chords and their shapes. Start with the basic diagrams or choose a root note to browse other shapes." }} /></p>
         <nav className={styles.links} aria-label="Pregled akorda">
           <a href="#osnovni-akordi"><GuideText text={{ sr: "Osnovni hvatovi", en: "Basic shapes" }} /></a>
