@@ -17,8 +17,9 @@ const promptEvent=(outcome='accepted')=>{const event=new Event('beforeinstallpro
 
 test('manifest launches the same origin without private context and allows landscape',async()=>{
  const m=manifest();assert.equal(m.id,'/');assert.equal(m.start_url,'/');assert.equal(m.scope,'/');assert.equal(m.display,'standalone');assert.equal(m.orientation,'any');assert.equal(m.prefer_related_applications,false)
- for(const n of [192,512]){const icon=m.icons.find(i=>i.sizes===`${n}x${n}`&&i.purpose==='any');assert.ok(icon);const info=await sharp(path.join(root,'public',icon.src)).metadata();assert.equal(info.width,n);assert.equal(info.height,n);assert.equal(info.format,'png')}
- const mask=m.icons.find(i=>i.purpose==='maskable');assert.ok(mask);const info=await sharp(path.join(root,'public',mask.src)).metadata(),stats=await sharp(path.join(root,'public',mask.src)).stats();assert.equal(info.width,512);assert.equal(info.height,512);assert.equal(stats.isOpaque,true)
+ const iconFile=icon=>path.join(root,'public',new URL(icon.src,'https://example.test').pathname)
+ for(const n of [192,512]){const icon=m.icons.find(i=>i.sizes===`${n}x${n}`&&i.purpose==='any');assert.ok(icon);const info=await sharp(iconFile(icon)).metadata();assert.equal(info.width,n);assert.equal(info.height,n);assert.equal(info.format,'png')}
+ const mask=m.icons.find(i=>i.purpose==='maskable');assert.ok(mask);const info=await sharp(iconFile(mask)).metadata(),stats=await sharp(iconFile(mask)).stats();assert.equal(info.width,512);assert.equal(info.height,512);assert.equal(stats.isOpaque,true)
 })
 test('unsupported browser has instructions and never invokes an invented installation prompt',async()=>{
  const c=createInstallController();await c.install();assert.equal(c.getSnapshot(),'unavailable')
