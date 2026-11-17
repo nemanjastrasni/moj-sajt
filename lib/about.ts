@@ -72,7 +72,7 @@ export const aboutSections = [
     "id": "sviranje",
     "title": "Prikaz za sviranje",
     "paragraphs": [
-      "Kontrole za prikaz, tonalitet, capo, skrolovanje, plejliste i PDF nalaze se iznad naslova pesme. Zup\u010danik otvara veli\u010dinu teksta i akorda, hvatove i brzinu skrolovanja. Meni sa tri ta\u010dke sadr\u017ei video i prijavu gre\u0161ke. Prikaz preko celog ekrana zavisi od podr\u0161ke pregleda\u010da.",
+      "Kontrole za prikaz, tonalitet, capo, skrolovanje, plejliste i PDF nalaze se iznad naslova pesme. Klikom na Play pokrećeš skrolovanje i otvaraš klizač brzine ispod komandi; klizač ostaje dostupan i kada pauziraš. Podešavanja prikaza otvaraju veličinu teksta i akorda i hvatove. Video i prijava greške imaju zasebnu dugmad. Prikaz preko celog ekrana zavisi od podrške pregledača.",
       "Iz plejliste prelazi direktno na prethodnu ili slede\u0107u pesmu. Opcija \u201eNastavi sviranje\u201c na po\u010detnoj strani vra\u0107a te na poslednje svirano na istom ure\u0111aju i u istom pregleda\u010du."
     ],
     "links": []

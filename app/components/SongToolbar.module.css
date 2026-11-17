@@ -2,6 +2,12 @@
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 0 0 14px; margin-bottom: 20px; border-bottom: 1px solid var(--theme-line); }
 .toolbar svg { width: 18px; height: 18px; flex-shrink: 0; }
 .icon { composes: ui-button from global; width: 44px; flex: 0 0 44px; padding: 0; }
+.scrollControls { flex: 0 0 100%; min-width: 0; padding: 10px 14px 4px; border: 1px solid var(--control-line); border-radius: 8px; background: var(--control-bg); color: var(--control-ink); }
+.scrollControls label { display: block; max-width: 520px; }
+.scrollControls label > span { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; line-height: 20px; }
+.scrollControls output { color: var(--control-muted); font-variant-numeric: tabular-nums; }
+.scrollControls input { display: block; width: 100%; min-width: 0; height: 44px; accent-color: var(--control-focus); cursor: pointer; }
+.scrollControls input:focus-visible { outline: 2px solid var(--control-focus); outline-offset: 2px; border-radius: 4px; }
 .videoToggle { composes: ui-button from global; flex: 0 0 auto; padding: 0 10px 0 0; gap: 0; }
 .videoMark { display: block; width: 44px; height: auto; flex: 0 0 44px; }
 .videoLabel { display: inline-flex; min-width: 40px; align-items: center; justify-content: center; }

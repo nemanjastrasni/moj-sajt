@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react"
 import { useEngagement } from "./Engagement"
 import Link from "next/link"
 import Image from "next/image"
@@ -47,6 +47,7 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
   const [showVideo, setShowVideo] = useState(false), [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [loadingVideo, setLoadingVideo] = useState(false), [videoError, setVideoError] = useState("")
   const [scrolling, setScrolling] = useState(false), [speed, setSpeed] = useState(1)
+  const [showScrollControls, setShowScrollControls] = useState(false), scrollControlsId = useId()
   const [textSize, setTextSize] = useState(18), [chordSize, setChordSize] = useState(18), [showDiagrams, setShowDiagrams] = useState(false)
   const videoRequest = useRef<AbortController | null>(null)
   const { title, artist } = song, lyrics = song.lyrics || song.content || ""
@@ -55,7 +56,14 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
   const usedChords = useMemo(() => getUsedChords(capo.lines).map(chord => transposeChordSymbol(chord, capo.shift)), [capo.lines, capo.shift])
   useEffect(() => {
     if (!scrolling) return
-    const timer = setInterval(() => window.scrollBy(0, speed * .2), 60)
+    // Keep fractional steps until a whole pixel is available: some browsers
+    // round each scrollBy call, which otherwise leaves speeds 1 and 2 still.
+    let remainder = 0
+    const timer = setInterval(() => {
+      remainder += speed * .2
+      const distance = Math.floor(remainder)
+      if (distance > 0) { window.scrollBy(0, distance); remainder -= distance }
+    }, 60)
     return () => clearInterval(timer)
   }, [scrolling, speed])
   useEffect(() => () => { videoRequest.current?.abort(); videoRequest.current = null }, [])
@@ -86,7 +94,7 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
         <button type="button" className={styles.icon} disabled={controls.controlsDisabled} aria-label={t("Originalni tonalitet")} title={t("Originalni tonalitet")} onClick={() => controls.change(0)}><RotateCcw /></button>
       </div>}
       {!lyricsOnly && <div className={styles.capo}><CapoControl dialog key={song.id} capo={capo} disabled={controls.controlsDisabled} /></div>}
-      <button type="button" className={styles.icon} aria-pressed={scrolling} aria-label={t(scrolling ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} title={t(scrolling ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} onClick={() => setScrolling(value => !value)}>{scrolling ? <Pause /> : <Play />}</button>
+      <button type="button" className={styles.icon} aria-pressed={scrolling} aria-controls={showScrollControls ? scrollControlsId : undefined} aria-label={t(scrolling ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} title={t(scrolling ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} onClick={() => { setShowScrollControls(true); setScrolling(value => !value) }}>{scrolling ? <Pause /> : <Play />}</button>
       <button type="button" className={styles.icon} disabled={controls.controlsDisabled} title={t("Rezim za sviranje")} aria-label={t("Rezim za sviranje")} onClick={async () => { if (performanceHref && !await playlistSettings.canLeave()) return; setScrolling(false); setShowVideo(false); if (performanceHref) router.push(performanceHref); else setPerformance(true) }}><Maximize /></button>
       <SongPlaylistButton key={song.id} songId={song.id} disabled={controls.controlsDisabled} settings={{ transpose, capo: capo.active ? capo.selected : null }} />
       <SongPdfButton song={{ id: song.id, title, artist, lyrics }} transpose={transpose} capo={capo.active ? capo.selected : null} disabled={controls.controlsDisabled} textSize={textSize} chordSize={chordSize} />
@@ -99,6 +107,9 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
       </button>
       {songVersion && <SongReportButton songId={song.id} songVersion={songVersion} title={title} artist={artist} transpose={transpose} />}
       <button type="button" className={styles.icon} title={t("Podesavanja prikaza")} aria-label={t("Podesavanja prikaza")} aria-haspopup="dialog" onClick={() => setPanel("settings")}><Settings2 /></button>
+      {showScrollControls && <div id={scrollControlsId} className={styles.scrollControls} data-song-scroll-controls>
+        <label><span>{t("Brzina skrolovanja")}<output>{speed}/10</output></span><input type="range" min="1" max="10" value={speed} aria-label={t("Brzina skrolovanja")} onChange={event => setSpeed(Number(event.target.value))} /></label>
+      </div>}
     </div>
     {playlistId && <PlaylistSettingsStatus controls={playlistSettings} />}
     <div className={styles.heading}><h1 translate="no">{title}</h1></div>
@@ -115,7 +126,6 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
     {panel === "settings" && <PlaylistDialog title="Podesavanja prikaza" close={() => setPanel(null)}><div className={styles.settings}>
       <label>{t("Velicina teksta")}<input type="range" min="14" max="32" value={textSize} aria-label={t("Velicina teksta")} onChange={event => setTextSize(Number(event.target.value))} /></label>
       {!lyricsOnly && <><label>{t("Velicina akorda")}<input type="range" min="14" max="32" value={chordSize} aria-label={t("Velicina akorda")} onChange={event => setChordSize(Number(event.target.value))} /></label><label className={styles.check}><input type="checkbox" checked={showDiagrams} onChange={event => setShowDiagrams(event.target.checked)} />{t("Prikazi hvatove akorda")}</label></>}
-      <label>{t("Brzina skrolovanja")}<input type="range" min="1" max="10" value={speed} aria-label={t("Brzina skrolovanja")} onChange={event => setSpeed(Number(event.target.value))} /></label>
     </div></PlaylistDialog>}
     {performance && <PerformanceView displayMode={{ lyricsOnly, change: setLyricsOnly }} playlistId={playlistId} song={{ id: song.id, title, artist, lyrics }} controls={controls} capoControl={capo} settingsTools={playlistId ? <PlaylistSettingsStatus controls={playlistSettings} /> : <></>} leaveGuard={playlistId ? playlistSettings.canLeave : undefined} close={() => setPerformance(false)} />}
   </div>
