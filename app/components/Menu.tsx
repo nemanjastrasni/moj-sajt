@@ -7,7 +7,7 @@ import { signOut, useSession } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
 import { publicPathname } from "@/lib/navigation/pathname"
 import type { Session } from "next-auth"
-import { BookOpen, ClipboardList, FilePlus2, Guitar, Headphones, House, ListMusic, LogIn, LogOut, Mail, Menu as MenuIcon, Music2, Shield, Smartphone, UserRound, X } from "lucide-react"
+import { BookOpen, ChevronDown, ChevronRight, ClipboardList, FilePlus2, Globe2, Guitar, Headphones, House, ListMusic, LogIn, LogOut, Mail, Menu as MenuIcon, MicVocal, Music2, Shield, Smartphone, UserRound, X } from "lucide-react"
 import { useI18n } from "./UiText"
 import { HEARTBEAT_INTERVAL_MS, PRESENCE_EVENT, validCounts, type PresenceCounts } from "@/lib/presence/model"
 import BackButton from "./BackButton"
@@ -19,9 +19,9 @@ import BrandSlogan from "./BrandSlogan"
 import GuideText from "./GuideText"
 
 const categories = [
-  { href: "/pesme/narodne", label: "Narodne" },
-  { href: "/pesme/domace", label: "Zabavne" },
-  { href: "/pesme/strane", label: "Strane" },
+  { href: "/pesme/narodne", label: "Narodne", icon: MicVocal },
+  { href: "/pesme/domace", label: "Zabavne", icon: Guitar },
+  { href: "/pesme/strane", label: "Strane", icon: Globe2 },
 ]
 const links = [
   { href: "/", label: "Home" },
@@ -132,15 +132,17 @@ function HeaderNavigation({ session, status, pathname, online }: {
     <div className="guitar-links">
       {items.filter(item => item.href !== "/").map((item, index) => <div key={item.href} className="guitar-item" style={{ "--step": index } as CSSProperties}>
         {item.href === "/pesme" ? <>
-          <button ref={songsButton} type="button" className="guitar-link" data-active={current(item.href) || undefined}
+          <button ref={songsButton} type="button" className="guitar-link song-menu-trigger" data-active={current(item.href) || undefined}
             aria-expanded={openPesme} aria-controls={openPesme ? id + "-categories" : undefined}
             onClick={() => { setOpenPesme(value => !value); setOpen(false) }}>
-            {t("Pesme")} <span aria-hidden="true" className="ml-1 text-xs">{openPesme ? "\u25b4" : "\u25be"}</span>
+            {t("Pesme")} <ChevronDown aria-hidden="true" className="song-menu-chevron" />
           </button>
-          {openPesme && <div id={id + "-categories"} className="guitar-dropdown left-0 top-full mt-1 w-40">
-            {categories.map(category => <Link key={category.href} href={category.href} prefetch={false} onClick={close}
-              aria-current={current(category.href) ? "page" : undefined} className="guitar-dropdown-link">
-              {t(category.label)}
+          {openPesme && <div id={id + "-categories"} className="song-category-menu">
+            <p className="song-category-heading">{t("Pesme")}</p>
+            {categories.map(({ href, label, icon: Icon }) => <Link key={href} href={href} prefetch={false} onClick={close}
+              aria-current={current(href) ? "page" : undefined} className="song-category-link">
+              <span className="song-category-icon"><Icon aria-hidden="true" /></span>
+              <span>{t(label)}</span><ChevronRight aria-hidden="true" className="song-category-arrow" />
             </Link>)}
           </div>}
         </> : <Link href={item.href} onClick={close} aria-current={current(item.href) ? "page" : undefined} className="guitar-link">
@@ -189,7 +191,7 @@ function HeaderNavigation({ session, status, pathname, online }: {
             })}
           </div>
           <div className="mobile-menu-categories">
-            {categories.map(category => <Link key={category.href} href={category.href} prefetch={false} onClick={close} className="mobile-menu-link" aria-current={current(category.href) ? "page" : undefined}>{t(category.label)}</Link>)}
+            {categories.map(({ href, label, icon: Icon }) => <Link key={href} href={href} prefetch={false} onClick={close} className="mobile-menu-link song-category-link" aria-current={current(href) ? "page" : undefined}><span className="song-category-icon"><Icon aria-hidden="true" /></span><span>{t(label)}</span></Link>)}
           </div>
         </nav>
         <Link href="/aplikacija" prefetch={false} onClick={close} className="mobile-menu-link" aria-current={current("/aplikacija") ? "page" : undefined}><Smartphone aria-hidden="true" /><GuideText text={{ sr: "Aplikacija za telefon", en: "Mobile app" }} /></Link>
