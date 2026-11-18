@@ -17,6 +17,7 @@ import TunerButton from "./TunerButton"
 import MetronomeButton from "./MetronomeButton"
 import BrandSlogan from "./BrandSlogan"
 import GuideText from "./GuideText"
+import { OFFLINE_OWNER, removeOfflineList } from "@/lib/offline/store"
 
 const categories = [
   { href: "/pesme/narodne", label: "Narodne", icon: MicVocal },
@@ -46,7 +47,7 @@ export default function Menu() {
   const [online, setOnline] = useState<PresenceCounts | null>(null)
 
   useEffect(() => {
-    if (status === "loading") return
+    if (status === "loading" || pathname === "/offline") return
     let disposed = false
     let running: AbortController | null = null
     const accept = (data: unknown) => { if (validCounts(data) && !disposed) setOnline(current => !current || Date.parse(data.checkedAt) >= Date.parse(current.checkedAt) ? data : current) }
@@ -69,7 +70,7 @@ export default function Menu() {
     document.addEventListener("visibilitychange", visible)
     window.addEventListener(PRESENCE_EVENT, update)
     return () => { disposed = true; running?.abort(); window.clearInterval(interval); document.removeEventListener("visibilitychange", visible); window.removeEventListener(PRESENCE_EVENT, update) }
-  }, [session?.user?.id, status])
+  }, [session?.user?.id, status, pathname])
 
   return <HeaderNavigation key={pathname} session={session} status={status} pathname={pathname} online={online} />
 }
@@ -85,6 +86,12 @@ function HeaderNavigation({ session, status, pathname, online }: {
   const [metronomePlaying, setMetronomePlaying] = useState(false)
   const close = () => { setOpen(false); setOpenPesme(false); setMobileOpen(false) }
   const login = () => router.push("/login?callbackUrl=" + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash))
+  const logout = async () => {
+    let hasOffline = false
+    try { hasOffline = Boolean(localStorage.getItem(OFFLINE_OWNER)) } catch {}
+    try { if (hasOffline) await removeOfflineList(); void signOut({ callbackUrl: "/" }) }
+    catch { window.alert("Offline kopije nisu obrisane. Ukloni ih na stranici Pesme bez interneta pre odjave.") }
+  }
 
   useEffect(() => {
     const media = window.matchMedia("(min-width: 768px)")
@@ -174,7 +181,7 @@ function HeaderNavigation({ session, status, pathname, online }: {
           <Link href="/profile/plejliste" prefetch={false} onClick={close} className="guitar-dropdown-link">{t("Moje plejliste")}</Link>
           <Link href="/listening-playlist" prefetch={false} onClick={close} className="guitar-dropdown-link">{t("Moja muzika")}</Link>
           {session.user?.role === "admin" && <Link href="/admin" prefetch={false} onClick={close} className="guitar-dropdown-link">Admin</Link>}
-          <button type="button" onClick={() => signOut({ callbackUrl: "/" })} className="guitar-dropdown-link w-full text-left text-red-300">{t("Odjavi se")}</button>
+          <button type="button" onClick={() => void logout()} className="guitar-dropdown-link w-full text-left text-red-300">{t("Odjavi se")}</button>
         </div>}
       </div>}
     </div>
@@ -201,7 +208,7 @@ function HeaderNavigation({ session, status, pathname, online }: {
             <p className="mobile-account-name">{session.user?.name}</p>
             <p className="mobile-account-email">{session.user?.email}</p>
             <div className="mobile-menu-grid">{accountLinks.map(({ href, label, icon: Icon }) => <Link key={href} href={href} prefetch={false} className="mobile-menu-link" onClick={close}><Icon aria-hidden="true" /><span>{t(label)}</span></Link>)}</div>
-            <button type="button" onClick={() => signOut({ callbackUrl: "/" })} className="mobile-menu-link mobile-logout"><LogOut aria-hidden="true" /><span>{t("Odjavi se")}</span></button>
+            <button type="button" onClick={() => void logout()} className="mobile-menu-link mobile-logout"><LogOut aria-hidden="true" /><span>{t("Odjavi se")}</span></button>
           </>}
         </section>
         <p className="mobile-presence">online {online?.total ?? "-"} · {t("ulogovani")} {online?.loggedIn ?? "-"} · {t("Gosti")} {online?.guests ?? "-"}</p>

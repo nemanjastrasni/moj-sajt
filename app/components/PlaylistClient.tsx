@@ -14,6 +14,7 @@ import { MAX_BOOK_SONGS } from "@/lib/songbook/model"
 import styles from "./PlaylistClient.module.css"
 import { playlistSongHref } from "@/lib/navigation/parent"
 import PlaylistActions from "./PlaylistActions"
+import OfflineDownloadButton from "./OfflineDownloadButton"
 import PlaylistSongSearch from "./PlaylistSongSearch"
 import { performanceHref } from "@/lib/performance/model"
 
@@ -115,6 +116,7 @@ export default function PlaylistClient({ playlistId, name, initialPublic, canEdi
       </div>
     </div>
     {tooMany && <p className={styles.notice}>{t("PDF playlista moze imati od 1 do 100 pesama.")}</p>}
+    {canEdit && <OfflineDownloadButton playlistId={playlistId} name={title} songs={songs} disabled={Boolean(busy)} />}
     {notice && <p role="status" className={styles.status}>{t(notice)}</p>}
     {busy && <p role="status" className={styles.status}>{busy === "pdf" ? t("Pripremam PDF...") + " " + progress + " / " + songs.length : t("Cuvam...")}</p>}
     {error && <div role="alert" className={styles.error}><p>{t(error)}</p><button type="button" onClick={() => router.refresh()} disabled={Boolean(busy)} className={styles.button}><RefreshCw />{t("Osvezi playlistu")}</button></div>}

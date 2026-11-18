@@ -55,6 +55,7 @@ export default function RootLayout({
           </main></MusicWorkspace>
 
           <footer className="mx-auto max-w-6xl px-4 pb-8 text-xs text-gray-400">
+            <a href="/offline" className="underline underline-offset-2">Pesme bez interneta</a>{" · "}
             <Link href="/kontakt" className="underline underline-offset-2"><UiText text="Kontakt" /></Link>
             {" · "}<Link href="/vodici" className="underline underline-offset-2"><UiText text="Vodiči za gitaru" /></Link>
             {" · "}<Link href="/aplikacija" prefetch={false} className="underline underline-offset-2"><GuideText text={{ sr: "Aplikacija za telefon", en: "Mobile app" }} /></Link>
