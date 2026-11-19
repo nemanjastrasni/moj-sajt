@@ -10,6 +10,7 @@ import styles from "./OfflineLibrary.module.css"
 
 function Player({ list, song, close, select }: { list: OfflinePlaylist; song: OfflineSong; close: () => void; select: (id: string) => void }) {
   const [transpose, setTranspose] = useState(song.transpose), [capo, setCapo] = useState(song.capo), [size, setSize] = useState(18)
+  const [chordSize, setChordSize] = useState(18)
   const [playing, setPlaying] = useState(false), [speed, setSpeed] = useState(1)
   const lines = useMemo(() => parseSongSheet(song.lyrics || song.chords || ""), [song])
   const source = useMemo(() => capoSource(lines), [lines]), display = capoSheet(lines, transpose, capo, source)
@@ -33,10 +34,9 @@ function Player({ list, song, close, select }: { list: OfflinePlaylist; song: Of
       <button className="ui-button" aria-pressed={playing} onClick={() => setPlaying(v => !v)}>{playing ? "Pauza" : "Play skrol"}</button>
       <label>Brzina <input aria-label="Brzina skrolovanja" type="range" min={1} max={10} value={speed} onChange={e => setSpeed(Number(e.target.value))} /></label>
       <label>Tekst <input aria-label="Veličina teksta" type="range" min={14} max={32} value={size} onChange={e => setSize(Number(e.target.value))} /></label>
+      <label>Akordi <input aria-label="Veličina akorda" type="range" min={14} max={32} value={chordSize} onChange={e => setChordSize(Number(e.target.value))} /></label>
     </div>
-    <p className={styles.note}>Offline kopija od {new Date(list.savedAt).toLocaleString("sr-Latn")}. Promene tonaliteta i capoa u ovom prikazu ne šalju se na nalog. Hvatovi i YouTube zahtevaju internet.</p>
-    {source.hasTabs && <p className={styles.note}>Promena tonaliteta menja oznake akorda; brojevi pragova u tabulaturi ostaju izvorni.</p>}
-    <SongSheet lines={display.lines} transpose={display.shift} textSize={size} chordSize={size} />
+    <SongSheet lines={display.lines} transpose={display.shift} textSize={size} chordSize={chordSize} />
   </article>
 }
 export default function OfflineLibrary() {
@@ -65,6 +65,7 @@ export default function OfflineLibrary() {
     {!ready && <p role="status">Učitavam sačuvane liste…</p>}
     {list && song ? <Player key={list.id + song.id} list={list} song={song} close={() => setSelection(null)} select={id => setSelection({ list: list.id, song: id })} /> : <>
       <p>Ovde su kopije koje si izričito sačuvao na ovom uređaju. Mogu raditi bez interneta i bez nove prijave. Na deljenom uređaju ukloni kopije posle korišćenja. Pregledač ih može ukloniti ako obrišeš podatke sajta ili oslobodi prostor.</p>
+      <p className={styles.note}>Promene tonaliteta i capoa tokom offline sviranja važe samo za taj prikaz i ne šalju se na nalog. Hvatovi i YouTube zahtevaju internet. Transpozicija menja akorde, a brojevi pragova u tabovima ostaju izvorni.</p>
       <a className="ui-button" href="/profile/plejliste">Moje plejliste (internet)</a>{" "}{visibleLists.length > 0 && <button className="ui-button" onClick={() => void remove()}>Obriši sve kopije</button>}
       {ready && !visibleLists.length && <p>Nema sačuvanih lista na ovom uređaju. Dok imaš internet, otvori svoju plejlistu i izaberi „Sačuvaj listu za offline“.</p>}
       {visibleLists.map(item => <section className={styles.list} key={item.id}>
