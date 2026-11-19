@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState, type FormEvent } from "react"
 import { authErrorMessage, safeCallbackUrl, withAuthTimeout } from "@/lib/auth/navigation"
 import { AVATARS, isValidEmail, MAX_AVATAR_BYTES, normalizeEmail, validateSignup } from "@/lib/auth/validation"
+import GuideText from "@/app/components/GuideText"
 
 type Props = { mode: "login" | "signup"; googleEnabled: boolean }
 const inputClass = "w-full min-w-0 min-h-11 rounded border border-gray-300 bg-white px-3 py-2 text-base text-black focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
@@ -141,6 +142,10 @@ export default function AuthForm({ mode, googleEnabled }: Props) {
       <div className="absolute inset-0 bg-black/60" />
       <form onSubmit={handleSubmit} noValidate aria-busy={pending !== null} className="relative z-10 w-full min-w-0 max-w-sm rounded-lg bg-white p-5 text-black shadow-xl sm:p-8">
         <h1 className="mb-6 text-center text-2xl font-bold">{signup ? t("Napravi nalog") : t("Prijavi se")}</h1>
+        <p className="mb-4 text-xs leading-relaxed text-gray-600">
+          <GuideText text={{ sr: "Kako koristimo podatke naloga: ", en: "How we use account data: " }} />
+          <Link href="/privatnost" prefetch={false} className="text-blue-600 underline"><GuideText text={{ sr: "Politika privatnosti", en: "Privacy policy" }} /></Link>.
+        </p>
         {registered && !error && <p role="status" className="mb-4 rounded bg-green-50 p-3 text-sm text-green-800">{t("Nalog je napravljen. Sada se prijavi.")}</p>}
         {error && <p role="alert" className="mb-4 break-words rounded bg-red-50 p-3 text-sm text-red-700">{t(error)}</p>}
         <fieldset disabled={pending !== null} className="flex min-w-0 flex-col gap-4">

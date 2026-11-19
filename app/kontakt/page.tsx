@@ -19,6 +19,10 @@ export default function KontaktPage() {
         <span className="break-all">{PUBLIC_CONTACT_EMAIL}</span>
       </a>
       <p className="text-sm text-gray-400"><UiText text="Ne šalji mejlom JMBG, lozinke, podatke kartice ili skenirane lične dokumente." /></p>
+      <p className="mt-4 flex flex-wrap gap-x-5 gap-y-3 text-sm">
+        <Link href="/privatnost" className="underline">Politika privatnosti</Link>
+        <Link href="/brisanje-naloga" className="underline">Zahtev za brisanje naloga i podataka</Link>
+      </p>
       <div className="mt-8 border-t border-gray-700 pt-6">
         <h2 className="mb-3 text-lg font-semibold"><UiText text="Sporan sadržaj" /></h2>
         <p><UiText text="Za prijavu povrede autorskih prava ili privatnosti navedi tačan link i opis problema." /></p>

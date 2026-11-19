@@ -57,6 +57,8 @@ export default function RootLayout({
           <footer className="mx-auto max-w-6xl px-4 pb-8 text-xs text-gray-400">
             <a href="/offline" className="underline underline-offset-2">Pesme bez interneta</a>{" · "}
             <Link href="/kontakt" className="underline underline-offset-2"><UiText text="Kontakt" /></Link>
+            {" · "}<Link href="/privatnost" prefetch={false} className="underline underline-offset-2"><GuideText text={{ sr: "Privatnost", en: "Privacy" }} /></Link>
+            {" · "}<Link href="/brisanje-naloga" prefetch={false} className="underline underline-offset-2"><GuideText text={{ sr: "Brisanje naloga", en: "Account deletion" }} /></Link>
             {" · "}<Link href="/vodici" className="underline underline-offset-2"><UiText text="Vodiči za gitaru" /></Link>
             {" · "}<Link href="/aplikacija" prefetch={false} className="underline underline-offset-2"><GuideText text={{ sr: "Aplikacija za telefon", en: "Mobile app" }} /></Link>
             {" · "}<Link href="/o-nama" className="underline underline-offset-2"><UiText text="O nama" /></Link>
