@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.gitarakordi.app",
+      "sha256_cert_fingerprints": [
+        "F8:C7:D1:B3:17:10:FC:D5:48:98:2E:99:96:FF:8A:35:CA:0C:87:93:9B:4F:6E:10:D4:5F:DD:23:68:1A:93:9A"
+      ]
+    }
+  }
+]
