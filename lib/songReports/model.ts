@@ -34,7 +34,8 @@ export function validateReportReview(value: unknown) {
   if (!isReportStatus(input.status) || !version(input.version)) throw new ReportError(400, "Osvezi prijavu pre obrade.")
   const note = text(input.note, 1000, "Napomena moze imati najvise 1.000 znakova.")
   if (input.status === "dismissed" && !note) throw new ReportError(400, "Napisi razlog odbacivanja.")
-  return { status: input.status, version: input.version, note }
+  const reply = input.reply === undefined ? "" : text(input.reply, 1000, "Odgovor može imati najviše 1.000 znakova.")
+  return { status: input.status, version: input.version, note, reply }
 }
 export function reportFilters(query: { status?: unknown; kind?: unknown; page?: unknown }) {
   return { status: isReportStatus(query.status) ? query.status : "pending" as ReportStatus,
@@ -43,7 +44,7 @@ export function reportFilters(query: { status?: unknown; kind?: unknown; page?: 
 }
 export type ReportFilters = ReturnType<typeof reportFilters>
 export type ReportView = {
-  id: string; kind: ReportKind; description: string; status: ReportStatus; note: string; version: string;
+  id: string; kind: ReportKind; description: string; status: ReportStatus; note: string; reply: string; version: string;
   title: string; artist: string; transpose: number; createdAt: string; updatedAt: string; reporter: string | null; reporterDeleted: boolean;
   songHref: string | null; editHref: string | null; songChanged: boolean;
 }

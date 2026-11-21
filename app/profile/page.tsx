@@ -38,9 +38,22 @@ if (!user) {
   return <div><UiText text="Korisnik nije pronađen" /></div>
 }
   const { accounts, ...profile } = user
+  const reportReplies = await prisma.songReport.findMany({
+    where: { userId: user.id, reporterReply: { not: null } },
+    orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
+    select: { id: true, songTitle: true, artistName: true, description: true, reporterReply: true },
+  })
   return <>
     {getGoogleCredentials() && <div className="mx-auto max-w-xl px-10 pt-6"><GoogleAccountLink linked={accounts.length > 0} /></div>}
     <ProfileClient user={profile} />
+    {reportReplies.length > 0 && <section className="mx-auto max-w-xl px-6 pb-10" aria-labelledby="report-replies-title">
+      <h2 id="report-replies-title" className="mb-3 text-xl font-bold"><GuideText text={{ sr: "Odgovori na prijave grešaka", en: "Replies to error reports" }} /></h2>
+      {reportReplies.map(report => <article key={report.id} className="mb-4 break-words">
+        <h3 className="font-semibold">{report.artistName} – {report.songTitle}</h3>
+        <p className="whitespace-pre-wrap text-sm"><GuideText text={{ sr: "Tvoja prijava", en: "Your report" }} />{" · "}{report.description}</p>
+        <p className="mt-1 whitespace-pre-wrap">{report.reporterReply}</p>
+      </article>)}
+    </section>}
     <EngagementPreference />
     <section className="mx-auto max-w-xl px-6 pb-10" aria-labelledby="account-deletion-title">
       <h2 id="account-deletion-title" className="mb-3 text-xl font-bold"><GuideText text={{ sr: "Brisanje naloga i podataka", en: "Account and data deletion" }} /></h2>

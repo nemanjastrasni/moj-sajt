@@ -201,6 +201,24 @@ test("admin resolves and reopens only the report, never marking or editing the s
   assert.deepEqual({ songs: state.songs, reviews: state.reviews, favorites: state.favorites, playlistSongs: state.playlistSongs }, before)
 })
 
+test("a reply is stored separately from the internal note and survives status-only edits", async () => {
+  const row = await create(); admin()
+  const body = { ...review(row, "pending", "Internal note"), reply: "  Thanks for reporting this.  " }
+  assert.equal((await reviewRoute.PATCH(req(body, "PATCH"), ctx(row.id))).status, 200)
+  const list = await server.listSongReports(model.reportFilters({}))
+  assert.equal(list.items[0].reply, "Thanks for reporting this.")
+  assert.equal(list.items[0].note, "Internal note")
+
+  const saved = state.reports[0]
+  assert.equal((await reviewRoute.PATCH(req(review(saved), "PATCH"), ctx(row.id))).status, 200)
+  assert.equal(state.reports[0].reporterReply, "Thanks for reporting this.")
+
+  state.reports[0].userId = null
+  const deletedAccount = { ...review(state.reports[0]), reply: "Another reply" }
+  assert.equal((await reviewRoute.PATCH(req(deletedAccount, "PATCH"), ctx(row.id))).status, 409)
+  assert.equal(state.reports[0].reporterReply, "Thanks for reporting this.")
+})
+
 test("stale moderation versions, missing reports and lost CAS updates fail safely", async () => {
   const row = await create(); admin()
   const old = review(row)

@@ -37,6 +37,7 @@ export default function AdminSongReports({ data, filters }: { data: ReportList; 
 function ReportRow({ item, saved }: { item: ReportView; saved: () => void }) {
   const { t, locale } = useI18n(), id = useId()
   const [status, setStatus] = useState<ReportStatus>(item.status), [note, setNote] = useState(item.note)
+  const [reply, setReply] = useState("")
   const [error, setError] = useState(""), [busy, setBusy] = useState(false), [committed, setCommitted] = useState(false), running = useRef(false)
   return <article className={styles.report} data-report-id={item.id}>
     <div className={styles.reportHeader}><h2>{item.artist} - {item.title}</h2><span className={styles.badge} data-status={item.status}>{t(reportStatusLabels[item.status])}</span></div>
@@ -52,7 +53,7 @@ function ReportRow({ item, saved }: { item: ReportView; saved: () => void }) {
       if (running.current || committed) return
       setError("")
       let input
-      try { input = validateReportReview({ status, note, version: item.version }) }
+      try { input = validateReportReview({ status, note, reply, version: item.version }) }
       catch (cause) { setError(cause instanceof Error ? cause.message : "Neispravni podaci prijave."); return }
       running.current = true; setBusy(true)
       try {
@@ -66,8 +67,14 @@ function ReportRow({ item, saved }: { item: ReportView; saved: () => void }) {
         <label htmlFor={id + "-status"}>{t("Status")}<select id={id + "-status"} value={status} onChange={event => setStatus(event.target.value as ReportStatus)}>{reportStatuses.map(value => <option key={value} value={value}>{t(reportStatusLabels[value])}</option>)}</select></label>
         <label htmlFor={id + "-note"}>{t("Napomena administratora")}<textarea id={id + "-note"} rows={2} maxLength={1000} value={note} onChange={event => setNote(event.target.value)} required={status === "dismissed"} /></label>
       </fieldset>
+      {item.reply && <p className={styles.description}><strong>{t("Poslednji odgovor korisniku")}</strong>{"\n"}{item.reply}</p>}
+      {!item.reporterDeleted && <fieldset disabled={busy || committed} className={styles.reviewFields}>
+        <label className="col-span-full" htmlFor={id + "-reply"}>{t("Odgovor korisniku")}<textarea id={id + "-reply"} rows={3} maxLength={1000} value={reply} onChange={event => setReply(event.target.value)} />
+          <small>{t("Korisnik vidi odgovor u svom profilu.")}</small>
+        </label>
+      </fieldset>}
       {error && <p role="alert" className={styles.error}>{t(error)}</p>}
-      <button type="submit" className={styles.button} disabled={busy || committed || status === item.status && note === item.note}><Check aria-hidden="true" />{t(busy ? "Cuvam..." : "Sacuvaj")}</button>
+      <button type="submit" className={styles.button} disabled={busy || committed || status === item.status && note === item.note && !reply.trim()}><Check aria-hidden="true" />{t(busy ? "Cuvam..." : reply.trim() ? "Sačuvaj i pošalji odgovor" : "Sacuvaj")}</button>
     </form>
   </article>
 }

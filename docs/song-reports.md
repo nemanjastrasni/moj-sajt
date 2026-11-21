@@ -2,8 +2,9 @@
 
 Signed-in, non-banned users can report a wrong chord, chord layout, lyrics or
 duplicate from a song page. Reports are private: only administrators can list
-them under `/admin/prijave`, add a note and mark them pending, resolved or
-dismissed. Dismissal requires a reason. No report action changes a song, its
+them under `/admin/prijave`, add an internal note and mark them pending, resolved or
+dismissed. Dismissal requires a reason. An administrator can also save a reply.
+The reporter sees the latest reply alongside their own report on `/profile`. No report action changes a song, its
 review status, favorites or playlists.
 
 ## Safeguards
@@ -22,7 +23,7 @@ review status, favorites or playlists.
 
 ## Data and Privacy
 
-Reports contain account/song references, descriptions, moderation notes,
+Reports contain account/song references, descriptions, moderation notes, replies,
 timestamps, title/artist snapshots and a song-content hash. They do not copy
 email addresses, song lyrics or IP addresses. The administrator can see the
 reporter's current display name.
@@ -38,7 +39,8 @@ a replacement for the site's rights-infringement contact.
 
 `prisma/sql/song-reports.sql` is an additive migration. The partial unique index
 and CHECK constraints are deliberately included in SQL, not just Prisma's
-model. Do not replace this setup with an unrestricted `prisma db push`.
+model. Apply the setup again on existing installations to add the nullable
+reply column before deploying code that uses it. Do not replace this setup with an unrestricted `prisma db push`.
 
 Inspect without writing:
 

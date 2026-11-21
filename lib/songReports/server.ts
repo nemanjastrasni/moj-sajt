@@ -46,8 +46,8 @@ export async function createSongReport(actorId: string, input: ReportInput) {
     return tx.songReport.create({ data: { songId: song.id, userId: actorId, kind: input.kind, description: input.description, songVersion: input.songVersion, transpose: input.transpose, songTitle: song.title, artistName: song.artist.name }, select: { id: true, status: true } })
   })
 }
-export function reportVersion(report: { id: string; status: string; reviewNote: string | null; reviewerId: string | null; updatedAt: Date }) {
-  return createHash("sha256").update(JSON.stringify([report.id, report.status, report.reviewNote, report.reviewerId, report.updatedAt.toISOString()])).digest("hex")
+export function reportVersion(report: { id: string; status: string; reviewNote: string | null; reporterReply?: string | null; reviewerId: string | null; updatedAt: Date }) {
+  return createHash("sha256").update(JSON.stringify([report.id, report.status, report.reviewNote, report.reporterReply ?? null, report.reviewerId, report.updatedAt.toISOString()])).digest("hex")
 }
 export async function reviewSongReport(id: string, actorId: string, input: ReturnType<typeof validateReportReview>) {
   if (!reportId(id)) throw new ReportError(400, "Neispravni podaci prijave.")
@@ -56,8 +56,9 @@ export async function reviewSongReport(id: string, actorId: string, input: Retur
     const before = await tx.songReport.findUnique({ where: { id } })
     if (!before) throw new ReportError(404, "Prijava nije pronadjena.")
     if (reportVersion(before) !== input.version) throw new ReportError(409, "Prijavu je promenio drugi administrator. Osvezi prikaz.")
+    if (input.reply && !before.userId) throw new ReportError(409, "Nalog korisnika je obrisan.")
     const now = new Date()
-    const changed = await tx.songReport.updateMany({ where: { id, updatedAt: before.updatedAt, status: before.status }, data: { status: input.status, reviewNote: input.note || null, reviewerId: actorId, updatedAt: now, reviewedAt: input.status === "pending" ? null : now } })
+    const changed = await tx.songReport.updateMany({ where: { id, updatedAt: before.updatedAt, status: before.status }, data: { status: input.status, reviewNote: input.note || null, ...(input.reply ? { reporterReply: input.reply } : {}), reviewerId: actorId, updatedAt: now, reviewedAt: input.status === "pending" ? null : now } })
     if (changed.count !== 1) throw new ReportError(409, "Prijavu je promenio drugi administrator. Osvezi prikaz.")
     return { id, status: input.status }
   })
@@ -67,12 +68,12 @@ export async function listSongReports(filters: ReportFilters) {
   const where = { status: filters.status, ...(filters.kind ? { kind: filters.kind } : {}) }
   const total = await prisma.songReport.count({ where }), totalPages = Math.max(1, Math.ceil(total / REPORT_PAGE_SIZE)), page = Math.min(filters.page, totalPages)
   const rows = await prisma.songReport.findMany({ where, orderBy: [{ createdAt: "desc" }, { id: "desc" }], skip: (page - 1) * REPORT_PAGE_SIZE, take: REPORT_PAGE_SIZE,
-    select: { id: true, kind: true, description: true, status: true, reviewNote: true, reviewerId: true, transpose: true, songTitle: true, artistName: true, songVersion: true, createdAt: true, updatedAt: true,
+    select: { id: true, kind: true, description: true, status: true, reviewNote: true, reporterReply: true, reviewerId: true, transpose: true, songTitle: true, artistName: true, songVersion: true, createdAt: true, updatedAt: true,
       user: { select: { name: true } }, song: { select: { id: true, title: true, slug: true, category: true, lyrics: true, chords: true, artist: { select: { slug: true, category: true } } } } },
   })
   const items: ReportView[] = rows.map(row => {
     if (!isReportKind(row.kind) || !isReportStatus(row.status)) throw new ReportError(503, "Prijave trenutno nisu dostupne. Pokusaj kasnije.")
-    return { id: row.id, kind: row.kind, description: row.description, status: row.status, note: row.reviewNote ?? "", version: reportVersion(row), title: row.songTitle, artist: row.artistName, transpose: row.transpose,
+    return { id: row.id, kind: row.kind, description: row.description, status: row.status, note: row.reviewNote ?? "", reply: row.reporterReply ?? "", version: reportVersion(row), title: row.songTitle, artist: row.artistName, transpose: row.transpose,
       createdAt: row.createdAt.toISOString(), updatedAt: row.updatedAt.toISOString(), reporter: row.user?.name || null, reporterDeleted: !row.user,
       songHref: row.song ? songPageHref(row.song, row.song.artist) : null, editHref: row.song ? `/admin/songs/${encodeURIComponent(row.song.id)}/edit?from=song` : null,
       songChanged: Boolean(row.song && songReviewVersion(row.song) !== row.songVersion) }

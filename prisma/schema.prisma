@@ -194,6 +194,7 @@ model SongReport {
   transpose    Int      @default(0)
   status       String   @default("pending")
   reviewNote   String?
+  reporterReply String?
   reviewerId   String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now())

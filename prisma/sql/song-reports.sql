@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS public."SongReport" (
   CONSTRAINT "SongReport_version_check" CHECK ("songVersion" ~ '^[a-f0-9]{64}$'),
   CONSTRAINT "SongReport_transpose_check" CHECK ("transpose" BETWEEN -11 AND 11)
 );
+ALTER TABLE public."SongReport" ADD COLUMN IF NOT EXISTS "reporterReply" TEXT;
 CREATE INDEX IF NOT EXISTS "SongReport_status_createdAt_idx" ON public."SongReport"("status", "createdAt");
 CREATE INDEX IF NOT EXISTS "SongReport_userId_createdAt_idx" ON public."SongReport"("userId", "createdAt");
 CREATE INDEX IF NOT EXISTS "SongReport_songId_idx" ON public."SongReport"("songId");
