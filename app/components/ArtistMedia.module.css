@@ -38,10 +38,9 @@
 .avatar { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 50%; }
 .avatar img { object-position: center 20%; }
 .tile { width: 100%; aspect-ratio: 4 / 3; border-radius: 6px; }
-.tile img { object-fit: contain; }
 .tile .initials { font-size: 28px; }
 .portrait { width: 100%; max-width: 500px; aspect-ratio: 4 / 3; border-radius: 6px; }
-.portrait img { object-fit: contain; }
+.tile img, .portrait img { object-position: center 30%; }
 .portrait .initials { font-size: 48px; }
 
 .mosaic { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 16px; margin-top: 32px; }

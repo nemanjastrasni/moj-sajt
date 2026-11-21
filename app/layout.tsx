@@ -13,6 +13,8 @@ import Link from "next/link"
 import HeaderSearch from "@/app/components/HeaderSearch"
 import { SITE_NAME, SITE_URL } from "@/lib/seo/site"
 import GuideText from "@/app/components/GuideText"
+import { Suspense } from "react"
+import NavigationFeedback from "@/app/components/PageLoading"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -42,6 +44,7 @@ export default function RootLayout({
       <head><script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT + ";" + LOCALE_INIT_SCRIPT }} /></head>
       <body className={`${poppins.className} m-0 p-0 overflow-x-hidden`}>
         <Providers>
+          <Suspense fallback={null}><NavigationFeedback /></Suspense>
           <HeaderSearch />
 
           {/* HEADER */}

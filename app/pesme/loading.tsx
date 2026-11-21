@@ -1,5 +1,5 @@
-import UiText from "@/app/components/UiText"
+import { PageLoading } from "@/app/components/PageLoading"
 
 export default function LoadingSongs() {
-  return <div className="px-4 py-8" role="status" aria-live="polite"><UiText text="Učitavam izvođače i pesme..." /></div>
+  return <PageLoading defer />
 }
