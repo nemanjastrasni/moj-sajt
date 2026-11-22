@@ -1,5 +1,8 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "Dodatni alati pesme": "More song tools",
+  "Još alata": "More tools",
+  "Sakrij alate": "Hide tools",
   "Privatnost i statistika korišćenja": "Privacy and usage statistics",
   "Dobrovoljno pomozi da vidimo koliko se korisnici vraćaju i koriste plejliste. Beležimo dan aktivnosti i da li si koristio pesmu iz plejliste, režim sviranja ili pokrenuo muziku. Ne beležimo koje pesme slušaš niti nazive, sadržaj i identifikatore lista, IP adresu ili istoriju pretrage.": "Optionally help us understand whether users return and use playlists. We record the day of activity and whether you used a song from a playlist, playlist performance mode or started music. We do not record which songs you listen to, playlist names, contents or identifiers, IP addresses or search history.",
   "Dnevni podaci vezani su za tvoj nalog, koriste se za poslednjih 90 kalendarskih dana; stariji zapisi se brišu pri sledećem merenju ili pregledu, a administrator vidi zbirne rezultate. Isključivanje briše dosadašnje dnevne podatke i početak tvog perioda merenja. Nema dodatnih kolačića, praćenja gostiju ili reklamnih servisa. Odluku možeš promeniti ovde; funkcije sajta rade i bez uključivanja.": "Daily records are linked to your account and used for the last 90 calendar days; older records are removed on the next measurement or report, and administrators see aggregate results. Turning this off deletes your previous daily records and measurement start date. No additional cookies, guest tracking or advertising services are used. You can change your choice here; site features also work without enabling this.",

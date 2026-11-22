@@ -18,15 +18,31 @@ export function applyLocale(locale: Locale, persist = true) {
   if (persist) { try { localStorage.setItem(LOCALE_KEY, value) } catch {} }
   window.dispatchEvent(new Event(LOCALE_EVENT))
 }
-export function subscribeLocale(notify: () => void) {
-  const storage = (event: StorageEvent) => {
-    if (event.key === LOCALE_KEY || event.key === null) {
-      let value = event.newValue
-      if (event.key === null) { try { value = localStorage.getItem(LOCALE_KEY) } catch {} }
-      applyLocale(normalizeLocale(value), false)
-    }
+const localeSubscribers = new Set<() => void>()
+let stopLocaleEvents: (() => void) | null = null
+const publishLocale = () => { for (const notify of [...localeSubscribers]) notify() }
+function storageLocale(event: StorageEvent) {
+  if (event.key === LOCALE_KEY || event.key === null) {
+    let value = event.newValue
+    if (event.key === null) { try { value = localStorage.getItem(LOCALE_KEY) } catch {} }
+    applyLocale(normalizeLocale(value), false)
   }
-  window.addEventListener(LOCALE_EVENT, notify)
-  window.addEventListener("storage", storage)
-  return () => { window.removeEventListener(LOCALE_EVENT, notify); window.removeEventListener("storage", storage) }
+}
+export function subscribeLocale(notify: () => void) {
+  // A song may render hundreds of translated controls. Share browser listeners;
+  // one cross-tab storage event must trigger one broadcast, not one per control.
+  if (!localeSubscribers.size) {
+    const target = window
+    target.addEventListener(LOCALE_EVENT, publishLocale)
+    target.addEventListener("storage", storageLocale)
+    stopLocaleEvents = () => { target.removeEventListener(LOCALE_EVENT, publishLocale); target.removeEventListener("storage", storageLocale) }
+  }
+  localeSubscribers.add(notify)
+  let active = true
+  return () => {
+    if (!active) return
+    active = false
+    localeSubscribers.delete(notify)
+    if (!localeSubscribers.size) { stopLocaleEvents?.(); stopLocaleEvents = null }
+  }
 }

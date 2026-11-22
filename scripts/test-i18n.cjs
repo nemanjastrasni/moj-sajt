@@ -44,6 +44,22 @@ test("cross-tab changes apply without overwriting storage; other preferences are
   const other = new Event("storage"); other.key = "gitarakordi-theme"; other.newValue = "dark"; window.dispatchEvent(other); assert.equal(calls, 1)
   const clear = new Event("storage"); clear.key = null; clear.newValue = null; window.dispatchEvent(clear); assert.equal(env.root.lang, "sr-Latn"); stop()
 })
+
+test("75 translated controls share browser events and receive one notification each per cross-tab change", () => {
+  setup("sr"); const counts = Array(75).fill(0), added = [], removed = []
+  const add = window.addEventListener.bind(window), remove = window.removeEventListener.bind(window)
+  window.addEventListener = (type, ...args) => { added.push(type); return add(type, ...args) }
+  window.removeEventListener = (type, ...args) => { removed.push(type); return remove(type, ...args) }
+  const stops = counts.map((_, index) => i18n.subscribeLocale(() => counts[index]++))
+  try {
+    assert.deepEqual(added.sort(), [i18n.LOCALE_EVENT, "storage"].sort())
+    const event = new Event("storage"); event.key = i18n.LOCALE_KEY; event.newValue = "en"
+    window.dispatchEvent(event); assert.ok(counts.every(count => count === 1))
+    stops.slice(0, -1).forEach(stop => stop()); assert.deepEqual(removed, [])
+    i18n.applyLocale("sr"); assert.equal(counts.at(-1), 2); assert.equal(counts[0], 1)
+    stops.at(-1)(); assert.deepEqual(removed.sort(), [i18n.LOCALE_EVENT, "storage"].sort())
+  } finally { stops.forEach(stop => stop()) }
+})
 test("category labels are geographic, consistent and leave stored values unchanged", () => {
   assert.equal(getCategoryLabel("Domace"), "Zabavne")
   assert.equal(getCategoryLabel("domace", "en"), "Ex-Yu Pop & Rock")

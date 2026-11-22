@@ -3,16 +3,12 @@
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react"
 import { useEngagement } from "./Engagement"
 import Link from "next/link"
-import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { LoaderCircle, Maximize, Minus, Pause, Play, Plus, RotateCcw, Settings2 } from "lucide-react"
+import { ChevronDown, Maximize, Minus, Pause, Play, Plus, RotateCcw } from "lucide-react"
 import UiText, { useI18n } from "./UiText"
 import dynamic from "next/dynamic"
 const UsedChordCard=dynamic(()=>import("./UsedChordCard"))
 import SongSheet from "./SongSheet"
-import SongPdfButton from "./SongPdfButton"
-import SongPlaylistButton from "./SongPlaylistButton"
-import SongReportButton from "./SongReportButton"
 import CapoControl from "./CapoControl"
 import useSongCapo from "./useSongCapo"
 import useSongKey from "./useSongKey"
@@ -22,12 +18,12 @@ import PlaylistSettingsStatus from "./PlaylistSettingsStatus"
 import SongPerformers from "./SongPerformers"
 import PlaylistSongNavigation from "./PlaylistSongNavigation"
 import SongDisplayMode from "./SongDisplayMode"
-import SongTutorialLauncher from "./SongTutorialLauncher"
 import PlaylistDialog from "./PlaylistDialog"
 import { getUsedChords, parseSongSheet } from "@/lib/chords/songSheet"
 import { transposeChordSymbol } from "@/lib/chords/chordSymbols"
 import type { SongPerformerView } from "@/lib/artists/performers"
 import styles from "./SongToolbar.module.css"
+const SongExtraTools = dynamic(() => import("./SongExtraTools"), { loading: () => <p role="status"><UiText text="Učitavam alat..." /></p> })
 
 type Props = {
   adminTools?: ReactNode; fromFavorites?: boolean; performanceHref?: string; playlistId?: string; songVersion?: string; startPerformance?: boolean
@@ -44,6 +40,8 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
   const original = useSongKey(song.id), playlistSettings = usePlaylistSongSettings(playlistId, song.id)
   const controls = playlistId ? playlistSettings : original, { transpose } = controls
   const [panel, setPanel] = useState<"settings" | null>(null)
+  const [extraTools, setExtraTools] = useState({ open: false, loaded: false }), extraToolsId = useId()
+  const extraToolsButton = useRef<HTMLButtonElement>(null)
   const [showVideo, setShowVideo] = useState(false), [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [loadingVideo, setLoadingVideo] = useState(false), [videoError, setVideoError] = useState("")
   const [scrolling, setScrolling] = useState(false), [speed, setSpeed] = useState(1)
@@ -53,7 +51,7 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
   const { title, artist } = song, lyrics = song.lyrics || song.content || ""
   const sheetLines = useMemo(() => parseSongSheet(lyrics), [lyrics])
   const capo = useSongCapo(song.id, sheetLines, transpose, undefined, playlistId ? { value: playlistSettings.capo, change: playlistSettings.changeCapo } : undefined)
-  const usedChords = useMemo(() => getUsedChords(capo.lines).map(chord => transposeChordSymbol(chord, capo.shift)), [capo.lines, capo.shift])
+  const usedChords = useMemo(() => showDiagrams && !lyricsOnly ? getUsedChords(capo.lines).map(chord => transposeChordSymbol(chord, capo.shift)) : [], [showDiagrams, lyricsOnly, capo.lines, capo.shift])
   useEffect(() => {
     if (!scrolling) return
     // Keep fractional steps until a whole pixel is available: some browsers
@@ -84,6 +82,9 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
   }
   return <div className={styles.page}>
     {playlistId && <PlaylistSongNavigation playlistId={playlistId} songId={song.id} />}
+    <div className={styles.heading}><h1 translate="no">{title}</h1></div>
+    {adminTools}
+    {song.performers && song.performers.length >= 2 ? <SongPerformers artists={song.performers} /> : song.artistSlug ? <Link href={`/pesme/${song.category}/${song.artistSlug}`} className={styles.artist} translate="no">{artist}</Link> : <p className={styles.artist}>{artist}</p>}
     <div className={styles.toolbar} aria-label={t("Kontrole pesme")} data-song-toolbar>
       <SongDisplayMode lyricsOnly={lyricsOnly} change={setLyricsOnly} />
       {!lyricsOnly && <div className={styles.key}>
@@ -96,25 +97,22 @@ export default function SongClient({ song, adminTools, performanceHref, playlist
       {!lyricsOnly && <div className={styles.capo}><CapoControl dialog key={song.id} capo={capo} disabled={controls.controlsDisabled} /></div>}
       <button type="button" className={styles.icon} aria-pressed={scrolling} aria-controls={showScrollControls ? scrollControlsId : undefined} aria-label={t(scrolling ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} title={t(scrolling ? "Zaustavi skrolovanje" : "Pokreni skrolovanje")} onClick={() => { setShowScrollControls(true); setScrolling(value => !value) }}>{scrolling ? <Pause /> : <Play />}</button>
       <button type="button" className={styles.icon} disabled={controls.controlsDisabled} title={t("Rezim za sviranje")} aria-label={t("Rezim za sviranje")} onClick={async () => { if (performanceHref && !await playlistSettings.canLeave()) return; setScrolling(false); setShowVideo(false); if (performanceHref) router.push(performanceHref); else setPerformance(true) }}><Maximize /></button>
-      <SongPlaylistButton key={song.id} songId={song.id} disabled={controls.controlsDisabled} settings={{ transpose, capo: capo.active ? capo.selected : null }} />
-      <SongPdfButton song={{ id: song.id, title, artist, lyrics }} transpose={transpose} capo={capo.active ? capo.selected : null} disabled={controls.controlsDisabled} textSize={textSize} chordSize={chordSize} />
-      <SongTutorialLauncher tutorial={song.tutorial} onPlay={() => { setScrolling(false); setShowVideo(false) }} />
-      <button type="button" className={styles.videoToggle} data-song-video-toggle disabled={loadingVideo} aria-pressed={showVideo} aria-busy={loadingVideo}
-        title={`${t(showVideo ? "Sakrij video" : "Prikazi video")} (YouTube)`}
-        aria-label={loadingVideo ? t("Ucitavam video...") : `${t(showVideo ? "Sakrij video" : "Prikazi video")} (YouTube)`} onClick={() => void toggleVideo()}>
-        <Image src="/brand/youtube-icon-red.png" width={44} height={38} alt="" unoptimized className={styles.videoMark} />
-        <span className={styles.videoLabel}>{loadingVideo ? <LoaderCircle className={styles.videoLoading} aria-hidden="true" /> : t("Video")}</span>
+      <button ref={extraToolsButton} type="button" className={styles.moreTools} aria-label={t("Dodatni alati pesme")} aria-expanded={extraTools.open} aria-controls={extraToolsId} onClick={() => setExtraTools(current => ({ open: !current.open, loaded: true }))}>
+        {t(extraTools.open ? "Sakrij alate" : "Još alata")}<ChevronDown aria-hidden="true" />
       </button>
-      {songVersion && <SongReportButton songId={song.id} songVersion={songVersion} title={title} artist={artist} transpose={transpose} />}
-      <button type="button" className={styles.icon} title={t("Podesavanja prikaza")} aria-label={t("Podesavanja prikaza")} aria-haspopup="dialog" onClick={() => setPanel("settings")}><Settings2 /></button>
+      <div id={extraToolsId} className={styles.extraTools} hidden={!extraTools.open} data-song-extra-tools onKeyDown={event => {
+        if (event.key === "Escape" && !event.defaultPrevented && !(event.target instanceof Element && event.target.closest("dialog[open]"))) {
+          setExtraTools(current => ({ ...current, open: false })); extraToolsButton.current?.focus()
+        }
+      }}>
+        {extraTools.loaded && <SongExtraTools song={{ id: song.id, title, artist, lyrics, tutorial: song.tutorial }} songVersion={songVersion} disabled={controls.controlsDisabled} transpose={transpose} capo={capo.active ? capo.selected : null} textSize={textSize} chordSize={chordSize}
+          showVideo={showVideo} loadingVideo={loadingVideo} toggleVideo={() => void toggleVideo()} openSettings={() => setPanel("settings")} onTutorialPlay={() => { setScrolling(false); setShowVideo(false) }} />}
+      </div>
       {showScrollControls && <div id={scrollControlsId} className={styles.scrollControls} data-song-scroll-controls>
         <label><span>{t("Brzina skrolovanja")}<output>{speed}/10</output></span><input type="range" min="1" max="10" value={speed} aria-label={t("Brzina skrolovanja")} onChange={event => setSpeed(Number(event.target.value))} /></label>
       </div>}
     </div>
     {playlistId && <PlaylistSettingsStatus controls={playlistSettings} />}
-    <div className={styles.heading}><h1 translate="no">{title}</h1></div>
-    {adminTools}
-    {song.performers && song.performers.length >= 2 ? <SongPerformers artists={song.performers} /> : song.artistSlug ? <Link href={`/pesme/${song.category}/${song.artistSlug}`} className={styles.artist} translate="no">{artist}</Link> : <p className={styles.artist}>{artist}</p>}
     {videoError && <p role="status" className={styles.error}>{t(videoError)}</p>}
     <div className={showVideo && videoUrl ? styles.withVideo : undefined}>
       <div className={styles.content}>

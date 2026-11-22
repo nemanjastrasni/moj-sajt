@@ -16,7 +16,6 @@ export default function Chord({ chord, size }: Props) {
   const previewId = useId()
   const [show, setShow] = useState(false)
   const [variantState, setVariantState] = useState({ chord, index: 1 })
-  const [isDesktop, setIsDesktop] = useState(false)
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const variants = useChordVariants(chord, show)
   const maxVariants = Math.max(1, variants.length)
@@ -49,17 +48,6 @@ export default function Chord({ chord, size }: Props) {
   }, [])
 
   useEffect(() => {
-    const updateMode = () => {
-      setIsDesktop(window.matchMedia("(hover: hover) and (pointer: fine)").matches)
-    }
-
-    updateMode()
-    window.addEventListener("resize", updateMode)
-
-    return () => window.removeEventListener("resize", updateMode)
-  }, [])
-
-  useEffect(() => {
     if (!show) return
 
     const handleOutsidePress = (event: Event) => {
@@ -82,6 +70,7 @@ export default function Chord({ chord, size }: Props) {
   }, [show])
 
   useEffect(() => {
+    if (!show) return
     const handleOtherPreview = (event: Event) => {
       const customEvent = event as CustomEvent<string>
       if (customEvent.detail !== previewId) {
@@ -95,7 +84,7 @@ export default function Chord({ chord, size }: Props) {
     return () => {
       window.removeEventListener("chord-preview-open", handleOtherPreview)
     }
-  }, [previewId])
+  }, [previewId, show])
 
   useEffect(() => {
     if (!show) return
@@ -137,7 +126,7 @@ export default function Chord({ chord, size }: Props) {
   }
 
   function closePreviewSoon() {
-    if (!isDesktop || pinnedRef.current) return
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches || pinnedRef.current) return
 
     if (closeTimerRef.current) {
       window.clearTimeout(closeTimerRef.current)
@@ -199,13 +188,13 @@ export default function Chord({ chord, size }: Props) {
         touchAction: "manipulation",
       }}
       onMouseEnter={() => {
-        if (isDesktop) openPreview()
+        if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) openPreview()
       }}
       onMouseLeave={closePreviewSoon}
       onClick={(event) => {
         event.stopPropagation()
 
-        if (isDesktop) {
+        if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
           pinnedRef.current = true
           openPreview()
           return

@@ -2,6 +2,10 @@
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 0 0 14px; margin-bottom: 20px; border-bottom: 1px solid var(--theme-line); }
 .toolbar svg { width: 18px; height: 18px; flex-shrink: 0; }
 .icon { composes: ui-button from global; width: 44px; flex: 0 0 44px; padding: 0; }
+.moreTools { composes: ui-button from global; gap: 6px; padding-inline: 10px; font-size: 13px; }
+.moreTools[aria-expanded=true] svg { transform: rotate(180deg); }
+.extraTools { display: flex; flex: 0 0 100%; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 10px; margin-top: 2px; border-top: 1px solid var(--theme-line); }
+.extraTools[hidden] { display: none; }
 .scrollControls { flex: 0 0 100%; min-width: 0; padding: 10px 14px 4px; border: 1px solid var(--control-line); border-radius: 8px; background: var(--control-bg); color: var(--control-ink); }
 .scrollControls label { display: block; max-width: 520px; }
 .scrollControls label > span { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; line-height: 20px; }
@@ -22,7 +26,7 @@
 .capo { min-width: 0; max-width: 100%; }
 .heading { margin: 0 0 12px; }
 .heading h1 { font-size: 28px; line-height: 1.25; font-weight: 700; overflow-wrap: anywhere; }
-.artist { display: block; width: fit-content; margin: 12px 0 24px; color: var(--theme-green, #78d9a0); font-size: 16px; }
+.artist { display: block; width: fit-content; margin: 8px 0 16px; color: var(--theme-green, #78d9a0); font-size: 16px; }
 .content { min-width: 0; }
 .diagrams { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
 .withVideo { display: grid; grid-template-columns: minmax(0,1fr) minmax(260px,360px); gap: 28px; }
