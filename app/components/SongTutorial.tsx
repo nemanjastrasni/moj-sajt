@@ -5,6 +5,7 @@ import { ExternalLink, Pencil, Plus, RefreshCw, Save, Trash2, Video } from "luci
 import { tutorialUrl, type TutorialSnapshot } from "@/lib/tutorials/model"
 import { tutorialRequest } from "@/lib/tutorials/client"
 import PlaylistDialog from "./PlaylistDialog"
+import TutorialCandidates from "./TutorialCandidates"
 import { useI18n } from "./UiText"
 import styles from "./SongTutorial.module.css"
 
@@ -48,6 +49,7 @@ function TutorialControl({ songId, onPlay, mode }: { songId: string; onPlay?: ()
     </PlaylistDialog>}
     {modal === "edit" && view.editable && <PlaylistDialog title={view.tutorial ? "Izmeni tutorijal" : "Dodaj tutorijal"} busy={busy} close={() => setModal(null)}>
       <form className={styles.form} onSubmit={event => { event.preventDefault(); void save(false) }}>
+        <TutorialCandidates key={songId} songId={songId} disabled={busy} onSelect={item => { setUrl(tutorialUrl(item.videoId)); setTitle(item.title); setError("") }} />
         <label>{t("YouTube ili Shorts link")}<input className="ui-input" type="url" inputMode="url" required maxLength={2000} value={url} disabled={busy} onChange={event => setUrl(event.target.value)} /></label>
         <label>{t("Naziv tutorijala (neobavezno)")}<input className="ui-input" maxLength={120} value={title} disabled={busy} onChange={event => setTitle(event.target.value)} /></label>
         {error && <div role="alert" className={styles.error}>{t(error)}<button type="button" className="ui-button" disabled={busy} onClick={reload}><RefreshCw size={18} />{t("U\u010ditaj sa\u010duvani tutorijal")}</button></div>}

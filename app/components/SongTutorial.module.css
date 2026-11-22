@@ -5,3 +5,8 @@
 .title { margin: 12px 0; color: var(--control-ink); overflow-wrap: anywhere; font-size: 14px; }
 .video { display: block; width: 100%; aspect-ratio: 16 / 9; min-height: 200px; border: 0; margin: 12px 0; background: #000; }
 .error { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--control-danger); font-size: 13px; overflow-wrap: anywhere; }
+.discovery { display: grid; gap: 8px; padding-bottom: 16px; border-bottom: 1px solid var(--control-line); min-width: 0; }
+.hint { margin: 0; font-size: 13px; color: var(--control-muted); overflow-wrap: anywhere; }
+.candidates { display: grid; gap: 12px; padding: 0; margin: 0; list-style: none; }
+.candidates li { display: grid; gap: 5px; padding: 10px; border: 1px solid var(--control-line); border-radius: 8px; min-width: 0; }
+.candidateTitle { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }

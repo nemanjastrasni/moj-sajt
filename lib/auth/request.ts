@@ -2,7 +2,7 @@ export class RequestBodyError extends Error {
   constructor(public status: number, message: string) { super(message) }
 }
 
-export async function readLimitedJson(request: Request, limit: number): Promise<unknown> {
+export async function readLimitedJson(request: Pick<Request, "headers" | "body">, limit: number): Promise<unknown> {
   const length = Number(request.headers.get("content-length"))
   if (length > limit) throw new RequestBodyError(413, "Podaci su preveliki. Smanji profilnu sliku.")
   const reader = request.body?.getReader()
