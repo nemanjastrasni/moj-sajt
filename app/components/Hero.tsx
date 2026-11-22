@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import Link from "./LocalizedLink"
 import { ArrowUpRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useI18n } from "./UiText"

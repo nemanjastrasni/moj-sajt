@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react"
 import Image from "next/image"
-import Link from "next/link"
+import Link from "./LocalizedLink"
 import { signOut, useSession } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
 import { publicPathname } from "@/lib/navigation/pathname"

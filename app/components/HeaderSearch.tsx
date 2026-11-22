@@ -1,7 +1,7 @@
 "use client"
 
 import SongSearch from "./SongSearch"
-import Link from "next/link"
+import Link from "./LocalizedLink"
 import BrandLogo from "./BrandLogo"
 import { useState } from "react"
 export default function HeaderSearch() {

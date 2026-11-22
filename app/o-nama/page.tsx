@@ -1,5 +1,5 @@
 import { publicPageMetadata } from "@/lib/seo/metadata"
-import Link from "next/link"
+import Link from "@/app/components/LocalizedLink"
 import { ArrowRight, AudioLines, BookOpen, FileDown, Flag, Guitar, ListMusic, Maximize, Music2, Palette, type LucideIcon } from "lucide-react"
 import UiText from "@/app/components/UiText"
 import { aboutAccountNote, aboutAppearance, aboutContactNote, aboutIntro, aboutSections } from "@/lib/about"
@@ -7,7 +7,7 @@ import { PUBLIC_OPERATOR_NAME } from "@/lib/site-contact"
 import styles from "./page.module.css"
 import AboutScreenshot from "@/app/components/AboutScreenshot"
 
-export const metadata = publicPageMetadata("O nama", "Pesme sa akordima, plejliste, tonalitet i capo, PDF pesmarice, prikaz za sviranje, štimer i metronom.", "/o-nama")
+export const metadata = publicPageMetadata("O nama: akordi za gitaru i tekstovi pesama", "GitarAkordi je pesmarica sa akordima za gitaru, tekstovima pesama i dijagramima hvatova. Upoznaj plejliste, capo, PDF pesmarice, štimer i metronom.", "/o-nama")
 
 const icons: Record<typeof aboutSections[number]["id"], LucideIcon> = {
   pesme: Music2, repertoar: ListMusic, tonalitet: Guitar, sviranje: Maximize,

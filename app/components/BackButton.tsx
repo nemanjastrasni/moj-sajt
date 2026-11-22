@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import Link from "./LocalizedLink"
 import { usePathname } from "next/navigation"
 import { publicPathname } from "@/lib/navigation/pathname"
 import { ArrowLeft } from "lucide-react"

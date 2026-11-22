@@ -1,12 +1,14 @@
 "use client"
 
-import { useSyncExternalStore, type InputHTMLAttributes } from "react"
+import { useContext, useSyncExternalStore, type InputHTMLAttributes } from "react"
 import { currentLocale, subscribeLocale, translate } from "@/lib/i18n"
 import { getCategoryLabel } from "@/lib/categories"
+import { RouteLocaleContext } from "./LocaleProvider"
 
 const serverLocale = () => "sr" as const
 export function useI18n() {
-  const locale = useSyncExternalStore(subscribeLocale, currentLocale, serverLocale)
+  const stored = useSyncExternalStore(subscribeLocale, currentLocale, serverLocale)
+  const locale = useContext(RouteLocaleContext) ?? stored
   return { locale, t: (source: string, values?: Record<string, string | number>) => translate(locale, source, values) }
 }
 export default function UiText({ text, values }: { text: string; values?: Record<string, string | number> }) {

@@ -1,6 +1,6 @@
-export const aboutIntro = "GitarAkordi povezuje pesme sa akordima, li\u010dni repertoar i ve\u017ebanje gitare sa biografijama, diskografijama i muzikom za slu\u0161anje."
+export const aboutIntro = "GitarAkordi je pesmarica sa akordima za gitaru i tekstovima narodnih, zabavnih i stranih pesama. Povezuje repertoar i vežbanje gitare sa biografijama, diskografijama i muzikom za slušanje."
 export const aboutAccountNote = "Javni sadr\u017eaj mo\u017ee\u0161 da pregleda\u0161 bez naloga. Za li\u010dne plejliste, slanje predloga i prijavu gre\u0161ke potrebna je prijava. Podaci platne kartice nisu potrebni."
-export const aboutAppearance = "Dostupne su svetla i tamna tema i interfejs na srpskom i engleskom. Menja se jezik kontrola, ne originalni tekstovi pesama."
+export const aboutAppearance = "Dostupne su svetla i tamna tema, kontrole na srpskom i engleskom i engleske verzije opisa sajta i vodiča. Stihovi i nazivi pesama ostaju u izvornom obliku. Biografije se prikazuju na jeziku dostupnog izvora."
 export const aboutContactNote = "Za pitanja, predloge i zahteve u vezi sa sadr\u017eajem ili nalogom poseti Kontakt."
 export const aboutSections = [
   {
@@ -72,7 +72,7 @@ export const aboutSections = [
     "id": "sviranje",
     "title": "Prikaz za sviranje",
     "paragraphs": [
-      "Kontrole za prikaz, tonalitet, capo, skrolovanje, plejliste i PDF nalaze se iznad naslova pesme. Klikom na Play pokrećeš skrolovanje i otvaraš klizač brzine ispod komandi; klizač ostaje dostupan i kada pauziraš. Podešavanja prikaza otvaraju veličinu teksta i akorda i hvatove. Video i prijava greške imaju zasebnu dugmad. Prikaz preko celog ekrana zavisi od podrške pregledača.",
+      "Kontrole za tonalitet, capo i skrolovanje nalaze se ispod naslova pesme. Dugme Još alata otvara dodatne opcije za plejliste, PDF, tutorijal, video, prijavu greške i podešavanja prikaza. Klikom na Play pokrećeš skrolovanje i otvaraš klizač brzine; klizač ostaje dostupan i kada pauziraš. Prikaz preko celog ekrana zavisi od podrške pregledača.",
       "Iz plejliste prelazi direktno na prethodnu ili slede\u0107u pesmu. Opcija \u201eNastavi sviranje\u201c na po\u010detnoj strani vra\u0107a te na poslednje svirano na istom ure\u0111aju i u istom pregleda\u010du."
     ],
     "links": []

@@ -1,10 +1,11 @@
 import { english } from "./messages"
+import { pathLocales } from "./routes"
 
 export type Locale = "sr" | "en"
 export const LOCALE_KEY = "gitarakordi-language"
 export const LOCALE_EVENT = "gitarakordi-language-change"
 export const normalizeLocale = (value: unknown): Locale => value === "en" ? "en" : "sr"
-export const LOCALE_INIT_SCRIPT = `(function(){var l="sr";try{if(localStorage.getItem("${LOCALE_KEY}")==="en")l="en"}catch(e){}document.documentElement.dataset.language=l;document.documentElement.lang=l==="sr"?"sr-Latn":"en"})()`
+export const LOCALE_INIT_SCRIPT = `(function(){var l="sr",p=typeof location==="object"?location.pathname.replace(/\\/$/,"")||"/":"",r=${JSON.stringify(pathLocales)};try{if(localStorage.getItem("${LOCALE_KEY}")==="en")l="en"}catch(e){}if(Object.prototype.hasOwnProperty.call(r,p))l=r[p];document.documentElement.dataset.language=l;document.documentElement.lang=l==="sr"?"sr-Latn":"en"})()`
 
 export function translate(locale: Locale, source: string, values: Record<string, string | number> = {}) {
   const text = locale === "en" && Object.hasOwn(english, source) ? english[source] : source

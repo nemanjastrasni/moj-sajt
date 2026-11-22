@@ -1,3 +1,4 @@
+import { localizedHref, translatedRoute } from "../i18n/routes"
 type ArtistSection = "pesme" | "biografija"
 
 function segments(pathname: string | null) {
@@ -46,6 +47,11 @@ export function artistIndexHref(section: ArtistSection, category: string, name: 
 }
 
 export function parentHref(pathname: string | null): string | null {
+  const pair = pathname ? translatedRoute(pathname) : null
+  if (pair?.en === pathname) {
+    const source = parentHref(pair.sr)
+    return source ? localizedHref(source, "en") : null
+  }
   const parts = segments(pathname)
   if (!parts?.length) return null
   const [section, category, third] = parts

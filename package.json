@@ -65,6 +65,7 @@
     "reports:setup": "node scripts/setup-song-reports.cjs",
     "reports:check-db": "node scripts/check-song-reports-db.cjs",
     "test:i18n": "node --test scripts/test-i18n.cjs",
+    "test:english": "node --test scripts/test-english-pages.cjs scripts/test-i18n.cjs scripts/test-about.cjs scripts/test-guitar-guides.cjs",
     "artists:images": "node scripts/artist-images.cjs",
     "artists:photos": "node scripts/artist-image-publish.cjs",
     "artists:wiki": "node scripts/artist-wiki.cjs",

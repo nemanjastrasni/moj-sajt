@@ -44,6 +44,16 @@ node scripts/setup-song-tutorials.cjs --ca "C:\path\to\certificate.crt" --apply
 
 Applied with user approval on 2026-10-29 UTC: a new empty SongTutorial table, independently verified afterward. Fingerprints of pre-existing application rows were unchanged. Backup: `reports/database-access/tutorials-2026-10-29T23-07-24-908Z.json` (ignored locally). Schema and regenerated Prisma Client must be present before code deployment.
 
+## English content addresses
+
+The first content localization batch exposes `/en`, `/en/about`, `/en/guitar-chords`, `/en/guides` and five English guide detail URLs. `lib/i18n/routes.ts` is the small shared registry of genuinely translated route pairs; untranslated artist and song URLs are never given invented English aliases. Existing Serbian URLs and their canonicals remain valid. Each translated URL has a self canonical, reciprocal `sr-Latn`/`en`/`x-default` alternate links and a static sitemap entry. The default alternate points to the Serbian URL. Existing guide translations are reused, and About has a clearer bilingual introduction describing guitar chords, song lyrics and the real site features.
+
+The route locale provider renders marked UI and guide copy in the URL's language on the server, so English HTML does not require a saved browser preference or client translation request. A `lang="en"` boundary identifies English main content, and the existing early initializer sets document language from the route before hydration. Selecting a language on these pages navigates to the corresponding address while preserving query/hash; other pages retain the existing interface preference behavior. Ordinary localized links keep visitors within translated pages where an equivalent exists. There is no browser-language redirect, paid translation API, schema migration or rewriting of song/artist records. Lyrics, song titles and artist names retain their original form.
+
+Biographies are not bulk-translated in this batch. A read-only sample revealed artist/subject mismatches and texts cut off mid-sentence, so biography source corrections precede translation. The existing biography pages and records are unchanged. Do not add artist pairs to the language registry until their main text has been translated and checked.
+
+Run `npm run test:english` for localized rendering, direct server output, route mappings, language initialization, metadata, sitemap and guide coverage. Google guidance: [language-specific URLs](https://developers.google.com/search/docs/specialty/international/managing-multi-regional-sites) and [localized alternate links](https://developers.google.com/search/docs/specialty/international/localized-versions).
+
 ## Verification
 
 Parser, SQL construction, search, authentication, stale-write, client timeout and tutorial tests run with `node --test scripts/test-*.cjs`. Browser fixtures exercise both themes/languages at 320/390/820/1440px, sticky search, keyboard search/error/retry/Escape, chord-to-lyrics round trips, performance mode, tutorial creation/edit/removal, failed saves preserving input, public read-only controls and native dialog bounds. About-page anchors and links were also rechecked after adding the sticky strip.

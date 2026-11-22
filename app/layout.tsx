@@ -9,7 +9,7 @@ import { THEME_INIT_SCRIPT } from "@/lib/theme"
 import { LOCALE_INIT_SCRIPT } from "@/lib/i18n"
 import UiText from "@/app/components/UiText"
 import MusicWorkspace from "@/app/components/MusicWorkspace"
-import Link from "next/link"
+import Link from "./components/LocalizedLink"
 import HeaderSearch from "@/app/components/HeaderSearch"
 import { SITE_NAME, SITE_URL } from "@/lib/seo/site"
 import GuideText from "@/app/components/GuideText"
@@ -58,7 +58,7 @@ export default function RootLayout({
           </main></MusicWorkspace>
 
           <footer className="mx-auto max-w-6xl px-4 pb-8 text-xs text-gray-400">
-            <a href="/offline" className="underline underline-offset-2">Pesme bez interneta</a>{" · "}
+            <a href="/offline" className="underline underline-offset-2"><UiText text="Pesme bez interneta" /></a>{" · "}
             <Link href="/kontakt" className="underline underline-offset-2"><UiText text="Kontakt" /></Link>
             {" · "}<Link href="/privatnost" prefetch={false} className="underline underline-offset-2"><GuideText text={{ sr: "Privatnost", en: "Privacy" }} /></Link>
             {" · "}<Link href="/brisanje-naloga" prefetch={false} className="underline underline-offset-2"><GuideText text={{ sr: "Brisanje naloga", en: "Account deletion" }} /></Link>

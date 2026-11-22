@@ -8,6 +8,7 @@ import { guitarGuides, guidePath } from "@/lib/guitarGuides"
 import { getSitemapSongExclusions } from "./song-search-review-server"
 import { songSearchReviewRevision } from "./song-search-review"
 import { PUBLIC_CATEGORIES, publicUrl, routePath, SITE_URL } from "./site"
+import { translatedRoutes } from "../i18n/routes"
 
 export const SITEMAP_BATCH_SIZE = 1000
 export const sitemapStaticPaths = ["/", "/aplikacija", "/pesme", "/biografija", "/akordi", "/vodici", ...guitarGuides.map(guide => guidePath(guide.slug)), "/plejliste", "/public-listening-playlists", "/o-nama", "/kontakt", "/foto-izvori", "/wiki-izvori", "/prijava-povrede", ...CHORD_ROOTS.map(root => routePath("akordi", root)), ...catalogEntries.map(entry => routePath("plejliste", entry.slug)), ...PUBLIC_CATEGORIES.map(category => routePath("top-50", category)), ...PUBLIC_CATEGORIES.flatMap(category => [routePath("pesme", category), routePath("biografija", category)])]
@@ -56,7 +57,7 @@ const publicPage = unstable_cache(async (kind: "songs" | "artists", page: number
 }, ["seo-sitemap-pages-v2", SITE_URL, songSearchReviewRevision], { revalidate: 300, tags: ["seo-sitemap"] })
 
 export async function sitemapPage(file: string): Promise<string | null> {
-  if (file === "pages.xml") return xmlUrlset(sitemapStaticPaths.map(publicUrl))
+  if (file === "pages.xml") return xmlUrlset([...sitemapStaticPaths, ...translatedRoutes.map(pair => pair.en)].map(publicUrl))
   const match = /^(songs|artists)-(0|[1-9]\d{0,5})\.xml$/.exec(file)
   if (!match) return null
   const kind = match[1] as "songs" | "artists", page = Number(match[2]), totals = await counts()

@@ -1,7 +1,7 @@
 import { publicPageMetadata } from "@/lib/seo/metadata"
 import { CHORD_ROOTS } from "@/lib/seo/catalog"
 import UiText from "@/app/components/UiText"
-import Link from "next/link"
+import Link from "@/app/components/LocalizedLink"
 import styles from "@/app/components/CatalogGuide.module.css"
 import BasicGuitarChords from "@/app/components/BasicGuitarChords"
 import GuideText from "@/app/components/GuideText"

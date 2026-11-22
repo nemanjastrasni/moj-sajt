@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from "./components/LocalizedLink"
 import { getHomeSongs } from "@/lib/homeSongsServer"
 import StructuredData from "./components/StructuredData"
 import { websiteData } from "@/lib/seo/structured-data"
