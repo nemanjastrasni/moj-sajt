@@ -1,5 +1,7 @@
 // Only explicitly marked interface copy is translated; song/user content never passes here.
 export const english: Record<string, string> = {
+  "Muzička saradnja": "Music collaboration",
+  "Akordi za pesmu {title}": "Guitar chords for {title}",
   "Pesme bez interneta": "Offline songs",
   "GitarAkordi je pesmarica sa akordima za gitaru i tekstovima narodnih, zabavnih i stranih pesama. Povezuje repertoar i vežbanje gitare sa biografijama, diskografijama i muzikom za slušanje.": "GitarAkordi is a songbook with guitar chords and song lyrics for ex-Yugoslav folk, pop and rock, alongside international songs. It brings together your repertoire and guitar practice with artist biographies, discographies and music listening.",
   "Dostupne su svetla i tamna tema, kontrole na srpskom i engleskom i engleske verzije opisa sajta i vodiča. Stihovi i nazivi pesama ostaju u izvornom obliku. Pojedine biografije imaju englesku verziju.": "Light and dark themes, Serbian and English controls, and English versions of the site description and guides are available. Song lyrics and titles stay in their original form. Selected artist biographies are available in English.",

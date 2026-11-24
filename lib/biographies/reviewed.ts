@@ -3,6 +3,26 @@ import { biographyText } from "./catalog"
 import { reviewedBiographyRoute } from "./routes"
 
 const reviewed = {
+  "aco-regina": {
+    oldBiographyHash: "6e0191725cace484fe07ebde4ec62638b6dcce0e267df93968107c4c8342dcdf",
+    paragraphs: {
+      sr: [
+        "Aco Regina je umetničko ime Aleksandra Čovića, muzičara i autora pesama. Jedan je od osnivača sarajevske pop-rok grupe Regina. U razgovoru o ranim godinama benda naveo je U2 kao uticaj na njegove prve pesme.",
+        "Tokom devedesetih nastavio je rad sa Bojanom Milićevićem u Beogradu, u izmenjenom sastavu Regine. Posle razlaza članova nastupao je i samostalno pod imenom Aco Regina, a kasnije se ponovo okupio sa Davorom Ebnerom, Milićevićem i Denisom Čabrićem.",
+        "Čović je autor pesme „Bistra voda“, sa kojom je Regina predstavljala Bosnu i Hercegovinu na Evroviziji u Moskvi 2009. Pesma je dobila kompozitorsku nagradu Marcel Bezençon.",
+      ],
+      en: [
+        "Aco Regina is the stage name of musician and songwriter Aleksandar Čović, a founding member of the Sarajevo pop-rock band Regina. Looking back on the band’s early years, he credited U2 as an influence on his first songs.",
+        "In the 1990s, he continued working with Bojan Milićević in Belgrade as part of a new Regina lineup. After the members went their separate ways, he performed as Aco Regina before reuniting with Davor Ebner, Milićević and Denis Čabrić.",
+        "Čović wrote Bistra voda, the song Regina performed for Bosnia and Herzegovina at the 2009 Eurovision Song Contest in Moscow. It received the Marcel Bezençon Composer Award.",
+      ],
+    },
+    sources: [
+      { name: "Menart – Regina", href: "https://www.menart.hr/artists/regina/" },
+      { name: "Razgovor sa Aleksandrom Čovićem / Interview", href: "https://www.nezavisne.com/kultura/muzika/Regina-od-rasula-do-predgrupe-The-Rolling-Stonesa/10306" },
+      { name: "Eurovision", href: "https://www.eurovision.com/eurovision-song-contest/countries/bosnia-herzegovina/" },
+    ],
+  },
   "aleksa-jelic": {
     oldBiographyHash: "c199069aaec2e1aa4c8f2ca1b2af29fa0ca40c69dd378f3e7fb2e5e5ea898cfd",
     paragraphs: {
@@ -65,6 +85,27 @@ const reviewed = {
       { name: "Grand Online", href: "https://grand.nova.rs/showbiz/najemotivniji-koncert-ikada-pogledajte-sve-detalje-spektakla-aleksandre-prijovic-u-areni-video/" },
     ],
   },
+  "aleksandra-prijovic-lexington-band": {
+    oldBiographyHash: "e71f8234b75190d54f3946cd13f3bc8e869a5c3f03b9df202e7450dd0c7f42fd",
+    collaborationSong: { title: "Dođi sebi", slug: "dodji-sebi" },
+    paragraphs: {
+      sr: [
+        "Aleksandra Prijović i Lexington snimili su „Dođi sebi“, objavljenu u avgustu 2021. U diskografiji Aleksandre Prijović pesma je navedena kao izdanje sa Lexingtonom.",
+        "Muziku je komponovao Miloš Vuksanović Vuxa, koji je tekst potpisao sa Miladinom Bogosavljevićem. Producent snimka je Filip Živojinović.",
+        "Pesma je kasnije uvrštena i na koncertni album Lexingtona „Arena Beograd 2024“, sa Aleksandrom Prijović kao gošćom.",
+      ],
+      en: [
+        "Aleksandra Prijović and Lexington released their collaboration Dođi sebi in August 2021. Prijović’s official discography lists the song as a release featuring Lexington.",
+        "Miloš Vuksanović Vuxa composed the music and wrote the lyrics with Miladin Bogosavljević. Filip Živojinović produced the recording.",
+        "Lexington later included a live version featuring Prijović on the album Arena Beograd 2024.",
+      ],
+    },
+    sources: [
+      { name: "Aleksandra Prijović – Diskografija", href: "https://aleksandraprijovic.rs/diskografija/" },
+      { name: "A Music – Dođi sebi", href: "https://www.youtube.com/watch?v=rbq8sD3AE-c" },
+      { name: "Lexington – Arena Beograd 2024", href: "https://music.apple.com/us/album/arena-beograd-2024/1795029232" },
+    ],
+  },
   "aleksandra-radovic": {
     oldBiographyHash: "7a367c58be02cc778ca6ddb074d942cda985a9975401cc60a0c241d7fb344ccc",
     paragraphs: {
@@ -105,6 +146,25 @@ const reviewed = {
       { name: "Croatia Records – Tajno", href: "https://crorec.net/album/alen-islamovic-tajno/" },
     ],
   },
+  "ana-stanic-ft-wikluh-sky": {
+    oldBiographyHash: "9c9e86adcbbb6e3ac2f5fc9d21ba587a409916ae75917f48688bb371802c2623",
+    collaborationSong: { title: "Više nisi moj", slug: "vise-nisi-moj" },
+    paragraphs: {
+      sr: [
+        "Ana Stanić i Sky Wikluh sarađivali su na pesmi „Više nisi moj“, koja se nalazi na Aninom albumu „Sudar“. U kreditima snimka Ana Stanić potpisuje muziku, a Alka Vuica tekst. Spot je objavljen na zvaničnom kanalu Ane Stanić 2008.",
+        "Kasnije su ponovo sarađivali na pesmi „Otkad te nema“. Ovog puta Ana Stanić gostovala je na snimku Sky Wikluha.",
+      ],
+      en: [
+        "Ana Stanić and Sky Wikluh collaborated on Više nisi moj, a track on Stanić’s album Sudar. The recording credits name Stanić as the composer and Alka Vuica as the lyricist. The music video appeared on Stanić’s official channel in 2008.",
+        "They worked together again on Otkad te nema. That time, Stanić appeared as a guest on Sky Wikluh’s recording.",
+      ],
+    },
+    sources: [
+      { name: "Ana Stanić – zvanični spot / Official video", href: "https://www.youtube.com/watch?v=JF4uk2w2pSo" },
+      { name: "Ana Stanić & DMS – Sudar", href: "https://www.youtube.com/watch?v=DbDPztka5yY" },
+      { name: "Prva – Otkad te nema", href: "https://www.prva.rs/show-biz/vesti/novi-duet-ana-stanic-i-skaj-vikler-2015782" },
+    ],
+  },
 } as const
 
 type ReviewedArtist = Parameters<typeof reviewedBiographyRoute>[0]
@@ -112,7 +172,10 @@ type SourceArtist = ReviewedArtist & { bio?: string | null; bioShort?: string | 
 
 export function getReviewedBiography(artist: ReviewedArtist) {
   const route = reviewedBiographyRoute(artist)
-  return route ? { route, ...reviewed[route.slug] } : null
+  if (!route) return null
+  const edition = reviewed[route.slug]
+  const collaborationSong = "collaborationSong" in edition ? edition.collaborationSong : null
+  return { route, ...edition, collaborationSong }
 }
 
 const cyrillic: Record<string, string> = {

@@ -29,11 +29,15 @@ async function loadProfile(slug: string) {
 export async function generateMetadata({ params }: Props) {
   const { artist, edition, image } = await loadProfile((await params).slug)
   const description = biographySummary(edition.paragraphs.en[0])
-  return publicPageMetadata(`${artist.name} – Biography`, description, edition.route.en, { image })
+  const type = edition.collaborationSong ? "Music collaboration" : "Biography"
+  return publicPageMetadata(`${artist.name} – ${type}`, description, edition.route.en, { image })
 }
 
 export default async function EnglishBiographyPage({ params }: Props) {
   const { artist, edition, image } = await loadProfile((await params).slug)
+  const { category, slug } = edition.route
+  const collaboration = edition.collaborationSong
+  const songsHref = collaboration ? routePath("pesme", category, slug, collaboration.slug) : routePath("pesme", category, slug)
   return <article className={styles.page}>
     <header className={styles.biographyHero}>
       <div className={styles.biographyPhoto}>
@@ -41,18 +45,18 @@ export default async function EnglishBiographyPage({ params }: Props) {
         <ArtistPhotoCredit image={image} />
       </div>
       <div className={styles.biographyIntro}>
-        <p className={styles.eyebrow}>Artist biography</p>
+        <p className={styles.eyebrow}>{collaboration ? "Music collaboration" : "Artist biography"}</p>
         <h1>{artist.name}</h1>
         <nav className={styles.biographyLinks} aria-label="Artist links">
-          <Link href={routePath("pesme", edition.route.category, edition.route.slug)}>Songs with chords</Link>
+          <Link href={songsHref}>{collaboration ? `${collaboration.title} – guitar chords` : "Songs with chords"}</Link>
           <Link href={edition.route.sr} hrefLang="sr-Latn" lang="sr-Latn">Srpski</Link>
         </nav>
       </div>
     </header>
     <section id="biografija" className={styles.biographyText}>
-      <h2>Biography</h2>
+      <h2>{collaboration ? "About the recording" : "Biography"}</h2>
       <ReviewedBio paragraphs={edition.paragraphs.en} sources={edition.sources} language="en" />
     </section>
-    <ArtistDiscography artistId={artist.id} value={artist.discography} />
+    {!collaboration && <ArtistDiscography artistId={artist.id} value={artist.discography} />}
   </article>
 }

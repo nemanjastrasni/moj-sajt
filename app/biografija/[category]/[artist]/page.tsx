@@ -31,9 +31,11 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const { category, artist } = await params, data = await getPublicArtist(category, artist)
   if (!data) { await redirectMergedArtist(category, artist, "bio"); notFound() }
   const correction = reviewedSerbianBiography(data)
+  const edition = getReviewedBiography(data)
   const text = biographyMetadataText(correction ? { ...data, bio: correction.paragraphs.sr.join(" ") } : data)
+  const title = edition?.collaborationSong ? `${data.name} – Muzička saradnja` : text.title
   return {
-    ...publicPageMetadata(text.title, text.description, routePath("biografija", category, data.slug), { image: getArtistImage(data), includeTranslations: Boolean(getReviewedBiography(data)) }),
+    ...publicPageMetadata(title, text.description, routePath("biografija", category, data.slug), { image: getArtistImage(data), includeTranslations: Boolean(edition) }),
     ...(!hasBiographyContent(data) ? { robots: { index: false, follow: true } } : {}),
   }
 }
@@ -48,6 +50,9 @@ export default async function BiographyPage({ params }: { params: Promise<{ cate
   const biography = biographyText(artistData.bio) || biographyText(artistData.bioShort)
   const edition = getReviewedBiography(artistData)
   const correction = reviewedSerbianBiography(artistData)
+  const collaboration = edition?.collaborationSong
+  const songsHref = collaboration ? routePath("pesme", category, artistData.slug, collaboration.slug) : routePath("pesme", category, artistData.slug)
+  const biographyHeading = collaboration ? "Muzička saradnja" : "Biografija"
   const hasDiscography = normalizeDiscography(artistData.discography).length > 0
 
   return (
@@ -58,12 +63,12 @@ export default async function BiographyPage({ params }: { params: Promise<{ cate
       <header className={styles.biographyHero}>
         <div className={styles.biographyPhoto}><ArtistImage src={image} name={artistData.name} variant="portrait" priority /><ArtistPhotoCredit image={image} /></div>
         <div className={styles.biographyIntro}>
-          <p className={styles.eyebrow}><UiText text={biography ? hasDiscography ? "Biografija i diskografija" : "Biografija" : hasDiscography ? "Diskografija" : "Profil izvođača"} /></p>
+          <p className={styles.eyebrow}><UiText text={collaboration ? biographyHeading : biography ? hasDiscography ? "Biografija i diskografija" : "Biografija" : hasDiscography ? "Diskografija" : "Profil izvođača"} /></p>
           <h1>{artistData.name}</h1>
           <nav aria-label={artistData.name} className={styles.biographyLinks}>
-            {biography && <a href="#biografija"><UiText text="Biografija" /></a>}
+            {biography && <a href="#biografija"><UiText text={biographyHeading} /></a>}
             {hasDiscography && <a href={`#discography-${artistData.id}`}><UiText text="Diskografija" /></a>}
-            <Link href={`/pesme/${artistData.category}/${artistData.slug}`}><UiText text="Pesme" /></Link>
+            <Link href={songsHref}>{collaboration?.title ?? <UiText text="Pesme" />}</Link>
             {edition && <Link href={edition.route.en} hrefLang="en" lang="en">English</Link>}
           </nav>
         </div>
@@ -71,15 +76,15 @@ export default async function BiographyPage({ params }: { params: Promise<{ cate
       <AdminPageActions kind="artist" id={artistData.id} name={artistData.name} editHref={`/admin/artists/${encodeURIComponent(artistData.id)}/edit?from=bio`} biography={Boolean(artistData.bio || artistData.bioShort)} version={artistContentVersion(artistData)} />
 
       <div className="mb-6 flex flex-wrap items-center gap-3"><MusicButton /><Link
-        href={`/pesme/${artistData.category}/${artistData.slug}`}
+        href={songsHref}
         className="ui-button"
       >
-        <UiText text="Idi na pesme izvođača" />
+        {collaboration ? <UiText text="Akordi za pesmu {title}" values={{ title: collaboration.title }} /> : <UiText text="Idi na pesme izvođača" />}
       </Link></div>
 
       {/* BIOGRAFIJA */}
       <section id="biografija" className={styles.biographyText}>
-        <h2><UiText text="Biografija" /></h2>
+        <h2><UiText text={biographyHeading} /></h2>
         {correction ? <ReviewedBio paragraphs={correction.paragraphs.sr} sources={correction.sources} language="sr" /> : <>
           {biography ? <BioText text={biographyLatin(biography)} /> : <p><UiText text="Biografija nije dostupna." /></p>}
           {biographyText(artistData.bio) && <ArtistWikiCredit artistId={artistData.id} field="bio" value={artistData.bio} />}
