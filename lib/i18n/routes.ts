@@ -1,7 +1,8 @@
 import type { Locale } from "./index"
+import { biographyRoutes } from "../biographies/routes"
 
 // Only pages with translated main content get an English address.
-export const translatedRoutes = [
+export const staticTranslatedRoutes = [
   { sr: "/", en: "/en" },
   { sr: "/o-nama", en: "/en/about" },
   { sr: "/akordi", en: "/en/guitar-chords" },
@@ -12,6 +13,8 @@ export const translatedRoutes = [
   { sr: "/vodici/plejliste-za-gitaru-i-pdf-pesmarica", en: "/en/guides/guitar-playlists-and-pdf-songbooks" },
   { sr: "/vodici/youtube-muzika-i-muzicke-plejliste", en: "/en/guides/youtube-music-and-listening-playlists" },
 ] as const
+
+export const translatedRoutes = [...staticTranslatedRoutes, ...biographyRoutes]
 
 const cleanPath = (path: string) => path.length > 1 ? path.replace(/\/$/, "") : path
 export function translatedRoute(path: string) {

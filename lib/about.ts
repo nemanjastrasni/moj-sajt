@@ -1,6 +1,6 @@
 export const aboutIntro = "GitarAkordi je pesmarica sa akordima za gitaru i tekstovima narodnih, zabavnih i stranih pesama. Povezuje repertoar i vežbanje gitare sa biografijama, diskografijama i muzikom za slušanje."
 export const aboutAccountNote = "Javni sadr\u017eaj mo\u017ee\u0161 da pregleda\u0161 bez naloga. Za li\u010dne plejliste, slanje predloga i prijavu gre\u0161ke potrebna je prijava. Podaci platne kartice nisu potrebni."
-export const aboutAppearance = "Dostupne su svetla i tamna tema, kontrole na srpskom i engleskom i engleske verzije opisa sajta i vodiča. Stihovi i nazivi pesama ostaju u izvornom obliku. Biografije se prikazuju na jeziku dostupnog izvora."
+export const aboutAppearance = "Dostupne su svetla i tamna tema, kontrole na srpskom i engleskom i engleske verzije opisa sajta i vodiča. Stihovi i nazivi pesama ostaju u izvornom obliku. Pojedine biografije imaju englesku verziju."
 export const aboutContactNote = "Za pitanja, predloge i zahteve u vezi sa sadr\u017eajem ili nalogom poseti Kontakt."
 export const aboutSections = [
   {

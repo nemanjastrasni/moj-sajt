@@ -7,6 +7,8 @@ import Breadcrumbs from "@/app/components/Breadcrumbs"
 import { getCategoryLabel } from "@/lib/categories"
 import { notFound } from "next/navigation"
 import BioText from "@/app/biografija/components/BioText"
+import ReviewedBio from "@/app/biografija/components/ReviewedBio"
+import { biographyLatin, getReviewedBiography, reviewedSerbianBiography } from "@/lib/biographies/reviewed"
 import ArtistPhotoCredit from "@/app/components/ArtistPhotoCredit"
 import ArtistWikiCredit from "@/app/components/ArtistWikiCredit"
 import ArtistDiscography from "@/app/components/ArtistDiscography"
@@ -23,22 +25,17 @@ import Link from "next/link"
 import MusicButton from "@/app/components/MusicButton"
 import { normalizeDiscography } from "@/lib/discography"
 
-function cirToLat(text: string) {
-  const map: Record<string, string> = {
-    "А":"A","Б":"B","В":"V","Г":"G","Д":"D","Ђ":"Đ","Е":"E","Ж":"Ž","З":"Z","И":"I","Ј":"J","К":"K","Л":"L","Љ":"Lj","М":"M","Н":"N","Њ":"Nj","О":"O","П":"P","Р":"R","С":"S","Т":"T","Ћ":"Ć","У":"U","Ф":"F","Х":"H","Ц":"C","Ч":"Č","Џ":"Dž","Ш":"Š",
-    "а":"a","б":"b","в":"v","г":"g","д":"d","ђ":"đ","е":"e","ж":"ž","з":"z","и":"i","ј":"j","к":"k","л":"l","љ":"lj","м":"m","н":"n","њ":"nj","о":"o","п":"p","р":"r","с":"s","т":"t","ћ":"ć","у":"u","ф":"f","х":"h","ц":"c","ч":"č","џ":"dž","ш":"š"
-  }
-
-  return text.replace(/[А-я]/g, (l) => map[l] || l)
-}
-
 export const dynamic = "force-dynamic"
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string; artist: string }> }) {
   const { category, artist } = await params, data = await getPublicArtist(category, artist)
   if (!data) { await redirectMergedArtist(category, artist, "bio"); notFound() }
-  const text = biographyMetadataText(data)
-  return { ...publicPageMetadata(text.title, text.description, routePath("biografija", category, data.slug), { image: getArtistImage(data) }), ...(!hasBiographyContent(data) ? { robots: { index: false, follow: true } } : {}) }
+  const correction = reviewedSerbianBiography(data)
+  const text = biographyMetadataText(correction ? { ...data, bio: correction.paragraphs.sr.join(" ") } : data)
+  return {
+    ...publicPageMetadata(text.title, text.description, routePath("biografija", category, data.slug), { image: getArtistImage(data), includeTranslations: Boolean(getReviewedBiography(data)) }),
+    ...(!hasBiographyContent(data) ? { robots: { index: false, follow: true } } : {}),
+  }
 }
 
 export default async function BiographyPage({ params }: { params: Promise<{ category: string; artist: string }> }) {
@@ -49,6 +46,8 @@ export default async function BiographyPage({ params }: { params: Promise<{ cate
   if (!artistData) { await redirectMergedArtist(category, artistSlug, "bio"); notFound() }
   const image = getArtistImage(artistData)
   const biography = biographyText(artistData.bio) || biographyText(artistData.bioShort)
+  const edition = getReviewedBiography(artistData)
+  const correction = reviewedSerbianBiography(artistData)
   const hasDiscography = normalizeDiscography(artistData.discography).length > 0
 
   return (
@@ -65,6 +64,7 @@ export default async function BiographyPage({ params }: { params: Promise<{ cate
             {biography && <a href="#biografija"><UiText text="Biografija" /></a>}
             {hasDiscography && <a href={`#discography-${artistData.id}`}><UiText text="Diskografija" /></a>}
             <Link href={`/pesme/${artistData.category}/${artistData.slug}`}><UiText text="Pesme" /></Link>
+            {edition && <Link href={edition.route.en} hrefLang="en" lang="en">English</Link>}
           </nav>
         </div>
       </header>
@@ -80,8 +80,10 @@ export default async function BiographyPage({ params }: { params: Promise<{ cate
       {/* BIOGRAFIJA */}
       <section id="biografija" className={styles.biographyText}>
         <h2><UiText text="Biografija" /></h2>
-        {biography ? <BioText text={cirToLat(biography)} /> : <p><UiText text="Biografija nije dostupna." /></p>}
-        {biographyText(artistData.bio) && <ArtistWikiCredit artistId={artistData.id} field="bio" value={artistData.bio} />}
+        {correction ? <ReviewedBio paragraphs={correction.paragraphs.sr} sources={correction.sources} language="sr" /> : <>
+          {biography ? <BioText text={biographyLatin(biography)} /> : <p><UiText text="Biografija nije dostupna." /></p>}
+          {biographyText(artistData.bio) && <ArtistWikiCredit artistId={artistData.id} field="bio" value={artistData.bio} />}
+        </>}
       </section>
 
       {/* DISKOGRAFIJA */}

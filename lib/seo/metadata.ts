@@ -6,13 +6,15 @@ import { routeLocale, translatedRoute } from "../i18n/routes"
 type PublicMetadataOptions = {
   image?: string | null
   canonicalQuery?: Record<string, string>
+  includeTranslations?: boolean
 }
 
 export function publicPageMetadata(title: string, description: string, path: string, options: PublicMetadataOptions = {}): Metadata {
   const canonical = new URL(publicUrl(path))
   for (const [key, value] of Object.entries(options.canonicalQuery ?? {})) canonical.searchParams.set(key, value)
   const url = canonical.href
-  const pair = translatedRoute(path), english = routeLocale(path) === "en"
+  const pair = options.includeTranslations === false ? null : translatedRoute(path)
+  const english = routeLocale(path) === "en"
   const fallback = SOCIAL_IMAGE
   const image = options.image
     ? { url: options.image.startsWith("/") ? publicUrl(options.image) : options.image, alt: title }

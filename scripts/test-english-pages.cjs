@@ -66,7 +66,7 @@ test('all five English guides expose substantive translated text, working anchor
 })
 test('every translated URL has a self canonical, reciprocal language alternates and one sitemap entry',async()=>{
   const $=load(await maps.sitemapPage('pages.xml'),{xml:true})
-  for(const pair of routes.translatedRoutes){
+  for(const pair of routes.staticTranslatedRoutes){
     for(const lang of ['sr','en']){
       const meta=metadata.publicPageMetadata('Title','Description',pair[lang]);assert.equal(new URL(meta.alternates.canonical).pathname,pair[lang]);assert.equal(new URL(meta.alternates.languages.en).pathname,pair.en);assert.equal(new URL(meta.alternates.languages['sr-Latn']).pathname,pair.sr);assert.equal(new URL(meta.alternates.languages['x-default']).pathname,pair.sr)
       assert.equal($('loc').toArray().filter(node=>new URL($(node).text()).pathname===pair[lang]).length,1)

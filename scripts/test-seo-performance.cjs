@@ -168,12 +168,22 @@ test('artist maps omit empty profiles and include biographies only when content 
   assert.match(text, /\/pesme\/domace\/zeljko/); assert.match(text, /\/biografija\/domace\/zeljko/)
   assert.match(text, /\/biografija\/domace\/discography/); assert.doesNotMatch(text, /\/empty|\/pesme\/domace\/discography/)
 })
+test('artist sitemap lists a reviewed English biography only for its verified artist record', async () => {
+  const [first, second] = require('../lib/biographies/routes.ts').biographyRoutes
+  data.artists = [
+    { ...data.artist, id: first.artistId, slug: first.slug, category: first.category },
+    { ...data.artist, slug: second.slug, category: second.category },
+  ]
+  const text = await (await mapRequest('artists-0.xml')).text()
+  assert.ok(text.includes(first.sr) && text.includes(first.en))
+  assert.ok(text.includes(second.sr) && !text.includes(second.en))
+})
 test('malformed legacy slugs are skipped without dropping a whole sitemap batch', async () => {
   data.sitemapSongs = ['', ' ', '.', '..', 'pesma'].map(slug => ({ slug, artist: data.artist }))
   const response = await mapRequest('songs-0.xml'), text = await response.text()
   assert.equal(response.status, 200); assert.equal((text.match(/<url>/g) || []).length, 1)
   assert.match(text, /\/pesme\/domace\/zeljko\/pesma/)
-  assert.ok(definitions.some(definition => definition.keys[0] === 'seo-sitemap-pages-v2' && definition.keys.includes(site.SITE_URL) && definition.keys.includes(require('../lib/seo/song-search-review.ts').songSearchReviewRevision)))
+  assert.ok(definitions.some(definition => definition.keys[0] === 'seo-sitemap-pages-v3' && definition.keys.includes(site.SITE_URL) && definition.keys.includes(require('../lib/seo/song-search-review.ts').songSearchReviewRevision)))
 })
 test('static sitemap excludes personal/admin screens and safely serializes XML', async () => {
   const text = await (await mapRequest('pages.xml')).text()

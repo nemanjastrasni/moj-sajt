@@ -12,6 +12,8 @@ import ArtistImage from "@/app/components/ArtistImage"
 import { getArtistImage } from "@/lib/artistPhotos"
 import AdminPageActions from "@/app/components/AdminPageActions"
 import { artistContentVersion } from "@/lib/adminContent/server"
+import { reviewedSerbianBiography } from "@/lib/biographies/reviewed"
+import ReviewedBio from "@/app/biografija/components/ReviewedBio"
 
 type Props = {
   params: Promise<{
@@ -35,6 +37,7 @@ export default async function ArtistInfoPage({ params }: Props) {
   if (!artistData) { await redirectMergedArtist(category, artist, "info"); notFound() }
 
   const image = getArtistImage(artistData)
+  const correction = reviewedSerbianBiography(artistData)
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
@@ -52,7 +55,7 @@ export default async function ArtistInfoPage({ params }: Props) {
 
       <ArtistPhotoCredit image={image} />
 
-      {artistData.bio && (
+      {correction ? <div className="mb-8 text-lg leading-relaxed"><ReviewedBio paragraphs={correction.paragraphs.sr} sources={correction.sources} language="sr" /></div> : artistData.bio && (
         <div className="mb-8 whitespace-pre-line text-lg leading-relaxed">
           {artistData.bio}
           <ArtistWikiCredit artistId={artistData.id} field="bio" value={artistData.bio} />
