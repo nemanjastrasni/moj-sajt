@@ -29,6 +29,19 @@ export default async function HomePage() {
       <StructuredData data={websiteData()} />
       <HomeRepertoire />
 
+      <section className={intro.intro} aria-labelledby="home-song-guide">
+        <header>
+          <h1 id="home-song-guide"><UiText text="Akordi za gitaru i tekstovi pesama" /></h1>
+          <p><GuideText text={{ sr: "Pronađi pesmu po naslovu ili izvođaču, pogledaj hvatove i sastavi repertoar za vežbanje.", en: "Find a guitar song by title or artist, check chord shapes and build a practice repertoire." }} /></p>
+        </header>
+        <nav className={intro.actions} aria-labelledby="home-song-guide">
+          <Link className="ui-button ui-button-primary" href="/pesme" prefetch={false}><UiText text="Pronađi pesme sa akordima" /></Link>
+          <Link className="ui-button" href="/akordi" prefetch={false}><UiText text="Dijagrami akorda za gitaru" /></Link>
+          <Link className="ui-button" href="/plejliste/beginner" prefetch={false}><UiText text="Pesme za početnike" /></Link>
+          <Link className="ui-button" href="/vodici" prefetch={false}><UiText text="Vodiči za gitaru" /></Link>
+        </nav>
+      </section>
+
       {/* HERO (NOVI) */}
       <Hero />
 
@@ -97,19 +110,9 @@ export default async function HomePage() {
       </section>
       <PopularSongs initialSongs={popular}/>
       <LatestSongs initialSongs={latest}/>
-      <section className="mx-auto max-w-6xl px-6 py-6" aria-labelledby="home-song-guide">
+      <section className="mx-auto max-w-6xl px-6 py-6" aria-labelledby="home-repertoire">
         <div className={guide.guide}>
-          <header className={intro.intro}>
-            <h1 id="home-song-guide"><UiText text="Akordi za gitaru i tekstovi pesama" /></h1>
-            <p><GuideText text={{ sr: "Pronađi pesmu po naslovu ili izvođaču, pogledaj hvatove i sastavi repertoar za vežbanje.", en: "Find a guitar song by title or artist, check chord shapes and build a practice repertoire." }} /></p>
-          </header>
-          <nav className={guide.links} aria-labelledby="home-song-guide">
-            <Link href="/vodici" prefetch={false}><UiText text="Vodiči za gitaru" /></Link>
-            <Link href="/pesme" prefetch={false}><UiText text="Pronađi pesme sa akordima" /></Link>
-            <Link href="/akordi" prefetch={false}><UiText text="Dijagrami akorda za gitaru" /></Link>
-            <Link href="/plejliste/beginner" prefetch={false}><UiText text="Pesme za početnike" /></Link>
-          </nav>
-          <h2><GuideText text={{ sr: "Repertoar, PDF pesmarica i muzičke liste", en: "Repertoire, PDF songbooks and music lists" }} /></h2>
+          <h2 id="home-repertoire"><GuideText text={{ sr: "Repertoar, PDF pesmarica i muzičke liste", en: "Repertoire, PDF songbooks and music lists" }} /></h2>
           <p><GuideText text={{ sr: "Plejliste za sviranje okupljaju zapise pesama i tvoja podešavanja tonaliteta i capoa. Moja muzika je zaseban prostor za organizovanje YouTube linkova i slušanje kroz ugrađeni plejer. Javne vodiče i kataloge možeš pregledati bez naloga; za čuvanje ličnih lista potrebno je da se prijaviš.", en: "Performance playlists collect song charts and your key and capo settings. My music is a separate space for organising YouTube links and listening through the embedded player. Public guides and catalogs are available without an account; saving personal lists requires sign-in." }} /></p>
           <nav className={guide.links} aria-label="Plejliste i muzika">
             <Link href="/plejliste" prefetch={false}><GuideText text={{ sr: "Plejliste za gitaru", en: "Guitar playlists" }} /></Link>

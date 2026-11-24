@@ -26,6 +26,9 @@ const render=element=>load(renderToStaticMarkup(element))
 test('homepage exposes one visible H1 and crawlable routes to each public feature without new database queries',async()=>{
  reads=0;const $=render(await home.default());assert.equal($('h1').length,1);assert.ok(!$('h1').hasClass('sr-only'));assert.match($('h1').text(),/Akordi za gitaru/)
  for(const href of ['/pesme','/akordi','/biografija','/plejliste','/public-listening-playlists','/vodici','/vodici/plejliste-za-gitaru-i-pdf-pesmarica','/vodici/youtube-muzika-i-muzicke-plejliste'])assert.ok($(`a[href="${href}"]`).length,href)
+ const firstSection = $('.home-page > section').first()
+ assert.equal(firstSection.find('h1').length, 1)
+ assert.deepEqual(firstSection.find('nav a').map((_, link) => $(link).attr('href')).get(), ['/pesme', '/akordi', '/plejliste/beginner', '/vodici'])
  assert.equal(reads,2,'only the existing popular/latest reads');assert.equal($('[hidden]').length,0)
 })
 test('categories have distinct descriptive titles, single visible H1 and relevant practice links',async()=>{
