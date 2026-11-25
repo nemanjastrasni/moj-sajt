@@ -26,6 +26,11 @@ test('category alphabet matches exactly the nonempty letter pages, including dig
  const $=load(renderToStaticMarkup(await category.default({params:Promise.resolve({category:'domace'})})))
  assert.deepEqual($('nav[aria-label="A-Z"] a').map((_,a)=>$(a).text()).get(),available)
  assert.ok($('a[href="/pesme/domace/slovo/num"]').length)
+ const content=$('h1,nav[aria-label="A-Z"]').toArray()
+ assert.deepEqual(content.map(node=>node.name),['h1','nav'])
+ const breadcrumbs=$('nav[aria-label="Putanja stranice"]')
+ assert.deepEqual(breadcrumbs.find('a').map((_,a)=>$(a).attr('href')).get(),['/','/pesme'])
+ assert.equal(breadcrumbs.find('[aria-current="page"]').text(),'Zabavne')
  assert.equal(reads,1);assert.equal(JSON.stringify(artists),before)
 })
 

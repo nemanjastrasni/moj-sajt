@@ -9,9 +9,9 @@ import styles from "./PageLoading.module.css"
 const SHOW_AFTER_MS = 180
 const RESET_AFTER_MS = 120_000
 
-export function PageLoading({ defer = false }: { defer?: boolean }) {
+function PageLoading() {
   return (
-    <div className={defer ? `${styles.status} ${styles.deferred}` : styles.status} role="status" aria-atomic="true" data-page-loading>
+    <div className={styles.status} role="status" aria-atomic="true" data-page-loading>
       <span className={styles.spinner} aria-hidden="true" />
       <GuideText text={{ sr: "Učitavanje stranice…", en: "Loading page…" }} />
     </div>
