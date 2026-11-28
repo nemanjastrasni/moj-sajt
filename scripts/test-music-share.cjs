@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- Pure export tests; no clipboard access, network or database writes. */
 require('ts-node').register({transpileOnly:true,compilerOptions:{module:'CommonJS',moduleResolution:'Node'}})
 const {test}=require('node:test'),assert=require('node:assert/strict')
-const {musicShareText,musicShareExport,musicShareFilename,copyMusicText,shareCancelled}=require('../lib/music/share.ts')
+const {musicItemShareUrl,musicShareText,musicShareExport,musicShareFilename,copyMusicText,shareCancelled}=require('../lib/music/share.ts')
 const list={id:'private-list',name:'Moja muzika — Šaban',isPublic:false,editable:true,userId:'PRIVATE_OWNER',version:'PRIVATE_VERSION',items:[{id:'track-two',title:'Druga pesma',url:'https://www.youtube.com/watch?v=BaW_jenozKc',type:'video',order:10},{id:'track-one',title:'Prva pesma',url:'https://www.youtube.com/playlist?list=PL1234567890',type:'playlist',order:0}]}
 test('whole playlist text includes every title and URL in the visible order',()=>{assert.equal(musicShareText(list),'# Moja muzika — Šaban\n\n# 1. Druga pesma\nhttps://www.youtube.com/watch?v=BaW_jenozKc\n\n# 2. Prva pesma\nhttps://www.youtube.com/playlist?list=PL1234567890');assert.deepEqual(musicShareText(list).split('\n').filter(line=>line.trim()&&!line.startsWith('#')),list.items.map(item=>item.url))})
 test('private list export contains only names and links, without ownership or edit tokens',()=>{const raw=musicShareExport(list),value=JSON.parse(raw);assert.deepEqual(value,{schema:'gitarakordi-mp3-v1',playlist:{name:list.name,items:list.items.map(({title,url})=>({title,url}))}});assert.doesNotMatch(raw,/PRIVATE_|private-list|editable|isPublic|track-two|order/);assert.equal(list.isPublic,false)})
@@ -11,3 +11,10 @@ test('empty lists export an empty items array and a readable header',()=>{assert
 test('download names support diacritics and exclude Windows reserved characters and names',()=>{assert.equal(musicShareFilename('Šaban / Najbolje?'),'Šaban _ Najbolje_.gitarakordi.json');assert.equal(musicShareFilename('CON'),'_CON.gitarakordi.json');assert.equal(musicShareFilename('...'),'Moja muzika.gitarakordi.json');assert.ok(musicShareFilename('a'.repeat(200)).length<120)})
 test('clipboard permission denial is a recoverable manual-copy result',async()=>{assert.equal(await copyMusicText('text',undefined),false);assert.equal(await copyMusicText('text',{writeText:async()=>{throw Error('denied')}}),false);let copied;assert.equal(await copyMusicText('all tracks',{writeText:async text=>{copied=text}}),true);assert.equal(copied,'all tracks')})
 test('cancelled native share is distinct from an error',()=>{assert.equal(shareCancelled(new DOMException('cancel','AbortError')),true);assert.equal(shareCancelled({name:'AbortError'}),true);assert.equal(shareCancelled(Error('failed')),false);assert.equal(shareCancelled(null),false)})
+test('recording sharing yields only the validated source URL',()=>{
+  assert.equal(musicItemShareUrl('https://youtu.be/BaW_jenozKc?list=PL1234567890'),'https://www.youtube.com/watch?v=BaW_jenozKc')
+  assert.equal(musicItemShareUrl('https://www.youtube.com/playlist?list=PL1234567890'), 'https://www.youtube.com/playlist?list=PL1234567890')
+  assert.equal(musicItemShareUrl('https://artist.bandcamp.com/track/one'),'https://artist.bandcamp.com/track/one')
+  assert.equal(musicItemShareUrl('https://gitarakordi.com/listening-playlist/private-list'),null)
+  assert.equal(musicItemShareUrl('javascript:alert(1)'),null)
+})

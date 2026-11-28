@@ -12,6 +12,7 @@ export function withYouTubeMetadata(item: MusicItem, info: { title: string; chan
 }
 export const musicId = (value: unknown): value is string => typeof value === "string" && /^[a-zA-Z0-9_-]{1,128}$/.test(value)
 export class MusicError extends Error { constructor(public status: number, message: string) { super(message) } }
+export const MUSIC_LIST_LIMIT = 100
 export function youtubeSource(value: unknown): YouTubeSource | null {
   if (typeof value !== "string" || value.length > 2000) return null
   try {
@@ -45,6 +46,11 @@ export function musicName(value: unknown) {
   const name = value.trim()
   if (!name || name.length > 120) throw new MusicError(400, "Naziv liste mora imati od 1 do 120 znakova.")
   return name
+}
+export function musicRecordingTitle(value: string) {
+  const title = value.trim()
+  if (title.length > 200 || /[\u0000-\u001f\u007f]/.test(title)) throw new MusicError(400, "Naziv snimka moze imati najvise 200 znakova.")
+  return title
 }
 export function musicCategory(value: unknown): MusicCategory {
   if (!(musicCategories as readonly unknown[]).includes(value)) throw new MusicError(400, "Izaberi kategoriju.")

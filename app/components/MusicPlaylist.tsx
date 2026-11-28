@@ -7,14 +7,16 @@ import { useRef,useState } from "react"
 import { DndContext,closestCenter,KeyboardSensor,PointerSensor,useSensor,useSensors,type DragEndEvent } from "@dnd-kit/core"
 import { SortableContext,arrayMove,sortableKeyboardCoordinates,useSortable,verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { ArrowDown,ArrowUp,ExternalLink,GripVertical,Headphones,Lock,Pencil,Play,Plus,RefreshCw,Save,Trash2,Users } from "lucide-react"
+import { ExternalLink,GripVertical,Headphones,Lock,Pencil,Play,Plus,RefreshCw,Save,Share2,Trash2,Users } from "lucide-react"
 import { externalMusicUrl,musicCategories,type MusicItem,type MusicList } from "@/lib/music/model"
 import { checkedMusic,musicRequest } from "@/lib/music/client"
+import { musicItemShareUrl } from "@/lib/music/share"
 import { getCategoryLabel } from "@/lib/categories"
 import { useI18n } from "./UiText"
 import { useMusic } from "./MusicContext"
 import PlaylistDialog from "./PlaylistDialog"
 import MusicShare from "./MusicShare"
+import MusicItemShare from "./MusicItemShare"
 import styles from "./Music.module.css"
 
 export default function MusicPlaylist({initial,viewerId}:{initial:MusicList;viewerId:string|null}){
@@ -23,6 +25,8 @@ export default function MusicPlaylist({initial,viewerId}:{initial:MusicList;view
   const [url,setUrl]=useState(""),[title,setTitle]=useState(""),[edit,setEdit]=useState(false),[removeId,setRemoveId]=useState<string|null>(null)
   const [name,setName]=useState(initial.name),[category,setCategory]=useState(initial.category||"Mix"),[isPublic,setPublic]=useState(initial.isPublic)
   const [positionId,setPositionId]=useState<string|null>(null),[position,setPosition]=useState("")
+  const [renaming,setRenaming]=useState<{id:string;title:string}|null>(null)
+  const [sharing,setSharing]=useState<{title:string;url:string}|null>(null)
   const running=useRef(false)
   const sensors=useSensors(useSensor(PointerSensor,{activationConstraint:{distance:8}}),useSensor(KeyboardSensor,{coordinateGetter:sortableKeyboardCoordinates}))
   const editable=list.editable&&status==="authenticated"&&session?.user?.id===viewerId
@@ -67,7 +71,7 @@ export default function MusicPlaylist({initial,viewerId}:{initial:MusicList;view
       <button type="submit" className="ui-button"><Plus aria-hidden="true" />{t(busy?"Cuvam...":"Dodaj link")}</button>
     </fieldset></form>}
     {notice&&<p role="status" className={styles.notice}>{t(notice)}</p>}
-    {error&&!edit&&!removeId&&!positionId&&<div role="alert" className={styles.error}><p>{t(error)}</p><button type="button" disabled={busy} className="ui-button mt-3" onClick={async()=>{
+    {error&&!edit&&!removeId&&!positionId&&!renaming&&<div role="alert" className={styles.error}><p>{t(error)}</p><button type="button" disabled={busy} className="ui-button mt-3" onClick={async()=>{
       if(running.current)return
       running.current=true;setBusy(true)
       try{const result=await musicRequest(base);accept(result.playlist);setError("")}
@@ -87,7 +91,9 @@ export default function MusicPlaylist({initial,viewerId}:{initial:MusicList;view
     }}><SortableContext items={list.items.map(item=>item.id)} strategy={verticalListSortingStrategy}>
       <ol className={styles.rows}>{list.items.map((item,index)=><MusicPlaylistItem key={item.id} item={item} index={index} total={list.items.length} editable={editable} busy={busy}
         playing={music.queue?.list.id===list.id&&music.queue.currentId===item.id} play={()=>void music.start(list.id,item.id)}
-        move={to=>void moveItem(item.id,to)} choosePosition={()=>{setError("");setPositionId(item.id);setPosition(String(index+1))}}
+        choosePosition={()=>{setError("");setPositionId(item.id);setPosition(String(index+1))}}
+        rename={()=>{setError("");setRenaming({id:item.id,title:item.title.slice(0,200)})}}
+        share={url=>setSharing({title:item.title,url})}
         remove={()=>{setError("");setRemoveId(item.id)}} />)}</ol>
     </SortableContext></DndContext>}
     {positionId&&<PlaylistDialog title="Pomeri na poziciju" close={()=>setPositionId(null)} busy={busy}>
@@ -105,27 +111,39 @@ export default function MusicPlaylist({initial,viewerId}:{initial:MusicList;view
       {error&&<p role="alert" className={styles.error}>{t(error)}</p>}
       <div className={styles.commands}><button type="button" className="ui-button" disabled={busy} onClick={()=>setEdit(false)}>{t("Otkazi")}</button><button type="submit" className="ui-button ui-button-primary" disabled={busy}><Save aria-hidden="true" />{t(busy?"Cuvam...":"Sacuvaj")}</button></div>
     </form></PlaylistDialog>}
+    {renaming&&<PlaylistDialog title="Preimenuj snimak" close={()=>setRenaming(null)} busy={busy}>
+      <form className={styles.dialogForm} onSubmit={async event=>{
+        event.preventDefault()
+        if(await update("/api/listening-playlist/item/"+encodeURIComponent(renaming.id),"PATCH",{title:renaming.title}))setRenaming(null)
+      }}>
+        <label>{t("Naziv snimka")}<input className="ui-input" autoFocus required maxLength={200} value={renaming.title} disabled={busy} onChange={event=>setRenaming({...renaming,title:event.target.value})} /></label>
+        {error&&<p role="alert" className={styles.error}>{t(error)}</p>}
+        <div className={styles.commands}><button type="button" className="ui-button" disabled={busy} onClick={()=>setRenaming(null)}>{t("Otkazi")}</button><button type="submit" className="ui-button ui-button-primary" disabled={busy||!renaming.title.trim()}><Save aria-hidden="true" />{t(busy?"Cuvam...":"Sacuvaj")}</button></div>
+      </form>
+    </PlaylistDialog>}
+    {sharing&&<MusicItemShare title={sharing.title} url={sharing.url} close={()=>setSharing(null)} />}
     {removeId&&<PlaylistDialog title="Ukloni stavku" close={()=>setRemoveId(null)} busy={busy}><p className={styles.notice} translate="no">{list.items.find(item=>item.id===removeId)?.title}</p>{error&&<p role="alert" className={styles.error}>{t(error)}</p>}<div className={styles.commands}><button type="button" className="ui-button" disabled={busy} onClick={()=>setRemoveId(null)}>{t("Otkazi")}</button><button type="button" className="ui-button ui-button-destructive" disabled={busy} onClick={async()=>{if(await update("/api/listening-playlist/item/"+encodeURIComponent(removeId),"DELETE",{}))setRemoveId(null)}}><Trash2 aria-hidden="true" />{t(busy?"Brisem...":"Potvrdi brisanje")}</button></div></PlaylistDialog>}
   </section>
 }
 
-function MusicPlaylistItem({item,index,total,editable,busy,playing,play,move,choosePosition,remove}:{
-  item:MusicItem;index:number;total:number;editable:boolean;busy:boolean;playing:boolean;play:()=>void;move:(to:number)=>void;choosePosition:()=>void;remove:()=>void
+function MusicPlaylistItem({item,index,total,editable,busy,playing,play,choosePosition,rename,share,remove}:{
+  item:MusicItem;index:number;total:number;editable:boolean;busy:boolean;playing:boolean;play:()=>void;choosePosition:()=>void;rename:()=>void;share:(url:string)=>void;remove:()=>void
 }){
   const {t}=useI18n()
   const {attributes,listeners,setNodeRef,setActivatorNodeRef,transform,transition,isDragging}=useSortable({id:item.id,disabled:!editable||busy||total<2})
   const external=externalMusicUrl(item.url)
+  const shareUrl=musicItemShareUrl(item.url)
   return <li ref={setNodeRef} style={{transform:CSS.Transform.toString(transform),transition}} className={styles.row} data-music-item={item.id} data-playing={playing} data-dragging={isDragging}>
     {editable&&<button type="button" ref={setActivatorNodeRef} {...attributes} {...listeners} disabled={busy||total<2} className={styles.icon+" "+styles.drag} title={t("Promeni redosled pesme")} aria-label={t("Promeni redosled pesme")+": "+item.title}><GripVertical aria-hidden="true" /></button>}
     {item.source?<button type="button" className={styles.icon} title={t("Pokreni muziku")+": "+item.title} aria-label={t("Pokreni muziku")+": "+item.title} onClick={play}><Play /></button>:!editable&&<span className={styles.muted}>{index+1}.</span>}
     <div className={styles.identity}><strong translate="no">{item.title||item.type}</strong>
       {item.youtubeTitle&&item.youtubeTitle!==item.title&&<span className={styles.sourceTitle} translate="no">{item.youtubeTitle}</span>}
       <small>{item.channelTitle&&<span translate="no">{t("Kanal")}: {item.channelTitle}</span>}{item.source?<span>YouTube{item.source.kind==="playlist"?" playlist":""}</span>:external?<a href={external} target="_blank" rel="noopener"><ExternalLink size={14} aria-hidden="true" />{t("Otvori izvor")}</a>:<span>{t("Ovaj stari link nije podrzan u plejeru.")}</span>}</small></div>
-    {editable&&<div className={styles.commands+" "+styles.itemCommands}>
-      <button type="button" className={styles.icon+" "+styles.position} disabled={busy||total<2} title={t("Pomeri na poziciju")} aria-label={t("Pomeri na poziciju")+": "+item.title} onClick={choosePosition}>{index+1}.</button>
-      <button type="button" className={styles.icon} disabled={busy||index===0} title={t("Pomeri stavku gore")} aria-label={t("Pomeri stavku gore")+": "+item.title} onClick={()=>move(index-1)}><ArrowUp /></button>
-      <button type="button" className={styles.icon} disabled={busy||index===total-1} title={t("Pomeri stavku dole")} aria-label={t("Pomeri stavku dole")+": "+item.title} onClick={()=>move(index+1)}><ArrowDown /></button>
-      <button type="button" className={styles.icon+" ui-button-danger"} disabled={busy} title={t("Ukloni stavku")} aria-label={t("Ukloni stavku")+": "+item.title} onClick={remove}><Trash2 /></button>
+    {(editable||shareUrl)&&<div className={styles.commands+" "+styles.itemCommands}>
+      {editable&&<><button type="button" className={styles.icon+" "+styles.position} disabled={busy||total<2} title={t("Pomeri na poziciju")} aria-label={t("Pomeri na poziciju")+": "+item.title} onClick={choosePosition}>{index+1}.</button>
+        <button type="button" className={styles.icon} disabled={busy} title={t("Preimenuj snimak")} aria-label={t("Preimenuj snimak")+": "+item.title} onClick={rename}><Pencil aria-hidden="true" /></button></>}
+      {shareUrl&&<button type="button" className={styles.icon} disabled={busy} title={t("Podeli snimak")} aria-label={t("Podeli snimak")+": "+item.title} onClick={()=>share(shareUrl)}><Share2 aria-hidden="true" /></button>}
+      {editable&&<button type="button" className={styles.icon+" ui-button-danger"} disabled={busy} title={t("Ukloni stavku")} aria-label={t("Ukloni stavku")+": "+item.title} onClick={remove}><Trash2 aria-hidden="true" /></button>}
     </div>}
   </li>
 }

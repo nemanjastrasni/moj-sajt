@@ -333,6 +333,7 @@ model ListeningPlaylist {
   category  String?
   isPublic  Boolean                 @default(true)
   views     Int                     @default(0)
+  position  Int?
   items     ListeningItem[]
   user      User?                   @relation("UserListeningPlaylists", fields: [userId], references: [id])
   likes     ListeningPlaylistLike[]

@@ -5,11 +5,12 @@ import { playlistBody, playlistTransaction, playlistViewerId, privateHeaders } f
 import { submissionUser } from "@/lib/submissions/server"
 import { SubmissionError } from "@/lib/submissions/validation"
 import { NextResponse } from "next/server"
-import { canonicalYoutube, expectedVersion, MusicError, musicCategory, musicId, musicName, youtubeSource, type MusicList, type MusicSummary } from "./model"
+import { canonicalYoutube, expectedVersion, MUSIC_LIST_LIMIT, MusicError, musicCategory, musicId, musicName, musicRecordingTitle, youtubeSource, type MusicList, type MusicSummary } from "./model"
 import { enrichMusicMetadata } from "./metadata"
 
 export { privateHeaders, playlistViewerId as musicViewerId }
 const itemOrder: Prisma.ListeningItemOrderByWithRelationInput[] = [{order:"asc"},{id:"asc"}]
+const personalOrder: Prisma.ListeningPlaylistOrderByWithRelationInput[] = [{position:{sort:"asc",nulls:"first"}},{createdAt:"desc"},{id:"asc"}]
 export const musicSelect = { id:true,name:true,userId:true,category:true,isPublic:true,items:{orderBy:itemOrder,select:{id:true,title:true,url:true,type:true,order:true}} } satisfies Prisma.ListeningPlaylistSelect
 type Row = Prisma.ListeningPlaylistGetPayload<{select:typeof musicSelect}>
 export function musicVersion(row: Row) {
@@ -25,7 +26,7 @@ export async function readableMusic(id: string, viewerId: string | null) {
   return enrichMusicMetadata(musicView(row,viewerId))
 }
 export async function musicCatalog({userId,viewerId,category,page=1,limit=50}:{userId?:string;viewerId?:string|null;category?:string;page?:number;limit?:number}={}):Promise<MusicSummary[]> {
-  const rows=await prisma.listeningPlaylist.findMany({where:{...(userId?{userId}:{isPublic:true}),...(category&&category!=="admin"?{category}:{}),...(category==="admin"?{user:{is:{role:"admin",banned:false}}}: {})},orderBy:userId?[{createdAt:"desc"},{id:"asc"}]:[{views:"desc"},{id:"asc"}],skip:(page-1)*limit,take:limit,
+  const rows=await prisma.listeningPlaylist.findMany({where:{...(userId?{userId}:{isPublic:true}),...(category&&category!=="admin"?{category}:{}),...(category==="admin"?{user:{is:{role:"admin",banned:false}}}: {})},orderBy:userId?personalOrder:[{views:"desc"},{id:"asc"}],skip:(page-1)*limit,take:limit,
     select:{id:true,name:true,category:true,isPublic:true,views:true,user:{select:{name:true}},likes:{where:{userId:viewerId||userId||"__no_viewer__"},select:{id:true},take:1},_count:{select:{items:true,likes:true}}}})
   return rows.map(row=>({id:row.id,name:row.name,category:row.category,isPublic:row.isPublic,views:row.views,count:row._count.items,likes:row._count.likes,liked:Boolean(row.likes.length),author:row.user?.name||null}))
 }
@@ -49,12 +50,12 @@ export async function createMusic(input:Record<string,unknown>) {
   return playlistTransaction(async tx=>{
     const current=await tx.user.findUnique({where:{id:actor.id},select:{id:true,banned:true}})
     if(!current||current.banned)throw new MusicError(403,"Pristup nije dozvoljen.")
-    if(await tx.listeningPlaylist.count({where:{userId:actor.id}})>=100)throw new MusicError(400,"Mozes imati najvise 100 muzickih lista.")
+    if(await tx.listeningPlaylist.count({where:{userId:actor.id}})>=MUSIC_LIST_LIMIT)throw new MusicError(400,"Mozes imati najvise 100 muzickih lista.")
     const row=await tx.listeningPlaylist.create({data:{name,category,userId:actor.id,isPublic:input.isPublic===true},select:musicSelect})
     return musicView(row,actor.id)
   })
 }
-export async function mutateMusic(id:string,input:Record<string,unknown>,operation:"edit"|"delete"|"add"|"reorder"|"remove",itemId?:string) {
+export async function mutateMusic(id:string,input:Record<string,unknown>,operation:"edit"|"rename"|"delete"|"add"|"reorder"|"remove"|"renameItem",itemId?:string) {
   const actor=await submissionUser()
   if(!musicId(id))throw new MusicError(404,"Muzicka lista nije dostupna.")
   const version=expectedVersion(input.version)
@@ -70,19 +71,26 @@ export async function mutateMusic(id:string,input:Record<string,unknown>,operati
       if(typeof input.isPublic!=="boolean")throw new MusicError(400,"Neispravna vidljivost liste.")
       await tx.listeningPlaylist.update({where:{id},data:{name:musicName(input.name),category:musicCategory(input.category),isPublic:input.isPublic}})
     }
+    if(operation==="rename")await tx.listeningPlaylist.update({where:{id},data:{name:musicName(input.name)}})
     if(operation==="add") {
       const source=youtubeSource(input.url)
       if(!source)throw new MusicError(400,"Unesi vazeci HTTPS YouTube video ili playlist link.")
       const url=canonicalYoutube(source)
       if(row.items.length>=500)throw new MusicError(400,"Lista moze imati najvise 500 stavki.")
       if(row.items.some(item=>{const source=youtubeSource(item.url);return source&&canonicalYoutube(source)===url}))throw new MusicError(409,"Ovaj YouTube link je vec na listi.")
-      const title=typeof input.title==="string"?input.title.trim():""
-      if(title.length>200||/[\u0000-\u001f\u007f]/.test(title))throw new MusicError(400,"Naziv snimka moze imati najvise 200 znakova.")
+      const title=musicRecordingTitle(typeof input.title==="string"?input.title:"")
       await tx.listeningItem.create({data:{playlistId:id,url,type:"youtube",title:title||(source.kind==="video"?"YouTube ":"YouTube playlist ")+source.id,order:Math.max(-1,...row.items.map(item=>item.order))+1}})
     }
     if(operation==="remove") {
       if(!row.items.some(item=>item.id===itemId))throw new MusicError(404,"Stavka nije dostupna.")
       await tx.listeningItem.delete({where:{id:itemId!}})
+    }
+    if(operation==="renameItem") {
+      const item=row.items.find(item=>item.id===itemId)
+      if(!item)throw new MusicError(404,"Stavka nije dostupna.")
+      const title=typeof input.title==="string"?musicRecordingTitle(input.title):""
+      if(!title)throw new MusicError(400,"Unesi naziv snimka.")
+      await tx.listeningItem.update({where:{id:item.id},data:{title}})
     }
     if(operation==="reorder") {
       const ids=input.items
@@ -95,10 +103,37 @@ export async function mutateMusic(id:string,input:Record<string,unknown>,operati
   })
   return result ? enrichMusicMetadata(result) : result
 }
-export async function removeMusicItem(itemId:string,input:Record<string,unknown>) {
+async function changeMusicItem(itemId:string,input:Record<string,unknown>,operation:"remove"|"renameItem") {
   await submissionUser()
   if(!musicId(itemId))throw new MusicError(404,"Stavka nije dostupna.")
   const item=await prisma.listeningItem.findUnique({where:{id:itemId},select:{playlistId:true}})
   if(!item)throw new MusicError(404,"Stavka nije dostupna.")
-  return mutateMusic(item.playlistId,input,"remove",itemId)
+  return mutateMusic(item.playlistId,input,operation,itemId)
+}
+export const removeMusicItem = (id:string,input:Record<string,unknown>) => changeMusicItem(id,input,"remove")
+export const renameMusicItem = (id:string,input:Record<string,unknown>) => changeMusicItem(id,input,"renameItem")
+
+const sameOrder = (left: string[], right: string[]) => left.length === right.length && left.every((id,index)=>id===right[index])
+
+export async function reorderMusicCatalog(input: Record<string,unknown>) {
+  const actor=await submissionUser(), {previous,items}=input
+  if(!Array.isArray(previous)||!Array.isArray(items)||items.length>MUSIC_LIST_LIMIT||previous.length!==items.length||
+    !previous.every(musicId)||!items.every(musicId)||new Set(items).size!==items.length||new Set(previous).size!==previous.length||
+    items.some(id=>!previous.includes(id)))throw new MusicError(400,"Redosled mora sadržati sve tvoje muzičke liste.")
+  return playlistTransaction(async tx=>{
+    const user=await tx.user.findUnique({where:{id:actor.id},select:{id:true,banned:true}})
+    if(!user||user.banned)throw new MusicError(403,"Pristup nije dozvoljen.")
+    const rows=await tx.listeningPlaylist.findMany({where:{userId:actor.id},orderBy:personalOrder,select:{id:true}})
+    const current=rows.map(row=>row.id)
+    if(sameOrder(current,items))return current
+    if(!sameOrder(current,previous))throw new MusicError(409,"Muzičke liste su se promenile. Proveri novi redosled i pokušaj ponovo.")
+    const changed=await tx.$executeRaw`
+      UPDATE public."ListeningPlaylist" AS playlist
+      SET "position" = ordered.ordinality::integer - 1
+      FROM jsonb_array_elements_text(${JSON.stringify(items)}::jsonb) WITH ORDINALITY AS ordered(id, ordinality)
+      WHERE playlist.id = ordered.id AND playlist."userId" = ${actor.id}
+    `
+    if(changed!==items.length)throw new MusicError(409,"Muzičke liste su se promenile. Proveri novi redosled i pokušaj ponovo.")
+    return items
+  })
 }

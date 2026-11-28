@@ -1,7 +1,12 @@
-import type { MusicList } from "./model"
+import { canonicalYoutube, externalMusicUrl, youtubeSource, type MusicList } from "./model"
 
 type ShareList = Pick<MusicList, "name" | "items">
 const line = (value: string) => value.replace(/[\u0000-\u001f\u007f]+/g, " ").trim()
+
+export function musicItemShareUrl(url: string) {
+  const source = youtubeSource(url)
+  return source ? canonicalYoutube(source) : externalMusicUrl(url)
+}
 
 // Comment lines keep the shared text readable and compatible with the MP3 app:
 // it ignores lines starting with # and imports every following URL in order.

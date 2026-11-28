@@ -18,11 +18,27 @@ const prisma={
   user:{findUnique:async({where})=>{if(fail)throw Error('private-database-credentials');return structuredClone(state.users.find(user=>user.id===where.id)||null)}},
   listeningPlaylist:{
     findFirst:async({where,select})=>{seenQueries.push({where,select});return materialize(state.lists.find(row=>match(row,where)))},
-    findMany:async(query)=>{seenQueries.push(query);return state.lists.filter(row=>match(row,query.where)).map(row=>({...row,user:{name:'Public display name'},likes:state.likes.filter(like=>like.playlistId===row.id&&like.userId===query.select.likes.where.userId).slice(0,1),_count:{items:state.items.filter(item=>item.playlistId===row.id).length,likes:state.likes.filter(like=>like.playlistId===row.id).length}})).slice(query.skip||0,(query.skip||0)+query.take)},
+    findMany:async query=>{
+      seenQueries.push(query)
+      const rows=state.lists.filter(row=>match(row,query.where))
+      if(query.orderBy?.[0]?.position)rows.sort((a,b)=>(a.position??-1)-(b.position??-1)||(b.createdAt??0)-(a.createdAt??0)||a.id.localeCompare(b.id))
+      if(!query.select.likes)return rows.map(row=>({id:row.id}))
+      return rows.slice(query.skip||0,(query.skip||0)+query.take).map(row=>({...row,user:{name:'Public display name'},likes:state.likes.filter(like=>like.playlistId===row.id&&like.userId===query.select.likes.where.userId).slice(0,1),_count:{items:state.items.filter(item=>item.playlistId===row.id).length,likes:state.likes.filter(like=>like.playlistId===row.id).length}}))
+    },
     count:async({where})=>state.lists.filter(row=>match(row,where)).length,
     create:async({data})=>{const row={id:'created',views:0,...data};state.lists.push(row);return materialize(row)},
     update:async({where,data})=>Object.assign(state.lists.find(row=>row.id===where.id),data),
     delete:async({where})=>{state.lists=state.lists.filter(row=>row.id!==where.id)},
+  },
+  $executeRaw:async(strings,ids,userId)=>{
+    assert.match(strings.join(''),/UPDATE public\."ListeningPlaylist"/)
+    const items=JSON.parse(ids)
+    let changed=0
+    for(const [position,id] of items.entries()){
+      const list=state.lists.find(row=>row.id===id&&row.userId===userId)
+      if(list){list.position=position;changed++}
+    }
+    return changed
   },
   listeningItem:{
     findUnique:async({where})=>structuredClone(state.items.find(item=>item.id===where.id)||null),
@@ -47,9 +63,10 @@ Module._load=function(request,parent,isMain){
   if(request.startsWith('@/'))request=path.join(__dirname,'..',request.slice(2))
   return original.call(this,request,parent,isMain)
 }
-let server,root,detail,item,itemDetail,reorder,legacyOrder,rename,legacyAdd,likes
+let server,root,detail,item,itemDetail,reorder,legacyOrder,rename,legacyAdd,likes,catalogOrder
 try{
   server=require('../lib/music/server.ts');root=require('../app/api/listening-playlist/route.ts');detail=require('../app/api/listening-playlist/[id]/route.ts');item=require('../app/api/listening-playlist/item/route.ts');itemDetail=require('../app/api/listening-playlist/item/[id]/route.ts');reorder=require('../app/api/listening-playlist/reorder/route.ts');legacyOrder=require('../app/api/listening-playlist/item/reorder-all/route.ts');rename=require('../app/api/listening-playlist/[id]/rename/route.ts');legacyAdd=require('../app/listening-playlist/item/route.ts');likes=require('../app/api/listening-playlist-like/route.ts')
+  catalogOrder=require('../app/api/listening-playlist/catalog-order/route.ts')
 }finally{Module._load=original}
 const req=(body={},method='POST',headers={})=>new Request('https://site.test/api/music',{method,headers:{'content-type':'application/json',origin:'https://site.test',...headers},...(method==='GET'?{}:{body:JSON.stringify(body)})})
 const ctx=(id='mine')=>({params:Promise.resolve({id})})
@@ -128,6 +145,42 @@ test('adding links preserves order, rejects duplicate/spoofed sources and retain
   assert.equal((await item.POST(req({playlistId:'mine',version:version(),url:'https://youtu.be/12345678901'}))).status,409)
   assert.equal((await item.POST(req({playlistId:'mine',version:version(),url:'https://evil.test/youtube.com/watch?v=12345678901'}))).status,400)
   assert.deepEqual(state,before)
+})
+test('a recording rename preserves its link, position and playlist and rejects stale or foreign edits',async()=>{
+  const stale=version(),before=structuredClone(state.items[0])
+  const renamed=await itemDetail.PATCH(req({version:stale,title:'  Kraći naziv  '},'PATCH'),ctx('a'))
+  assert.equal(renamed.status,200)
+  assert.deepEqual(state.items[0],{...before,title:'Kraći naziv'})
+  assert.equal((await renamed.json()).playlist.items[0].title,'Kraći naziv')
+  for(const title of ['', 'a'.repeat(201), 'a\nb'])assert.equal((await itemDetail.PATCH(req({version:version(),title},'PATCH'),ctx('a'))).status,400)
+  assert.equal((await itemDetail.PATCH(req({version:stale,title:'Old edit'},'PATCH'),ctx('a'))).status,409)
+  assert.equal((await itemDetail.PATCH(req({version:version('foreign'),title:'Foreign edit'},'PATCH'),ctx('c'))).status,404)
+})
+test('the catalogue rename only changes the name, including lists with a legacy category',async()=>{
+  state.lists[0].category=null
+  const before=structuredClone(state)
+  const response=await rename.PATCH(req({version:version(),name:'New title',isPublic:true,category:'Strane'},'PATCH'),ctx())
+  assert.equal(response.status,200)
+  before.lists[0].name='New title'
+  assert.deepEqual(state,before)
+})
+test('a personal catalogue reorders durably, preserves old/new defaults and rejects stale or foreign lists',async()=>{
+  state.lists[0].createdAt=1
+  state.lists.push({id:'newer',userId:'owner',name:'Recent',category:'Mix',isPublic:true,views:11,createdAt:2})
+  const own=async()=> (await (await root.GET(new Request('https://site.test/api/listening-playlist'))).json()).lists.map(list=>list.id)
+  assert.deepEqual(await own(),['newer','mine'])
+  const save=(previous,items)=>catalogOrder.PUT(req({previous,items},'PUT'))
+  assert.equal((await save(['newer','mine'],['mine','newer'])).status,200)
+  assert.deepEqual(await own(),['mine','newer'])
+  assert.equal((await save(['newer','mine'],['mine','newer'])).status,200)
+  state.lists.push({id:'latest',userId:'owner',name:'Latest',category:'Mix',isPublic:false,views:0,createdAt:3})
+  assert.deepEqual(await own(),['latest','mine','newer'])
+  assert.equal((await save(['mine','newer'],['newer','mine'])).status,409)
+  assert.equal((await save(['latest','mine','foreign'],['foreign','mine','latest'])).status,409)
+  assert.equal((await save(['latest','mine','newer'],['mine','mine','latest'])).status,400)
+  assert.equal(state.lists.find(list=>list.id==='foreign').position,undefined)
+  session=null
+  assert.equal((await save(['latest','mine','newer'],['mine','latest','newer'])).status,401)
 })
 test('reorder is an exact permutation of this list; foreign, duplicate and incomplete IDs fail',async()=>{
   for(const ids of [['a','c'],['a','a'],['a']]){
