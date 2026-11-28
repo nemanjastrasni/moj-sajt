@@ -6,6 +6,7 @@ export const staticTranslatedRoutes = [
   { sr: "/", en: "/en" },
   { sr: "/o-nama", en: "/en/about" },
   { sr: "/akordi", en: "/en/guitar-chords" },
+  { sr: "/stimer", en: "/en/guitar-tuner" },
   { sr: "/vodici", en: "/en/guides" },
   { sr: "/vodici/kako-se-citaju-akordi-za-gitaru", en: "/en/guides/reading-guitar-chord-diagrams" },
   { sr: "/vodici/vezbanje-promene-akorda", en: "/en/guides/practising-chord-changes" },

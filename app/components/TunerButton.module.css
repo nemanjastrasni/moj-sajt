@@ -1,6 +1,7 @@
 .icon { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: 0 0 44px; border-radius: 4px; cursor: pointer; color: inherit; touch-action: manipulation; }
-.icon svg, .start svg, .result svg { width: 20px; height: 20px; flex-shrink: 0; }
-.icon:focus-visible, .start:focus-visible, .selection select:focus-visible { outline: 2px solid var(--theme-link, #69baff); outline-offset: -2px; }
+.launch { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px; border: 1px solid var(--theme-link, #69baff); border-radius: 6px; background: var(--theme-raised, #20262b); color: var(--theme-ink, #eee); font-weight: 600; cursor: pointer; }
+.icon svg, .launch svg, .start svg, .result svg { width: 20px; height: 20px; flex-shrink: 0; }
+.icon:focus-visible, .launch:focus-visible, .start:focus-visible, .selection select:focus-visible { outline: 2px solid var(--theme-link, #69baff); outline-offset: -2px; }
 .dialog { margin: auto; width: min(380px, calc(100% - 24px)); max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain; padding: 16px 20px; border: 1px solid var(--theme-line, #56616c); border-radius: 8px; background: var(--theme-panel, #191919); color: var(--theme-ink, #eee); }
 .dialog::backdrop { background: rgb(0 0 0 / .65); }
 .header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }

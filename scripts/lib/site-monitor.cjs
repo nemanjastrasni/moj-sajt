@@ -6,6 +6,8 @@ const USER_AGENT = 'GitarAkordiMonitor/1.0 HeadlessChrome (read-only health chec
 const MAX_BODY = 4 * 1024 * 1024
 const PRIVATE_PATH = /^\/(?:admin|api|profile|favorite|login|signin|signup|predlozi-pesmu|moji-predlozi|listening-playlist)(?:\/|$)/
 const PUBLIC_PATH = /^\/(?:pesme|biografija|akordi|plejliste|top-50|vodici|o-nama|kontakt|foto-izvori|wiki-izvori|prijava-povrede)(?:\/|$)/
+const ENGLISH_PATH = /^\/en(?:\/(?:about|guitar-chords|guitar-tuner|guides(?:\/[a-z0-9-]+)?|biography\/[a-z0-9-]+))?$/
+const STANDALONE_PATHS = new Set(['/', '/aplikacija', '/public-listening-playlists', '/stimer'])
 const CATALOG_SLUGS = new Set(['veoma-lako', 'lako', 'srednje', 'tesko', 'veoma-tesko', '4-akorda', 'beginner', 'acoustic', 'domace', 'strane', 'narodne'])
 
 function originUrl(value) {
@@ -16,7 +18,8 @@ function originUrl(value) {
 function publicPath(value, origin) {
   try {
     const url = new URL(value)
-    if (url.origin !== origin || url.search || url.hash || url.username || url.password || !PUBLIC_PATH.test(url.pathname) && url.pathname !== '/' && url.pathname !== '/public-listening-playlists' && url.pathname !== '/aplikacija') return null
+    if (url.origin !== origin || url.search || url.hash || url.username || url.password) return null
+    if (!PUBLIC_PATH.test(url.pathname) && !ENGLISH_PATH.test(url.pathname) && !STANDALONE_PATHS.has(url.pathname)) return null
     const decoded = decodeURIComponent(url.pathname)
     if (PRIVATE_PATH.test(decoded) || /^\/plejliste\/(?:pesme-koje-znam|top-user)(?:\/|$)/.test(decoded) || /[\u0000-\u001f\\]/.test(decoded)) return null
     if (decoded.startsWith('/plejliste/') && !CATALOG_SLUGS.has(decoded.slice('/plejliste/'.length))) return null
@@ -126,7 +129,8 @@ async function inspectSite({ origin: input, now = new Date(), fetcher = fetch, s
     if (!songs.length) add('critical', 'song_sitemap_empty', '/sitemap.xml', 'Sitemap ne sadrži nijednu adresu pesme.')
     const day = now.toISOString().slice(0, 10)
     const guides = [...paths].filter(path => /^\/vodici\/[^/]+$/.test(path))
-    const selected = [...new Set(['/', '/pesme', '/biografija', '/akordi', '/akordi/C%23', '/plejliste', '/plejliste/beginner', '/plejliste/4-akorda', '/plejliste/acoustic', '/vodici', '/aplikacija', '/public-listening-playlists', '/kontakt', ...samples(songs, Math.min(20, sampleSize), day), ...samples(bios, 2, day), ...samples(guides, 1, day)])]
+    const tuners = ['/stimer', '/en/guitar-tuner'].filter(path => paths.has(path))
+    const selected = [...new Set(['/', '/pesme', '/biografija', '/akordi', '/akordi/C%23', '/plejliste', '/plejliste/beginner', '/plejliste/4-akorda', '/plejliste/acoustic', '/vodici', '/aplikacija', '/public-listening-playlists', '/kontakt', ...tuners, ...samples(songs, Math.min(20, sampleSize), day), ...samples(bios, 2, day), ...samples(guides, 1, day)])]
     for (const path of selected) {
       if (robots.status === 200 && !robotsAllows(robots.text, path)) { add('critical', 'robots_blocks_public', path, 'Robots blokira javnu stranicu.'); continue }
       const result = await request(path); report.coverage.pagesChecked++

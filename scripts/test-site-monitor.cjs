@@ -41,6 +41,8 @@ test('sitemap entries cannot turn into authenticated requests, foreign requests 
   assert.equal(publicPath(origin + song, origin), song)
   assert.equal(publicPath(origin + '/plejliste/lako', origin), '/plejliste/lako')
   assert.equal(publicPath(origin + '/public-listening-playlists', origin), '/public-listening-playlists')
+  for (const path of ['/stimer', '/en', '/en/guitar-tuner', '/en/guides/capo-and-transposition', '/en/biography/aco-regina']) assert.equal(publicPath(origin + path, origin), path)
+  for (const path of ['/stimer/private-id', '/en/profile', '/en/guitar-tuner/private-id', '/en/biography/private?userId=private']) assert.equal(publicPath(origin + path, origin), null)
   for (const path of ['/admin', '/api/admin/songs', '/profile', '/plejliste/private-user-id', '/plejliste/pesme-koje-znam', song + '?playlist=private', '/pesme/%ZZ']) assert.equal(publicPath(origin + path, origin), null)
   assert.equal(publicPath('https://foreign.example/pesme/x', origin), null)
   for (const path of ['/public-listening-playlists/private-id', '/public-listening-playlists?userId=private', '/listening-playlist/private-id']) assert.equal(publicPath(origin + path, origin), null)

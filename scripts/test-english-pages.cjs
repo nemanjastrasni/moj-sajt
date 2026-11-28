@@ -15,9 +15,10 @@ Module._load=function(request,parent,main){
   if(request.startsWith('@/'))request=path.join(root,request.slice(2))
   return original.call(this,request,parent,main)
 }
-let home,about,chords,guides,detail,LocaleProvider,routes,maps,metadata,i18n
+let home,about,chords,guides,detail,tuner,srTuner,LocaleProvider,routes,maps,metadata,i18n
 try{
   home=require('../app/en/page.tsx');about=require('../app/en/about/page.tsx');chords=require('../app/en/guitar-chords/page.tsx');guides=require('../app/en/guides/page.tsx');detail=require('../app/en/guides/[slug]/page.tsx');LocaleProvider=require('../app/components/LocaleProvider.tsx').default;routes=require('../lib/i18n/routes.ts');maps=require('../lib/seo/sitemaps.ts');metadata=require('../lib/seo/metadata.ts');i18n=require('../lib/i18n/index.ts')
+  tuner=require('../app/en/guitar-tuner/page.tsx');srTuner=require('../app/stimer/page.tsx')
 }finally{Module._load=original}
 const render=(url,node)=>{pathname=url;return load(renderToStaticMarkup(React.createElement(LocaleProvider,null,node)))}
 
@@ -52,6 +53,21 @@ test('English chord landing keeps all real diagrams and full English explanation
   const $=render('/en/guitar-chords',chords.default())
   assert.equal($('h1').text(),'Guitar chords');assert.equal($('svg[role="img"]').length,8);assert.match($('p').text(),/standard.*tuning/);assert.match($('p').text(),/minor/)
   assert.ok($('a[href="/en/guides/reading-guitar-chord-diagrams"]').length)
+})
+test('guitar tuner pages expose the working tool entry and accurate standard tuning in both languages',()=>{
+  for(const {url,page,title,action,notes,alternate} of [
+    {url:'/stimer',page:srTuner,title:'Online štimer za gitaru',action:'Otvori štimer',notes:['E2','A2','D3','G3','H3','E4'],alternate:'/en/guitar-tuner'},
+    {url:'/en/guitar-tuner',page:tuner,title:'Online guitar tuner',action:'Open guitar tuner',notes:['E2','A2','D3','G3','B3','E4'],alternate:'/stimer'},
+  ]){
+    const $=render(url,page.default())
+    assert.equal($('h1').text(),title)
+    assert.equal($('button[aria-haspopup="dialog"]').text(),action)
+    assert.deepEqual($('tbody td:nth-child(2)').map((_,node)=>$(node).text()).get(),notes)
+    assert.ok($(`a[hreflang][href="${alternate}"]`).length)
+    assert.equal(new URL(page.metadata.alternates.canonical).pathname,url)
+  }
+  assert.ok(render('/en/guitar-chords',chords.default())('a[href="/en/guitar-tuner"]').length)
+  assert.ok(render('/en/guides',guides.default())('a[href="/en/guitar-tuner"]').length)
 })
 test('all five English guides expose substantive translated text, working anchors and matching breadcrumbs',async()=>{
   const $index=render('/en/guides',guides.default());assert.equal($index('h1').text(),'Guitar guides')

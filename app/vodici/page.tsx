@@ -16,6 +16,6 @@ export default function GuitarGuidesPage() {
       <h2><Link href={guidePath(guide.slug)} prefetch={false}><span aria-hidden="true">{index + 1}. </span><GuideText text={guide.title} /></Link></h2>
       <p><GuideText text={guide.description} /></p>
     </article>)}</div>
-    <nav className={styles.links} aria-label="Akordi i pesme"><Link href="/akordi" prefetch={false}><GuideText text={{ sr: "Pregledaj dijagrame akorda", en: "Browse chord diagrams" }} /></Link><Link href="/plejliste/beginner" prefetch={false}><GuideText text={{ sr: "Izaberi pesmu za početak", en: "Choose a song to start with" }} /></Link></nav>
+    <nav className={styles.links} aria-label="Akordi i pesme"><Link href="/stimer" prefetch={false}>Online štimer za gitaru</Link><Link href="/akordi" prefetch={false}><GuideText text={{ sr: "Pregledaj dijagrame akorda", en: "Browse chord diagrams" }} /></Link><Link href="/plejliste/beginner" prefetch={false}><GuideText text={{ sr: "Izaberi pesmu za početak", en: "Choose a song to start with" }} /></Link></nav>
   </div>
 }
